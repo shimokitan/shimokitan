@@ -12,7 +12,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
         }
 
-        await registerResident(result.data.email);
+        const rows = await registerResident(result.data.email);
+
+        if (rows.length === 0) {
+            return NextResponse.json({ error: 'ALREADY_REGISTERED' }, { status: 409 });
+        }
 
         return NextResponse.json({ success: true });
     } catch (error) {

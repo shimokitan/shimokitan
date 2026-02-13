@@ -19,7 +19,10 @@ export const metadata: Metadata = {
   description: "Recalibrating the district conduits.",
 };
 
-const IS_MAINTENANCE = true;
+import { MainLayout } from "../components/layout/MainLayout";
+import { MaintenanceLayout } from "../components/layout/MaintenanceLayout";
+
+const IS_MAINTENANCE = false;
 
 export default function RootLayout({
   children,
@@ -27,12 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-violet-500/30 selection:text-violet-200`}
       >
         <Providers>
-          {IS_MAINTENANCE ? <ComingSoon /> : children}
+          {IS_MAINTENANCE ? (
+            <MaintenanceLayout>
+              <ComingSoon />
+            </MaintenanceLayout>
+          ) : (
+            <MainLayout>{children}</MainLayout>
+          )}
         </Providers>
       </body>
     </html>

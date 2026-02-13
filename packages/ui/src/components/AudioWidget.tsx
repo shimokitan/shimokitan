@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
+import { Badge } from './Badge';
 
 // --- Types ---
 
@@ -14,11 +15,7 @@ interface Track {
     format: string;
 }
 
-const Badge: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = "zinc" }) => (
-    <span className={`px-2 py-0.5 rounded bg-${color}-900/30 text-${color}-200 border border-${color}-700/30 text-[9px] font-mono tracking-tighter uppercase whitespace-nowrap`}>
-        {children}
-    </span>
-);
+
 
 export const AudioWidget: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -233,7 +230,7 @@ export const AudioWidget: React.FC = () => {
                                 {/* Track Info */}
                                 <div className="flex flex-col min-w-[180px] ml-4">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Badge color="zinc">{currentTrack.format}</Badge>
+                                        <Badge variant="zinc">{currentTrack.format}</Badge>
                                         <span className="text-[9px] font-mono text-zinc-600 tracking-tighter">{currentTrack.bitrate}</span>
                                     </div>
                                     <h3 className="text-white font-bold text-xl leading-none tracking-tighter truncate max-w-[220px] uppercase">

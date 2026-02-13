@@ -1,6 +1,10 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
+import { customAlphabet } from 'nanoid';
 import * as schema from './schema';
+
+const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const generateId = customAlphabet(ALPHABET, 12);
 
 let sqlInstance: any;
 let dbInstance: any;
@@ -28,7 +32,10 @@ export async function registerResident(email: string) {
   if (!db) throw new Error('DATABASE_URL is not defined');
 
   return await db.insert(schema.residents)
-    .values({ email })
+    .values({
+      id: generateId(),
+      email
+    })
     .onConflictDoNothing({ target: schema.residents.email })
     .returning();
 }

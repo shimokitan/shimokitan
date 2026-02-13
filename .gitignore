@@ -4,6 +4,9 @@ dist
 build
 .turbo
 
+docs/
+README.md
+
 # Configuration & Secrets
 .env*
 *.pem
