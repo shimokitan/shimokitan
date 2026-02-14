@@ -128,20 +128,12 @@ export function ComingSoon() {
         <div className="flex flex-col items-center justify-center p-6 min-h-full">
             <div className="max-w-4xl w-full flex flex-col items-center">
 
-                {/* Visual Indicator - Square/Technical */}
+                {/* Visual Indicator */}
                 <div className="mb-12 relative">
-                    <div className="w-32 h-32 border border-zinc-800 bg-zinc-950/40 flex items-center justify-center relative overflow-hidden group">
-                        {/* Corner Accents */}
-                        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-violet-600" />
-                        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-violet-600" />
-                        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-zinc-800" />
-                        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-zinc-800" />
-
-                        {/* Inner Technical Frame */}
-                        <div className="w-24 h-24 border border-zinc-900 flex items-center justify-center relative bg-black/40">
-                            {/* Spinning Frame Accent */}
-                            <div className="absolute inset-[-4px] border border-violet-600 animate-[spin_12s_linear_infinite] opacity-30" />
-                            <Icon icon="lucide:lock" width={32} height={32} className="text-zinc-600" />
+                    <div className="w-32 h-32 border-2 border-zinc-800 rounded-full flex items-center justify-center relative">
+                        <div className="absolute inset-0 border-t-2 border-violet-600 rounded-full animate-spin [animation-duration:3s]" />
+                        <div className="w-24 h-24 border border-zinc-900 rounded-full flex items-center justify-center">
+                            <Icon icon="lucide:lock" width={32} height={32} className="text-zinc-700" />
                         </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-[9px] font-mono text-zinc-400 font-bold uppercase tracking-widest">

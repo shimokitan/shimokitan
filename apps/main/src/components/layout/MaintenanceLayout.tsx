@@ -50,8 +50,6 @@ export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
                     {children}
                 </main>
 
-
-
                 <footer className="h-20 border-t border-zinc-900 flex flex-col md:flex-row items-center justify-between px-8 z-10 shrink-0 text-zinc-600 font-mono text-[9px] gap-4 md:gap-0 bg-zinc-950/20">
                     <div className="flex items-center gap-6">
                         <div className="w-4 h-4 rounded-sm bg-zinc-900 border border-zinc-800 flex items-center justify-center font-black text-[8px] text-zinc-100">N</div>

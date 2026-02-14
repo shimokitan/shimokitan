@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 import { MainLayout } from "../components/layout/MainLayout";
 import { MaintenanceLayout } from "../components/layout/MaintenanceLayout";
 
-const IS_MAINTENANCE = true;
+const IS_MAINTENANCE = process.env.NODE_ENV === "production";
 
 export default function RootLayout({
   children,
