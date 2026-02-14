@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 import { MainLayout } from "../components/layout/MainLayout";
 import { MaintenanceLayout } from "../components/layout/MaintenanceLayout";
 
-const IS_MAINTENANCE = false;
+const IS_MAINTENANCE = true;
 
 export default function RootLayout({
   children,
