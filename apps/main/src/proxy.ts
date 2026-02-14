@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies'];
+const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies', '/contact'];
 
 export function proxy(request: NextRequest) {
     // Check if we are in maintenance mode (you could use an env var here)

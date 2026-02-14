@@ -7,10 +7,7 @@ export function Footer() {
     return (
         <footer className="border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[9px] text-zinc-500 shrink-0 relative z-40 gap-4 w-full">
             <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight">
-                <a href="mailto:social@shimokitan.live" className="hover:text-violet-400 transition-colors">SOCIAL@SHIMOKITAN.LIVE</a>
-                <a href="mailto:feedback@shimokitan.live" className="hover:text-violet-400 transition-colors">FEEDBACK@SHIMOKITAN.LIVE</a>
-                <a href="mailto:dmca@shimokitan.live" className="hover:text-violet-400 transition-colors">DMCA@SHIMOKITAN.LIVE</a>
-                <a href="mailto:support@shimokitan.live" className="hover:text-violet-400 transition-colors">SUPPORT@SHIMOKITAN.LIVE</a>
+                <Link href="/contact" className="hover:text-violet-400 transition-colors">CONTACT US</Link>
             </div>
 
             <div className="flex items-center gap-8">
