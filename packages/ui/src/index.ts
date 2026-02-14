@@ -19,6 +19,18 @@ export {
     DialogTrigger,
 } from "./components/ui/dialog";
 export { Toaster } from "./components/ui/sonner";
+export {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectScrollDownButton,
+    SelectScrollUpButton,
+    SelectSeparator,
+    SelectTrigger,
+    SelectValue,
+} from "./components/ui/select";
 
 // --- Composite Components ---
 export { AudioWidget } from "./components/AudioWidget";

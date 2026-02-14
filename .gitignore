@@ -4,7 +4,7 @@ dist
 build
 .turbo
 
-# docs/
+docs/
 README.md
 
 # Configuration & Secrets
