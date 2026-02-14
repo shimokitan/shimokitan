@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { BentoCard, Badge } from '@shimokitan/ui';
+import { useTime } from '../hooks/use-time';
 
 // --- Assets ---
 
@@ -31,6 +32,7 @@ const albumCovers = [
 export default function AppPage() {
   const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
+  const time = useTime();
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 md:grid-rows-7 gap-3 h-auto md:h-full">
@@ -227,18 +229,28 @@ export default function AppPage() {
         </BentoCard>
 
         {/* Simplified District (Time handling is now in MainLayout) */}
-        <BentoCard className="h-32 md:h-full md:w-48 shrink-0 md:aspect-square" title="District" icon="lucide:map-pin">
-          <div className="flex flex-row md:flex-col h-full justify-between items-center md:items-start -m-0.5">
-            <div className="flex-1 md:flex-none">
-              <h3 className="text-base md:text-lg font-black tracking-tighter leading-none mb-0.5">SHIMO<br className="hidden md:block" />KITAZAWA</h3>
-              <p className="text-[8px] md:text-[9px] text-zinc-500 font-mono tracking-widest uppercase">Tokyo, JP</p>
+        {/* District Card with Dynamic Time */}
+        <BentoCard className="h-44 md:h-full md:w-48 shrink-0 md:aspect-square" title="District" icon="lucide:map-pin">
+          <div className="flex flex-col h-full -m-0.5">
+            <div className="mb-2">
+              <h3 className="text-xs md:text-sm font-black tracking-tighter leading-none mb-0.5">SHIMO KITAZAWA</h3>
+              <p className="text-[7px] md:text-[8px] text-zinc-500 font-mono tracking-widest uppercase">Tokyo, JP</p>
             </div>
 
-            <div className="mt-0 md:mt-2 flex items-center gap-2 bg-zinc-800/40 rounded-lg px-2 py-1 border border-zinc-700/30 shrink-0">
-              <Icon icon="lucide:cloud-sun" width={16} height={16} className="text-amber-400" />
-              <div className="flex flex-col leading-none">
-                <span className="text-xs font-bold text-white">8°C</span>
-                <span className="text-[6px] text-zinc-600 font-mono uppercase hidden md:block">Sunny</span>
+            <div className="flex-1 flex flex-col justify-center">
+              <div className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-white italic">
+                {time || "00:00"}
+              </div>
+              <div className="text-[7px] md:text-[8px] text-zinc-600 font-mono tracking-[0.2em] font-bold mt-1">
+                JST / UTC+9
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center gap-2 bg-zinc-900/60 px-2 py-1.5 rounded border border-zinc-800 shrink-0">
+              <Icon icon="lucide:cloud-sun" width={14} height={14} className="text-amber-500" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-white leading-none">8°C</span>
+                <span className="text-[7px] text-zinc-600 font-mono uppercase tracking-tighter">Sunny</span>
               </div>
             </div>
           </div>
