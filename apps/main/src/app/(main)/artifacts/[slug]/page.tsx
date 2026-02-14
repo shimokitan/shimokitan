@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { BentoCard, Badge } from '@shimokitan/ui';
 import { MainLayout } from '../../../../components/layout/MainLayout';
-import { MOCK_ARTIFACTS, Artifact } from '../../../../lib/mock-data';
+import { MOCK_ARTIFACTS, Artifact, MOCK_ZINES, Zine } from '../../../../lib/mock-data';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function ArtifactPage() {
     const params = useParams();
@@ -106,6 +107,21 @@ export default function ArtifactPage() {
                     {/* Side B: The Controls (Pedals) */}
                     <div className="md:col-span-4 space-y-4">
 
+                        {/* Zine Signal Pedal */}
+                        <BentoCard title="Zine Signal" icon="lucide:message-square-plus">
+                            <div className="flex flex-col gap-4">
+                                <p className="text-[9px] font-mono text-zinc-500 uppercase leading-tight">
+                                    Broadcast your life shard resonance for this artifact.
+                                </p>
+                                <Link
+                                    href={`/artifacts/${artifact.slug}/zines/post`}
+                                    className="w-full flex items-center justify-center p-3 bg-rose-600/10 border border-rose-500/20 rounded-lg text-[10px] font-black text-rose-500 hover:bg-rose-600 hover:text-black transition-all uppercase tracking-widest"
+                                >
+                                    Initialize Echo
+                                </Link>
+                            </div>
+                        </BentoCard>
+
                         {/* Credits Pedal */}
                         <BentoCard title="Credits" icon="lucide:book-user">
                             <div className="space-y-4 font-mono">
@@ -193,34 +209,88 @@ export default function ArtifactPage() {
                 </div>
 
                 {/* 3. The Basement: Echoes */}
-                <div className="mt-6 border-t border-zinc-800 pt-8 pb-12">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-2 h-8 bg-violet-600" />
-                        <h2 className="text-2xl font-black tracking-tighter uppercase italic">Echo Resonance</h2>
-                        <Badge variant="distortion">12_ZINES</Badge>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-40 grayscale group hover:opacity-100 hover:grayscale-0 transition-all duration-700">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="p-4 border border-zinc-800/50 rounded-lg hover:border-zinc-700 transition-all cursor-pointer">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-6 h-6 bg-zinc-800 rounded-full" />
-                                    <span className="text-[10px] font-mono text-zinc-400">RESIDENT_#{Math.floor(Math.random() * 9000) + 1000}</span>
-                                </div>
-                                <p className="text-xs text-zinc-500 italic line-clamp-3 mb-3">
-                                    &ldquo;This shard takes me back to the 2022 cold cycle. The way the strings hit during the second chord change felt like literal static in my teeth.&rdquo;
-                                </p>
-                                <div className="flex gap-1.5">
-                                    <Badge variant="truth">TRUTH</Badge>
-                                </div>
+                <div className="mt-12 border-t border-zinc-900 pt-12 pb-20">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-12 bg-rose-600 shadow-[0_0_15px_rgba(225,29,72,0.4)]" />
+                            <div className="flex flex-col">
+                                <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none">Echo Resonance</h2>
+                                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Fragmented Collective Memoirs</span>
                             </div>
-                        ))}
+                        </div>
+
+                        <Link
+                            href={`/artifacts/${artifact.slug}/zines`}
+                            className="text-xs font-black uppercase text-zinc-400 hover:text-white transition-colors border-b-2 border-zinc-900 pb-1 flex items-center gap-2 group"
+                        >
+                            See All Shards
+                            <Icon icon="lucide:chevron-right" width={14} height={14} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
                     </div>
 
-                    <div className="mt-12 p-12 border-2 border-dashed border-zinc-900 rounded-2xl flex flex-col items-center justify-center text-center group">
-                        <Icon icon="lucide:plus-circle" width={32} height={32} className="text-zinc-800 group-hover:text-violet-600 transition-all mb-4" />
-                        <h3 className="text-sm font-black text-zinc-700 uppercase tracking-widest group-hover:text-zinc-400 transition-colors">You haven't committed an echo to this artifact.</h3>
-                        <p className="text-[10px] text-zinc-800 font-mono mt-2 uppercase tracking-tight group-hover:text-zinc-700 transition-colors">Phase 4 // Zine Engine Offline</p>
+                    {/* Zine Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                        {MOCK_ZINES.filter(z => z.artifactSlug === artifact.slug).length > 0 ? (
+                            MOCK_ZINES.filter(z => z.artifactSlug === artifact.slug).map((zine) => (
+                                <div key={zine.id} className="p-6 bg-zinc-950/40 border border-zinc-900 rounded-xl relative overflow-hidden group hover:border-zinc-700 transition-all duration-500">
+                                    <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
+                                        <Icon icon="lucide:quote-right" className="text-zinc-800" width={24} height={24} />
+                                    </div>
+
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                                            <Icon icon="lucide:user" className="text-zinc-600" width={14} height={14} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-zinc-200 uppercase">{zine.authorName}</span>
+                                            <span className="text-[8px] font-mono text-zinc-600">{zine.authorHandle}</span>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-sm text-zinc-400 italic leading-relaxed mb-6 line-clamp-4">
+                                        &ldquo;{zine.content}&rdquo;
+                                    </p>
+
+                                    <div className="flex justify-between items-center text-[9px] font-mono uppercase tracking-widest">
+                                        <span className="text-zinc-700">{new Date(zine.createdAt).toLocaleDateString()}</span>
+                                        <div className="flex items-center gap-1 text-rose-500">
+                                            <Icon icon="lucide:flame" width={10} height={10} />
+                                            {zine.resonanceRating}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="md:col-span-3 py-12 text-center border border-dashed border-zinc-900 rounded-2xl">
+                                <p className="text-zinc-700 font-mono text-xs uppercase">No echoes recorded for this shard yet.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Zine CTA - The Prompts */}
+                    <div className="relative group overflow-hidden">
+                        <div className="absolute inset-0 bg-rose-600 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity" />
+                        <div className="relative p-12 border-2 border-zinc-900 rounded-3xl flex flex-col items-center text-center gap-8 group-hover:border-rose-900/40 transition-colors">
+                            <div className="space-y-4">
+                                <Icon icon="lucide:message-square-plus" width={40} height={40} className="text-rose-600 mx-auto animate-bounce-slow" />
+                                <h3 className="text-3xl font-black italic tracking-tighter uppercase text-white">
+                                    Cast Your <span className="text-rose-600">Echo.</span>
+                                </h3>
+                                <p className="text-zinc-500 text-sm font-mono max-w-lg mx-auto uppercase leading-relaxed tracking-tight">
+                                    Identity is not a profile. It is a moment. <br />
+                                    <span className="text-zinc-300 font-bold italic mt-2 block">
+                                        &ldquo;What state in your life were you in when you experienced this?&rdquo;
+                                    </span>
+                                </p>
+                            </div>
+
+                            <Link
+                                href={`/artifacts/${artifact.slug}/zines/post`}
+                                className="bg-rose-600 text-black font-black italic text-xl px-12 py-4 shadow-[8px_8px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase tracking-tighter"
+                            >
+                                INITIALIZE_ZINE
+                            </Link>
+                        </div>
                     </div>
                 </div>
 

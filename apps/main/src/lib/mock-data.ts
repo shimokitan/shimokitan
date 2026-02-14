@@ -1,4 +1,4 @@
-export type ArtifactCategory = 'anime' | 'music' | 'asmr' | 'manga' | 'doujinshi' | 'mv';
+export type ArtifactCategory = 'anime' | 'music' | 'asmr' | 'zines';
 
 export interface Artifact {
     id: string;
@@ -11,6 +11,75 @@ export interface Artifact {
     heatIndex: number;
     metadata: Record<string, any>;
 }
+
+export interface Zine {
+    id: string;
+    artifactSlug: string;
+    authorName: string;
+    authorHandle: string;
+    authorAvatar?: string;
+    content: string; // The response to "What state in your life were you in when you experienced this?"
+    createdAt: string;
+    resonanceRating: number;
+}
+
+export interface User {
+    id: string;
+    name: string;
+    handle: string;
+    avatar?: string;
+    bio: string;
+    collectionSlugs: string[]; // Slugs of artifacts in the user's collection
+    stats: {
+        shards: number;
+        echoes: number;
+        resonance: number;
+    };
+}
+
+export const MOCK_USER: User = {
+    id: 'user_001',
+    name: 'Xavier_Dusk',
+    handle: '@xavier_shkn',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
+    bio: 'Resonating with distortion and high-fidelity haunts since 2018. Architect of the Pit.',
+    collectionSlugs: ['bocchi-the-rock', 'neon-genesis-ost', 'akiba-maid-war'],
+    stats: {
+        shards: 12,
+        echoes: 4,
+        resonance: 542
+    }
+};
+
+export const MOCK_ZINES: Zine[] = [
+    {
+        id: 'zine_001',
+        artifactSlug: 'bocchi-the-rock',
+        authorName: 'Hitori_Fan_99',
+        authorHandle: '@pink_trashcan',
+        content: 'I was in my second year of college, hiding in the library during lunch breaks. This anime made me feel like my small world was finally loud enough for someone to hear. It wasn\'t just distortion; it was hope.',
+        createdAt: '2026-02-01T10:00:00Z',
+        resonanceRating: 128
+    },
+    {
+        id: 'zine_002',
+        artifactSlug: 'bocchi-the-rock',
+        authorName: 'Gutter_Ghost',
+        authorHandle: '@void_walker',
+        content: 'Fresh out of a job, guitar gathering dust. Seeing Hitori struggle just to say "hello" felt like looking in a mirror. I started playing again because of this shard.',
+        createdAt: '2026-02-10T14:30:00Z',
+        resonanceRating: 89
+    },
+    {
+        id: 'zine_003',
+        artifactSlug: 'akiba-maid-war',
+        authorName: 'Ranko_Enjoyer',
+        authorHandle: '@blood_maid',
+        content: 'Life felt too serious, too rigid. This absolute chaos reminded me that sometimes you just have to pull the trigger on your own path, even if it looks ridiculous to the rest of the world.',
+        createdAt: '2026-02-12T09:15:00Z',
+        resonanceRating: 245
+    }
+];
 
 export const MOCK_ARTIFACTS: Record<string, Artifact> = {
     'bocchi-the-rock': {

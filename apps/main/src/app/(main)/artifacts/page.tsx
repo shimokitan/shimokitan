@@ -12,7 +12,7 @@ const categories: { label: string; value: ArtifactCategory | 'all' }[] = [
     { label: 'ANIME', value: 'anime' },
     { label: 'MUSIC', value: 'music' },
     { label: 'AMBIENCE', value: 'asmr' },
-    { label: 'ZINES', value: 'manga' },
+    { label: 'ZINES', value: 'zines' },
 ];
 
 export default function ArtifactsBrowsePage() {

@@ -6,6 +6,7 @@
 
 // --- Primitives (shadcn/ui) ---
 export { Button, buttonVariants } from "./components/ui/button";
+export { Avatar, AvatarImage, AvatarFallback } from "./components/ui/avatar";
 export {
     Dialog,
     DialogClose,
