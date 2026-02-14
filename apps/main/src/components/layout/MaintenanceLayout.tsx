@@ -46,7 +46,7 @@ export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
 
-                <main className="flex-1 relative z-10 overflow-y-auto hide-scroll">
+                <main className="flex-1 relative z-10 flex flex-col items-center justify-center overflow-y-auto hide-scroll">
                     {children}
                 </main>
 
