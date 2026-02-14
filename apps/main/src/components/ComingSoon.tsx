@@ -166,7 +166,7 @@ export function ComingSoon() {
                         </p>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <div className="relative flex-1">
                             <input
                                 type="email"
@@ -190,7 +190,7 @@ export function ComingSoon() {
                                 : 'bg-zinc-900 text-zinc-700 cursor-not-allowed'
                                 }`}
                         >
-                            {mutation.isPending ? 'UPLINKING...' : 'SUBSCRIBE'}
+                            {mutation.isPending ? 'UPLINKING...' : 'REGISTER'}
                         </button>
                     </div>
                 </div>
