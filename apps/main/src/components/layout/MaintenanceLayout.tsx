@@ -60,14 +60,6 @@ export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <div className="flex items-center gap-8">
-                        <div className="flex gap-5 font-mono uppercase tracking-widest">
-                            <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link>
-                            <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
-                            <Link href="/community-guidelines" className="hover:text-zinc-300 transition-colors">Guidelines</Link>
-                            <Link href="/copyright" className="hover:text-zinc-300 transition-colors">Copyright</Link>
-                            <Link href="/dmca" className="hover:text-zinc-300 transition-colors">DMCA</Link>
-                            <Link href="/cookies" className="hover:text-zinc-300 transition-colors">Cookies</Link>
-                        </div>
                         <div className="font-mono opacity-40 tracking-[0.3em] text-[8px] uppercase font-bold">
                             © 2026 SHIMOKITAN
                         </div>

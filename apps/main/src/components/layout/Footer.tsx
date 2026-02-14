@@ -6,8 +6,11 @@ import Link from 'next/link';
 export function Footer() {
     return (
         <footer className="border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[10px] text-zinc-400 shrink-0 relative z-40 gap-4 w-full">
-            <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight items-center">
                 <Link href="/contact" className="hover:text-violet-400 transition-colors">CONTACT US</Link>
+                <div className="w-px h-3 bg-zinc-800" />
+                <a href="https://x.com/shimokitan_off" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">X</a>
+                <a href="https://www.instagram.com/shimokitan.live/" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">Instagram</a>
             </div>
 
             <div className="flex items-center gap-8">
