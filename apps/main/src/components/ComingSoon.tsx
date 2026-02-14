@@ -136,7 +136,7 @@ export function ComingSoon() {
                             <Icon icon="lucide:lock" width={32} height={32} className="text-zinc-700" />
                         </div>
                     </div>
-                    <div className="absolute -bottom-2 -right-2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-xs font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-xs font-mono text-zinc-400 font-bold uppercase tracking-widest whitespace-nowrap">
                         Access Restricted
                     </div>
                 </div>
