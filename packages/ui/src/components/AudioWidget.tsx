@@ -22,6 +22,7 @@ export const AudioWidget: React.FC = () => {
     const [progress] = useState<number>(35);
     const [volume] = useState<number>(80);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [mounted, setMounted] = useState(false);
 
     // Dragging State
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -32,9 +33,10 @@ export const AudioWidget: React.FC = () => {
 
     // Initialize position to bottom right
     useEffect(() => {
+        setMounted(true);
         setPosition({
-            x: window.innerWidth - 120, // 24*4 = 96px width + some margin
-            y: window.innerHeight - 120
+            x: window.innerWidth - 124,
+            y: window.innerHeight - 124
         });
     }, []);
 
@@ -95,16 +97,19 @@ export const AudioWidget: React.FC = () => {
         };
     }, [isDragging, position.x, position.y]);
 
-    const handleWidgetClick = () => {
+    const handleWidgetClick = (e: React.MouseEvent) => {
         if (!isExpanded && !hasDragged) {
+            e.stopPropagation();
             setIsExpanded(true);
         }
     };
 
+    if (!mounted) return null;
+
     return (
         <div
             ref={widgetRef}
-            className="fixed z-[9999] select-none"
+            className="fixed z-[9999] select-none touch-none"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
@@ -119,8 +124,8 @@ export const AudioWidget: React.FC = () => {
                 <div
                     id="music-widget"
                     className={`
-            relative bg-zinc-950/40 backdrop-blur-2xl border border-zinc-800/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,1)]
-            transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+            relative bg-zinc-950/60 backdrop-blur-2xl border border-zinc-800/80 shadow-[0_32px_64px_-16px_rgba(0,0,0,1)]
+            transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] pointer-events-auto
             ${isExpanded ? 'w-[calc(100vw-4rem)] max-w-2xl h-32 rounded-xl p-0' : 'w-24 h-24 rounded-full cursor-grab active:cursor-grabbing flex items-center justify-center ring-4 ring-zinc-900/50'}
           `}
                     onClick={handleWidgetClick}
@@ -176,9 +181,16 @@ export const AudioWidget: React.FC = () => {
                                 <div className="absolute inset-6 rounded-full border border-zinc-900" />
                                 <div className="absolute inset-8 rounded-full border border-zinc-900" />
 
+
+
                                 {/* Album Art */}
-                                <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10">
-                                    <img src={currentTrack.cover} className="w-full h-full object-cover" alt="cover" />
+                                <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10 pointer-events-none">
+                                    <img
+                                        src={currentTrack.cover}
+                                        className="w-full h-full object-cover"
+                                        alt="cover"
+                                        draggable="false"
+                                    />
                                 </div>
 
                                 {/* Spindle */}
