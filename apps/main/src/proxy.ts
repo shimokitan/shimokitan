@@ -5,7 +5,7 @@ const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright
 
 export function proxy(request: NextRequest) {
     // Check if we are in maintenance mode (you could use an env var here)
-    const IS_MAINTENANCE = true;
+    const IS_MAINTENANCE = process.env.NODE_ENV === 'production';
 
     if (IS_MAINTENANCE) {
         const { pathname } = request.nextUrl;
