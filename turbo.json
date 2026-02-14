@@ -24,6 +24,21 @@
         "dev": {
             "cache": false,
             "persistent": true
+        },
+        "build:cf": {
+            "dependsOn": [
+                "^build",
+                "build"
+            ],
+            "outputs": [
+                ".open-next/**"
+            ]
+        },
+        "deploy:cf": {
+            "dependsOn": [
+                "build:cf"
+            ],
+            "cache": false
         }
     }
 }

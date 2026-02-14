@@ -26,6 +26,14 @@ coverage
 # Vercel
 .vercel
 
+# Cloudflare
+.open-next
+.wrangler
+.dev.vars
+
+# Build outputs
+.next
+
 # Logs
 *.log
 npm-debug.log*

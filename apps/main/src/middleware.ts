@@ -1,9 +1,12 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+export const runtime = 'experimental-edge';
+
 const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies', '/contact'];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
     // Check if we are in maintenance mode (you could use an env var here)
     const IS_MAINTENANCE = process.env.NODE_ENV === 'production';
 
