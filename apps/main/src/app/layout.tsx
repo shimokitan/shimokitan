@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ComingSoon } from "../components/ComingSoon";
 import Providers from "./providers";
+import { MaintenanceSwitcher } from "../components/layout/MaintenanceSwitcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +19,6 @@ export const metadata: Metadata = {
   description: "Recalibrating the district conduits.",
 };
 
-import { MainLayout } from "../components/layout/MainLayout";
-import { MaintenanceLayout } from "../components/layout/MaintenanceLayout";
-
 const IS_MAINTENANCE = process.env.NODE_ENV === "production";
 
 export default function RootLayout({
@@ -35,13 +32,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-violet-500/30 selection:text-violet-200`}
       >
         <Providers>
-          {IS_MAINTENANCE ? (
-            <MaintenanceLayout>
-              <ComingSoon />
-            </MaintenanceLayout>
-          ) : (
-            <MainLayout>{children}</MainLayout>
-          )}
+          <MaintenanceSwitcher isMaintenance={IS_MAINTENANCE}>
+            {children}
+          </MaintenanceSwitcher>
         </Providers>
       </body>
     </html>

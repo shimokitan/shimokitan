@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { CyberpunkShell } from '@shimokitan/ui';
+import Link from 'next/link';
 import { useTime } from '../../hooks/use-time';
 
 export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
@@ -50,24 +51,43 @@ export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
                     {children}
                 </main>
 
-                <footer className="h-20 border-t border-zinc-900 flex flex-col md:flex-row items-center justify-end px-8 z-10 shrink-0 text-zinc-600 font-mono text-[9px] gap-8 bg-zinc-950/20">
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-zinc-800 rounded-full" />
-                            <span className="tracking-widest uppercase">ESTABLISHING CONNECTION...</span>
+                <footer className="py-8 border-t border-zinc-900 flex flex-col md:flex-row items-start justify-between px-8 z-10 shrink-0 text-zinc-600 font-mono text-[9px] gap-8 bg-zinc-950/20">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-wrap gap-x-8 gap-y-2">
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-zinc-800 rounded-full" />
+                                <span className="tracking-widest uppercase">ESTABLISHING CONNECTION...</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-zinc-800 rounded-full" />
+                                <span className="tracking-widest uppercase">ENCRYPTED // SHA-256</span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-zinc-800 rounded-full" />
-                            <span className="tracking-widest uppercase">ENCRYPTED // SHA-256</span>
+                        <div className="flex flex-wrap gap-x-6 gap-y-2 text-zinc-500">
+                            <a href="mailto:social@shimokitan.live" className="hover:text-violet-400 transition-colors">SOCIAL@SHIMOKITAN.LIVE</a>
+                            <a href="mailto:feedback@shimokitan.live" className="hover:text-violet-400 transition-colors">FEEDBACK@SHIMOKITAN.LIVE</a>
+                            <a href="mailto:dmca@shimokitan.live" className="hover:text-violet-400 transition-colors">DMCA@SHIMOKITAN.LIVE</a>
+                            <a href="mailto:support@shimokitan.live" className="hover:text-violet-400 transition-colors">SUPPORT@SHIMOKITAN.LIVE</a>
                         </div>
                     </div>
-                    <div className="flex gap-8 items-center">
-                        <div className="flex gap-4">
-                            <a href="https://x.com/shimokitan_off" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors uppercase tracking-widest">X (Twitter)</a>
-                            <a href="https://www.instagram.com/shimokitan.live/" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors uppercase tracking-widest">Instagram</a>
+
+                    <div className="flex flex-col items-end gap-4 w-full md:w-auto">
+                        <div className="flex flex-wrap justify-end gap-x-6 gap-y-2 uppercase tracking-widest px-0">
+                            <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy</Link>
+                            <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms</Link>
+                            <Link href="/community-guidelines" className="hover:text-zinc-400 transition-colors">Guidelines</Link>
+                            <Link href="/copyright" className="hover:text-zinc-400 transition-colors">Copyright</Link>
+                            <Link href="/dmca" className="hover:text-zinc-400 transition-colors">DMCA</Link>
+                            <Link href="/cookies" className="hover:text-zinc-400 transition-colors">Cookies</Link>
                         </div>
-                        <div className="tracking-[0.3em] font-bold uppercase">
-                            &copy; 2026 SHIMOKITAN
+                        <div className="flex gap-8 items-center">
+                            <div className="flex gap-4">
+                                <a href="https://x.com/shimokitan_off" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors uppercase tracking-widest">X (Twitter)</a>
+                                <a href="https://www.instagram.com/shimokitan.live/" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors uppercase tracking-widest">Instagram</a>
+                            </div>
+                            <div className="tracking-[0.3em] font-bold uppercase text-zinc-700">
+                                &copy; 2026 SHIMOKITAN
+                            </div>
                         </div>
                     </div>
                 </footer>

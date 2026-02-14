@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies'];
+
 export function proxy(request: NextRequest) {
     // Check if we are in maintenance mode (you could use an env var here)
     const IS_MAINTENANCE = true;
@@ -8,13 +10,19 @@ export function proxy(request: NextRequest) {
     if (IS_MAINTENANCE) {
         const { pathname } = request.nextUrl;
 
-        // Allow static files, robots.txt, favicon.ico, and the root path
+        // Allow static files, robots.txt, favicon.ico, root path, and legal routes
+        const isLegalRoute = LEGAL_ROUTES.some(route =>
+            pathname.toLowerCase() === route.toLowerCase() ||
+            pathname.toLowerCase().startsWith(route.toLowerCase() + '/')
+        );
+
         if (
             pathname.startsWith('/_next') ||
             pathname.startsWith('/api') ||
             pathname === '/favicon.ico' ||
             pathname === '/robots.txt' ||
-            pathname === '/'
+            pathname === '/' ||
+            isLegalRoute
         ) {
             return NextResponse.next();
         }
