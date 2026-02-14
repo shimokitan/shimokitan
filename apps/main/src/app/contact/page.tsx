@@ -112,27 +112,27 @@ export default function ContactPage() {
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-5">
                                 <div>
-                                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold mb-2 block">Identity</label>
+                                    <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold mb-2 block">Identity</label>
                                     <input
                                         type="text"
                                         name="name"
                                         placeholder="Your Name"
                                         required
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all"
+                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold mb-2 block">Comms Channel</label>
+                                    <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold mb-2 block">Comms Channel</label>
                                     <input
                                         type="email"
                                         name="email"
                                         placeholder="email@example.com"
                                         required
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all"
+                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold mb-2 block">Encryption Subject</label>
+                                    <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold mb-2 block">Encryption Subject</label>
                                     <Select value={subject} onValueChange={setSubject}>
                                         <SelectTrigger className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 h-auto text-sm text-white focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all">
                                             <SelectValue placeholder="Select Topic" />
@@ -146,13 +146,13 @@ export default function ContactPage() {
                                     </Select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold mb-2 block">Transmission</label>
+                                    <label className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold mb-2 block">Transmission</label>
                                     <textarea
                                         name="message"
                                         rows={5}
                                         placeholder="Type your message..."
                                         required
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all resize-none"
+                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-md px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/20 transition-all resize-none"
                                     />
                                 </div>
                                 <button

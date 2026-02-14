@@ -3,13 +3,13 @@ export default function CookiesPage() {
         <>
             <h1>Cookie Policy</h1>
             <p>Last Updated: February 14, 2026</p>
-            <p>This Cookie Policy explains how Shimokitan ("we", "our", or "us") uses cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.</p>
+            <p>This Cookie Policy explains how Shimokitan (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) uses cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.</p>
 
             <h2>1. What are Cookies?</h2>
             <p>Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</p>
 
             <h2>2. Why do we use Cookies?</h2>
-            <p>We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our website to operate, and we refer to these as "essential" or "strictly necessary" cookies.</p>
+            <p>We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our website to operate, and we refer to these as &quot;essential&quot; or &quot;strictly necessary&quot; cookies.</p>
 
             <h2>3. Types of Cookies We Use</h2>
             <ul>

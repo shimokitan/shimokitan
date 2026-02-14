@@ -5,7 +5,7 @@ export default function PrivacyPage() {
             <p>Last Updated: February 14, 2026</p>
 
             <h2>1. Introduction</h2>
-            <p>Shimokitan ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our Service.</p>
+            <p>Shimokitan (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our Service.</p>
 
             <h2>2. Information We Collect</h2>
             <p>We collect information that you provide directly to us, such as when you subscribe to our newsletter or create an account. This information may include your name, email address, and any other information you choose to provide.</p>

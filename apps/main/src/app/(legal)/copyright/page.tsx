@@ -11,7 +11,7 @@ export default function CopyrightPage() {
             <h2>2. User-Generated Content</h2>
             <p>Users retain ownership of the content they create and post on Shimokitan. However, by posting content, you grant Shimokitan a non-exclusive, royalty-free, worldwide license to use, display, and distribute your content in connection with the Service.</p>
 
-            <h2>3. Respecting Others' Rights</h2>
+            <h2>3. Respecting Others&apos; Rights</h2>
             <p>You agree not to post any content that violates the intellectual property rights of others. Unauthorized use of copyrighted material may result in the termination of your account.</p>
 
             <h2>4. Reporting Infringement</h2>

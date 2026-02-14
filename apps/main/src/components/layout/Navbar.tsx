@@ -21,36 +21,36 @@ export function Navbar() {
                     </div>
                     <div className="flex flex-col leading-none">
                         <h1 className="font-black tracking-tighter text-lg italic uppercase group-hover:text-violet-400 transition-colors text-white">SHIMOKITAN</h1>
-                        <span className="text-zinc-600 text-[8px] font-mono tracking-[0.3em] font-bold group-hover:text-zinc-500 transition-colors">V.2.0.26 // DIGITAL_DISTRICT</span>
+                        <span className="text-zinc-500 text-[10px] font-mono tracking-[0.3em] font-bold group-hover:text-zinc-400 transition-colors">V.2.0.26 // DIGITAL_DISTRICT</span>
                     </div>
                 </Link>
 
                 <div className="hidden lg:flex gap-4 items-center h-8 border-l border-zinc-800/80 pl-6">
                     <div className="flex flex-col">
-                        <span className="text-zinc-500 text-[7px] font-mono uppercase">System Status</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">System Status</span>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                            <span className="text-emerald-500/80 text-[9px] font-mono font-bold tracking-tight uppercase">Operational</span>
+                            <span className="text-emerald-500/80 text-[10px] font-mono font-bold tracking-tight uppercase">Operational</span>
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-zinc-500 text-[7px] font-mono uppercase">Location</span>
-                        <span className="text-zinc-300 text-[9px] font-mono font-bold tracking-tight uppercase">TyO-Dist_012</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">Location</span>
+                        <span className="text-zinc-300 text-[10px] font-mono font-bold tracking-tight uppercase">TyO-Dist_012</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-zinc-500 text-[7px] font-mono uppercase">Time</span>
-                        <span className="text-zinc-100 text-[9px] font-mono font-bold tracking-tight uppercase">{time} JST</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">Time</span>
+                        <span className="text-zinc-100 text-[10px] font-mono font-bold tracking-tight uppercase">{time} JST</span>
                     </div>
                 </div>
             </div>
 
             <div className="flex items-center gap-4">
                 <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-sm px-3 py-1.5 flex items-center gap-2 w-32 sm:w-48 md:w-64 backdrop-blur-md group focus-within:border-violet-500/50 transition-colors">
-                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-600 group-focus-within:text-violet-400" />
+                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500 group-focus-within:text-violet-400" />
                     <input
                         type="text"
                         placeholder="Query database..."
-                        className="bg-transparent border-none outline-none text-[9px] w-full placeholder-zinc-700 text-zinc-300 font-mono"
+                        className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
                     />
                 </div>
                 <div className="h-8 w-px bg-zinc-800/80 mx-1 hidden sm:block" />

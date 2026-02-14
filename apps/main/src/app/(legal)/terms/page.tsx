@@ -5,7 +5,7 @@ export default function TermsPage() {
             <p>Last Updated: February 14, 2026</p>
 
             <h2>1. Acceptance of Terms</h2>
-            <p>By accessing or using Shimokitan (the "Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
+            <p>By accessing or using Shimokitan (the &quot;Service&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.</p>
 
             <h2>2. Use of the Service</h2>
             <p>You must follow any policies made available to you within the Service. You agree not to misuse the Service or help anyone else do so. For example, you must not interfere with our Service or try to access it using a method other than the interface and the instructions that we provide.</p>

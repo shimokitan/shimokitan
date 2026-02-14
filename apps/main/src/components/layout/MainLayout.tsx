@@ -1,15 +1,11 @@
 "use client"
 
 import React from 'react';
-import { Icon } from '@iconify/react';
-import Link from 'next/link';
 import {
     AudioWidget,
     CyberpunkShell,
     NavigationLink,
 } from '@shimokitan/ui';
-
-import { useTime } from '../../hooks/use-time';
 
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';

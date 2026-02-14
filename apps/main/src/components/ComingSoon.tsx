@@ -136,7 +136,7 @@ export function ComingSoon() {
                             <Icon icon="lucide:lock" width={32} height={32} className="text-zinc-700" />
                         </div>
                     </div>
-                    <div className="absolute -bottom-2 -right-2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-[9px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                    <div className="absolute -bottom-2 -right-2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-xs font-mono text-zinc-400 font-bold uppercase tracking-widest">
                         Access Restricted
                     </div>
                 </div>
@@ -147,7 +147,7 @@ export function ComingSoon() {
                         COMING<br />
                         <span className="text-transparent bg-zinc-900" style={{ WebkitTextStroke: '1px rgba(139, 92, 246, 0.5)' }}>SOON.</span>
                     </h2>
-                    <p className="text-zinc-500 font-mono text-xs md:text-sm tracking-[0.2em] uppercase max-w-lg mx-auto leading-relaxed">
+                    <p className="text-zinc-400 font-mono text-xs md:text-sm tracking-[0.2em] uppercase max-w-lg mx-auto leading-relaxed">
                         We are recalibrating the district conduits. <br className="hidden md:block" />
                         Expected synchronization in the next cycle.
                     </p>
@@ -158,10 +158,10 @@ export function ComingSoon() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/5 blur-[60px] pointer-events-none" />
 
                     <div className="flex flex-col gap-2 mb-8 border-l-2 border-violet-600 pl-4 py-2 bg-zinc-900/40 rounded-r-xl">
-                        <label className="block text-zinc-100 text-[10px] font-mono uppercase tracking-[0.3em] font-black">
+                        <label className="block text-zinc-100 text-xs font-mono uppercase tracking-[0.3em] font-black">
                             Receive Broadcast Ping
                         </label>
-                        <p className="text-zinc-400 text-[11px] font-mono leading-relaxed normal-case">
+                        <p className="text-zinc-400 text-xs font-mono leading-relaxed normal-case">
                             We only use your email to notify you when the District opens. <span className="text-violet-400 font-bold uppercase tracking-tighter">No spam, no selling data.</span>
                         </p>
                     </div>
@@ -177,7 +177,7 @@ export function ComingSoon() {
                                     }`}
                             />
                             {isValid === false && (
-                                <div className="absolute -bottom-5 left-1 text-[8px] text-rose-600 font-mono font-bold tracking-widest italic animate-pulse">
+                                <div className="absolute -bottom-5 left-1 text-[10px] text-rose-600 font-mono font-bold tracking-widest italic animate-pulse">
                                     INVALID_ENDPOINT_FORMAT
                                 </div>
                             )}
@@ -185,7 +185,7 @@ export function ComingSoon() {
                         <button
                             onClick={handleSubmit}
                             disabled={!isValid || mutation.isPending}
-                            className={`px-6 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all shrink-0 ${isValid && !mutation.isPending
+                            className={`px-6 py-3 rounded-xl text-xs font-black tracking-widest transition-all shrink-0 ${isValid && !mutation.isPending
                                 ? 'bg-zinc-100 text-black hover:bg-white active:scale-95 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.1)]'
                                 : 'bg-zinc-900 text-zinc-700 cursor-not-allowed'
                                 }`}
@@ -205,7 +205,7 @@ export function ComingSoon() {
                     {/* Top status bar */}
                     <div className={`flex items-center gap-2 px-5 py-2.5 ${vs.accent} border-b ${vs.border}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${vs.dot} animate-pulse`} />
-                        <span className="text-[9px] font-mono font-bold tracking-[0.3em] text-zinc-400 uppercase">
+                        <span className="text-[10px] font-mono font-bold tracking-[0.3em] text-zinc-400 uppercase">
                             {modal.variant === 'success' && 'TRANSMISSION // COMPLETE'}
                             {modal.variant === 'warning' && 'SIGNAL // DUPLICATE'}
                             {modal.variant === 'error' && 'TRANSMISSION // FAILED'}
@@ -222,14 +222,14 @@ export function ComingSoon() {
                                     {modal.title}
                                 </DialogTitle>
                             </div>
-                            <DialogDescription className="text-zinc-500 text-xs font-mono leading-relaxed normal-case">
+                            <DialogDescription className="text-zinc-400 text-xs font-mono leading-relaxed normal-case">
                                 {modal.description}
                             </DialogDescription>
                         </DialogHeader>
 
                         <button
                             onClick={() => setModal(MODAL_INITIAL)}
-                            className="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 text-[10px] font-black tracking-widest uppercase py-2.5 rounded-lg transition-all active:scale-[0.98] cursor-pointer"
+                            className="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 text-xs font-black tracking-widest uppercase py-2.5 rounded-lg transition-all active:scale-[0.98] cursor-pointer"
                         >
                             ACKNOWLEDGED
                         </button>

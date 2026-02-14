@@ -46,7 +46,7 @@ export default function AppPage() {
               <div className="w-2 h-0.5 bg-violet-500" />
               <div className="w-8 h-0.5 bg-zinc-800" />
             </div>
-            <span className="text-[7px] font-mono text-zinc-500 font-bold uppercase tracking-[0.2em]">Data // Visual_Link_02</span>
+            <span className="text-[9px] font-mono text-zinc-400 font-bold uppercase tracking-[0.2em]">Data // Visual_Link_02</span>
           </div>
 
           {/* Background Image */}
@@ -77,15 +77,15 @@ export default function AppPage() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-rose-400">STATE.</span>
             </h2>
 
-            <p className="text-zinc-400 text-[10px] font-mono leading-relaxed max-w-xs mb-8 uppercase tracking-wide">
+            <p className="text-zinc-300 text-xs font-mono leading-relaxed max-w-xs mb-8 uppercase tracking-wide">
               Archive the friction. <span className="text-violet-400 opacity-60">{"//"}</span> Reject the sterile. <span className="text-violet-400 opacity-60">{"//"}</span> Embrace the noise of the street.
             </p>
 
             <div className="flex gap-3">
-              <button className="bg-violet-600 text-white px-6 py-2 rounded-sm text-[10px] font-black tracking-widest hover:bg-violet-500 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)] group">
+              <button className="bg-violet-600 text-white px-6 py-2 rounded-sm text-xs font-black tracking-widest hover:bg-violet-500 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)] group">
                 INITIALIZE <Icon icon="lucide:zap" width={12} height={12} className="group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="border border-zinc-700 bg-zinc-900/40 text-zinc-400 px-6 py-2 rounded-sm text-[10px] font-black tracking-widest hover:border-zinc-400 hover:text-white transition-all backdrop-blur-md">
+              <button className="border border-zinc-700 bg-zinc-900/40 text-zinc-300 px-6 py-2 rounded-sm text-xs font-black tracking-widest hover:border-zinc-400 hover:text-white transition-all backdrop-blur-md">
                 METADATA
               </button>
             </div>
@@ -118,7 +118,7 @@ export default function AppPage() {
                       className="w-full h-28 md:h-36 object-cover rounded shadow-inner"
                     />
                     <div className="mt-2 px-1 pb-1">
-                      <div className="text-[10px] font-bold line-clamp-1 mb-1">{item.title}</div>
+                      <div className="text-xs font-bold line-clamp-1 mb-1">{item.title}</div>
                       <Badge variant={item.tag.toLowerCase() as "distortion" | "truth" | "gold"}>{item.tag}</Badge>
                     </div>
                   </div>
@@ -127,7 +127,7 @@ export default function AppPage() {
             </div>
 
             <div className="mt-auto text-center pb-2">
-              <p className="text-[9px] text-zinc-500 font-mono flex items-center gap-1 justify-center">
+              <p className="text-[10px] text-zinc-400 font-mono flex items-center gap-1 justify-center">
                 <span className="w-1 h-1 rounded-full bg-violet-500"></span>
                 {activeSpotlight + 1} / {spotlightItems.length}
               </p>
@@ -145,7 +145,7 @@ export default function AppPage() {
                 className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
-              <div className="absolute bottom-1.5 left-1.5 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white font-mono border border-zinc-700/50">
+              <div className="absolute bottom-1.5 left-1.5 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-white font-mono border border-zinc-700/50">
                 EP 08 • LIVE
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -156,7 +156,7 @@ export default function AppPage() {
             </div>
 
             <h3 className="text-sm font-bold leading-tight mb-1">Bocchi the Rock!</h3>
-            <p className="text-[9px] text-zinc-500 italic line-clamp-2 mb-2">&quot;Fuzz-drenched anthem for bedroom guitarists.&quot;</p>
+            <p className="text-[11px] text-zinc-400 italic line-clamp-2 mb-2">&quot;Fuzz-drenched anthem for bedroom guitarists.&quot;</p>
 
             <div className="mt-auto flex items-center gap-1">
               <Badge variant="truth">TRUTH</Badge>
@@ -166,7 +166,7 @@ export default function AppPage() {
         </BentoCard>
 
         {/* 4. Recent Echoes */}
-        <BentoCard className="col-span-1 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4 min-h-[25vh] md:min-h-0" title="Recent Echoes" icon="lucide:ghost" action={<div className="text-[9px] underline cursor-pointer">All</div>}>
+        <BentoCard className="col-span-1 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4 min-h-[25vh] md:min-h-0" title="Recent Echoes" icon="lucide:ghost" action={<div className="text-[10px] underline cursor-pointer">All</div>}>
           <div className="grid grid-cols-2 md:grid-cols-2 gap-1.5 h-full -m-1">
             {echoes.slice(0, 4).map((echo, i) => (
               <div key={i} className="relative group cursor-pointer rounded-lg overflow-hidden border border-zinc-800/50 hover:border-violet-500/50 transition-all hover-glitch aspect-square md:aspect-auto">
@@ -177,7 +177,7 @@ export default function AppPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-70 group-hover:opacity-90 transition-opacity"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-1.5">
-                  <span className="text-[9px] font-bold text-white line-clamp-1 hidden md:block">{echo.title}</span>
+                  <span className="text-[10px] font-bold text-white line-clamp-1 hidden md:block">{echo.title}</span>
                 </div>
               </div>
             ))}
@@ -200,15 +200,15 @@ export default function AppPage() {
               <div className="flex flex-col flex-1 py-1 pr-1 min-w-0 h-full md:justify-center">
                 <div className="px-0.5 md:mb-1">
                   <h4 className="text-base font-black text-white leading-tight truncate uppercase tracking-tighter">{albumCovers[0].title}</h4>
-                  <p className="text-xs text-zinc-500 font-mono truncate uppercase mt-0.5 tracking-wide">{albumCovers[0].artist}</p>
+                  <p className="text-xs text-zinc-400 font-mono truncate uppercase mt-0.5 tracking-wide">{albumCovers[0].artist}</p>
                 </div>
 
                 <div className="flex items-center gap-2 px-0.5 mt-auto mb-2 md:mt-1.5 md:mb-1.5">
-                  <span className="text-[8px] text-zinc-600 font-mono shrink-0">1:24</span>
+                  <span className="text-[10px] text-zinc-500 font-mono shrink-0">1:24</span>
                   <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
                     <div className="h-full bg-violet-500 rounded-full w-2/5 transition-all"></div>
                   </div>
-                  <span className="text-[8px] text-zinc-600 font-mono shrink-0">3:47</span>
+                  <span className="text-[10px] text-zinc-500 font-mono shrink-0">3:47</span>
                 </div>
 
                 <div className="flex items-center justify-between md:justify-center gap-5 md:mt-1 pb-1">
@@ -235,14 +235,14 @@ export default function AppPage() {
             <div className="flex flex-col h-full -m-0.5">
               <div className="mb-2">
                 <h3 className="text-xs md:text-sm font-black tracking-tighter leading-none mb-0.5">SHIMO KITAZAWA</h3>
-                <p className="text-[7px] md:text-[8px] text-zinc-500 font-mono tracking-widest uppercase">Tokyo, JP</p>
+                <p className="text-[9px] md:text-[10px] text-zinc-400 font-mono tracking-widest uppercase">Tokyo, JP</p>
               </div>
 
               <div className="flex-1 flex flex-col justify-center">
                 <div className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-white italic">
                   {time || "00:00"}
                 </div>
-                <div className="text-[7px] md:text-[8px] text-zinc-600 font-mono tracking-[0.2em] font-bold mt-1">
+                <div className="text-[9px] md:text-[10px] text-zinc-500 font-mono tracking-[0.2em] font-bold mt-1">
                   JST / UTC+9
                 </div>
               </div>
@@ -250,8 +250,8 @@ export default function AppPage() {
               <div className="mt-3 flex items-center gap-2 bg-zinc-900/60 px-2 py-1.5 rounded border border-zinc-800 shrink-0">
                 <Icon icon="lucide:cloud-sun" width={14} height={14} className="text-amber-500" />
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-white leading-none">8°C</span>
-                  <span className="text-[7px] text-zinc-600 font-mono uppercase tracking-tighter">Sunny</span>
+                  <span className="text-xs font-bold text-white leading-none">8°C</span>
+                  <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-tighter">Sunny</span>
                 </div>
               </div>
             </div>
@@ -292,14 +292,14 @@ export default function AppPage() {
 
             <div className="w-full flex-1 md:w-1/2 md:h-full flex flex-col justify-center p-5 bg-zinc-900/80 backdrop-blur-sm relative">
               <h3 className="text-2xl font-black mb-2 leading-tight tracking-tight">Serial Experiments Lain</h3>
-              <p className="text-zinc-400 text-xs italic leading-relaxed mb-4">
+              <p className="text-zinc-400 text-sm italic leading-relaxed mb-4">
                 &quot;A cyberpunk prophecy that predicted our digital dystopia. Lain isn&apos;t just ahead of its time&mdash;it&apos;s outside of time entirely.&quot;
               </p>
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 bg-gradient-to-br from-violet-600 to-rose-600 rounded-full"></div>
-                <span className="text-[9px] text-zinc-500 font-mono tracking-wider text-nowrap">— WIRED COLLECTIVE</span>
+                <span className="text-[10px] text-zinc-500 font-mono tracking-wider text-nowrap">— WIRED COLLECTIVE</span>
               </div>
-              <button className="mt-4 text-[10px] font-bold text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1 group">
+              <button className="mt-4 text-xs font-bold text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1 group">
                 READ FULL REVIEW
                 <Icon icon="lucide:arrow-right" width={12} height={12} className="group-hover:translate-x-1 transition-transform" />
               </button>

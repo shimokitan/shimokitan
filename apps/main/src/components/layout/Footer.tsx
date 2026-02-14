@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export function Footer() {
     return (
-        <footer className="border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[9px] text-zinc-500 shrink-0 relative z-40 gap-4 w-full">
+        <footer className="border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[10px] text-zinc-400 shrink-0 relative z-40 gap-4 w-full">
             <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight">
                 <Link href="/contact" className="hover:text-violet-400 transition-colors">CONTACT US</Link>
             </div>
@@ -19,7 +19,7 @@ export function Footer() {
                     <Link href="/dmca" className="hover:text-zinc-300 transition-colors">DMCA</Link>
                     <Link href="/cookies" className="hover:text-zinc-300 transition-colors">Cookies</Link>
                 </div>
-                <div className="font-mono opacity-40 tracking-[0.3em] text-[8px] uppercase font-bold">
+                <div className="font-mono opacity-60 tracking-[0.3em] text-[10px] uppercase font-bold">
                     © 2026 SHIMOKITAN
                 </div>
             </div>
