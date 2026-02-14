@@ -16,19 +16,20 @@ export function proxy(request: NextRequest) {
             pathname.toLowerCase().startsWith(route.toLowerCase() + '/')
         );
 
+        // Rewrite to maintenance page for root and non-legal, non-static routes
         if (
             pathname.startsWith('/_next') ||
             pathname.startsWith('/api') ||
             pathname === '/favicon.ico' ||
             pathname === '/robots.txt' ||
-            pathname === '/' ||
-            isLegalRoute
+            isLegalRoute ||
+            pathname === '/maintenance' // Allow direct access to check it
         ) {
             return NextResponse.next();
         }
 
-        // Redirect everything else to root
-        return NextResponse.redirect(new URL('/', request.url));
+        // Rewrite all other traffic to the maintenance page
+        return NextResponse.rewrite(new URL('/maintenance', request.url));
     }
 
     return NextResponse.next();
