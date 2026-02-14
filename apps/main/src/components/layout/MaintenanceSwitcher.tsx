@@ -11,7 +11,7 @@ interface MaintenanceSwitcherProps {
     isMaintenance: boolean;
 }
 
-const LEGAL_ROUTES = ["/terms", "/privacy", "/community-guidelines", "/copyright", "/dmca", "/cookies"];
+const LEGAL_ROUTES = ["/terms", "/privacy", "/community-guidelines", "/copyright", "/dmca", "/cookies", "/contact"];
 
 export function MaintenanceSwitcher({ children, isMaintenance }: MaintenanceSwitcherProps) {
     const pathname = usePathname();
