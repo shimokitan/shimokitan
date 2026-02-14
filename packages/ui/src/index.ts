@@ -31,6 +31,23 @@ export {
     SelectTrigger,
     SelectValue,
 } from "./components/ui/select";
+export {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuCheckboxItem,
+    DropdownMenuRadioItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuGroup,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuRadioGroup,
+} from "./components/ui/dropdown-menu";
 
 // --- Composite Components ---
 export { AudioWidget } from "./components/AudioWidget";

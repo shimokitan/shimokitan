@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import {
     AudioWidget,
     CyberpunkShell,
@@ -11,6 +12,11 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+
+    const isHomeActive = pathname === "/";
+    const isArtifactsActive = pathname?.startsWith("/artifacts");
+
     return (
         <CyberpunkShell>
             <div className="bg-black text-white h-screen w-screen overflow-hidden flex flex-col font-sans selection:bg-violet-500/40 selection:text-violet-100 italic-selection">
@@ -29,10 +35,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                     {/* Sidebar */}
                     <nav className="hidden md:flex flex-col gap-4 shrink-0 justify-center z-50">
                         <div className="bg-zinc-950/40 border border-zinc-800/80 p-2.5 rounded-3xl backdrop-blur-2xl flex flex-col items-center gap-3.5 shadow-2xl relative w-16">
-                            <NavigationLink icon="lucide:radio" label="The District" active />
-                            <NavigationLink icon="lucide:disc" label="Crate Digging" />
+                            <NavigationLink icon="lucide:radio" label="The District" href="/" active={isHomeActive} />
+                            <NavigationLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={isArtifactsActive} />
                             <NavigationLink icon="lucide:layers" label="Pedalboard" />
                             <NavigationLink icon="lucide:ghost" label="Back-Alley" />
+
                             <div className="h-px bg-zinc-800/80 w-full my-1" />
                             <NavigationLink icon="lucide:headphones" label="Mixtapes" />
                             <NavigationLink icon="lucide:tv" label="Live Feed" />

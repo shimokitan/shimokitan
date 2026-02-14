@@ -4,8 +4,8 @@ dist
 build
 .turbo
 
-docs/
-README.md
+# docs/
+# README.md
 
 # Configuration & Secrets
 .env*

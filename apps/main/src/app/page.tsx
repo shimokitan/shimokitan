@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react';
 import { BentoCard, Badge } from '@shimokitan/ui';
 import { useTime } from '../hooks/use-time';
 import { MainLayout } from '../components/layout/MainLayout';
+import Link from 'next/link';
 
 // --- Assets ---
 
@@ -136,34 +137,36 @@ export default function AppPage() {
         </BentoCard>
 
         {/* 3. In The Pit */}
-        <BentoCard className="col-span-1 md:col-span-1 md:row-span-3 min-h-[25vh] md:min-h-0" title="In The Pit" icon="lucide:flame" action={<Icon icon="lucide:more-horizontal" width={14} height={14} />}>
-          <div className="flex flex-col h-full -m-1">
-            <div className="relative flex-1 rounded-lg overflow-hidden mb-2 border border-zinc-800/50 group-hover:border-violet-500/50 transition-all hover-glitch min-h-0">
-              <img
-                src="https://images.unsplash.com/photo-1548502669-522718227b26?q=80&w=600&auto=format&fit=crop"
-                alt="Now Playing"
-                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
-              <div className="absolute bottom-1.5 left-1.5 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-white font-mono border border-zinc-700/50">
-                EP 08 • LIVE
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center backdrop-blur-sm">
-                  <Icon icon="lucide:play" width={20} height={20} className="text-black ml-0.5" />
+        <Link href="/artifacts/bocchi-the-rock" className="col-span-1 md:col-span-1 md:row-span-3">
+          <BentoCard className="h-full min-h-[25vh] md:min-h-0" title="In The Pit" icon="lucide:flame" action={<Icon icon="lucide:more-horizontal" width={14} height={14} />}>
+            <div className="flex flex-col h-full -m-1">
+              <div className="relative flex-1 rounded-lg overflow-hidden mb-2 border border-zinc-800/50 group-hover:border-violet-500/50 transition-all hover-glitch min-h-0">
+                <img
+                  src="https://images.unsplash.com/photo-1548502669-522718227b26?q=80&w=600&auto=format&fit=crop"
+                  alt="Now Playing"
+                  className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                <div className="absolute bottom-1.5 left-1.5 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-white font-mono border border-zinc-700/50">
+                  EP 08 • LIVE
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center backdrop-blur-sm">
+                    <Icon icon="lucide:play" width={20} height={20} className="text-black ml-0.5" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <h3 className="text-sm font-bold leading-tight mb-1">Bocchi the Rock!</h3>
-            <p className="text-[11px] text-zinc-400 italic line-clamp-2 mb-2">&quot;Fuzz-drenched anthem for bedroom guitarists.&quot;</p>
+              <h3 className="text-sm font-bold leading-tight mb-1">Bocchi the Rock!</h3>
+              <p className="text-[11px] text-zinc-400 italic line-clamp-2 mb-2">&quot;Fuzz-drenched anthem for bedroom guitarists.&quot;</p>
 
-            <div className="mt-auto flex items-center gap-1">
-              <Badge variant="truth">TRUTH</Badge>
-              <Badge variant="distortion">NOISE</Badge>
+              <div className="mt-auto flex items-center gap-1">
+                <Badge variant="truth">TRUTH</Badge>
+                <Badge variant="distortion">NOISE</Badge>
+              </div>
             </div>
-          </div>
-        </BentoCard>
+          </BentoCard>
+        </Link>
 
         {/* 4. Recent Echoes */}
         <BentoCard className="col-span-1 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4 min-h-[25vh] md:min-h-0" title="Recent Echoes" icon="lucide:ghost" action={<div className="text-[10px] underline cursor-pointer">All</div>}>
@@ -186,48 +189,47 @@ export default function AppPage() {
 
         {/* 5. Soundtrack & 6. District */}
         <div className="col-span-2 md:col-span-2 md:row-span-2 md:col-start-1 md:row-start-4 flex flex-col md:flex-row gap-2.5">
-          <BentoCard className="flex-1 h-36 md:h-full" title="Soundtrack" icon="lucide:disc">
-            <div className="flex flex-row items-center h-full gap-4 -m-1">
-              <div className="relative aspect-square h-24 md:h-full rounded-lg overflow-hidden border border-zinc-800/50 group-hover:border-violet-500/50 transition-all shrink-0 shadow-lg">
-                <img
-                  src={albumCovers[0].img}
-                  alt={albumCovers[0].title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              </div>
-
-              <div className="flex flex-col flex-1 py-1 pr-1 min-w-0 h-full md:justify-center">
-                <div className="px-0.5 md:mb-1">
-                  <h4 className="text-base font-black text-white leading-tight truncate uppercase tracking-tighter">{albumCovers[0].title}</h4>
-                  <p className="text-xs text-zinc-400 font-mono truncate uppercase mt-0.5 tracking-wide">{albumCovers[0].artist}</p>
+          <Link href="/artifacts/neon-genesis-ost" className="flex-1">
+            <BentoCard className="h-36 md:h-full" title="Soundtrack" icon="lucide:disc">
+              <div className="flex flex-row items-center h-full gap-4 -m-1">
+                <div className="relative aspect-square h-24 md:h-full rounded-lg overflow-hidden border border-zinc-800/50 group-hover:border-violet-500/50 transition-all shrink-0 shadow-lg">
+                  <img
+                    src={albumCovers[0].img}
+                    alt={albumCovers[0].title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                 </div>
 
-                <div className="flex items-center gap-2 px-0.5 mt-auto mb-2 md:mt-1.5 md:mb-1.5">
-                  <span className="text-[10px] text-zinc-500 font-mono shrink-0">1:24</span>
-                  <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-violet-500 rounded-full w-2/5 transition-all"></div>
+                <div className="flex flex-col flex-1 py-1 pr-1 min-w-0 h-full md:justify-center">
+                  <div className="px-0.5 md:mb-1">
+                    <h4 className="text-base font-black text-white leading-tight truncate uppercase tracking-tighter">{albumCovers[0].title}</h4>
+                    <p className="text-xs text-zinc-400 font-mono truncate uppercase mt-0.5 tracking-wide">{albumCovers[0].artist}</p>
                   </div>
-                  <span className="text-[10px] text-zinc-500 font-mono shrink-0">3:47</span>
-                </div>
 
-                <div className="flex items-center justify-between md:justify-center gap-5 md:mt-1 pb-1">
-                  <button className="text-zinc-500 hover:text-white transition-colors">
-                    <Icon icon="lucide:skip-back" width={14} height={14} />
-                  </button>
-                  <button
-                    onClick={() => setIsAudioPlaying(!isAudioPlaying)}
-                    className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
-                  >
-                    <Icon icon={isAudioPlaying ? "lucide:pause" : "lucide:play"} width={16} height={16} className="text-black ml-0.5" />
-                  </button>
-                  <button className="text-zinc-500 hover:text-white transition-colors">
-                    <Icon icon="lucide:skip-forward" width={14} height={14} />
-                  </button>
+                  <div className="flex items-center gap-2 px-0.5 mt-auto mb-2 md:mt-1.5 md:mb-1.5">
+                    <span className="text-[10px] text-zinc-500 font-mono shrink-0">1:24</span>
+                    <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-violet-500 rounded-full w-2/5 transition-all"></div>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 font-mono shrink-0">3:47</span>
+                  </div>
+
+                  <div className="flex items-center justify-between md:justify-center gap-5 md:mt-1 pb-1">
+                    <button className="text-zinc-500 hover:text-white transition-colors">
+                      <Icon icon="lucide:skip-back" width={14} height={14} />
+                    </button>
+                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
+                      <Icon icon={isAudioPlaying ? "lucide:pause" : "lucide:play"} width={16} height={16} className="text-black ml-0.5" />
+                    </div>
+                    <button className="text-zinc-500 hover:text-white transition-colors">
+                      <Icon icon="lucide:skip-forward" width={14} height={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </BentoCard>
+            </BentoCard>
+          </Link>
 
           {/* Simplified District (Time handling is now in MainLayout) */}
           {/* District Card with Dynamic Time */}

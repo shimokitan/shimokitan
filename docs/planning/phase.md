@@ -3,61 +3,66 @@
 This document outlines the roadmap for the Shimokitan District ecosystem, focusing on achieving a "Vibe-First" experience while maintaining technical robustness.
 
 ## 🏁 PHASE 1: THE DISCOVERY (Core Foundation)
-**Goal:** Establish the visual identity and the primary archival database.
+**Goal:** Establish the visual identity and the primary infrastructure.
 
 *   **Infrastructure:**
     *   Monorepo initialization (Turborepo + pnpm).
     *   Shared UI package (`@shimokitan/ui`) with "Charcoal/Concrete/Nicotine" design tokens.
-    *   Database setup (Neon for artifacts metadata, MongoDB for future UGC).
+    *   Database setup (Neon for relational metadata, MongoDB for UGC storage).
 *   **The Landing Zones:**
     *   Primary Homepage for `shimokitan.live` (The District Entrance).
-    *   Stub pages for `akiba` and `kabukicho` districts.
-*   **The Artifact Database:**
-    *   Schema for Seasonal Anime/Media (ID, Title, Editorial Description, Status).
-    *   "The Pit" vs "The Back-Alley" state logic.
-*   **Gateways & Consumption:**
-    *   **The Media Rack:** Integration of affiliate buttons (Crunchyroll, Apple Music).
-    *   **Live House Embeds:** Official YouTube video/soundtrack embedding via Iframe.
-    *   Basic artifact search/filter (Crate Digging v0.1).
+    *   Stub pages for specialized districts.
+*   **The Media Foundation:**
+    *   Base Schema for Media Artifacts.
+    *   "The Pit" vs "The Back-Alley" state logic implementation.
 
 ---
 
-## 📓 PHASE 2: THE ALBUM ERA (UGC & Memory)
-**Goal:** Implement the storytelling engine and user persistence.
+## 🖼️ PHASE 2: THE GALLERY (Artifact Architecture)
+**Goal:** Define the layouts and content specific to each media type.
 
-*   **Identity:** Neon Auth integration and User Profile initialization.
-*   **The District Album:** Saving artifacts to personal "Completed Albums."
+*   **Artifact Page Layouts:**
+    *   **Anime:** Seasonal tracker with "Pit" status and episode logs.
+    *   **Music / Song:** High-fidelity audio player orientation and album art focus.
+    *   **ASMR:** Atmospheric "Whisper" logs with focused audio visualization.
+    *   **Manga:** Page-by-page layout or archival shard view.
+    *   **Doujinshi:** Specialized sanctuary view for Kabukicho-rated masterpieces.
+    *   **Music Video:** Immersive YouTube loop with credits and trivia overlays.
+*   **Content Decision:** Finalizing the data requirements (attributes, genres, tags) for each artifact category.
+
+---
+
+## 📈 PHASE 3: THE DISTRICT PULSE (Seeding & Populating)
+**Goal:** Transition from mock data to a populated "District" via production seeding.
+
+*   **Home Seeding:**
+    *   Populating the "Spotlight" and "In The Pit" sections with actual Neon DB records.
+    *   Transitioning homepage components from static constants to TanStack Query hooks.
+*   **Initial Resonance:**
+    *   Implementing the visual "Heat Index" displays on the homepage.
+    *   Basic artifact search and filtering (Crate Digging v1.0).
+*   **Performance:** Optimization of the hybrid data layer to ensure fast fetches for the Home district.
+
+---
+
+## 📓 PHASE 4: THE ALBUM ERA (UGC & Memory)
+**Goal:** Implement the storytelling engine and user persistence via Zines.
+
+*   **Identity:** Neon Auth integration and Resident Profile initialization.
 *   **The Zine Engine:**
     *   Implementation of Public Zines (`/zines`) and private Perzines (`/perzines`).
-    *   Artifact-centric attachment requirements.
-    *   Strictly permanent submission logic (permanent write in MongoDB).
-*   **The Grain Pipeline:** Sharp-powered image processing for Zine attachments.
-*   **Vocal Snippets:** Audio recording and storage for "The Honest Stutter."
+    *   Artifact-centric attachment requirements and permanent submission logic.
+*   **Street Stickers:** Implementation of community-applied resonance labels (`[TRUTH]`, `[GOLD]`, etc.).
+*   **UGC Pipeline:**
+    *   Sharp-powered image processing for grain-filtered attachments.
+    *   Vocal Snippets (audio recording) for honest reactions.
+*   **Gamification:** Quests and Soundchecks based on Zine activity.
 
 ---
 
-## 📈 PHASE 3: THE RESONANCE (Heat & Mechanics)
-**Goal:** Launch the community feedback loops and gamification.
-
-*   **The Heat Index:** Algorithm to calculate "Narrative Density" from Zine volume and quality.
-*   **Street Stickers:** Implementation of `[TRUTH]`, `[GOLD]`, `[DISTORTION]`, and `[CLEAN]` labels.
-*   **Gamification:**
-    *   **Quests:** Action-based milestone tracking (e.g., Seasonal Cold Quest).
-    *   **Soundchecks:** Quiz-based atmospheric challenges.
-    *   **Ink System:** Digital badges for "Original Pressing" and quest rewards.
-*   **The Pedalboard:** Transitioning the User Dashboard to the modular Bento-style pedalboard UI.
-
----
-
-## 🏙️ PHASE 4: THE EXTENDED DISTRICTS (Bazaar & Sanctuary)
+## 🏙️ PHASE 5: THE EXTENDED DISTRICTS (Bazaar & Sanctuary)
 **Goal:** Populate and polish the specialized subdomains.
 
-*   **Akiba District (The Bazaar):**
-    *   Storefront implementation for curated gear and artifacts.
-    *   Payment integration (Stripe/alternative).
-    *   "Street Credit" gating for exclusive items.
-*   **Kabukicho District (The Sanctuary):**
-    *   Audit systems for high-effort adult artistry.
-    *   Dedicated gallery and player for masterpieces.
-*   **The Physical Pressing:** Backend logic for identifying top musicians for vinyl pressing.
-*   **The Performance Audit:** Final optimization and polish for "Safe-ish" isolation between districts.
+*   **Akiba District (The Bazaar):** Storefront implementation and payment integration.
+*   **Kabukicho District (The Sanctuary):** Audit systems and high-effort adult artistry focus.
+*   **The Physical Pressing:** Backend logic for vinyl pressing rewards.

@@ -5,6 +5,14 @@ import { Icon } from '@iconify/react';
 import { useTime } from '../../hooks/use-time';
 
 import Link from 'next/link';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@shimokitan/ui';
 
 export function Navbar() {
     const time = useTime();
@@ -54,10 +62,36 @@ export function Navbar() {
                     />
                 </div>
                 <div className="h-8 w-px bg-zinc-800/80 mx-1 hidden sm:block" />
-                <button className="w-9 h-9 rounded-sm bg-zinc-900/40 border border-zinc-800/80 flex items-center justify-center hover:bg-violet-600 transition-all hover:scale-105 active:scale-95 group">
-                    <Icon icon="lucide:user" width={16} height={16} className="text-zinc-400 group-hover:text-white" />
-                </button>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="w-9 h-9 rounded-sm bg-zinc-900/40 border border-zinc-800/80 flex items-center justify-center hover:bg-violet-600 transition-all hover:scale-105 active:scale-95 group outline-none">
+                            <Icon icon="lucide:user" width={16} height={16} className="text-zinc-400 group-hover:text-white" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 bg-zinc-950/95 border-zinc-800 backdrop-blur-xl text-zinc-100 font-mono">
+                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-zinc-500">Identity // Panel</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-zinc-800" />
+                        <Link href="/auth/signin">
+                            <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
+                                <Icon icon="lucide:log-in" width={14} height={14} className="mr-2" />
+                                Initialize Session
+                            </DropdownMenuItem>
+                        </Link>
+                        <Link href="/auth/signup">
+                            <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
+                                <Icon icon="lucide:user-plus" width={14} height={14} className="mr-2" />
+                                Register Resident
+                            </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuSeparator className="bg-zinc-800" />
+                        <DropdownMenuItem className="text-[10px] uppercase text-zinc-600 opacity-50 cursor-default">
+                            Guest_Protocol_Active
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </header>
+
     );
 }

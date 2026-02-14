@@ -3,21 +3,24 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { cn } from "../lib/utils";
+import Link from 'next/link';
 
 interface NavigationLinkProps {
     icon: string;
     label: string;
     active?: boolean;
     onClick?: () => void;
+    href?: string;
 }
 
 export const NavigationLink = ({
     icon,
     label,
     active = false,
-    onClick
-}: NavigationLinkProps) => (
-    <div className="relative group flex items-center">
+    onClick,
+    href
+}: NavigationLinkProps) => {
+    const content = (
         <button
             onClick={onClick}
             className={cn(
@@ -29,13 +32,23 @@ export const NavigationLink = ({
         >
             <Icon icon={icon} width={24} height={24} />
         </button>
+    );
 
-        {/* Floating Tooltip - Firmly to the Right */}
-        <div className="absolute left-full ml-4 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-[100] translate-x-2 group-hover:translate-x-4">
-            <div className="bg-black border border-zinc-800 px-3 py-1.5 rounded-sm shadow-[0_0_40px_rgba(0,0,0,1)] flex items-center gap-2.5 whitespace-nowrap">
-                <div className="w-1.5 h-1.5 bg-violet-600 rounded-full shadow-[0_0_10px_rgba(139,92,246,0.6)] animate-pulse" />
-                <span className="text-[10px] font-black tracking-widest text-zinc-100 uppercase">{label}</span>
+    return (
+        <div className="relative group flex items-center cursor-pointer">
+            {href ? (
+                <Link href={href} className="block">
+                    {content}
+                </Link>
+            ) : content}
+
+            {/* Floating Tooltip - Firmly to the Right */}
+            <div className="absolute left-full ml-4 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-[100] translate-x-2 group-hover:translate-x-4">
+                <div className="bg-black border border-zinc-800 px-3 py-1.5 rounded-sm shadow-[0_0_40px_rgba(0,0,0,1)] flex items-center gap-2.5 whitespace-nowrap">
+                    <div className="w-1.5 h-1.5 bg-violet-600 rounded-full shadow-[0_0_10px_rgba(139,92,246,0.6)] animate-pulse" />
+                    <span className="text-[10px] font-black tracking-widest text-zinc-100 uppercase">{label}</span>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
