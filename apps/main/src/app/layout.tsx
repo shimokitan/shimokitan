@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SHIMOKITAN // COMING SOON",
-  description: "Recalibrating the district conduits.",
+  description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories — not data points. Inspired by the back-alleys of Shimokitazawa, this is where your taste becomes a curated archive of experience.",
 };
 
 export default function RootLayout({

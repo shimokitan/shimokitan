@@ -147,9 +147,11 @@ export function ComingSoon() {
                         COMING<br />
                         <span className="text-transparent bg-zinc-900" style={{ WebkitTextStroke: '1px rgba(139, 92, 246, 0.5)' }}>SOON.</span>
                     </h2>
-                    <p className="text-zinc-400 font-mono text-xs md:text-sm tracking-[0.2em] uppercase max-w-lg mx-auto leading-relaxed">
-                        We are recalibrating the district conduits. <br className="hidden md:block" />
-                        Expected synchronization in the next cycle.
+                    <p className="text-zinc-400 font-mono text-xs md:text-sm tracking-[0.1em] max-w-2xl mx-auto leading-relaxed">
+                        SHIMOKITAN is a district for Japanese culture enthusiasts <br className="hidden md:block" />
+                        who document their anime, games, and music as lived memories — <br className="hidden md:block" />
+                        not data points. Inspired by the back-alleys of Shimokitazawa, <br className="hidden md:block" />
+                        this is where your taste becomes a curated archive of experience.
                     </p>
                 </div>
 
