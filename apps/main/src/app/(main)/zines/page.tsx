@@ -1,12 +1,20 @@
-"use client"
-
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { MainLayout } from '../../../components/layout/MainLayout';
-import { MOCK_ZINES, MOCK_ARTIFACTS } from '../../../lib/mock-data';
+import { getDb, schema, desc } from '@shimokitan/db';
 import Link from 'next/link';
 
-export default function PublicZinesPage() {
+export default async function PublicZinesPage() {
+    const db = getDb();
+    if (!db) return <div>DB_CONNECTION_ERROR</div>;
+
+    const zines = await db.query.zines.findMany({
+        orderBy: [desc(schema.zines.createdAt)],
+        with: {
+            artifact: true
+        }
+    } as any);
+
     return (
         <MainLayout>
             <div className="flex flex-col gap-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
@@ -26,21 +34,15 @@ export default function PublicZinesPage() {
 
                 {/* Zine Stream */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {MOCK_ZINES.map((zine) => {
-                        const artifact = MOCK_ARTIFACTS[zine.artifactSlug];
+                    {zines.map((zine: any) => {
                         return (
                             <div key={zine.id} className="bg-zinc-950/20 border border-zinc-900 rounded-2xl p-8 flex flex-col gap-8 relative overflow-hidden group hover:border-rose-900/30 transition-all duration-700">
-                                {/* Artifact Reference - Static Header */}
+                                {/* Artifact Reference */}
                                 <div className="flex flex-col gap-2">
                                     <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Resonating With //</span>
-                                    <Link href={`/artifacts/${zine.artifactSlug}`} className="text-xl font-black uppercase italic group-hover:text-rose-500 transition-colors truncate">
-                                        {artifact?.title || zine.artifactSlug}
+                                    <Link href={`/artifacts/${zine.artifact_id}`} className="text-xl font-black uppercase italic group-hover:text-rose-500 transition-colors truncate">
+                                        {zine.artifact?.title || "Unknown Shard"}
                                     </Link>
-                                </div>
-
-                                {/* The Question (Shadow Background) */}
-                                <div className="absolute top-1/2 left-4 -translate-y-1/2 opacity-[0.02] select-none pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                                    <span className="text-6xl font-black uppercase italic leading-none">MEMOIR</span>
                                 </div>
 
                                 {/* The Content */}
@@ -58,22 +60,18 @@ export default function PublicZinesPage() {
                                             <Icon icon="lucide:user" className="text-zinc-600" width={18} height={18} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-black uppercase text-zinc-200">{zine.authorName}</span>
-                                            <span className="text-[9px] font-mono text-zinc-600">{zine.authorHandle}</span>
+                                            <span className="text-xs font-black uppercase text-zinc-200">{zine.author}</span>
                                         </div>
                                     </div>
 
                                     <div className="flex flex-col items-end gap-1">
                                         <div className="flex items-center gap-1.5 text-rose-600 font-black italic">
                                             <Icon icon="lucide:flame" width={14} height={14} />
-                                            <span>{zine.resonanceRating}</span>
+                                            <span>{zine.resonance}</span>
                                         </div>
                                         <span className="text-[8px] font-mono text-zinc-700 uppercase">{new Date(zine.createdAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
-
-                                {/* Hover Glow */}
-                                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-rose-600/10 blur-[60px] rounded-full group-hover:opacity-100 opacity-0 transition-opacity" />
                             </div>
                         );
                     })}
