@@ -1,9 +1,20 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { seedArtifact } from '../actions';
+import { getDb, schema, desc } from '@shimokitan/db';
+import ArtifactForm from './ArtifactForm';
+import AdminTable from '../components/AdminTable';
 
-export default function ArtifactsPage() {
+export default async function ArtifactsPage() {
+    // Fetch Entities for the credits selector
+    const db = getDb();
+    const entities = db ? await db.query.entities.findMany({
+        columns: { id: true, name: true, type: true }
+    }) : [];
+    const allArtifacts = db ? await db.query.artifacts.findMany({
+        orderBy: [desc(schema.artifacts.createdAt)]
+    }) : [];
+
     return (
         <div className="space-y-6">
             <header>
@@ -15,60 +26,38 @@ export default function ArtifactsPage() {
                 </p>
             </header>
 
-            <section className="bg-zinc-950/50 border border-zinc-900 p-6 space-y-6 relative overflow-hidden group max-w-2xl">
-                <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
-                    <Icon icon="lucide:package-plus" width={120} />
-                </div>
-                <div className="flex items-center gap-3 border-b border-zinc-900 pb-4">
-                    <Icon icon="lucide:package-plus" className="text-rose-600" width={18} />
-                    <h2 className="text-sm font-black uppercase tracking-[0.3em] text-white">New_Artifact</h2>
-                </div>
-
-                <form action={seedArtifact} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
-                            <input name="title" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="Artifact Title" />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
-                            <textarea name="description" rows={3} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors" placeholder="Brief description..." />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Category</label>
-                            <select name="category" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors">
-                                <option value="anime">ANIME</option>
-                                <option value="music">MUSIC</option>
-                                <option value="vtuber">VTUBER</option>
-                                <option value="asmr">ASMR</option>
-                                <option value="zine">ZINE</option>
-                                <option value="art">ART</option>
-                                <option value="game">GAME</option>
-                            </select>
-                        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Creation Form */}
+                <section className="bg-zinc-950/50 border border-zinc-900 p-6 space-y-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
+                        <Icon icon="lucide:package-plus" width={120} />
+                    </div>
+                    <div className="flex items-center gap-3 border-b border-zinc-900 pb-4 mb-4">
+                        <Icon icon="lucide:package-plus" className="text-rose-600" width={18} />
+                        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-white">New_Artifact</h2>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
-                        <textarea name="description" rows={3} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors" placeholder="Brief description..." />
+                    <ArtifactForm entities={entities as any} />
+                </section>
+
+                {/* List View */}
+                <section className="space-y-6">
+                    <div className="flex items-center gap-3 border-b border-zinc-900 pb-4">
+                        <Icon icon="lucide:list" className="text-zinc-500" width={18} />
+                        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-white">Recent_Entries</h2>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Cover URL</label>
-                            <input name="coverImage" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="https://..." />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Initial Score</label>
-                            <input name="score" type="number" defaultValue="0" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" />
-                        </div>
-                    </div>
-
-                    <button type="submit" className="w-full py-4 bg-rose-600 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all mt-4">
-                        REGISTER_ARTIFACT
-                    </button>
-                </form>
-            </section>
+                    <AdminTable
+                        data={allArtifacts}
+                        columns={[
+                            { key: 'title', label: 'Title', render: (val) => <span className="font-bold text-white">{val}</span> },
+                            { key: 'category', label: 'Category', render: (val) => <span className="text-[10px] font-mono px-1.5 py-0.5 bg-zinc-800 rounded">{val}</span> },
+                            { key: 'status', label: 'Status' },
+                            { key: 'score', label: 'Score', render: (val) => <span className="text-rose-500 font-bold">+{val}</span> }
+                        ]}
+                    />
+                </section>
+            </div>
         </div>
     );
 }
