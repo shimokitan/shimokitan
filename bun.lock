@@ -19,6 +19,7 @@
         "@iconify/react": "^6.0.2",
         "@shimokitan/db": "workspace:*",
         "@shimokitan/ui": "workspace:*",
+        "@shimokitan/utils": "workspace:*",
         "@tanstack/react-query": "^5.66.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -114,6 +115,7 @@
       "dependencies": {
         "dayjs": "^1.11.13",
         "lodash": "^4.17.21",
+        "nanoid": "^5.1.6",
       },
       "devDependencies": {
         "@types/lodash": "^4.17.15",

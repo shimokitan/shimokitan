@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { getDb } from '@shimokitan/db';
+import { isNull, schema as dbSchema, getDb } from '@shimokitan/db';
 import Link from 'next/link';
 
 export default async function AdminDashboard() {
@@ -11,10 +11,10 @@ export default async function AdminDashboard() {
     if (!db) return <div>DB Connection Failed</div>;
 
     const [artifacts, entities, collections, zines] = await Promise.all([
-        db.query.artifacts.findMany({ columns: { id: true } }),
-        db.query.entities.findMany({ columns: { id: true } }),
-        db.query.collections.findMany({ columns: { id: true } }),
-        db.query.zines.findMany({ columns: { id: true } }),
+        db.query.artifacts.findMany({ where: isNull(dbSchema.artifacts.deletedAt), columns: { id: true } }),
+        db.query.entities.findMany({ where: isNull(dbSchema.entities.deletedAt), columns: { id: true } }),
+        db.query.collections.findMany({ where: isNull(dbSchema.collections.deletedAt), columns: { id: true } }),
+        db.query.zines.findMany({ where: isNull(dbSchema.zines.deletedAt), columns: { id: true } }),
     ]);
 
     const stats = [

@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 
 export default function PedalboardPage() {
     const user = MOCK_USER;
-    const collection = user.collectionSlugs.map((slug: string) => MOCK_ARTIFACTS[slug]);
+    const collection = user.collectionArtifactIds.map((id: string) => MOCK_ARTIFACTS[id]);
     const userZines = MOCK_ZINES.filter((z: Zine) => z.authorHandle === user.handle);
 
     return (
@@ -92,7 +92,7 @@ export default function PedalboardPage() {
                         >
                             <div className="grid grid-cols-2 gap-3 h-full pt-1">
                                 {collection.slice(0, 2).map((artifact: Artifact) => (
-                                    <Link key={artifact.id} href={`/artifacts/${artifact.slug}`} className="group relative rounded-xl overflow-hidden border border-zinc-800/50 bg-black">
+                                    <Link key={artifact.id} href={`/artifacts/${artifact.id}`} className="group relative rounded-xl overflow-hidden border border-zinc-800/50 bg-black">
                                         <img src={artifact.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-3">
                                             <span className="text-[9px] font-black uppercase italic text-zinc-200 line-clamp-1">{artifact.title}</span>
@@ -136,7 +136,7 @@ export default function PedalboardPage() {
                         >
                             <div className="space-y-3 h-full py-1">
                                 {userZines.slice(0, 2).map((zine: Zine) => {
-                                    const artifact = MOCK_ARTIFACTS[zine.artifactSlug];
+                                    const artifact = MOCK_ARTIFACTS[zine.artifactId];
                                     return (
                                         <div key={zine.id} className="p-4 bg-black/40 border border-zinc-900/50 rounded-xl relative group/item hover:border-rose-900/30 transition-all">
                                             <div className="flex justify-between items-center mb-2">

@@ -2,7 +2,6 @@ export type ArtifactCategory = 'anime' | 'music' | 'asmr' | 'zines';
 
 export interface Artifact {
     id: string;
-    slug: string;
     title: string;
     category: ArtifactCategory;
     editorialDescription: string;
@@ -14,7 +13,7 @@ export interface Artifact {
 
 export interface Zine {
     id: string;
-    artifactSlug: string;
+    artifactId: string;
     authorName: string;
     authorHandle: string;
     authorAvatar?: string;
@@ -29,7 +28,7 @@ export interface User {
     handle: string;
     avatar?: string;
     bio: string;
-    collectionSlugs: string[]; // Slugs of artifacts in the user's collection
+    collectionArtifactIds: string[]; // IDs of artifacts in the user's collection
     stats: {
         shards: number;
         echoes: number;
@@ -43,7 +42,7 @@ export const MOCK_USER: User = {
     handle: '@xavier_shkn',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
     bio: 'Resonating with distortion and high-fidelity haunts since 2018. Architect of the Pit.',
-    collectionSlugs: ['bocchi-the-rock', 'neon-genesis-ost', 'akiba-maid-war'],
+    collectionArtifactIds: ['art_001', 'art_002', 'art_003'],
     stats: {
         shards: 12,
         echoes: 4,
@@ -54,7 +53,7 @@ export const MOCK_USER: User = {
 export const MOCK_ZINES: Zine[] = [
     {
         id: 'zine_001',
-        artifactSlug: 'bocchi-the-rock',
+        artifactId: 'art_001',
         authorName: 'Hitori_Fan_99',
         authorHandle: '@pink_trashcan',
         content: 'I was in my second year of college, hiding in the library during lunch breaks. This anime made me feel like my small world was finally loud enough for someone to hear. It wasn\'t just distortion; it was hope.',
@@ -63,7 +62,7 @@ export const MOCK_ZINES: Zine[] = [
     },
     {
         id: 'zine_002',
-        artifactSlug: 'bocchi-the-rock',
+        artifactId: 'art_001',
         authorName: 'Gutter_Ghost',
         authorHandle: '@void_walker',
         content: 'Fresh out of a job, guitar gathering dust. Seeing Hitori struggle just to say "hello" felt like looking in a mirror. I started playing again because of this shard.',
@@ -72,7 +71,7 @@ export const MOCK_ZINES: Zine[] = [
     },
     {
         id: 'zine_003',
-        artifactSlug: 'akiba-maid-war',
+        artifactId: 'art_003',
         authorName: 'Ranko_Enjoyer',
         authorHandle: '@blood_maid',
         content: 'Life felt too serious, too rigid. This absolute chaos reminded me that sometimes you just have to pull the trigger on your own path, even if it looks ridiculous to the rest of the world.',
@@ -82,9 +81,9 @@ export const MOCK_ZINES: Zine[] = [
 ];
 
 export const MOCK_ARTIFACTS: Record<string, Artifact> = {
-    'bocchi-the-rock': {
+    'art_001': {
         id: 'art_001',
-        slug: 'bocchi-the-rock',
+
         title: 'Bocchi the Rock!',
         category: 'anime',
         editorialDescription: 'A fuzz-drenched anthem for the bedroom guitarists. Best watched when you\'re feeling a little glitchy.',
@@ -100,9 +99,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             crunchyrollUrl: 'https://www.crunchyroll.com/series/G1HWHGN52/bocchi-the-rock'
         }
     },
-    'neon-genesis-ost': {
+    'art_002': {
         id: 'art_002',
-        slug: 'neon-genesis-ost',
+
         title: 'Neon Genesis Evangelion OST',
         category: 'music',
         editorialDescription: 'The high-fidelity haunt of the 90s. Violins meeting industrial static in the shadow of giants.',
@@ -117,9 +116,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             appleMusicId: 'id123456789'
         }
     },
-    'akiba-maid-war': {
+    'art_003': {
         id: 'art_003',
-        slug: 'akiba-maid-war',
+
         title: 'Akiba Maid War',
         category: 'anime',
         editorialDescription: 'The Gutter-Punk edge of Akihabara. Blood, sweat, and moe in the underground live houses.',
@@ -135,9 +134,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             crunchyrollUrl: '#'
         }
     },
-    'steins-gate': {
+    'art_004': {
         id: 'art_004',
-        slug: 'steins-gate',
+
         title: 'Steins;Gate',
         category: 'anime',
         editorialDescription: 'An urban gothic mystery where time is the greatest friction of all.',
@@ -153,9 +152,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             crunchyrollUrl: '#'
         }
     },
-    'flcl-progressive': {
+    'art_005': {
         id: 'art_005',
-        slug: 'flcl-progressive',
+
         title: 'FLCL Progressive',
         category: 'anime',
         editorialDescription: 'Pure abstract kinetic energy. A distortion of reality that rejects the linear.',
@@ -171,9 +170,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             crunchyrollUrl: '#'
         }
     },
-    'cowboy-bebop-ost-1': {
+    'art_006': {
         id: 'art_006',
-        slug: 'cowboy-bebop-ost-1',
+
         title: 'Cowboy Bebop OST 1',
         category: 'music',
         editorialDescription: 'The jazz-punk blueprint for the digital district. Tank! is the anthem of the archive.',
@@ -188,9 +187,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             appleMusicId: 'id987654321'
         }
     },
-    'serial-experiments-lain-soundtrack': {
+    'art_007': {
         id: 'art_007',
-        slug: 'serial-experiments-lain-soundtrack',
+
         title: 'Duvet / Lain Soundtrack',
         category: 'music',
         editorialDescription: 'The sound of the Wired. Gentle, haunting, and deeply connected to the digital void.',
@@ -205,9 +204,9 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
             appleMusicId: 'id1122334455'
         }
     },
-    'cyberpunk-edgerunners-ost': {
+    'art_008': {
         id: 'art_008',
-        slug: 'cyberpunk-edgerunners-ost',
+
         title: 'Edgerunners Selection',
         category: 'music',
         editorialDescription: 'Electronic static from the Night City gutters. Hard-hitting distortion and synth-wave grief.',

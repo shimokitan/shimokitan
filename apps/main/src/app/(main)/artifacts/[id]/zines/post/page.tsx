@@ -11,8 +11,8 @@ import { Badge } from '@shimokitan/ui';
 export default function PostZinePage() {
     const params = useParams();
     const router = useRouter();
-    const slug = params?.slug as string;
-    const artifact = MOCK_ARTIFACTS[slug];
+    const id = params?.id as string;
+    const artifact = MOCK_ARTIFACTS[id];
     const [content, setContent] = useState('');
 
     if (!artifact) {
@@ -29,7 +29,7 @@ export default function PostZinePage() {
         e.preventDefault();
         // In a real app, logic to save would go here
         alert("Echo broadcasted into the void. (Mock functionality)");
-        router.push(`/artifacts/${slug}`);
+        router.push(`/artifacts/${id}`);
     };
 
     return (
@@ -39,7 +39,7 @@ export default function PostZinePage() {
                 {/* Protocol Header */}
                 <div className="flex flex-col gap-6 mb-20">
                     <div className="flex items-center justify-between">
-                        <Link href={`/artifacts/${slug}`} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors group">
+                        <Link href={`/artifacts/${id}`} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors group">
                             <Icon icon="lucide:arrow-left" width={14} height={14} className="group-hover:-translate-x-1 transition-transform" />
                             Return to Fragment
                         </Link>

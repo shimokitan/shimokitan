@@ -2,14 +2,17 @@
 import React from 'react';
 import { Badge } from '@shimokitan/ui';
 import { Icon } from '@iconify/react';
+import DeleteButton from './DeleteButton';
 
 export default function AdminTable({
     data,
     columns,
+    onDelete,
     actions = true
 }: {
     data: any[],
     columns: { key: string, label: string, render?: (val: any, row: any) => React.ReactNode }[],
+    onDelete?: (id: string) => Promise<any>,
     actions?: boolean
 }) {
     if (data.length === 0) {
@@ -41,9 +44,12 @@ export default function AdminTable({
                             ))}
                             {actions && (
                                 <td className="p-3 text-right">
-                                    <button className="text-zinc-600 hover:text-white transition-colors">
-                                        <Icon icon="lucide:more-horizontal" width={16} />
-                                    </button>
+                                    <div className="flex items-center justify-end gap-2">
+                                        {onDelete && <DeleteButton id={row.id} action={onDelete} />}
+                                        <button className="text-zinc-600 hover:text-white transition-colors">
+                                            <Icon icon="lucide:more-horizontal" width={16} />
+                                        </button>
+                                    </div>
                                 </td>
                             )}
                         </tr>

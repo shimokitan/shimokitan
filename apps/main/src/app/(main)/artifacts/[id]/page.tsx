@@ -6,11 +6,11 @@ import { getArtifactById } from '@shimokitan/db';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export default async function ArtifactPage(props: { params: Promise<{ slug: string }> }) {
-    const { slug } = await props.params; // Using the ID directly (slug stripped)
+export default async function ArtifactPage(props: { params: Promise<{ id: string }> }) {
+    const { id } = await props.params;
 
-    // In our new schema, 'slug' is actually the NanoID
-    const artifact = await getArtifactById(slug);
+    // Fetch by NanoID directly
+    const artifact = await getArtifactById(id);
 
     if (!artifact) {
         notFound();

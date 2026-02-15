@@ -20,6 +20,7 @@ export const entities = pgTable("entities", {
     socialLinks: jsonb("social_links").default({}),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 // 3. Artifacts (The Content)
@@ -34,6 +35,7 @@ export const artifacts = pgTable("artifacts", {
     specs: jsonb("specs").default({}),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
 }, (table) => ({
     categoryIdx: index("idx_artifacts_category").on(table.category),
     statusIdx: index("idx_artifacts_status").on(table.status),
@@ -47,6 +49,7 @@ export const collections = pgTable("collections", {
     coverImage: text("cover_image"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 export const collectionArtifacts = pgTable("collection_artifacts", {
@@ -87,6 +90,7 @@ export const zines = pgTable("zines", {
     content: text("content").notNull(),
     resonance: integer("resonance").default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
 // Schemas for validation

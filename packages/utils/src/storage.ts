@@ -1,0 +1,79 @@
+/**
+ * R2 Storage Path Generation Utilities
+ * 
+ * Centralized logic for generating R2 object keys based on the Shimokitan storage schema.
+ * Defines the folder structure for Artifacts, Echos, Zines, and Media types.
+ * 
+ * Schema: {media_type}/{context}/{identifier}/{filename}
+ */
+
+export type MediaType = 'images' | 'audio' | 'video' | 'raw';
+export type StorageContext = 'artifacts' | 'zines' | 'profiles' | 'echos' | 'soundchecks' | 'metadata' | 'collections';
+
+interface PathOptions {
+    mediaType: MediaType;
+    context: StorageContext;
+    identifier: string; // NanoID
+    filename: string;   // NanoID + Extension
+}
+
+/**
+ * Generates a fully qualified R2 storage path.
+ * 
+ * @param options - The path components
+ * @returns The slash-separated path string
+ * 
+ * @example
+ * generateStoragePath({ 
+ *   mediaType: 'images', 
+ *   context: 'artifacts', 
+ *   identifier: 'shard_8z2k', 
+ *   filename: 'b1x9k2.webp' 
+ * })
+ * // Returns: "images/artifacts/shard_8z2k/b1x9k2.webp"
+ */
+export const generateStoragePath = ({ mediaType, context, identifier, filename }: PathOptions): string => {
+    return `${mediaType}/${context}/${identifier}/${filename}`;
+};
+
+/**
+ * Common path generators for specific use cases
+ */
+export const storagePaths = {
+    /**
+     * Path for an Artifact's cover image.
+     * Note: filename should be a NanoID generated at upload time.
+     */
+    artifactImage: (artifactId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'images', context: 'artifacts', identifier: artifactId, filename }),
+
+    /**
+     * Path for an Echo audio fragment.
+     */
+    echoAudio: (shardId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'audio', context: 'echos', identifier: shardId, filename }),
+
+    /**
+     * Path for a User's avatar/profile image.
+     */
+    userAvatar: (userId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'images', context: 'profiles', identifier: userId, filename }),
+
+    /**
+     * Path for a Collection's cover image.
+     */
+    collectionImage: (collectionId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'images', context: 'collections', identifier: collectionId, filename }),
+
+    /**
+     * Path for a Zine layout asset.
+     */
+    zineImage: (zineId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'images', context: 'zines', identifier: zineId, filename }),
+
+    /**
+     * Path for a Zine raw PDF/Print export.
+     */
+    zineRaw: (zineId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'raw', context: 'zines', identifier: zineId, filename }),
+};
