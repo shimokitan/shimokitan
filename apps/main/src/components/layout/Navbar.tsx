@@ -53,6 +53,10 @@ export function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
+                <Link href="/about" className="text-zinc-500 hover:text-white transition-colors">
+                    <Icon icon="lucide:info" width={18} height={18} />
+                </Link>
+
                 <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-sm px-3 py-1.5 flex items-center gap-2 w-32 sm:w-48 md:w-64 backdrop-blur-md group focus-within:border-violet-500/50 transition-colors">
                     <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500 group-focus-within:text-violet-400" />
                     <input

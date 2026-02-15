@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { BentoCard, Badge } from '@shimokitan/ui';
 import { useTime } from '../hooks/use-time';
@@ -37,6 +37,12 @@ export default function HomeClient({
     const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
     const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
     const time = useTime();
+
+    const [randomFreq, setRandomFreq] = useState<string>("000");
+
+    useEffect(() => {
+        setRandomFreq(Math.floor(Math.random() * 1000).toString(16));
+    }, []);
 
     const heroArtifact = spotlightArtifacts[0];
 
@@ -127,7 +133,7 @@ export default function HomeClient({
                         <div className="flex flex-col gap-1 font-mono text-[7px] text-zinc-500 uppercase overflow-hidden h-12">
                             <div className="flex justify-between items-center opacity-40 animate-out fade-out slide-out-to-top duration-1000">
                                 <span>SCANNING_FREQ...</span>
-                                <span>0x{Math.floor(Math.random() * 1000).toString(16)}</span>
+                                <span>0x{randomFreq}</span>
                             </div>
                             <div className="flex justify-between items-center text-zinc-400">
                                 <span>SHIMO_VALVE_82</span>

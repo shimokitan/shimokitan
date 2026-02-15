@@ -36,12 +36,15 @@ export default function SignInPage() {
                         <div className="absolute -left-10 top-2 text-violet-600/50">
                             <Icon icon="lucide:arrow-right-to-line" width={20} height={20} className="group-focus-within:translate-x-2 transition-transform" />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-[9px] font-black uppercase text-zinc-700 tracking-[0.3em]">Identity_Input</span>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-baseline justify-between">
+                                <label className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Email / Username</label>
+                                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest hidden sm:block">Identity_Input</span>
+                            </div>
                             <input
                                 type="email"
-                                className="bg-transparent border-none text-2xl md:text-4xl font-black italic uppercase outline-none text-white placeholder:text-zinc-900 transition-colors w-full"
-                                placeholder="ID_REQUIRED"
+                                className="bg-transparent border-b border-zinc-800 focus:border-violet-600 text-xl py-2 font-medium outline-none text-white placeholder:text-zinc-700 transition-colors w-full"
+                                placeholder="user@example.com"
                                 autoFocus
                             />
                         </div>
@@ -51,11 +54,14 @@ export default function SignInPage() {
                         <div className="absolute -left-10 top-2 text-violet-600/50">
                             <Icon icon="lucide:key-round" width={20} height={20} className="group-focus-within:rotate-45 transition-transform" />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-[9px] font-black uppercase text-zinc-700 tracking-[0.3em]">Access_Code</span>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-baseline justify-between">
+                                <label className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Password</label>
+                                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest hidden sm:block">Access_Code</span>
+                            </div>
                             <input
                                 type="password"
-                                className="bg-transparent border-none text-2xl md:text-4xl font-black italic uppercase outline-none text-white placeholder:text-zinc-900 transition-colors w-full"
+                                className="bg-transparent border-b border-zinc-800 focus:border-violet-600 text-xl py-2 font-medium outline-none text-white placeholder:text-zinc-700 transition-colors w-full"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -81,18 +87,24 @@ export default function SignInPage() {
                 </div>
             </div>
 
-            {/* MINIMAL FOOTER BAR */}
-            <aside className="fixed bottom-0 left-0 w-full p-6 flex justify-between items-center opacity-30 select-none">
-                <div className="flex gap-6 items-center">
+            {/* MINIMAL FOOTER BAR - MATCHING MAIN FOOTER STYLE */}
+            <aside className="fixed bottom-0 left-0 w-full border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[10px] shrink-0 z-50 gap-4 text-zinc-500">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight items-center">
                     <div className="flex gap-4">
-                        <Icon icon="logos:google-icon" width={14} height={14} className="grayscale" />
-                        <Icon icon="lucide:github" width={14} height={14} />
+                        <Icon icon="logos:google-icon" width={14} height={14} className="grayscale hover:grayscale-0 transition-all cursor-pointer" />
+                        <Icon icon="lucide:github" width={14} height={14} className="hover:text-white transition-colors cursor-pointer" />
                     </div>
-                    <div className="w-px h-3 bg-zinc-800" />
-                    <span className="text-[8px] font-mono uppercase tracking-widest leading-none">External_Sync_Ready</span>
                 </div>
-                <div className="text-[7px] font-mono uppercase text-right leading-none">
-                    Session_Tunnel: Established // 2026.SHKN
+
+                <div className="flex items-center gap-8">
+                    <div className="flex gap-5 font-mono uppercase tracking-widest text-[8px] md:text-[10px]">
+                        <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
+                        <Link href="/cookies" className="hover:text-zinc-300 transition-colors">Cookies</Link>
+                    </div>
+                    <div className="font-mono tracking-[0.3em] text-[8px] md:text-[10px] uppercase font-bold opacity-40">
+                        © 2026 SHIMOKITAN
+                    </div>
                 </div>
             </aside>
         </div>

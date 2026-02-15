@@ -7,12 +7,18 @@ export const runtime = 'experimental-edge';
 const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies', '/contact'];
 
 export function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
     // Check if we are in maintenance mode (you could use an env var here)
     const IS_MAINTENANCE = process.env.NODE_ENV === 'production';
 
-    if (IS_MAINTENANCE) {
-        const { pathname } = request.nextUrl;
+    if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+        const token = request.cookies.get('shimokitan_admin_session')?.value;
+        if (token !== 'authenticated') {
+            return NextResponse.redirect(new URL('/admin/login', request.url));
+        }
+    }
 
+    if (IS_MAINTENANCE) {
         // Allow static files, robots.txt, favicon.ico, root path, and legal routes
         const isLegalRoute = LEGAL_ROUTES.some(route =>
             pathname.toLowerCase() === route.toLowerCase() ||
