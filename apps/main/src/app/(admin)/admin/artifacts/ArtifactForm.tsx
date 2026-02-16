@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createFullArtifact } from '../actions';
 import { useRouter } from 'next/navigation';
+import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 
 type Entity = {
     id: string;
@@ -36,6 +37,9 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
     const [resources, setResources] = useState<Resource[]>([{ type: 'other', platform: 'other', url: '', isPrimary: false }]);
     const [credits, setCredits] = useState<Credit[]>([]);
     const [specs, setSpecs] = useState<Spec[]>([{ key: 'genre', value: '' }]);
+    const [coverUrl, setCoverUrl] = useState('');
+    const [isMajor, setIsMajor] = useState(false);
+    const [allowMirroring, setAllowMirroring] = useState(false);
 
     const addResource = () => setResources([...resources, { type: 'other', platform: 'other', url: '', isPrimary: false }]);
     const removeResource = (idx: number) => setResources(resources.filter((_, i) => i !== idx));
@@ -46,6 +50,15 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
             newResources.forEach(r => r.isPrimary = false);
         }
         newResources[idx] = { ...newResources[idx], [field]: value };
+
+        // AUTO-COVER LOGIC: If user adds a primary resource URL, try to grab thumbnail
+        if (field === 'url' && (!coverUrl || coverUrl.includes('img.youtube.com'))) {
+            const platform = newResources[idx].platform;
+            const id = extractMediaId(value, platform);
+            const thumb = getThumbnailUrl(id, platform);
+            if (thumb) setCoverUrl(thumb);
+        }
+
         setResources(newResources);
     };
 
@@ -80,9 +93,11 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
                 title: formData.get('title') as string,
                 category: formData.get('category') as string,
                 description: formData.get('description') as string,
-                coverImage: formData.get('coverImage') as string,
+                coverImage: coverUrl,
                 status: formData.get('status') as string,
                 score: parseInt(formData.get('score') as string) || 0,
+                isMajor: isMajor,
+                allowMirroring: allowMirroring,
                 resources: cleanResources,
                 credits: cleanCredits,
                 specs: cleanSpecs
@@ -90,8 +105,6 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
 
             // Reset or redirect
             router.refresh();
-            // Optional: reset form types here if needed, but for now we rely on action completing
-
             alert('Artifact Created with Relations!');
         } catch (e) {
             console.error(e);
@@ -109,16 +122,41 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
                     <span className="text-xs font-black uppercase text-rose-500">01 // CORE_DATA</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
-                        <input name="title" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="Artifact Title" />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div className="lg:col-span-8 space-y-6">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
+                            <input name="title" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="Artifact Title" />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
+                            <textarea name="description" rows={4} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors" placeholder="Brief description..." />
+                        </div>
                     </div>
+
+                    <div className="lg:col-span-4 space-y-2">
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Visual_Manifest (Preview)</label>
+                        <div className="aspect-video lg:aspect-square bg-zinc-950 border border-zinc-800 rounded relative overflow-hidden group">
+                            {coverUrl ? (
+                                <img src={coverUrl} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-800">
+                                    <Icon icon="lucide:image" width={32} />
+                                    <span className="text-[8px] uppercase mt-2 font-mono">No_Data</span>
+                                </div>
+                            )}
+                            <div className="absolute inset-0 scanline pointer-events-none opacity-20" />
+                            <div className="absolute inset-0 noise pointer-events-none opacity-10" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1">
                         <label className="text-[10px] font-mono uppercase text-zinc-400">Category</label>
-                        <select name="category" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors">
-                            <option value="anime">ANIME</option>
+                        <select name="category" required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
                             <option value="music">MUSIC</option>
+                            <option value="anime">ANIME</option>
                             <option value="vtuber">VTUBER</option>
                             <option value="asmr">ASMR</option>
                             <option value="zine">ZINE</option>
@@ -126,31 +164,45 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
                             <option value="game">GAME</option>
                         </select>
                     </div>
-                </div>
-
-                <div className="space-y-1">
-                    <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
-                    <textarea name="description" rows={3} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors" placeholder="Brief description..." />
+                    <div className="md:col-span-2 space-y-1">
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Cover_URL (Auto-populated from YouTube)</label>
+                        <div className="flex gap-2">
+                            <input
+                                name="coverImage"
+                                value={coverUrl}
+                                onChange={(e) => setCoverUrl(e.target.value)}
+                                className="flex-1 bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none"
+                                placeholder="https://..."
+                            />
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-[46px] group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                                    <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                                    <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
+                                </div>
+                                <div
+                                    className={`flex items-center gap-3 border px-4 h-[46px] group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
+                                    onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
+                                >
+                                    <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                                    <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Cover URL</label>
-                        <input name="coverImage" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="https://..." />
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Status</label>
+                        <select name="status" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
+                            <option value="back_alley">BACK_ALLEY</option>
+                            <option value="the_pit">THE_PIT</option>
+                            <option value="archived">ARCHIVED</option>
+                        </select>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Status</label>
-                            <select name="status" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
-                                <option value="back_alley">BACK_ALLEY</option>
-                                <option value="the_pit">THE_PIT</option>
-                                <option value="archived">ARCHIVED</option>
-                            </select>
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Score</label>
-                            <input name="score" type="number" defaultValue="0" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none" />
-                        </div>
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Heat_Index (Score)</label>
+                        <input name="score" type="number" defaultValue="0" className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none" />
                     </div>
                 </div>
             </div>
@@ -295,7 +347,7 @@ export default function ArtifactForm({ entities }: { entities: Entity[] }) {
                 </div>
 
                 {credits.map((credit, i) => (
-                    <div key={i} className="flex gap-2 items-center bg-zinc-900/30 p-2 rounded border border-zinc-800/50">
+                    <div key={i} className="flex gap-2 items-center bg-zinc-950/30 p-2 rounded border border-zinc-800/50">
                         <select
                             value={credit.entityId}
                             onChange={(e) => updateCredit(i, 'entityId', e.target.value)}

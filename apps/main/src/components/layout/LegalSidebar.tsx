@@ -10,7 +10,6 @@ const links = [
     { href: '/terms', label: 'Terms of Service' },
     { href: '/community-guidelines', label: 'Guidelines' },
     { href: '/copyright', label: 'Copyright' },
-    { href: '/dmca', label: 'DMCA' },
     { href: '/cookies', label: 'Cookies' },
 ];
 

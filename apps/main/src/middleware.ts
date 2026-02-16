@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 
 export const runtime = 'experimental-edge';
 
-const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/dmca', '/cookies', '/contact'];
+const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/cookies', '/contact'];
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

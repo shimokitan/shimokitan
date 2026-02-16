@@ -62,7 +62,7 @@ export default async function ArtifactPage(props: { params: Promise<{ id: string
                         <BentoCard minimal className="aspect-video bg-black overflow-hidden relative border-violet-500/20">
                             {primaryResource?.platform === 'youtube' ? (
                                 <iframe
-                                    src={`https://www.youtube.com/embed/${primaryResource.url.split('v=')[1] || primaryResource.url.split('/').pop()}`}
+                                    src={`https://www.youtube.com/embed/${primaryResource.externalId || primaryResource.url.split('v=')[1] || primaryResource.url.split('/').pop()}`}
                                     className="absolute inset-0 w-full h-full border-0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen

@@ -5,11 +5,15 @@ import { getDb, schema } from '@shimokitan/db';
 import { sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-import { nanoid } from '@shimokitan/utils';
+import { nanoid, extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 import { uploadImageFromUrl } from '@/lib/r2';
 
-async function processImageField(url: string, id: string, type: 'artifact' | 'zine' | 'profile' | 'collection') {
+async function processImageField(url: string, id: string, type: 'artifact' | 'zine' | 'profile' | 'collection', isMajor: boolean = false, allowMirroring: boolean = false) {
     if (!url || !url.startsWith('http')) return url;
+
+    // Safety check: Never upload if major OR if mirroring permission is denied
+    if (isMajor || !allowMirroring) return url;
+
     // Avoid re-processing R2 URLs
     const r2Domain = process.env.NEXT_PUBLIC_R2_DOMAIN || 'assets.shimokitan.com';
     if (url.includes(r2Domain)) return url;
@@ -124,6 +128,8 @@ export async function createFullArtifact(data: {
     coverImage: string;
     status: string;
     score: number;
+    isMajor: boolean;
+    allowMirroring: boolean;
     resources: any[];
     credits: any[];
     specs: Record<string, string>;
@@ -133,7 +139,19 @@ export async function createFullArtifact(data: {
 
     // 1. Generate ID and Process Image
     const artifactId = nanoid();
-    const processedCover = await processImageField(data.coverImage, artifactId, 'artifact');
+    let coverUrl = data.coverImage;
+
+    // Fallback: If no cover provided, try to get from primary resource
+    if (!coverUrl) {
+        const primaryRes = data.resources.find(r => r.isPrimary) || data.resources[0];
+        if (primaryRes) {
+            const extId = extractMediaId(primaryRes.url, primaryRes.platform);
+            const thumb = getThumbnailUrl(extId, primaryRes.platform);
+            if (thumb) coverUrl = thumb;
+        }
+    }
+
+    const processedCover = await processImageField(coverUrl, artifactId, 'artifact', data.isMajor, data.allowMirroring);
 
     // 2. Create Artifact
     await db.insert(schema.artifacts).values({
@@ -144,18 +162,23 @@ export async function createFullArtifact(data: {
         coverImage: processedCover,
         status: data.status as any,
         score: data.score,
-        specs: data.specs
+        specs: data.specs,
+        isMajor: data.isMajor,
+        allowMirroring: data.allowMirroring
     });
 
     // 3. Add Resources
     if (data.resources.length > 0) {
         for (const res of data.resources) {
+            const externalId = extractMediaId(res.url, res.platform);
+
             await db.insert(schema.artifactResources).values({
                 id: nanoid(),
                 artifactId: artifactId,
                 type: res.type,
                 platform: res.platform,
                 url: res.url,
+                externalId: externalId,
                 isPrimary: res.isPrimary
             });
         }
@@ -182,13 +205,15 @@ export async function createFullEntity(data: {
     type: string;
     bio: string;
     avatarUrl: string;
+    isMajor: boolean;
+    allowMirroring: boolean;
     socialLinks: Record<string, string>;
 }) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
     const entityId = nanoid();
-    const processedAvatar = await processImageField(data.avatarUrl, entityId, 'profile');
+    const processedAvatar = await processImageField(data.avatarUrl, entityId, 'profile', data.isMajor, data.allowMirroring);
 
     await db.insert(schema.entities).values({
         id: entityId,
@@ -196,6 +221,8 @@ export async function createFullEntity(data: {
         type: data.type as any,
         bio: data.bio,
         avatarUrl: processedAvatar,
+        isMajor: data.isMajor,
+        allowMirroring: data.allowMirroring,
         socialLinks: data.socialLinks
     });
 

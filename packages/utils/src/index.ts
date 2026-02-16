@@ -4,3 +4,4 @@ import dayjs from 'dayjs';
 export { dayjs };
 export * from './nanoid';
 export * from './storage';
+export * from './media';
