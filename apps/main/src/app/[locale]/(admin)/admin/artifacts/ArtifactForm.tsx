@@ -49,11 +49,19 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
             ? Object.entries(initialData.specs).map(([key, value]) => ({ key, value: value as string }))
             : [{ key: 'genre', value: '' }]
     );
+    const [tags, setTags] = useState<{ id?: string, name: string }[]>(
+        initialData?.tags
+            ? initialData.tags.map((t: any) => ({
+                id: t.tag.id,
+                name: t.tag.translations?.[0]?.name || 'Unknown'
+            }))
+            : []
+    );
     const [coverUrl, setCoverUrl] = useState(initialData?.coverImage || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
-    const [slug, setSlug] = useState(initialData?.slug || '');
+
 
     const addResource = () => setResources([...resources, { type: 'other', platform: 'other', url: '', isPrimary: false }]);
     const removeResource = (idx: number) => setResources(resources.filter((_, i) => i !== idx));
@@ -90,6 +98,14 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
         setSpecs(newSpecs);
     };
 
+    const addTag = () => setTags([...tags, { name: '' }]);
+    const removeTag = (idx: number) => setTags(tags.filter((_, i) => i !== idx));
+    const updateTag = (idx: number, field: 'name', value: string) => {
+        const newTags = [...tags];
+        newTags[idx] = { ...newTags[idx], [field]: value };
+        setTags(newTags);
+    };
+
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
@@ -99,6 +115,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 if (curr.key.trim()) acc[curr.key] = curr.value;
                 return acc;
             }, {} as Record<string, string>);
+            const cleanTags = tags.filter(t => t.name.trim() !== '');
 
             const payload = {
                 title: formData.get('title') as string,
@@ -112,14 +129,15 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 allowMirroring: allowMirroring,
                 resources: cleanResources,
                 credits: cleanCredits,
-                specs: cleanSpecs
+                specs: cleanSpecs,
+                tags: cleanTags
             };
 
             if (initialData?.id) {
-                await updateFullArtifact(initialData.id, { ...payload, slug });
+                await updateFullArtifact(initialData.id, payload);
                 alert('Artifact Updated!');
             } else {
-                await createFullArtifact({ ...payload, slug });
+                await createFullArtifact(payload);
                 alert('Artifact Created!');
             }
 
@@ -152,31 +170,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                                     required
                                     className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors"
                                     placeholder="Artifact Title"
-                                    onChange={(e) => {
-                                        if (!slug || slug === initialData?.slug) {
-                                            setSlug(_.kebabCase(e.target.value));
-                                        }
-                                    }}
                                 />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-mono uppercase text-zinc-400">Slug (URL_HANDLE)</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        name="slug"
-                                        value={slug}
-                                        onChange={(e) => setSlug(e.target.value)}
-                                        className="flex-1 bg-black border border-zinc-800 p-3 text-[10px] font-mono text-zinc-400 focus:border-rose-600 outline-none"
-                                        placeholder="unique-slug-id"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setSlug(_.kebabCase(slug))}
-                                        className="px-3 bg-zinc-900 border border-zinc-800 text-[10px] hover:bg-zinc-800"
-                                    >
-                                        FIX
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         <div className="space-y-1">
@@ -378,36 +372,65 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 ))}
             </div>
 
-            {/* 3. Specs */}
-            <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-4">
-                    <span className="text-xs font-black uppercase text-amber-500">03 // VIBE_SIGNATURE (Specs)</span>
-                    <button type="button" onClick={addSpec} className="text-[10px] uppercase font-bold text-amber-500 hover:text-white flex items-center gap-1">
-                        <Icon icon="lucide:plus" width={12} /> ADD_TAG
-                    </button>
+            {/* 3. Specs & Tags */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Specs */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-4">
+                        <span className="text-xs font-black uppercase text-amber-500">03A // VIBE_SPECS</span>
+                        <button type="button" onClick={addSpec} className="text-[10px] uppercase font-bold text-amber-500 hover:text-white flex items-center gap-1">
+                            <Icon icon="lucide:plus" width={12} /> ADD_SPEC
+                        </button>
+                    </div>
+
+                    <div className="space-y-2">
+                        {specs.map((spec, i) => (
+                            <div key={i} className="flex gap-2 items-center">
+                                <input
+                                    value={spec.key}
+                                    onChange={(e) => updateSpec(i, 'key', e.target.value)}
+                                    placeholder="Key"
+                                    className="bg-black border border-zinc-800 p-2 text-xs text-white w-24 text-right font-mono text-[10px] uppercase text-zinc-500"
+                                />
+                                <div className="text-zinc-700">:</div>
+                                <input
+                                    value={spec.value}
+                                    onChange={(e) => updateSpec(i, 'value', e.target.value)}
+                                    placeholder="Value..."
+                                    className="bg-black border border-zinc-800 p-2 text-xs text-white flex-1"
+                                />
+                                <button type="button" onClick={() => removeSpec(i)} className="text-rose-500 hover:text-rose-400">
+                                    <Icon icon="lucide:x" width={10} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                    {specs.map((spec, i) => (
-                        <div key={i} className="flex gap-2 items-center">
-                            <input
-                                value={spec.key}
-                                onChange={(e) => updateSpec(i, 'key', e.target.value)}
-                                placeholder="Key (e.g. genre)"
-                                className="bg-black border border-zinc-800 p-2 text-xs text-white w-24 text-right font-mono text-[10px] uppercase text-zinc-500"
-                            />
-                            <div className="text-zinc-700">:</div>
-                            <input
-                                value={spec.value}
-                                onChange={(e) => updateSpec(i, 'value', e.target.value)}
-                                placeholder="Value..."
-                                className="bg-black border border-zinc-800 p-2 text-xs text-white flex-1"
-                            />
-                            <button type="button" onClick={() => removeSpec(i)} className="text-rose-500 hover:text-rose-400">
-                                <Icon icon="lucide:x" width={10} />
-                            </button>
-                        </div>
-                    ))}
+                {/* Tags */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-4">
+                        <span className="text-xs font-black uppercase text-pink-500">03B // TAGS (Genres/Identity)</span>
+                        <button type="button" onClick={addTag} className="text-[10px] uppercase font-bold text-pink-500 hover:text-white flex items-center gap-1">
+                            <Icon icon="lucide:plus" width={12} /> ADD_TAG
+                        </button>
+                    </div>
+
+                    <div className="space-y-2">
+                        {tags.map((tag, i) => (
+                            <div key={i} className="flex gap-2 items-center">
+                                <input
+                                    value={tag.name}
+                                    onChange={(e) => updateTag(i, 'name', e.target.value)}
+                                    placeholder="Tag Name (e.g. Future Funk)"
+                                    className="bg-black border border-zinc-800 p-2 text-xs text-white flex-1"
+                                />
+                                <button type="button" onClick={() => removeTag(i)} className="text-rose-500 hover:text-rose-400">
+                                    <Icon icon="lucide:x" width={10} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 

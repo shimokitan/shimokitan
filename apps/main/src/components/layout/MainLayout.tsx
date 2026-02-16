@@ -39,6 +39,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                         <div className="bg-zinc-950/40 border border-zinc-800/80 p-2.5 rounded-3xl backdrop-blur-2xl flex flex-col items-center gap-3.5 shadow-2xl relative w-16">
                             <NavigationLink icon="lucide:radio" label="The District" href="/" active={isHomeActive} />
                             <NavigationLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={isArtifactsActive} />
+                            <NavigationLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
                             <NavigationLink icon="lucide:layers" label="Pedalboard" href="/pedalboard" active={isPedalboardActive} />
                             <NavigationLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={isZinesActive} />
 

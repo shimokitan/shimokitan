@@ -96,7 +96,7 @@ export default function HomeClient({
                                 }}
                             >
                                 <div className="bg-white p-2 rounded-lg shadow-2xl border-2 border-zinc-800 w-36 md:w-44 text-black">
-                                    <img src={item.coverImage || ''} alt={item.title} className="w-full h-28 md:h-36 object-cover rounded" />
+                                    <img src={item.coverImage || undefined} alt={item.title} className="w-full h-28 md:h-36 object-cover rounded" />
                                     <div className="mt-2 text-[10px] font-bold truncate">{item.title}</div>
                                     <Badge variant="distortion" className="text-[8px] mt-1">{item.category}</Badge>
                                 </div>
@@ -168,7 +168,7 @@ export default function HomeClient({
                 <div className="grid grid-cols-2 gap-1.5 h-full">
                     {recentZines.map((zine) => (
                         <Link key={zine.id} href={`/artifacts/${zine.artifact_id}`} className="relative group rounded-lg overflow-hidden border border-zinc-800">
-                            <img src={zine.artifact.coverImage || ''} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                            <img src={zine.artifact.coverImage || undefined} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span className="text-[8px] font-black text-white uppercase tracking-tighter">{dict.home.view_shard}</span>
                             </div>
@@ -183,7 +183,7 @@ export default function HomeClient({
                     <BentoCard className="h-full" title={dict.home.in_the_pit} icon="lucide:flame">
                         <div className="flex flex-col h-full">
                             <div className="relative flex-1 rounded-lg overflow-hidden mb-2">
-                                <img src={featuredArtifact.coverImage || ''} className="object-cover w-full h-full" />
+                                <img src={featuredArtifact.coverImage || undefined} className="object-cover w-full h-full" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                             </div>
                             <h3 className="text-xs font-bold uppercase truncate">{featuredArtifact.title}</h3>
@@ -199,7 +199,7 @@ export default function HomeClient({
                     <div className="flex flex-col items-center h-full justify-center gap-3">
                         <div className="relative aspect-square w-24 rounded-lg overflow-hidden border border-zinc-800/50 group-hover:border-violet-500/50 transition-all shadow-lg shrink-0">
                             <img
-                                src={spotlightArtifacts[1]?.coverImage || heroArtifact?.coverImage || ''}
+                                src={spotlightArtifacts[1]?.coverImage || heroArtifact?.coverImage || undefined}
                                 alt="Album Cover"
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
@@ -228,20 +228,6 @@ export default function HomeClient({
                 </BentoCard>
             </Link>
 
-            {/* 7. Recent Echoes Grid */}
-            <BentoCard className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4" title={dict.home.recent_echoes} icon="lucide:ghost">
-                <div className="grid grid-cols-2 gap-1.5 h-full">
-                    {recentZines.map((zine) => (
-                        <Link key={zine.id} href={`/artifacts/${zine.artifact_id}`} className="relative group rounded-lg overflow-hidden border border-zinc-800">
-                            <img src={zine.artifact.coverImage || ''} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span className="text-[8px] font-black text-white uppercase tracking-tighter">{dict.home.view_shard}</span>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </BentoCard>
-
             {/* 8. Video Integration */}
             <BentoCard className="col-span-2 md:col-span-2 md:row-span-4 md:col-start-4 md:row-start-4 overflow-hidden p-0 bg-black" minimal>
                 <iframe
@@ -255,7 +241,7 @@ export default function HomeClient({
             <BentoCard className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0" minimal>
                 <div className="flex h-full w-full">
                     <div className="w-1/2 relative hidden md:block">
-                        <img src={heroArtifact?.coverImage || ''} className="absolute inset-0 w-full h-full object-cover" />
+                        <img src={heroArtifact?.coverImage || undefined} className="absolute inset-0 w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-zinc-950" />
                     </div>
                     <div className="flex-1 p-6 flex flex-col justify-center bg-zinc-950/50 backdrop-blur-sm">
@@ -267,7 +253,6 @@ export default function HomeClient({
                     </div>
                 </div>
             </BentoCard>
-
         </div>
     );
 }

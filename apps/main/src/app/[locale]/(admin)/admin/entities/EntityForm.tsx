@@ -18,16 +18,17 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
-    const [slug, setSlug] = useState(initialData?.slug || '');
 
     // Dynamic List
     const [socials, setSocials] = useState<SocialLink[]>(
         initialData?.socialLinks
-            ? Object.entries(initialData.socialLinks).map(([platform, url]) => ({ platform, url: url as string }))
+            ? (Array.isArray(initialData.socialLinks)
+                ? initialData.socialLinks
+                : Object.entries(initialData.socialLinks).map(([platform, url]) => ({ platform, url: url as string })))
             : [{ platform: 'twitter', url: '' }]
     );
 
-    const addSocial = () => setSocials([...socials, { platform: '', url: '' }]);
+    const addSocial = () => setSocials([...socials, { platform: 'twitter', url: '' }]);
     const removeSocial = (idx: number) => setSocials(socials.filter((_, i) => i !== idx));
     const updateSocial = (idx: number, field: keyof SocialLink, value: string) => {
         const newSocials = [...socials];
@@ -39,12 +40,7 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
         setIsSubmitting(true);
         try {
             // Convert dynamic list to JSON object
-            const cleanSocials = socials.reduce((acc, curr) => {
-                if (curr.platform.trim() && curr.url.trim()) {
-                    acc[curr.platform] = curr.url;
-                }
-                return acc;
-            }, {} as Record<string, string>);
+            const cleanSocials = socials.filter(s => s.platform.trim() && s.url.trim());
 
             const payload = {
                 name: formData.get('name') as string,
@@ -54,8 +50,7 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                 isMajor: isMajor,
                 isVerified: isVerified,
                 allowMirroring: allowMirroring,
-                socialLinks: cleanSocials,
-                slug: slug
+                socialLinks: cleanSocials
             };
 
             if (initialData?.id) {
@@ -116,11 +111,6 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                                 required
                                 className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
                                 placeholder="Entity Name"
-                                onChange={(e) => {
-                                    if (!slug || slug === initialData?.slug) {
-                                        setSlug(_.kebabCase(e.target.value));
-                                    }
-                                }}
                             />
                         </div>
                         <div className="col-span-12 md:col-span-4 space-y-1">
@@ -147,16 +137,14 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Slug (URL_HANDLE)</label>
-                            <div className="flex gap-2">
-                                <input
-                                    name="slug"
-                                    value={slug}
-                                    onChange={(e) => setSlug(e.target.value)}
-                                    className="flex-1 bg-black border border-zinc-800 p-3 text-[10px] font-mono text-zinc-400 focus:border-violet-600 outline-none"
-                                    placeholder="unique-slug-id"
-                                />
-                            </div>
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Bio</label>
+                            <textarea
+                                name="bio"
+                                defaultValue={initialData?.translations?.[0]?.bio || initialData?.bio}
+                                rows={2}
+                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
+                                placeholder="About this entity..."
+                            />
                         </div>
                     </div>
                 </div>

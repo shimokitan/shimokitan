@@ -5,7 +5,7 @@ import { locales, defaultLocale } from '@shimokitan/utils';
 
 export const runtime = 'experimental-edge';
 
-const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/cookies', '/contact'];
+const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/cookies', '/contact', '/about', '/about/vision'];
 
 function getLocale(request: NextRequest): string {
     // Check cookie first

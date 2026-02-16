@@ -17,10 +17,9 @@ export const residents = pgTable("residents", {
 // ------------------------------------------------------------------
 export const entities = pgTable("entities", {
     id: text("id").primaryKey(),
-    slug: text("slug").unique().notNull(),
     type: text("type", { enum: ['individual', 'organization', 'agency', 'circle', 'staff'] }).notNull(),
     avatarUrl: text("avatar_url"),
-    socialLinks: jsonb("social_links").default({}),
+    socialLinks: jsonb("social_links").default([]),
     isMajor: boolean("is_major").default(false),
     isVerified: boolean("is_verified").default(false), // Public verification badge
     allowMirroring: boolean("allow_mirroring").default(false),
@@ -44,7 +43,6 @@ export const entitiesI18n = pgTable("entities_i18n", {
 // ------------------------------------------------------------------
 export const artifacts = pgTable("artifacts", {
     id: text("id").primaryKey(),
-    slug: text("slug").unique().notNull(),
     category: text("category", { enum: ['anime', 'music', 'vtuber', 'asmr', 'zine', 'art', 'game'] }).notNull(),
     coverImage: text("cover_image"),
     status: text("status", { enum: ['the_pit', 'back_alley', 'archived'] }).default('back_alley'),
@@ -76,7 +74,6 @@ export const artifactsI18n = pgTable("artifacts_i18n", {
 // ------------------------------------------------------------------
 export const collections = pgTable("collections", {
     id: text("id").primaryKey(),
-    slug: text("slug").unique().notNull(),
     coverImage: text("cover_image"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
@@ -112,14 +109,12 @@ export const artifactCredits = pgTable("artifact_credits", {
 }, (table) => ({
     pk: primaryKey({ columns: [table.artifactId, table.entityId, table.role] }),
 }));
-
 export const artifactResources = pgTable("artifact_resources", {
     id: text("id").primaryKey(),
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }),
     type: text("type").notNull(),
     platform: text("platform").notNull(),
-    externalId: text("external_id"),
-    url: text("url").notNull(),
+    value: text("value").notNull(), // formerly 'url' & 'external_id' hybrid
     embedData: jsonb("embed_data").default({}),
     isPrimary: boolean("is_primary").default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -191,6 +186,7 @@ export const artifactsRelations = relations(artifacts, ({ many }) => ({
     verifications: many(verificationRegistry, {
         relationName: "artifact_verifications"
     }),
+    tags: many(artifactTags),
 }));
 
 export const artifactsI18nRelations = relations(artifactsI18n, ({ one }) => ({
@@ -285,4 +281,30 @@ export const verificationRegistryRelations = relations(verificationRegistry, ({ 
         fields: [verificationRegistry.targetId],
         references: [entities.id],
     }),
+}));
+
+// ------------------------------------------------------------------
+// 8. Tags (Genres, Moods, etc)
+// ------------------------------------------------------------------
+export const tags = pgTable("tags", {
+    id: text("id").primaryKey(),
+    category: text("category", { enum: ['genre', 'mood', 'style', 'theme', 'other'] }).default('genre'),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const tagsI18n = pgTable("tags_i18n", {
+    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    name: text("name").notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.tagId, table.locale] }),
+    nameIdx: index("idx_tags_i18n_name").on(table.name),
+}));
+
+export const artifactTags = pgTable("artifact_tags", {
+    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
+    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.artifactId, table.tagId] }),
 }));

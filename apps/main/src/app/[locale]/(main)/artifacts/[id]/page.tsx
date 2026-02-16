@@ -100,8 +100,8 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                 {artifact.credits?.map((credit: any, i: number) => (
                                     <div key={i} className="flex justify-between items-end border-b border-zinc-800/50 pb-2">
                                         <span className="text-[10px] text-zinc-500 uppercase">{credit.role}</span>
-                                        <Link href={`/entity/${credit.entityId}`} className="text-xs font-bold text-white hover:text-violet-400 transition-colors">
-                                            {credit.entity.name}
+                                        <Link href={`/artists/${credit.entityId}`} className="text-xs font-bold text-white hover:text-violet-400 transition-colors">
+                                            {credit.entity.translations?.find((t: any) => t.locale === locale)?.name || credit.entity.translations?.[0]?.name || "Anonymous Resident"}
                                         </Link>
                                     </div>
                                 ))}

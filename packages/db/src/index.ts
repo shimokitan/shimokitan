@@ -44,7 +44,11 @@ export async function getArtifactById(id: string) {
     with: {
       credits: {
         with: {
-          entity: true
+          entity: {
+            with: {
+              translations: true
+            }
+          }
         }
       },
       translations: true,
@@ -64,6 +68,47 @@ export async function getZinesByArtifact(artifactId: string) {
   return await db.query.zines.findMany({
     where: eq(schema.zines.artifactId, artifactId),
     orderBy: [desc(schema.zines.resonance)],
+  });
+}
+
+export async function getAllEntities() {
+  const db = getDb();
+  if (!db) return [];
+  return await db.query.entities.findMany({
+    with: {
+      translations: true,
+      credits: {
+        with: {
+          artifact: {
+            with: {
+              translations: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+export async function getEntityById(id: string) {
+  const db = getDb();
+  if (!db) return null;
+
+  return await db.query.entities.findFirst({
+    where: eq(schema.entities.id, id),
+    with: {
+      translations: true,
+      credits: {
+        with: {
+          artifact: {
+            with: {
+              translations: true,
+              resources: true
+            }
+          }
+        }
+      }
+    }
   });
 }
 

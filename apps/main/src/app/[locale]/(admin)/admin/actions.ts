@@ -26,9 +26,7 @@ async function processImageField(url: string, id: string, type: 'artifact' | 'zi
     }
 }
 
-function generateSlug(text: string, id: string) {
-    return `${_.kebabCase(text)}-${id.slice(0, 4)}`;
-}
+
 
 export async function seedArtifact(formData: FormData) {
     const db = getDb();
@@ -41,13 +39,10 @@ export async function seedArtifact(formData: FormData) {
     let coverImage = formData.get('coverImage') as string;
     const status = formData.get('status') as any;
     const score = parseInt(formData.get('score') as string || '0');
-    const slug = generateSlug(title, id);
-
     coverImage = await processImageField(coverImage, id, 'artifact');
 
     await db.insert(schema.artifacts).values({
         id,
-        slug,
         category,
         coverImage,
         status,
@@ -74,13 +69,10 @@ export async function seedEntity(formData: FormData) {
     const type = formData.get('type') as any;
     const bio = formData.get('bio') as string;
     let avatarUrl = formData.get('avatarUrl') as string;
-    const slug = generateSlug(name, id);
-
     avatarUrl = await processImageField(avatarUrl, id, 'profile');
 
     await db.insert(schema.entities).values({
         id,
-        slug,
         type,
         avatarUrl,
     });
@@ -103,13 +95,10 @@ export async function seedCollection(formData: FormData) {
     const title = formData.get('title') as string;
     const thesis = formData.get('thesis') as string;
     let coverImage = formData.get('coverImage') as string;
-    const slug = generateSlug(title, id);
-
     coverImage = await processImageField(coverImage, id, 'collection');
 
     await db.insert(schema.collections).values({
         id,
-        slug,
         coverImage,
     });
 
@@ -149,10 +138,32 @@ export async function seedZine(formData: FormData) {
     revalidatePath('/admin');
 }
 
+async function syncTags(db: any, artifactId: string, tags: { name: string }[], locale: string) {
+    if (!tags || tags.length === 0) return;
+
+    for (const tag of tags) {
+        let tagId: string;
+        // Try to find a tag by name in the current locale
+        const existingTagI18n = await db.query.tagsI18n.findFirst({
+            where: and(eq(schema.tagsI18n.locale, locale as any), eq(schema.tagsI18n.name, tag.name))
+        });
+
+        if (existingTagI18n) {
+            tagId = existingTagI18n.tagId;
+        } else {
+            tagId = nanoid();
+            await db.insert(schema.tags).values({ id: tagId });
+            await db.insert(schema.tagsI18n).values({ tagId, locale, name: tag.name });
+        }
+
+        await db.insert(schema.artifactTags).values({ artifactId, tagId }).onConflictDoNothing();
+    }
+}
+
 // Complex Actions
 export async function createFullArtifact(data: {
     title: string;
-    slug?: string;
+
     category: string;
     description: string;
     coverImage: string;
@@ -164,6 +175,7 @@ export async function createFullArtifact(data: {
     resources: any[];
     credits: any[];
     specs: Record<string, string>;
+    tags: { name: string }[];
     locale?: string;
 }) {
     const db = getDb();
@@ -171,7 +183,6 @@ export async function createFullArtifact(data: {
 
     const artifactId = nanoid();
     const locale = (data.locale as any) || 'en';
-    const slug = data.slug || generateSlug(data.title, artifactId);
     let coverUrl = data.coverImage;
 
     if (!coverUrl) {
@@ -187,7 +198,6 @@ export async function createFullArtifact(data: {
 
     await db.insert(schema.artifacts).values({
         id: artifactId,
-        slug,
         category: data.category as any,
         coverImage: processedCover,
         status: data.status as any,
@@ -205,6 +215,8 @@ export async function createFullArtifact(data: {
         description: data.description,
     });
 
+    await syncTags(db, artifactId, data.tags, locale);
+
     if (data.resources.length > 0) {
         for (const res of data.resources) {
             const externalId = extractMediaId(res.url, res.platform);
@@ -213,8 +225,7 @@ export async function createFullArtifact(data: {
                 artifactId: artifactId,
                 type: res.type,
                 platform: res.platform,
-                url: res.url,
-                externalId: externalId,
+                value: res.url,
                 isPrimary: res.isPrimary
             });
         }
@@ -237,7 +248,6 @@ export async function createFullArtifact(data: {
 
 export async function updateFullArtifact(id: string, data: {
     title: string;
-    slug: string;
     category: string;
     description: string;
     coverImage: string;
@@ -249,6 +259,7 @@ export async function updateFullArtifact(id: string, data: {
     resources: any[];
     credits: any[];
     specs: Record<string, string>;
+    tags: { name: string }[];
     locale?: string;
 }) {
     const db = getDb();
@@ -259,7 +270,6 @@ export async function updateFullArtifact(id: string, data: {
 
     await db.update(schema.artifacts)
         .set({
-            slug: data.slug,
             category: data.category as any,
             coverImage: processedCover,
             status: data.status as any,
@@ -287,6 +297,9 @@ export async function updateFullArtifact(id: string, data: {
             }
         });
 
+    await db.delete(schema.artifactTags).where(eq(schema.artifactTags.artifactId, id));
+    await syncTags(db, id, data.tags, locale);
+
     await db.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
     if (data.resources.length > 0) {
         for (const res of data.resources) {
@@ -296,8 +309,7 @@ export async function updateFullArtifact(id: string, data: {
                 artifactId: id,
                 type: res.type,
                 platform: res.platform,
-                url: res.url,
-                externalId: externalId,
+                value: res.url,
                 isPrimary: res.isPrimary
             });
         }
@@ -322,14 +334,13 @@ export async function updateFullArtifact(id: string, data: {
 
 export async function updateFullEntity(id: string, data: {
     name: string;
-    slug: string;
     type: string;
     bio: string;
     avatarUrl: string;
     isMajor: boolean;
     isVerified: boolean;
     allowMirroring: boolean;
-    socialLinks: Record<string, string>;
+    socialLinks: any[];
     locale?: string;
 }) {
     const db = getDb();
@@ -340,7 +351,6 @@ export async function updateFullEntity(id: string, data: {
 
     await db.update(schema.entities)
         .set({
-            slug: data.slug,
             type: data.type as any,
             avatarUrl: processedAvatar,
             isMajor: data.isMajor,
@@ -374,14 +384,13 @@ export async function updateFullEntity(id: string, data: {
 
 export async function createFullEntity(data: {
     name: string;
-    slug?: string;
     type: string;
     bio: string;
     avatarUrl: string;
     isMajor: boolean;
     isVerified: boolean;
     allowMirroring: boolean;
-    socialLinks: Record<string, string>;
+    socialLinks: any[];
     locale?: string;
 }) {
     const db = getDb();
@@ -389,12 +398,10 @@ export async function createFullEntity(data: {
 
     const entityId = nanoid();
     const locale = (data.locale as any) || 'en';
-    const slug = data.slug || generateSlug(data.name, entityId);
     const processedAvatar = await processImageField(data.avatarUrl, entityId, 'profile', data.isMajor, data.allowMirroring);
 
     await db.insert(schema.entities).values({
         id: entityId,
-        slug,
         type: data.type as any,
         avatarUrl: processedAvatar,
         isMajor: data.isMajor,
@@ -417,7 +424,6 @@ export async function createFullEntity(data: {
 
 export async function createFullCollection(data: {
     title: string;
-    slug?: string;
     thesis: string;
     coverImage: string;
     locale?: string;
@@ -427,12 +433,10 @@ export async function createFullCollection(data: {
 
     const collectionId = nanoid();
     const locale = (data.locale as any) || 'en';
-    const slug = data.slug || generateSlug(data.title, collectionId);
     const processedCover = await processImageField(data.coverImage, collectionId, 'collection');
 
     await db.insert(schema.collections).values({
         id: collectionId,
-        slug,
         coverImage: processedCover,
     });
 
@@ -450,7 +454,6 @@ export async function createFullCollection(data: {
 
 export async function updateFullCollection(id: string, data: {
     title: string;
-    slug: string;
     thesis: string;
     coverImage: string;
     locale?: string;
@@ -463,7 +466,6 @@ export async function updateFullCollection(id: string, data: {
 
     await db.update(schema.collections)
         .set({
-            slug: data.slug,
             coverImage: processedCover,
             updatedAt: new Date()
         })
@@ -496,7 +498,6 @@ export async function updateCollection(id: string, formData: FormData) {
 
     const locale = (formData.get('locale') as any) || 'en';
     const title = formData.get('title') as string;
-    const slug = formData.get('slug') as string || generateSlug(title, id);
     const thesis = formData.get('thesis') as string;
     let coverImage = formData.get('coverImage') as string;
 
@@ -504,7 +505,6 @@ export async function updateCollection(id: string, formData: FormData) {
 
     await db.update(schema.collections)
         .set({
-            slug,
             coverImage,
             updatedAt: new Date()
         })
