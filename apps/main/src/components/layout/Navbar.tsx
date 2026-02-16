@@ -4,7 +4,10 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import { useTime } from '../../hooks/use-time';
 
-import Link from 'next/link';
+import Link from '../Link';
+import { locales, Locale, getLocalePath, getDictionary } from '@shimokitan/utils';
+import { useLocale } from '../../hooks/use-i18n';
+import { usePathname } from 'next/navigation';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,10 +15,22 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    cn
 } from '@shimokitan/ui';
 
 export function Navbar() {
     const time = useTime();
+    const currentLocale = useLocale() as Locale;
+    const pathname = usePathname();
+    const dict = getDictionary(currentLocale).navbar;
+
+    const redirectedPathname = (locale: string) => {
+        if (!pathname) return "/";
+        const segments = pathname.split("/");
+        if (segments.length <= 1) return `/${locale}`;
+        segments[1] = locale;
+        return segments.join("/");
+    };
 
     return (
         <header className="h-14 border-b border-zinc-800/80 flex items-center justify-between px-4 bg-zinc-950/40 backdrop-blur-2xl z-40 shrink-0 relative overflow-hidden">
@@ -35,24 +50,42 @@ export function Navbar() {
 
                 <div className="hidden lg:flex gap-4 items-center h-8 border-l border-zinc-800/80 pl-6">
                     <div className="flex flex-col">
-                        <span className="text-zinc-400 text-[9px] font-mono uppercase">System Status</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">{dict.system_status}</span>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-                            <span className="text-emerald-500/80 text-[10px] font-mono font-bold tracking-tight uppercase">Operational</span>
+                            <span className="text-emerald-500/80 text-[10px] font-mono font-bold tracking-tight uppercase">{dict.operational}</span>
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-zinc-400 text-[9px] font-mono uppercase">Location</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">{dict.location}</span>
                         <span className="text-zinc-300 text-[10px] font-mono font-bold tracking-tight uppercase">TyO-Dist_012</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-zinc-400 text-[9px] font-mono uppercase">Time</span>
+                        <span className="text-zinc-400 text-[9px] font-mono uppercase">{dict.time}</span>
                         <span className="text-zinc-100 text-[10px] font-mono font-bold tracking-tight uppercase">{time} JST</span>
                     </div>
                 </div>
             </div>
 
             <div className="flex items-center gap-4">
+                {/* Language Switcher */}
+                <div className="flex gap-2 mr-2 border-r border-zinc-800 pr-4 h-6 items-center">
+                    {locales.map((l) => (
+                        <a
+                            key={l}
+                            href={redirectedPathname(l)}
+                            className={cn(
+                                "text-[10px] font-black tracking-widest transition-colors px-1.5 py-0.5 rounded-sm uppercase",
+                                currentLocale === l
+                                    ? "bg-violet-600/20 text-violet-400 border border-violet-500/30"
+                                    : "text-zinc-600 hover:text-zinc-300"
+                            )}
+                        >
+                            {l}
+                        </a>
+                    ))}
+                </div>
+
                 <Link href="/about" className="text-zinc-500 hover:text-white transition-colors">
                     <Icon icon="lucide:info" width={18} height={18} />
                 </Link>
@@ -61,7 +94,7 @@ export function Navbar() {
                     <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500 group-focus-within:text-violet-400" />
                     <input
                         type="text"
-                        placeholder="Query database..."
+                        placeholder={dict.search_placeholder}
                         className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
                     />
                 </div>
@@ -74,23 +107,23 @@ export function Navbar() {
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 bg-zinc-950/95 border-zinc-800 backdrop-blur-xl text-zinc-100 font-mono">
-                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-zinc-500">Identity // Panel</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-zinc-500">{dict.identity_panel}</DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-zinc-800" />
                         <Link href="/auth/signin">
                             <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
                                 <Icon icon="lucide:log-in" width={14} height={14} className="mr-2" />
-                                Initialize Session
+                                {dict.initialize_session}
                             </DropdownMenuItem>
                         </Link>
                         <Link href="/auth/signup">
                             <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
                                 <Icon icon="lucide:user-plus" width={14} height={14} className="mr-2" />
-                                Register Resident
+                                {dict.register_resident}
                             </DropdownMenuItem>
                         </Link>
                         <DropdownMenuSeparator className="bg-zinc-800" />
                         <DropdownMenuItem className="text-[10px] uppercase text-zinc-600 opacity-50 cursor-default">
-                            Guest_Protocol_Active
+                            {dict.guest_protocol}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

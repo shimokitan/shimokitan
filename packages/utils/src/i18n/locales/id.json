@@ -1,0 +1,450 @@
+{
+    "common": {
+        "coming_soon": "SEGERA HADIR",
+        "back_to_home": "KEMBALI KE BERANDA",
+        "submit": "KIRIM",
+        "loading": "MEMUAT...",
+        "error": "GALAT",
+        "maintenance_mode": "MODE PEMELIHARAAN",
+        "privacy": "PRIVASI",
+        "terms": "KETENTUAN",
+        "cookies": "COOKIE",
+        "access_restricted": "AKSES DIBATASI",
+        "stay_connected": "TETAP TERHUBUNG",
+        "follow_us": "Ikuti media sosial kami untuk pembaruan saat gerbang Distrik mulai dibuka."
+    },
+    "home": {
+        "title": "SHIMOKITAN // SEGERA HADIR",
+        "description": "SHIMOKITAN adalah sebuah distrik bagi para peminat budaya Jepang yang mendokumentasikan anime, gim, dan musik mereka sebagai pengalaman nyata — bukan sekadar data. Terinspirasi dari gang-gang sempit di Shimokitazawa, di sinilah selera Anda menjadi arsip pengalaman yang terkurasi.",
+        "initialize": "INISIALISASI",
+        "recent_shards": "Shard Terbaru",
+        "district": "Distrik",
+        "signal_stable": "SINYAL_STABIL",
+        "scanning_freq": "PEMINDAIAN_FREK...",
+        "active": "AKTIF",
+        "data_resonance": "RESONANSI_DATA",
+        "recent_echoes": "Gema Terbaru",
+        "in_the_pit": "In The Pit",
+        "playlist": "Daftar Putar",
+        "view_shard": "LIHAT_SHARD",
+        "editorial_sigil": "SIGIL_EDITORIAL",
+        "featured_title": "Runtuhnya Narasi.",
+        "featured_description": "Distrik ini bukanlah sebuah lokasi; melainkan sebuah frekuensi. Saat sinyal-sinyal tumpang tindih, arsitektur realitas mulai melebur menjadi resonansi data murni."
+    },
+    "contact": {
+        "title": "BANGUN KONEKSI",
+        "description": "Memiliki pertanyaan, masukan, atau sekadar ingin menyapa? Buka kanal transmisi dan hubungi tim Shimokitan.",
+        "transmission_sent": "Transmisi Terkirim",
+        "transmission_sent_description": "Pesan Anda telah berhasil dienkripsi dan dikirim ke server aman kami.",
+        "send_another": "Kirim pesan lain",
+        "identity": "Identitas",
+        "identity_placeholder": "Nama Anda",
+        "comms_channel": "Kanal Komunikasi",
+        "comms_channel_placeholder": "email@contoh.com",
+        "encryption_subject": "Subjek Enkripsi",
+        "select_topic": "Pilih Topik",
+        "topics": {
+            "general": "Pertanyaan Umum",
+            "support": "Permintaan Bantuan",
+            "partnership": "Kemitraan",
+            "bug": "Laporan Bug"
+        },
+        "transmission": "Transmisi",
+        "transmission_placeholder": "Ketik pesan Anda...",
+        "send_transmission": "Kirim Transmisi",
+        "transmitting": "Mengirim...",
+        "success_toast": "Pesan berhasil terkirim!",
+        "error_toast": "Gagal mengirim transmisi. Silakan coba lagi."
+    },
+    "about": {
+        "title": "Tentang Shimokitan",
+        "sidebar_links": {
+            "about": "Tentang Shimokitan",
+            "vision": "Visi dan Rencana",
+            "changelog": "Catatan Perubahan"
+        },
+        "q1": "Tempat Apa Ini?",
+        "a1_1": "Shimokitan adalah arsip terkurasi untuk budaya kreatif Jepang. Kami mengindeks, menyusun, dan merayakan anime, musik, gim, beserta para kreator di baliknya — bukan sebagai poin data atau peringkat, melainkan sebagai pengalaman hidup yang layak diingat.",
+        "a1_2": "Bayangkan ini sebagai koleksi piringan hitam pribadi untuk segala hal yang Anda cintai dalam media Jepang. Setiap entri adalah sebuah artefak — potongan budaya yang didokumentasikan dengan penuh perhatian.",
+        "q2": "Mengapa Shimokitan Ada",
+        "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja — skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
+        "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda — ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
+        "q3": "Cara Kerja",
+        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi yang tersedia secara publik — kami tidak mengakses atau memproses data dari sumber privat atau berbayar. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang ketentuan layanannya mengizinkan penyematan eksternal, seperti YouTube. Setiap artefak di sistem kami tertaut kembali ke kreator asli dan saluran distribusi resmi mereka.",
+        "a3_2": "Halaman artefak yang menampilkan indikator verifikasi telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan sematan resmi.",
+        "artifacts_label": "Artefak",
+        "artifacts_desc": "Entri utama. Seri anime, album, film, gim, novel visual. Masing-masing memiliki metadata, sampul, media sematan, dan konteks editorial.",
+        "entities_label": "Entitas",
+        "entities_desc": "Orang-orang dan studio di balik karya tersebut. Sutradara, komposer, animator, label, dan tim pengembang.",
+        "collections_label": "Koleksi",
+        "collections_desc": "Pengelompokan terkurasi yang disusun berdasarkan tema, momen, atau suasana hati.",
+        "zines_label": "Zine",
+        "zines_desc": "Refleksi tertulis yang melekat pada artefak. Bukan ulasan, melainkan respons personal terhadap sebuah karya.",
+        "q4": "Siapa yang Menjalankan Ini",
+        "a4_1": "Shimokitan dioperasikan secara independen dari Indonesia. Tidak ada perusahaan, investor, atau dewan direksi. Situs ini ada karena orang-orang yang membangunnya benar-benar mencintai budaya ini dan menginginkan 'rumah' yang lebih baik di dunia maya.",
+        "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa — sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, bukan melalui algoritma.",
+        "q5": "Terbuka untuk Dunia",
+        "a5_1": "Shimokitan dibangun untuk siapa saja yang memiliki apresiasi mendalam terhadap karya kreatif Jepang, di mana pun mereka berada. Platform ini bebas untuk dijelajahi dan dibaca.",
+        "a5_2": "Semua yang Anda lihat di platform ini dikurasi secara manual. Tidak ada umpan (feed) algoritma, halaman yang dibuat otomatis, atau konten kiriman pengguna untuk saat ini.",
+        "q6": "Hubungi Kami",
+        "a6_1": "Jika Anda memiliki pertanyaan, saran, atau sekadar ingin menyapa, silakan hubungi kami melalui halaman kontak. Anda juga bisa menemukan kami di X dan Instagram.",
+        "legal_notice_title": "Pemberitahuan Hukum",
+        "legal_notice_content_1": "Semua judul anime, gim, musik, karya seni, dan merek dagang terkait adalah milik dari pemiliknya masing-masing. Shimokitan tidak mengklaim kepemilikan atas konten yang diindeks. Untuk rincian mengenai kekayaan intelektual, penggunaan konten, dan praktik afiliasi, lihat Dokumen Hukum kami.",
+        "legal_notice_content_2": "Meskipun kami berupaya memberikan akurasi, kami tidak menjamin kelengkapan atau kebenaran semua metadata. Informasi di platform ini disediakan hanya untuk tujuan referensi dan pengarsipan.",
+        "vision_disclaimer": "Rencana ini mewakili visi kami saat ini dan dapat berubah sewaktu-waktu tanpa pemberitahuan. Tidak ada poin di sini yang merupakan komitmen atau jaminan fitur di masa mendatang.",
+        "vision": {
+            "title": "Visi dan Rencana",
+            "section1": {
+                "title": "Ke Mana Kami Melangkah",
+                "content": "Shimokitan dimulai sebagai arsip pribadi — tempat untuk mengatalogkan anime, musik, dan gim yang berkesan. Visi jangka panjang kami adalah mengembangkannya menjadi indeks budaya hidup di mana siapa pun dapat berkontribusi, tanpa kehilangan jiwa kurasi yang membedakannya dari sekadar daftar atau pelacak biasa."
+            },
+            "section2": {
+                "title": "Fase 1: Fondasi",
+                "content": "Inilah posisi kami saat ini. Arsip inti telah berjalan, dengan artefak, entitas, dan koleksi yang dikurasi secara manual. Semua konten dikelola secara internal. Fokus kami adalah menyempurnakan aspek fundamental — struktur data, kualitas editorial, dan pengalaman menyeluruh dalam menjelajahi arsip.",
+                "l1": "Basis data artefak inti dengan metadata, sumber daya, dan kredit.",
+                "l2": "Profil entitas untuk kreator, studio, dan label.",
+                "l3": "Koleksi terkurasi berdasarkan tema dan suasana hati.",
+                "l4": "Sematan YouTube untuk trailer resmi dan video musik.",
+                "l5": "Tautan ke platform streaming dan pembelian resmi."
+            },
+            "section3": {
+                "title": "Fase 2: Komunitas",
+                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine — refleksi tertulis yang terkait dengan artefak tertentu.",
+                "l1": "Registrasi pengguna dan profil pribadi.",
+                "l2": "Penulisan Zine — respons personal terhadap artefak, bukan ulasan.",
+                "l3": "Rak pribadi untuk menyusun koleksi artefak Anda sendiri.",
+                "l4": "Sistem resonansi — cara untuk memunculkan kontribusi yang bermakna."
+            },
+            "section4": {
+                "title": "Model Pendapatan",
+                "content": "Shimokitan saat ini beroperasi tanpa monetisasi. Jika pendapatan menjadi diperlukan, opsi potensial mencakup kemitraan afiliasi dengan layanan streaming, fitur premium, dukungan sukarela, atau cendera mata. Setiap keputusan monetisasi akan dibuat dengan transparansi dan kesadaran komunitas."
+            },
+            "section5": {
+                "title": "Apa yang Tidak Akan Kami Lakukan",
+                "content": "Beberapa hal sengaja berada di luar cakupan Shimokitan:",
+                "l1": "Kami tidak akan menyimpan atau dengan sengaja menautkan ke media bajakan, tidak sah, atau didistribusikan secara ilegal. Arsip ini adalah indeks ke sumber resmi, bukan situs unduhan.",
+                "l2": "Kami tidak akan menerapkan umpan (feed) algoritma. Penemuan karya haruslah bersifat intensional, bukan didorong oleh dopamin.",
+                "l3": "Kami tidak akan menjual data pengguna atau menerapkan iklan yang mengganggu.",
+                "l4": "Kami tidak akan mengejar skala dengan mengorbankan kualitas. Pertumbuhan harus mengikuti kurasi, bukan sebaliknya."
+            }
+        }
+    },
+    "legal": {
+        "last_updated": "Terakhir Diperbarui",
+        "last_updated_date": "16 Februari 2026",
+        "sidebar_title": "Dokumen Hukum",
+        "help_title": "Butuh Bantuan?",
+        "help_text": "Jika Anda memiliki pertanyaan tentang kebijakan kami, silakan hubungi tim hukum kami.",
+        "privacy": {
+            "title": "Kebijakan Privasi",
+            "s1": {
+                "title": "1. Siapa Kami",
+                "content": "Shimokitan (\"kami\", \"kita\") mengoperasikan platform yang dijalankan secara independen (\"Layanan\") yang berbasis di Indonesia. Layanan ini berfungsi sebagai indeks arsip terkurasi untuk budaya kreatif Jepang. Shimokitan dioperasikan oleh perorangan, bukan perusahaan terdaftar."
+            },
+            "s2": {
+                "title": "2. Data yang Kami Kumpulkan",
+                "p1": "Kami berkomitmen untuk mengumpulkan sesedikit mungkin data pribadi. Shimokitan **tidak** menawarkan akun pengguna, pendaftaran, atau fitur masuk (sign-in). Kami tidak melacak, memprofil, atau melakukan sidik jari (fingerprint) pada pengunjung.",
+                "p2": "Satu-satunya data pribadi yang kami proses adalah melalui **Formulir Kontak**. Saat Anda mengirimkan formulir, kami menerima nama, alamat email, dan pesan Anda. Informasi ini dikirim melalui penyedia layanan email kami (Resend) dan dikirim ke kotak surat kami di Hostinger. Email juga dapat diteruskan ke Gmail untuk kemudahan operasional. Data formulir kontak **tidak disimpan** dalam basis data atau CRM — data tersebut hanya ada sebagai email standar dan akan dihapus setelah pertanyaan Anda selesai ditangani. Kami memproses data ini berdasarkan persetujuan Anda, yang diberikan saat Anda secara sukarela mengirimkan formulir."
+            },
+            "s2_5": {
+                "title": "2.5 Komunikasi Artis dan Pemegang Hak Cipta",
+                "content": "Saat artis atau pemegang hak cipta memberikan izin untuk menampilkan karya mereka, kami menyimpan salinan korespondensi izin tersebut dalam arsip privat yang aman untuk tujuan verifikasi dan kepatuhan hukum.",
+                "p1": "Data ini meliputi:",
+                "l1": "Nama dan informasi kontak",
+                "l2": "Pemberian izin dan kondisi yang ditentukan",
+                "l3": "Tanggal dan cakupan izin",
+                "p2": "Informasi ini **tidak** dibagikan secara publik, dijual, atau digunakan untuk tujuan apa pun selain memverifikasi penggunaan sah karya mereka di Shimokitan. Dokumentasi izin disimpan tanpa batas waktu kecuali artis atau pemegang hak meminta penghapusan informasi mereka. Untuk meminta penghapusan dokumentasi izin Anda, hubungi kami di legal@shimokitan.live."
+            },
+            "s3": {
+                "title": "3. Cookie dan Pelacakan",
+                "p1": "Kami tidak menggunakan cookie analitik atau skrip pelacakan. Cookie yang mungkin ada di situs kami adalah:",
+                "l1": "Cookie infrastruktur esensial dari Cloudflare untuk keamanan dan performa (misalnya deteksi bot).",
+                "l2": "Cookie pihak ketiga dari YouTube saat video disematkan. Ini diatur oleh Kebijakan Privasi Google.",
+                "p2": "Untuk rincian lebih lanjut, lihat Kebijakan Cookie kami."
+            },
+            "s4": {
+                "title": "4. Layanan Pihak Ketiga",
+                "p1": "Kami menggunakan layanan berikut yang mungkin memproses data sehubungan dengan kunjungan Anda:",
+                "l1": "**Cloudflare** (AS) — Hosting, CDN, dan perlindungan DDoS.",
+                "l2": "**Resend** (AS) — Pengiriman email formulir kontak.",
+                "l3": "**Google** (AS) — Pemutaran video (YouTube) dan penerusan email (Gmail).",
+                "l4": "**Hostinger** (Internasional) — Hosting email.",
+                "p2": "Basis data kami disediakan oleh **Neon** (AS); tidak ada data pribadi pengunjung yang disimpan di sana. Kami berencana mengintegrasikan program afiliasi (Crunchyroll, Apple Music) yang akan menggunakan parameter pelacakan."
+            },
+            "s5": {
+                "title": "5. Transfer Data Internasional",
+                "content": "Mitra infrastruktur kami (Cloudflare, Resend) berbasis di Amerika Serikat. Dengan menggunakan Layanan kami, data yang berkaitan dengan permintaan Anda mungkin diproses di luar negara asal Anda. Kami mengandalkan perlindungan privasi yang disediakan oleh penyedia layanan ini, termasuk perjanjian pemrosesan data mereka dan, jika berlaku, Klausul Kontraktual Standar (SCC) atau mekanisme transfer setara yang diakui di bawah hukum perlindungan data yang berlaku."
+            },
+            "s6": {
+                "title": "6. Retensi Data",
+                "content": "Pesan formulir kontak tidak disimpan di basis data dan akan dihapus dari kotak masuk email kami setelah masalah selesai ditangani. Log infrastruktur disimpan oleh Cloudflare sesuai dengan praktik retensi data mereka dan konfigurasi akun kami."
+            },
+            "s7": {
+                "title": "7. Hak Anda",
+                "p1": "Tergantung pada yurisdiksi Anda, Anda mungkin memiliki hak untuk:",
+                "l1": "Meminta akses ke data pribadi apa pun yang kami simpan tentang Anda.",
+                "l2": "Meminta koreksi atau penghapusan data pribadi Anda.",
+                "l3": "Menolak atau membatasi pemrosesan data Anda oleh kami.",
+                "l4": "Mengajukan aduan kepada otoritas perlindungan data di yurisdiksi Anda.",
+                "p2": "Karena kami tidak mengelola akun pengguna atau basis data pribadi saat ini, sebagian besar hak ini memiliki penerapan praktis yang terbatas."
+            },
+            "s8": {
+                "title": "8. Anak-anak",
+                "content": "Shimokitan tidak ditujukan untuk individu di bawah usia 13 tahun. Kami tidak dengan sengaja mengumpulkan data dari anak-anak. Jika Anda yakin seorang anak telah memberikan data pribadi kepada kami, silakan hubungi kami."
+            },
+            "s9": {
+                "title": "9. Perubahan Kebijakan",
+                "content": "Kami dapat memperbarui Kebijakan Privasi ini sewaktu-waktu. Penggunaan berkelanjutan setelah perubahan dianggap sebagai penerimaan terhadap kebijakan terbaru."
+            },
+            "s10": {
+                "title": "10. Kontak",
+                "content": "Untuk pertanyaan terkait privasi, hubungi kami di privacy@shimokitan.live."
+            }
+        },
+        "terms": {
+            "title": "Ketentuan Layanan",
+            "s1": {
+                "title": "1. Penerimaan Ketentuan",
+                "content": "Dengan mengakses Shimokitan, Anda setuju untuk terikat oleh Ketentuan Layanan ini."
+            },
+            "s2": {
+                "title": "2. Tentang Layanan",
+                "content": "Shimokitan adalah indeks arsip budaya Jepang yang dioperasikan secara independen oleh perorangan di Indonesia."
+            },
+            "s3": {
+                "title": "3. Penggunaan Layanan",
+                "p1": "Anda setuju untuk menggunakan Layanan hanya untuk tujuan yang sah. Anda dilarang:",
+                "l1": "Mengganggu infrastruktur Layanan.",
+                "l2": "Mencoba mendapatkan akses tidak sah.",
+                "l3": "Menyebarkan malware atau spam.",
+                "l4": "Melakukan scraping atau pengambilan konten secara massal.",
+                "l5": "Memalsukan identitas saat menghubungi kami."
+            },
+            "s4": {
+                "title": "4. Kekayaan Intelektual",
+                "p1": "Semua konten asli — termasuk namun tidak terbatas pada teks editorial, desain UI/UX, grafis, logo, dan kerangka konsep \"Distrik\" — adalah milik Shimokitan dan dilindungi oleh hukum hak cipta dan kekayaan intelektual yang berlaku.",
+                "p2": "Konten pihak ketiga (termasuk judul anime, musik, sematan video, dan citra artis) tetap menjadi milik pemiliknya masing-masing. Shimokitan tidak mengklaim kepemilikan atas konten pihak ketiga yang diindeks atau disematkan dalam Layanan."
+            },
+            "s5": {
+                "title": "5. Konten Pihak Ketiga dan Sematan",
+                "content": "Kami menyematkan konten dari platform seperti YouTube. Anda juga setuju untuk terikat oleh ketentuan penyedia pihak ketiga tersebut."
+            },
+            "s6": {
+                "title": "6. Tautan Afiliasi",
+                "content": "Layanan mungkin mengandung tautan afiliasi. Kami mungkin menerima komisi dari tindakan yang memenuhi syarat tanpa biaya tambahan bagi Anda."
+            },
+            "s7": {
+                "title": "7. Penafian Jaminan",
+                "content": "Layanan disediakan \"apa adanya\" dan \"sebagaimana tersedia\" tanpa jaminan dalam bentuk apa pun, baik tersurat maupun tersirat. Kami tidak menjamin bahwa Layanan tidak akan terganggu, bebas dari kesalahan, atau bebas dari komponen berbahaya."
+            },
+            "s8": {
+                "title": "8. Batasan Tanggung Jawab",
+                "content": "Sejauh diizinkan oleh hukum yang berlaku, Shimokitan tidak bertanggung jawab atas kerugian tidak langsung, insidental, khusus, konsekuensial, atau punitif, atau kehilangan keuntungan, data, penggunaan, goodwill, atau kerugian tidak berwujud lainnya yang timbul dari penggunaan atau ketidakmampuan Anda menggunakan Layanan."
+            },
+            "s9": {
+                "title": "9. Penghentian",
+                "content": "Kami berhak membatasi atau menghentikan akses ke Layanan atas kebijakan kami, tanpa pemberitahuan sebelumnya, untuk perilaku yang kami yakini melanggar Ketentuan ini atau berbahaya bagi Layanan, pengguna lain, atau pihak ketiga."
+            },
+            "s10": {
+                "title": "10. Modifikasi",
+                "content": "Kami dapat merevisi Ketentuan ini sewaktu-waktu. Tanggal \"Terakhir Diperbarui\" mencerminkan revisi terbaru."
+            },
+            "s11": {
+                "title": "11. Kelayakan",
+                "content": "Anda harus berusia setidaknya 13 tahun untuk menggunakan Layanan ini."
+            },
+            "s12": {
+                "title": "12. Ganti Rugi",
+                "content": "Anda setuju untuk mengganti rugi dan membebaskan Shimokitan serta operatornya dari segala klaim, kerugian, kerusakan, atau biaya (termasuk biaya hukum yang wajar) yang timbul dari pelanggaran Anda terhadap Ketentuan ini, penggunaan Layanan oleh Anda, atau pelanggaran Anda terhadap hak pihak ketiga mana pun."
+            },
+            "s13": {
+                "title": "13. Hukum yang Mengatur",
+                "content": "Ketentuan ini diatur oleh hukum Republik Indonesia. Setiap perselisihan akan tunduk pada yurisdiksi eksklusif pengadilan di Republik Indonesia."
+            },
+            "s14": {
+                "title": "14. Kontak",
+                "content": "Hubungi legal@shimokitan.live untuk pertanyaan mengenai Ketentuan ini."
+            }
+        },
+        "cookies": {
+            "title": "Kebijakan Cookie",
+            "description": "Kebijakan ini menjelaskan bagaimana Shimokitan menggunakan cookie saat Anda mengunjungi situs kami.",
+            "s1": {
+                "title": "1. Apa itu Cookie?",
+                "content": "Cookie adalah file data kecil yang ditempatkan di perangkat Anda untuk membantu situs berfungsi dengan baik."
+            },
+            "s2": {
+                "title": "2. Cookie yang Kami Gunakan",
+                "content": "Kami menggunakan set cookie minimal dan **tidak** menggunakan cookie iklan atau pelacakan."
+            },
+            "s3": {
+                "title": "3. Cookie Esensial",
+                "content": "**Cookie Cloudflare** (misal: __cf_bm) — Diperlukan untuk keamanan, deteksi bot, dan perlindungan DDoS. Cookie ini sangat diperlukan untuk operasi situs yang aman. Anda tidak dapat menyisih (opt-out) dari cookie ini tanpa meninggalkan situs."
+            },
+            "s4": {
+                "title": "4. Cookie Pihak Ketiga",
+                "p1": "**Cookie YouTube/Google** — Saat menonton video sematan, Google mungkin menempatkan cookie di perangkat Anda (seperti VISITOR_INFO1_LIVE, YSC, dan lainnya). Cookie ini diatur oleh Kebijakan Privasi Google. Kami tidak mengontrol data yang dikumpulkan oleh cookie ini.",
+                "p2": "Jika integrasi pihak ketiga tambahan diperkenalkan di masa mendatang, kebijakan ini akan diperbarui sebagaimana mestinya."
+            },
+            "s5": {
+                "title": "5. Cara Mengontrol Cookie",
+                "p1": "Anda dapat mengelola cookie melalui pengaturan browser Anda (Chrome, Firefox, Safari, Edge).",
+                "p2": "Memblokir cookie esensial Cloudflare mungkin menyebabkan situs tidak dapat dimuat dengan benar.",
+                "l1": "**Chrome**: Setelan → Privasi dan keamanan → Cookie dan data situs lainnya",
+                "l2": "**Firefox**: Pengaturan → Privasi & Keamanan → Cookie dan Data Situs",
+                "l3": "**Safari**: Preferensi → Privasi → Kelola Data Situs Web",
+                "l4": "**Edge**: Pengaturan → Cookie dan izin situs",
+                "l5": "Anda juga dapat **memblokir cookie pihak ketiga** untuk mencegah cookie YouTube sambil tetap mengakses situs.",
+                "l6": "Gunakan ekstensi peramban seperti **uBlock Origin** untuk memblokir konten pihak ketiga secara selektif."
+            },
+            "s6": {
+                "title": "6. Kontak",
+                "content": "Hubungi privacy@shimokitan.live jika ada pertanyaan."
+            }
+        },
+        "copyright": {
+            "title": "Kebijakan Hak Cipta dan Konten",
+            "s1": {
+                "title": "1. Pendekatan Kami terhadap Konten",
+                "content": "Shimokitan adalah indeks arsip terkurasi, bukan platform hosting konten. Kami mendokumentasikan dan mengatalogkan budaya kreatif Jepang — anime, musik, gim, dan media terkait — melalui komentar editorial, metadata terstruktur, dan sematan pihak ketiga. Semua metadata yang kami indeks bersumber secara eksklusif dari informasi yang tersedia secara publik."
+            },
+            "s2": {
+                "title": "2. Kebijakan Tanpa-Hosting",
+                "p1": "Kami **tidak** menyimpan atau mendistribusikan file media berhak cipta tanpa izin.",
+                "p2": "Kami mengandalkan fitur **penyematan (embedding)** dari platform resmi."
+            },
+            "s3": {
+                "title": "3. Media Visual",
+                "content": "Gambar mini (thumbnail), gambar sampul, dan referensi visual lainnya yang ditampilkan di Layanan disematkan atau di-hotlink dari platform masing-masing dan tetap menjadi milik kreator asli dan pemegang hak ciptanya."
+            },
+            "s4": {
+                "title": "4. Atribusi",
+                "content": "Semua gambar mini dan sampul yang ditampilkan di Shimokitan menyertakan atribusi sumber jika tersedia. Setiap halaman artefak menautkan langsung ke saluran distribusi resmi. Halaman artefak yang menampilkan **indikator verifikasi** telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan sematan resmi."
+            },
+            "s5": {
+                "title": "5. Konten Asli",
+                "content": "Teks editorial dan desain UI Shimokitan dilindungi hak cipta. Reproduksi tanpa izin dilarang."
+            },
+            "s6": {
+                "title": "6. Penghormatan terhadap Hak",
+                "content": "Pendekatan Shimokitan dirancang untuk menghormati pemegang hak:",
+                "l1": "Kami menyematkan konten dari platform yang mengizinkan penyematan eksternal (sesuai Ketentuan Layanan mereka)",
+                "l2": "Kami menyertakan atribusi dan tautan langsung ke saluran distribusi resmi",
+                "l3": "Kami tidak mereproduksi, menyimpan, atau mendistribusikan ulang file media berhak cipta",
+                "l4": "Kami merespons dengan cepat kekhawatiran pemegang hak cipta",
+                "p2": "Jika Anda adalah pemegang hak cipta dan memiliki pertanyaan tentang bagaimana kami mereferensikan karya Anda, silakan hubungi kami di **legal@shimokitan.live**."
+            },
+            "s7": {
+                "title": "7. Tanggung Jawab Pengunjung",
+                "content": "Pengunjung bertanggung jawab atas penggunaan materi yang ditautkan oleh mereka sendiri."
+            },
+            "s8": {
+                "title": "8. Permintaan Penghapusan Konten",
+                "p1": "Pemilik hak cipta dapat mengirimkan permintaan penghapusan dengan menyertakan bukti kepemilikan dan URL materi terkait.",
+                "l1": "Identifikasi karya berhak cipta.",
+                "l2": "Identifikasi materi di Shimokitan (misalnya, URL).",
+                "l3": "Informasi kontak Anda.",
+                "l4": "Pernyataan bahwa Anda memiliki keyakinan dengan itikad baik bahwa penggunaan materi tersebut tidak diizinkan oleh pemilik hak cipta, agennya, atau hukum.",
+                "l5": "Pernyataan, yang dibuat di bawah pernyataan kebenaran dan tunduk pada tanggung jawab hukum atas klaim palsu, bahwa informasi dalam pemberitahuan Anda akurat dan bahwa Anda adalah pemilik hak cipta atau berwenang untuk bertindak atas nama pemilik hak cipta.",
+                "l6": "Tanda tangan fisik atau elektronik Anda.",
+                "p2": "Kirim ke: legal@shimokitan.live"
+            },
+            "s9": {
+                "title": "9. Notifikasi Balasan",
+                "content": "Jika Anda yakin bahwa materi telah dihapus atau dibatasi karena kekeliruan, Anda dapat mengirimkan notifikasi balasan ke legal@shimokitan.live. Notifikasi balasan Anda harus mencakup: (1) identifikasi materi yang telah dihapus dan lokasinya sebelum penghapusan; (2) pernyataan, di bawah sumpah, bahwa Anda memiliki keyakinan dengan itikad baik bahwa materi tersebut dihapus atau dibatasi akibat kesalahan atau salah identifikasi; (3) nama, alamat, dan informasi kontak Anda; (4) pernyataan menyetujui yurisdiksi pengadilan di tempat tinggal Anda (atau Republik Indonesia jika Anda bertempat tinggal di luar Indonesia); dan (5) tanda tangan fisik atau elektronik Anda."
+            },
+            "s10": {
+                "title": "10. Peninjauan Konten Sukarela",
+                "content": "Shimokitan secara berkala meninjau konten yang diindeks dan dapat secara proaktif menghapus atau membatasi akses ke materi yang melanggar hak pihak ketiga atau kebijakan konten kami."
+            },
+            "s11": {
+                "title": "11. Pelanggar Berulang",
+                "content": "Shimokitan berhak untuk menghapus konten dari sumber yang berulang kali menghasilkan klaim pelanggaran yang valid."
+            },
+            "s12": {
+                "title": "12. Kontak",
+                "content": "Untuk pertanyaan hak cipta, hubungi kami di legal@shimokitan.live."
+            }
+        },
+        "affiliate": {
+            "title": "Pengungkapan Afiliasi",
+            "s1": {
+                "title": "1. Ikhtisar",
+                "content": "Shimokitan berencana berpartisipasi dalam program afiliasi. Tautan tertentu mungkin merupakan \"tautan afiliasi\" di masa mendatang."
+            },
+            "s2": {
+                "title": "2. Mitra yang Direncanakan",
+                "p1": "Kami berencana bekerja sama dengan Crunchyroll dan Apple Music.",
+                "p2": "Pengungkapan ini akan diperbarui saat tautan aktif.",
+                "l1": "**Crunchyroll** -- Langganan streaming anime",
+                "l2": "**Apple Music** -- Langganan streaming musik dan pembelian"
+            },
+            "s3": {
+                "title": "3. Bagaimana Tautan Afiliasi Bekerja",
+                "content": "Tautan afiliasi mengandung parameter pelacakan yang memungkinkan pedagang untuk mengatribusikan rujukan ke Shimokitan. Parameter ini mungkin mengakibatkan pedagang mengatur cookie di perangkat Anda."
+            },
+            "s4": {
+                "title": "4. Independensi Editorial",
+                "content": "Hubungan afiliasi **tidak** memengaruhi keputusan editorial kami. Kurasi, komentar editorial, dan keputusan pengarsipan kami bersifat independen dari kemitraan afiliasi apa pun."
+            },
+            "s5": {
+                "title": "5. Mengidentifikasi Tautan Afiliasi",
+                "content": "Halaman atau bagian situs yang berisi tautan afiliasi akan diidentifikasi dengan indikator yang terlihat, seperti label \"Tautan Mitra\"."
+            },
+            "s6": {
+                "title": "6. Kontak",
+                "content": "Jika Anda memiliki pertanyaan tentang hubungan afiliasi kami, hubungi kami di partners@shimokitan.live."
+            }
+        },
+        "community": {
+            "title": "Panduan Komunitas",
+            "description": "Shimokitan saat ini belum menawarkan akun pengguna atau fitur komunitas.\n\nPanduan akan disusun saat fitur tersebut diluncurkan. Untuk saat ini, silakan hubungi kami melalui [Halaman Kontak](/contact)."
+        }
+    },
+    "changelog": {
+        "title": "Catatan Perubahan",
+        "description": "Log pembaruan dan perubahan penting pada platform Shimokitan.",
+        "v2_0_26": {
+            "title": "v2.0.26 -- Februari 2026",
+            "subtitle": "Kepatuhan Hukum dan Fondasi",
+            "l1": "Penulisan ulang lengkap seluruh halaman hukum (Kebijakan Privasi, Ketentuan Layanan, dll).",
+            "l2": "Penambahan halaman Pengungkapan Afiliasi.",
+            "l3": "Peningkatan keamanan autentikasi admin.",
+            "l4": "Fitur salin-sebagai-markdown pada halaman hukum dan tentang.",
+            "l5": "Penyempurnaan halaman segera-hadir untuk menghapus pengumpulan data."
+        },
+        "v2_0_0": {
+            "title": "v2.0.0 -- Januari 2026",
+            "subtitle": "Reaktivasi Inti",
+            "l1": "Penulisan ulang platform menggunakan Next.js App Router.",
+            "l2": "Integrasi Drizzle ORM dengan Neon PostgreSQL.",
+            "l3": "Pembangunan konsol admin untuk pengelolaan artefak, entitas, dan koleksi.",
+            "l4": "Implementasi sistem desain UI baru dengan CyberpunkShell.",
+            "l5": "Penambahan pipeline aset R2 untuk pemrosesan gambar."
+        },
+        "v1_5_0": {
+            "title": "v1.5.0 -- Desember 2025",
+            "subtitle": "Sinyal Awal",
+            "l1": "Peluncuran beta sistem pengiriman artefak.",
+            "l2": "Fungsionalitas pencarian dasar.",
+            "l3": "Iterasi pertama konsep distrik dan navigasi."
+        }
+    },
+    "navbar": {
+        "system_status": "Status Sistem",
+        "operational": "Operasional",
+        "location": "Lokasi",
+        "time": "Waktu",
+        "search_placeholder": "Kueri basis data...",
+        "identity_panel": "Identitas // Panel",
+        "initialize_session": "Inisialisasi Sesi",
+        "register_resident": "Daftar Residen",
+        "guest_protocol": "Protokol_Tamu_Aktif"
+    },
+    "footer": {
+        "contact_us": "HUBUNGI KAMI",
+        "guidelines": "Panduan",
+        "copyright": "Hak Cipta",
+        "affiliates": "Afiliasi"
+    }
+}

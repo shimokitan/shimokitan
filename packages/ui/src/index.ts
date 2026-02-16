@@ -55,6 +55,7 @@ export { AudioWidget } from "./components/AudioWidget";
 export { Badge, badgeVariants } from "./components/Badge";
 export { BentoCard } from "./components/BentoCard";
 export { CyberpunkShell, CyberpunkStyles } from "./components/CyberpunkShell";
+export { InlineMarkdown } from "./components/InlineMarkdown";
 export { NavigationLink } from "./components/NavigationLink";
 
 // --- Theme ---

@@ -1,0 +1,450 @@
+{
+    "common": {
+        "coming_soon": "COMING SOON",
+        "back_to_home": "BACK TO HOME",
+        "submit": "SUBMIT",
+        "loading": "LOADING...",
+        "error": "ERROR",
+        "maintenance_mode": "MAINTENANCE MODE",
+        "privacy": "PRIVACY",
+        "terms": "TERMS",
+        "cookies": "COOKIES",
+        "access_restricted": "ACCESS RESTRICTED",
+        "stay_connected": "STAY CONNECTED",
+        "follow_us": "Follow us on social media for updates on when the District opens its gates."
+    },
+    "home": {
+        "title": "SHIMOKITAN // COMING SOON",
+        "description": "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories — not data points. Inspired by the back-alleys of Shimokitazawa, this is where your taste becomes a curated archive of experience.",
+        "initialize": "INITIALIZE",
+        "recent_shards": "Recent Shards",
+        "district": "District",
+        "signal_stable": "SIGNAL_STABLE",
+        "scanning_freq": "SCANNING_FREQ...",
+        "active": "ACTIVE",
+        "data_resonance": "DATA_RESONANCE",
+        "recent_echoes": "Recent Echoes",
+        "in_the_pit": "In The Pit",
+        "playlist": "Playlist",
+        "view_shard": "VIEW_SHARD",
+        "editorial_sigil": "EDITORIAL_SIGIL",
+        "featured_title": "Narrative Collapse.",
+        "featured_description": "The district is not a location; it is a frequency. When the signals overlap, the architecture of the real begins to dissolve into pure data resonance."
+    },
+    "contact": {
+        "title": "ESTABLISH CONNECTION",
+        "description": "Have a question, feedback, or just want to say hello? Open a channel and reach out to the Shimokitan team.",
+        "transmission_sent": "Transmission Sent",
+        "transmission_sent_description": "Your message has been successfully encrypted and delivered to our secure servers.",
+        "send_another": "Send another message",
+        "identity": "Identity",
+        "identity_placeholder": "Your Name",
+        "comms_channel": "Comms Channel",
+        "comms_channel_placeholder": "email@example.com",
+        "encryption_subject": "Encryption Subject",
+        "select_topic": "Select Topic",
+        "topics": {
+            "general": "General Inquiry",
+            "support": "Support Request",
+            "partnership": "Partnership",
+            "bug": "Report Bug"
+        },
+        "transmission": "Transmission",
+        "transmission_placeholder": "Type your message...",
+        "send_transmission": "Send Transmission",
+        "transmitting": "Transmitting...",
+        "success_toast": "Message sent successfully!",
+        "error_toast": "Failed to send transmission. Please try again."
+    },
+    "about": {
+        "title": "About Shimokitan",
+        "sidebar_links": {
+            "about": "About Shimokitan",
+            "vision": "Vision and Roadmap",
+            "changelog": "Changelog"
+        },
+        "q1": "What is This Place?",
+        "a1_1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them -- not as data points or rankings, but as lived experiences worth remembering.",
+        "a1_2": "Think of it as a personal record collection for everything you care about in Japanese media. Each entry is an artifact -- a piece of culture documented with the attention it deserves.",
+        "q2": "Why Shimokitan Exists",
+        "a2_1": "The internet has an abundance of databases and trackers for anime, music, and games. Most of them treat culture as spreadsheets -- scores, stats, completion percentages. We wanted something different.",
+        "a2_2": "Shimokitan is built on the idea that your taste tells a story. The anime that kept you up at night, the album you played on repeat during a specific season, the game that changed how you see things -- these are memories, not metrics. We archive them with that weight.",
+        "q3": "How It Works",
+        "a3_1": "Shimokitan operates as an archival index. We do not host copyrighted media files. All metadata we catalog is sourced from publicly available information -- we do not access, extract, or process data from private, paywalled, or restricted sources. For media playback, we embed content exclusively from platforms whose terms of service permit external embedding, such as YouTube. Every artifact in our system links back to the original creators and their official distribution channels.",
+        "a3_2": "Artifact pages that display a verified indicator have received explicit permission from the rights holder. Pages without this indicator are index entries only, using publicly available metadata and authorized embeds.",
+        "artifacts_label": "Artifacts",
+        "artifacts_desc": "The core entries. Anime series, albums, films, games, visual novels. Each has metadata, a cover, embedded media, and editorial context.",
+        "entities_label": "Entities",
+        "entities_desc": "The people and studios behind the work. Directors, composers, animators, labels, development teams.",
+        "collections_label": "Collections",
+        "collections_desc": "Curated groupings organized around a theme, a moment, or a mood.",
+        "zines_label": "Zines",
+        "zines_desc": "Written reflections attached to artifacts. Not reviews, but personal responses to the work.",
+        "q4": "Who Runs This",
+        "a4_1": "Shimokitan is independently operated from Indonesia. There is no company, no investors, no board. It exists because the people building it genuinely love this culture and wanted a better home for it online.",
+        "a4_2": "The platform is named after Shimokitazawa -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, not by algorithm.",
+        "q5": "Open to the World",
+        "a5_1": "Shimokitan is built for anyone who shares a deep appreciation for Japanese creative work, regardless of where they are. The platform is free to browse, free to read, and free to explore.",
+        "a5_2": "Everything you see on the platform is hand-curated. There are no algorithmic feeds, no auto-generated pages, and no user-submitted content at this time.",
+        "q6": "Get in Touch",
+        "a6_1": "If you have questions, suggestions, or just want to say hello, reach out through our contact page. You can also find us on X and Instagram.",
+        "legal_notice_title": "Legal Notice",
+        "legal_notice_content_1": "All anime, game, music titles, artwork, and related trademarks are property of their respective owners. Shimokitan claims no ownership over indexed content. For details on intellectual property, content usage, and affiliate practices, see our Legal Documents.",
+        "legal_notice_content_2": "While we strive for accuracy, we cannot guarantee the completeness or correctness of all metadata. Information on the platform is provided for reference and archival purposes only.",
+        "vision_disclaimer": "This roadmap represents our current vision and may change at any time without notice. Nothing here constitutes a commitment or guarantee of future features.",
+        "vision": {
+            "title": "Vision and Roadmap",
+            "section1": {
+                "title": "Where We Are Going",
+                "content": "Shimokitan started as a personal archive -- a place to catalog the anime, music, and games that matter. The long-term vision is to grow it into a living cultural index that anyone can contribute to, without losing the curatorial soul that makes it different from a list or a tracker."
+            },
+            "section2": {
+                "title": "Phase 1: Foundation",
+                "content": "This is where we are now. The core archive is live, with hand-curated artifacts, entities, and collections. All content is managed internally. The focus is on getting the fundamentals right -- data structure, editorial quality, and the overall experience of browsing the archive.",
+                "l1": "Core artifact database with metadata, resources, and credits.",
+                "l2": "Entity profiles for creators, studios, and labels.",
+                "l3": "Curated collections organized by theme and mood.",
+                "l4": "YouTube embeds for official trailers and music videos.",
+                "l5": "Links to official streaming and purchase platforms."
+            },
+            "section3": {
+                "title": "Phase 2: Community",
+                "content": "The next step is opening the platform to community participation. This means user accounts, personal archives, and the ability to write and publish zines -- written reflections tied to specific artifacts.",
+                "l1": "User registration and personal profiles.",
+                "l2": "Zine authoring -- personal responses to artifacts, not reviews.",
+                "l3": "Personal shelves for organizing your own artifact collection.",
+                "l4": "Resonance system -- a way to surface meaningful contributions."
+            },
+            "section4": {
+                "title": "Revenue Model",
+                "content": "Shimokitan currently operates without monetization. If revenue becomes necessary, potential options include affiliate partnerships with streaming services, premium features, voluntary support, or merchandise. Any monetization decisions will be made with transparency and community awareness."
+            },
+            "section5": {
+                "title": "What We Will Not Do",
+                "content": "Some things are intentionally out of scope for Shimokitan:",
+                "l1": "We will not host or knowingly link to pirated, unauthorized, or illegally distributed media. The archive is an index to official sources, not a download site.",
+                "l2": "We will not implement algorithmic feeds. Discovery should be intentional, not dopamine-driven.",
+                "l3": "We will not sell user data or implement intrusive advertising.",
+                "l4": "We will not chase scale at the expense of quality. Growth should follow curation, not the other way around."
+            }
+        }
+    },
+    "legal": {
+        "last_updated": "Last Updated",
+        "last_updated_date": "February 16, 2026",
+        "sidebar_title": "Legal Documents",
+        "help_title": "Need Help?",
+        "help_text": "If you have questions about our policies, please contact our legal team.",
+        "privacy": {
+            "title": "Privacy Policy",
+            "s1": {
+                "title": "1. Who We Are",
+                "content": "Shimokitan (\"we\", \"us\", \"our\") operates an independently run platform (the \"Service\") based in Indonesia. The Service serves as a curated archival index for Japanese creative culture, including anime, music, games, and related media. Shimokitan is operated by an individual, not a registered company."
+            },
+            "s2": {
+                "title": "2. What We Collect",
+                "p1": "We are committed to collecting as little personal data as possible. Shimokitan does **not** offer user accounts, sign-up, or sign-in functionality. We do not track, profile, or fingerprint visitors.",
+                "p2": "The only personal data we process is through our **Contact Form**. When you submit a contact form, we receive your name, email address, and your message. This information is transmitted via our email service provider (Resend) and delivered to our mailbox hosted by Hostinger. Emails may also be forwarded to Gmail for operational convenience. Contact form data is **not stored** in any database or CRM -- it exists only as standard email in our inbox and is deleted after your inquiry has been resolved. We process this data on the basis of your consent, provided when you voluntarily submit the form."
+            },
+            "s2_5": {
+                "title": "2.5 Artist and Rights Holder Communications",
+                "content": "When artists, creators, or rights holders grant us permission to feature their work, we retain copies of permission correspondence (emails, messages, and related documentation) in a private, secure archive. This documentation is stored for verification, legal compliance, and record-keeping purposes.",
+                "p1": "This data includes:",
+                "l1": "Name and contact information",
+                "l2": "Permission grants and any specified conditions",
+                "l3": "Date and scope of permission",
+                "p2": "This information is **not** shared publicly, sold, or used for any purpose other than verifying authorized use of their work on Shimokitan. Permission documentation is retained indefinitely unless the artist or rights holder requests deletion of their information. To request removal of your permission documentation, contact us at legal@shimokitan.live."
+            },
+            "s3": {
+                "title": "3. Cookies and Tracking",
+                "p1": "We do not use analytics cookies or tracking scripts. The cookies that may be present on our site are:",
+                "l1": "Essential infrastructure cookies set by Cloudflare (our hosting provider) for security and performance purposes, such as bot detection.",
+                "l2": "Third-party cookies set by YouTube when embedded video content is loaded on artifact pages. These cookies are governed by Google's Privacy Policy.",
+                "p2": "For more details, see our Cookie Policy."
+            },
+            "s4": {
+                "title": "4. Third-Party Services",
+                "p1": "We use the following third-party services that may process data in connection with your visit:",
+                "l1": "**Cloudflare** (United States) -- Hosting, CDN, and DDoS protection.",
+                "l2": "**Resend** (United States) -- Email delivery for contact form submissions.",
+                "l3": "**Google** (United States) -- Embedded video playback (YouTube) and operational email forwarding (Gmail).",
+                "l4": "**Hostinger** (International) -- Email hosting for contact form submissions.",
+                "p2": "Our database infrastructure is provided by **Neon** (United States); no personal visitor data is stored in our database. We plan to integrate affiliate programs (Crunchyroll, Apple Music) that will use tracking parameters. See our [Affiliate Disclosure](/affiliate-disclosure) for details."
+            },
+            "s5": {
+                "title": "5. International Data Transfers",
+                "content": "Our infrastructure partners (Cloudflare, Resend) are based in the United States. By using our Service, data relating to your requests may be processed outside of your home country. We rely on the privacy safeguards provided by these service providers, including their data processing agreements and, where applicable, Standard Contractual Clauses or equivalent transfer mechanisms recognized under applicable data protection law."
+            },
+            "s6": {
+                "title": "6. Data Retention",
+                "content": "Contact form submissions are processed in real-time via email and are **not stored** in any database. Emails received through the contact form are retained in our mailbox only until the inquiry is resolved, after which they are deleted. Infrastructure logs are retained by Cloudflare in accordance with their data retention practices and our account configuration."
+            },
+            "s7": {
+                "title": "7. Your Rights",
+                "p1": "Depending on your jurisdiction, you may have the right to:",
+                "l1": "Request access to any personal data we hold about you.",
+                "l2": "Request correction or deletion of your personal data.",
+                "l3": "Object to or restrict our processing of your data.",
+                "l4": "Lodge a complaint with a data protection authority in your jurisdiction.",
+                "p2": "Since we do not maintain user accounts or databases of personal data at this time, most of these rights have limited practical applicability."
+            },
+            "s8": {
+                "title": "8. Children",
+                "content": "Shimokitan is not directed at individuals under the age of 13. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us."
+            },
+            "s9": {
+                "title": "9. Changes to This Policy",
+                "content": "We may update this Privacy Policy from time to time. When we make material changes, we will make reasonable efforts to provide notice, such as displaying a prominent announcement on the Service. The \"Last Updated\" date at the top of this page reflects the most recent revision. Continued use of the Service after changes have been posted constitutes acceptance of the updated policy."
+            },
+            "s10": {
+                "title": "10. Contact",
+                "content": "For privacy-related inquiries, contact us at privacy@shimokitan.live."
+            }
+        },
+        "terms": {
+            "title": "Terms of Service",
+            "s1": {
+                "title": "1. Acceptance of Terms",
+                "content": "By accessing or using Shimokitan (the \"Service\"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please discontinue use of the Service immediately."
+            },
+            "s2": {
+                "title": "2. About the Service",
+                "content": "Shimokitan is an independently operated, curated archival index for Japanese creative culture. The Service is operated by an individual based in Indonesia. At this time, Shimokitan does not offer user accounts or user-generated content features."
+            },
+            "s3": {
+                "title": "3. Use of the Service",
+                "p1": "You agree to use the Service only for lawful purposes and in accordance with these Terms. You must not:",
+                "l1": "Interfere with or disrupt the Service or its infrastructure.",
+                "l2": "Attempt to gain unauthorized access to any portion of the Service.",
+                "l3": "Use the Service to distribute malware, spam, or harmful content.",
+                "l4": "Scrape, crawl, or harvest content from the Service in bulk.",
+                "l5": "Misrepresent your identity or affiliation when contacting us."
+            },
+            "s4": {
+                "title": "4. Intellectual Property",
+                "p1": "All original content provided on the Service -- including but not limited to editorial text, UI/UX design, graphics, logos, and the \"District\" concept framework -- is the property of Shimokitan and is protected by applicable copyright and intellectual property laws.",
+                "p2": "Third-party content (including anime titles, music, video embeds, and artist imagery) remains the property of its respective owners. Shimokitan does not claim ownership of third-party content indexed or embedded within the Service."
+            },
+            "s5": {
+                "title": "5. Third-Party Content and Embeds",
+                "content": "The Service embeds content from third-party platforms, including YouTube. By using the Service, you also agree to the terms of these third-party providers. We are not responsible for the content, availability, or policies of external platforms."
+            },
+            "s6": {
+                "title": "6. Affiliate Links",
+                "content": "The Service may contain affiliate links to third-party platforms such as Crunchyroll and Apple Music. We may earn a commission from qualifying actions at no additional cost to you. For more information, see our Affiliate Disclosure."
+            },
+            "s7": {
+                "title": "7. Disclaimer of Warranties",
+                "content": "The Service is provided \"as is\" and \"as available\" without warranties of any kind, whether express or implied. We do not warrant that the Service will be uninterrupted, error-free, or free of harmful components."
+            },
+            "s8": {
+                "title": "8. Limitation of Liability",
+                "content": "To the maximum extent permitted by applicable law, Shimokitan shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, data, use, goodwill, or other intangible losses arising from your use of or inability to use the Service."
+            },
+            "s9": {
+                "title": "9. Termination",
+                "content": "We reserve the right to restrict or terminate access to the Service at our discretion, without prior notice, for conduct that we believe violates these Terms or is harmful to the Service, other users, or third parties."
+            },
+            "s10": {
+                "title": "10. Modifications",
+                "content": "We may revise these Terms at any time by updating this page. When we make material changes, we will make reasonable efforts to provide notice, such as displaying a prominent announcement on the Service. The \"Last Updated\" date at the top reflects the most recent revision. Continued use of the Service after changes have been posted constitutes acceptance of the revised Terms."
+            },
+            "s11": {
+                "title": "11. Eligibility",
+                "content": "The Service is not directed at individuals under the age of 13. By using the Service, you represent that you are at least 13 years of age. If you are under 13, you must discontinue use of the Service immediately."
+            },
+            "s12": {
+                "title": "12. Indemnification",
+                "content": "You agree to indemnify and hold harmless Shimokitan and its operator from any claims, damages, losses, or expenses (including reasonable legal fees) arising from your violation of these Terms, your use of the Service, or your infringement of any third-party rights."
+            },
+            "s13": {
+                "title": "13. Governing Law",
+                "content": "These Terms shall be governed by and construed in accordance with the laws of the Republic of Indonesia. Any disputes arising from or relating to these Terms or your use of the Service shall be subject to the exclusive jurisdiction of the courts of the Republic of Indonesia."
+            },
+            "s14": {
+                "title": "14. Contact",
+                "content": "If you have questions about these Terms, contact us at legal@shimokitan.live."
+            }
+        },
+        "cookies": {
+            "title": "Cookie Policy",
+            "description": "This Cookie Policy explains how Shimokitan uses cookies and similar technologies when you visit our website.",
+            "s1": {
+                "title": "1. What are Cookies?",
+                "content": "Cookies are small data files placed on your device when you visit a website. They are widely used to make websites function properly, enhance performance, and provide information to site operators."
+            },
+            "s2": {
+                "title": "2. Cookies We Use",
+                "content": "Shimokitan uses a minimal set of cookies. We do **not** use analytics cookies, advertising cookies, or tracking pixels."
+            },
+            "s3": {
+                "title": "3. Essential / Infrastructure Cookies",
+                "content": "**Cloudflare cookies** (e.g., __cf_bm, cf_clearance) -- Set by our hosting and CDN provider, Cloudflare, for bot detection, DDoS protection, and security purposes. These are strictly necessary for the secure operation of the site. You cannot opt out of these without leaving the site."
+            },
+            "s4": {
+                "title": "4. Third-Party Cookies",
+                "p1": "**YouTube / Google cookies** -- When you view a page containing an embedded YouTube video, Google may set cookies on your device (such as VISITOR_INFO1_LIVE, YSC, and others). These cookies are governed by Google's Privacy Policy. We do not control the data collected by these cookies.",
+                "p2": "If additional third-party integrations are introduced in the future, this policy will be updated accordingly."
+            },
+            "s5": {
+                "title": "5. How to Control Cookies",
+                "p1": "You can control and manage cookies through your browser settings:",
+                "l1": "**Chrome**: Settings → Privacy and security → Cookies and other site data",
+                "l2": "**Firefox**: Settings → Privacy & Security → Cookies and Site Data",
+                "l3": "**Safari**: Preferences → Privacy → Manage Website Data",
+                "l4": "**Edge**: Settings → Cookies and site permissions",
+                "l5": "You can also **block third-party cookies** to prevent YouTube cookies while still accessing the site.",
+                "l6": "Use browser extensions like **uBlock Origin** to selectively block third-party content.",
+                "p2": "Please note that blocking essential Cloudflare cookies may prevent the site from loading properly."
+            },
+            "s6": {
+                "title": "6. Contact",
+                "content": "If you have questions about our use of cookies, contact us at privacy@shimokitan.live."
+            }
+        },
+        "copyright": {
+            "title": "Copyright and Content Policy",
+            "s1": {
+                "title": "1. Our Approach to Content",
+                "content": "Shimokitan is a curated archival index, not a content hosting platform. We document and catalog Japanese creative culture -- anime, music, games, and related media -- through editorial commentary, structured metadata, and third-party embeds. All metadata we index is sourced exclusively from publicly available information."
+            },
+            "s2": {
+                "title": "2. No-Host Policy",
+                "p1": "Shimokitan does **not** host, upload, or distribute copyrighted media files without explicit permission from the rights holder.",
+                "p2": "Where explicit permission has not been obtained, we rely exclusively on **embedding and hotlinking** from platforms whose terms of service permit external embedding. Content is displayed directly from its original source without downloading, modifying, or storing it locally."
+            },
+            "s3": {
+                "title": "3. Visual Media and Referential Use",
+                "content": "Thumbnails, cover images, and other visual references displayed on the Service are embedded or hotlinked from their respective platforms and remain the property of their original creators and rights holders."
+            },
+            "s4": {
+                "title": "4. Visual Media Attribution",
+                "content": "All thumbnail images and cover art displayed on Shimokitan include source attribution where available. Each artifact page links directly to official distribution channels. Artifact pages that display a **verified indicator** have received explicit permission from the rights holder. Pages without this indicator are index entries using publicly available metadata and authorized embeds only."
+            },
+            "s5": {
+                "title": "5. Original Content",
+                "content": "All original editorial content, UI design, graphics, and the \"District\" concept framework on Shimokitan are protected by copyright. Reproduction without written permission is prohibited."
+            },
+            "s6": {
+                "title": "6. Our Approach to Rights",
+                "content": "Shimokitan's approach is designed to respect rights holders:",
+                "l1": "We embed content from platforms that authorize external embedding (per their Terms of Service)",
+                "l2": "We provide attribution and link directly to official distribution channels",
+                "l3": "We do not reproduce, host, or redistribute copyrighted media files",
+                "l4": "We respond promptly to rights holder concerns",
+                "p2": "If you are a rights holder and have questions about how we reference your work, please contact us at **legal@shimokitan.live**."
+            },
+            "s7": {
+                "title": "7. Visitor Responsibility",
+                "content": "Shimokitan does not provide legal advice regarding copyright status, fair use, or licensing of indexed content. Visitors are responsible for their own use of linked materials."
+            },
+            "s8": {
+                "title": "8. Content Removal Requests",
+                "p1": "If you are a copyright owner or authorized agent and believe that material on Shimokitan infringes your copyright, you may submit a removal request. Please include the following information:",
+                "l1": "Identification of the copyrighted work.",
+                "l2": "Identification of the material on Shimokitan (e.g., a URL).",
+                "l3": "Your contact information.",
+                "l4": "A statement that you have a good-faith belief that the use of the material is not authorized by the copyright owner, its agent, or the law.",
+                "l5": "A statement, made under declaration of truthfulness and subject to legal liability for false claims, that the information in your notification is accurate and that you are the copyright owner or authorized to act on behalf of the copyright owner.",
+                "l6": "Your physical or electronic signature.",
+                "p2": "Submit removal requests to: legal@shimokitan.live"
+            },
+            "s9": {
+                "title": "9. Counter-Notification",
+                "content": "If you believe that material was removed or restricted in error, you may submit a counter-notification to legal@shimokitan.live. Your counter-notification should include: (1) identification of the material that was removed and its location before removal; (2) a statement, under declaration of truthfulness, that you have a good-faith belief the material was removed or restricted as a result of mistake or misidentification; (3) your name, address, and contact information; (4) a statement consenting to the jurisdiction of the courts in your place of residence (or the Republic of Indonesia if you reside outside Indonesia); and (5) your physical or electronic signature."
+            },
+            "s10": {
+                "title": "10. Voluntary Content Review",
+                "content": "Shimokitan periodically reviews indexed content and may proactively remove or restrict access to materials that we reasonably believe to infringe on third-party rights or violate our content policies."
+            },
+            "s11": {
+                "title": "11. Repeat Infringers",
+                "content": "Shimokitan reserves the right to delist content from sources that repeatedly generate valid infringement claims."
+            },
+            "s12": {
+                "title": "12. Contact",
+                "content": "For copyright inquiries, contact us at legal@shimokitan.live."
+            }
+        },
+        "affiliate": {
+            "title": "Affiliate Disclosure",
+            "s1": {
+                "title": "1. Overview",
+                "content": "Shimokitan will participate in affiliate programs with third-party platforms once they are implemented. When active, some links on our site will be \"affiliate links.\""
+            },
+            "s2": {
+                "title": "2. Planned Affiliate Partners",
+                "p1": "We plan to participate in affiliate programs with:",
+                "l1": "**Crunchyroll** -- Anime streaming subscriptions",
+                "l2": "**Apple Music** -- Music streaming subscriptions and purchases",
+                "p2": "This disclosure will be updated when affiliate links go live."
+            },
+            "s3": {
+                "title": "3. How Affiliate Links Work",
+                "content": "Affiliate links contain tracking parameters that allow the merchant to attribute a referral to Shimokitan. These tracking parameters may result in the merchant setting cookies on your device."
+            },
+            "s4": {
+                "title": "4. Editorial Independence",
+                "content": "Affiliate relationships do **not** influence our editorial decisions. Our curation, editorial commentary, and archival decisions are independent of any affiliate partnership."
+            },
+            "s5": {
+                "title": "5. Identifying Affiliate Links",
+                "content": "Pages or sections of the site that contain affiliate links will be identified with a visible indicator, such as a \"Partner Link\" label."
+            },
+            "s6": {
+                "title": "6. Contact",
+                "content": "If you have questions about our affiliate relationships, contact us at partners@shimokitan.live."
+            }
+        },
+        "community": {
+            "title": "Community Guidelines",
+            "description": "Shimokitan does not currently offer user accounts or community features.\n\nWhen we introduce these features in the future, we'll establish clear guidelines for respectful participation, content standards, and prohibited conduct. Until then, if you have feedback or concerns, please contact us via our [Contact Page](/contact)."
+        }
+    },
+    "changelog": {
+        "title": "Changelog",
+        "description": "A log of notable updates and changes to the Shimokitan platform.",
+        "v2_0_26": {
+            "title": "v2.0.26 -- February 2026",
+            "subtitle": "Legal Compliance and Foundation",
+            "l1": "Complete rewrite of all legal pages (Privacy Policy, Terms of Service, Cookie Policy, Copyright Policy, Community Guidelines).",
+            "l2": "Added Affiliate Disclosure page.",
+            "l3": "Strengthened admin authentication security.",
+            "l4": "Added copy-as-markdown functionality to legal and about pages.",
+            "l5": "Refined coming-soon page to remove data collection."
+        },
+        "v2_0_0": {
+            "title": "v2.0.0 -- January 2026",
+            "subtitle": "Core Reactivation",
+            "l1": "Complete rewrite of the platform on Next.js App Router.",
+            "l2": "Integrated Drizzle ORM with Neon PostgreSQL.",
+            "l3": "Built the admin console for artifact, entity, and collection management.",
+            "l4": "Implemented the new UI design system with CyberpunkShell and district theming.",
+            "l5": "Added R2 asset pipeline for image processing and storage."
+        },
+        "v1_5_0": {
+            "title": "v1.5.0 -- December 2025",
+            "subtitle": "Initial Signal",
+            "l1": "Beta launch of the artifact submission system.",
+            "l2": "Basic search functionality.",
+            "l3": "First iteration of the district concept and navigation."
+        }
+    },
+    "navbar": {
+        "system_status": "System Status",
+        "operational": "Operational",
+        "location": "Location",
+        "time": "Time",
+        "search_placeholder": "Query database...",
+        "identity_panel": "Identity // Panel",
+        "initialize_session": "Initialize Session",
+        "register_resident": "Register Resident",
+        "guest_protocol": "Guest_Protocol_Active"
+    },
+    "footer": {
+        "contact_us": "CONTACT US",
+        "guidelines": "Guidelines",
+        "copyright": "Copyright",
+        "affiliates": "Affiliates"
+    }
+}

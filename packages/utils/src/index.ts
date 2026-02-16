@@ -5,3 +5,4 @@ export { dayjs };
 export * from './nanoid';
 export * from './storage';
 export * from './media';
+export * from './i18n';

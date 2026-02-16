@@ -11,3 +11,4 @@ This Rule appliead to Shimokitan Project Only
 - We use shadcn/ui
 - Make everything possible to be shared as shared
 - ALWAYS MAKES FONT READABLE AND VISIBLE, NOT TOO DARK NOT TOO SMALL
+- WE HAVE i18n Implemented

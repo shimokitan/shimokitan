@@ -1,18 +1,26 @@
 "use client"
 
 import React from 'react';
-import Link from 'next/link';
+import Link from '../Link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@shimokitan/ui';
 
-const links = [
-    { href: '/about', label: 'About Shimokitan' },
-    { href: '/about/vision', label: 'Vision and Roadmap' },
-    { href: '/about/changelog', label: 'Changelog' },
-];
+interface AboutSidebarProps {
+    dict: {
+        about: string;
+        vision: string;
+        changelog: string;
+    }
+}
 
-export function AboutSidebar() {
+export function AboutSidebar({ dict }: AboutSidebarProps) {
     const pathname = usePathname();
+
+    const links = [
+        { href: '/about', label: dict.about },
+        { href: '/about/vision', label: dict.vision },
+        { href: '/about/changelog', label: dict.changelog },
+    ];
 
     return (
         <nav className="hidden lg:block w-64 shrink-0 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto pr-8 border-r border-zinc-800/50">

@@ -2,9 +2,26 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from './Link';
+import { Dictionary } from '@shimokitan/utils';
 
-export function ComingSoon() {
+export function ComingSoon({ dict }: { dict?: Dictionary }) {
+    // Fallback if dict is not provided (should be provided by parent)
+    const d = dict || {
+        common: {
+            access_restricted: "Access Restricted",
+            coming_soon: "COMING SOON",
+            stay_connected: "Stay Connected",
+            follow_us: "Follow us on social media for updates on when the District opens its gates.",
+            privacy: "Privacy",
+            terms: "Terms",
+            cookies: "Cookies"
+        },
+        home: {
+            description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories — not data points. Inspired by the back-alleys of Shimokitazawa, this is where your taste becomes a curated archive of experience."
+        }
+    } as any;
+
     return (
         <div className="flex flex-col items-center justify-center p-6 min-h-full">
             <div className="max-w-4xl w-full flex flex-col items-center">
@@ -18,21 +35,18 @@ export function ComingSoon() {
                         </div>
                     </div>
                     <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-xs font-mono text-zinc-400 font-bold uppercase tracking-widest whitespace-nowrap">
-                        Access Restricted
+                        {d.common.access_restricted}
                     </div>
                 </div>
 
                 {/* Heading */}
                 <div className="text-center space-y-4 mb-16">
                     <h2 className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase text-white leading-none">
-                        COMING<br />
-                        <span className="text-transparent bg-zinc-900" style={{ WebkitTextStroke: '1px rgba(139, 92, 246, 0.5)' }}>SOON.</span>
+                        {d.common.coming_soon.split(' ')[0]}<br />
+                        <span className="text-transparent bg-zinc-900" style={{ WebkitTextStroke: '1px rgba(139, 92, 246, 0.5)' }}>{d.common.coming_soon.split(' ')[1]}.</span>
                     </h2>
                     <p className="text-zinc-400 font-mono text-xs md:text-sm tracking-[0.1em] max-w-2xl mx-auto leading-relaxed">
-                        SHIMOKITAN is a district for Japanese culture enthusiasts <br className="hidden md:block" />
-                        who document their anime, games, and music as lived memories — <br className="hidden md:block" />
-                        not data points. Inspired by the back-alleys of Shimokitazawa, <br className="hidden md:block" />
-                        this is where your taste becomes a curated archive of experience.
+                        {d.home.description}
                     </p>
                 </div>
 
@@ -42,10 +56,10 @@ export function ComingSoon() {
 
                     <div className="flex flex-col gap-2 mb-6 border-l-2 border-violet-600 pl-4 py-2 bg-zinc-900/40 rounded-r-xl">
                         <label className="block text-zinc-100 text-xs font-mono uppercase tracking-[0.3em] font-black">
-                            Stay Connected
+                            {d.common.stay_connected}
                         </label>
                         <p className="text-zinc-400 text-xs font-mono leading-relaxed normal-case">
-                            Follow us on social media for updates on when the District opens its gates.
+                            {d.common.follow_us}
                         </p>
                     </div>
 
@@ -73,11 +87,12 @@ export function ComingSoon() {
 
                 {/* Legal links */}
                 <div className="mt-8 flex gap-5 text-[10px] font-mono uppercase tracking-widest text-zinc-600">
-                    <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy</Link>
-                    <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms</Link>
-                    <Link href="/cookies" className="hover:text-zinc-400 transition-colors">Cookies</Link>
+                    <Link href="/privacy" className="hover:text-zinc-400 transition-colors">{d.common.privacy}</Link>
+                    <Link href="/terms" className="hover:text-zinc-400 transition-colors">{d.common.terms}</Link>
+                    <Link href="/cookies" className="hover:text-zinc-400 transition-colors">{d.common.cookies}</Link>
                 </div>
             </div>
         </div>
     );
 }
+

@@ -33,6 +33,10 @@ function htmlToMarkdown(element: HTMLElement): string {
                 lines.push(`### ${el.textContent?.trim()}`);
                 lines.push('');
                 return;
+            case 'hr':
+                lines.push('---');
+                lines.push('');
+                return;
             case 'p': {
                 const content = inlineContent(el);
                 lines.push(content);

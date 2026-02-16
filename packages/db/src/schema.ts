@@ -94,6 +94,7 @@ export const zines = pgTable("zines", {
     content: text("content").notNull(),
     resonance: integer("resonance").default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
