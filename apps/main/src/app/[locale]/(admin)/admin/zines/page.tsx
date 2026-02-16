@@ -15,20 +15,38 @@ export default async function ZinesPage(props: { searchParams: Promise<{ trash?:
 
     const db = getDb();
 
-    const artifacts = db ? await db.query.artifacts.findMany({
+    // Fetch Artifacts for the selection form
+    const rawArtifacts = db ? await db.query.artifacts.findMany({
         where: isNull(schema.artifacts.deletedAt),
-        columns: { id: true, title: true }
+        with: {
+            translations: true
+        }
     }) : [];
 
-    const allZines = db ? await db.query.zines.findMany({
+    const artifacts = rawArtifacts.map(a => ({
+        id: a.id,
+        title: a.translations?.[0]?.title || "Untitled"
+    }));
+
+    const rawZines = db ? await db.query.zines.findMany({
         where: isTrash ? isNotNull(schema.zines.deletedAt) : isNull(schema.zines.deletedAt),
         orderBy: [desc(schema.zines.createdAt)],
         with: {
             artifact: {
-                columns: { title: true }
+                with: {
+                    translations: true
+                }
             }
         }
     }) : [];
+
+    const allZines = rawZines.map(z => ({
+        ...z,
+        artifact: z.artifact ? {
+            ...z.artifact,
+            title: z.artifact.translations?.[0]?.title || "Untitled"
+        } : null
+    }));
 
     return (
         <div className="space-y-6">

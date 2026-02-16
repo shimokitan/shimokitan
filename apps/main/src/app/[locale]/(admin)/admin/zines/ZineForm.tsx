@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { seedZine, updateZine } from '../actions';
+import { createFullZine, updateFullZine } from '../actions';
 import { useRouter } from 'next/navigation';
 
 export default function ZineForm({ artifacts, initialData }: { artifacts: any[], initialData?: any }) {
@@ -11,12 +11,19 @@ export default function ZineForm({ artifacts, initialData }: { artifacts: any[],
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
+            const payload = {
+                artifactId: formData.get('artifactId') as string,
+                author: formData.get('author') as string,
+                content: formData.get('content') as string,
+                resonance: parseInt(formData.get('resonance') as string || '0')
+            };
+
             if (initialData?.id) {
-                await updateZine(initialData.id, formData);
+                await updateFullZine(initialData.id, payload);
                 alert('Zine Updated!');
                 router.push('/admin/zines');
             } else {
-                await seedZine(formData);
+                await createFullZine(payload);
                 alert('Zine Created!');
             }
             router.refresh();
@@ -61,7 +68,7 @@ export default function ZineForm({ artifacts, initialData }: { artifacts: any[],
                 <label className="text-[10px] font-mono uppercase text-zinc-400">Content</label>
                 <textarea
                     name="content"
-                    defaultValue={initialData?.content}
+                    defaultValue={initialData?.translations?.[0]?.content || initialData?.content}
                     required
                     rows={6}
                     className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-emerald-500 outline-none resize-none transition-colors"

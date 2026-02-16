@@ -29,6 +29,9 @@ export async function getAllArtifacts() {
   if (!db) return [];
   return await db.query.artifacts.findMany({
     orderBy: [desc(schema.artifacts.score)],
+    with: {
+      translations: true
+    }
   });
 }
 
@@ -44,8 +47,13 @@ export async function getArtifactById(id: string) {
           entity: true
         }
       },
+      translations: true,
       resources: true,
-      zines: true
+      zines: {
+        with: {
+          translations: true
+        }
+      }
     }
   });
 }

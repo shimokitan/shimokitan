@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createFullArtifact, updateFullArtifact } from '../actions';
 import { useRouter } from 'next/navigation';
-import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
+import { extractMediaId, getThumbnailUrl, _ } from '@shimokitan/utils';
 
 type Entity = {
     id: string;
@@ -51,7 +51,9 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
     );
     const [coverUrl, setCoverUrl] = useState(initialData?.coverImage || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
+    const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
+    const [slug, setSlug] = useState(initialData?.slug || '');
 
     const addResource = () => setResources([...resources, { type: 'other', platform: 'other', url: '', isPrimary: false }]);
     const removeResource = (idx: number) => setResources(resources.filter((_, i) => i !== idx));
@@ -106,6 +108,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 status: formData.get('status') as string,
                 score: parseInt(formData.get('score') as string) || 0,
                 isMajor: isMajor,
+                isVerified: isVerified,
                 allowMirroring: allowMirroring,
                 resources: cleanResources,
                 credits: cleanCredits,
@@ -113,10 +116,10 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
             };
 
             if (initialData?.id) {
-                await updateFullArtifact(initialData.id, payload);
+                await updateFullArtifact(initialData.id, { ...payload, slug });
                 alert('Artifact Updated!');
             } else {
-                await createFullArtifact(payload);
+                await createFullArtifact({ ...payload, slug });
                 alert('Artifact Created!');
             }
 
@@ -140,13 +143,51 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <div className="lg:col-span-8 space-y-6">
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
-                            <input name="title" defaultValue={initialData?.title} required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors" placeholder="Artifact Title" />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
+                                <input
+                                    name="title"
+                                    defaultValue={initialData?.translations?.[0]?.title || initialData?.title}
+                                    required
+                                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors"
+                                    placeholder="Artifact Title"
+                                    onChange={(e) => {
+                                        if (!slug || slug === initialData?.slug) {
+                                            setSlug(_.kebabCase(e.target.value));
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-mono uppercase text-zinc-400">Slug (URL_HANDLE)</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        name="slug"
+                                        value={slug}
+                                        onChange={(e) => setSlug(e.target.value)}
+                                        className="flex-1 bg-black border border-zinc-800 p-3 text-[10px] font-mono text-zinc-400 focus:border-rose-600 outline-none"
+                                        placeholder="unique-slug-id"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setSlug(_.kebabCase(slug))}
+                                        className="px-3 bg-zinc-900 border border-zinc-800 text-[10px] hover:bg-zinc-800"
+                                    >
+                                        FIX
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="space-y-1">
                             <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
-                            <textarea name="description" defaultValue={initialData?.description} rows={4} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors" placeholder="Brief description..." />
+                            <textarea
+                                name="description"
+                                defaultValue={initialData?.translations?.[0]?.description || initialData?.description}
+                                rows={4}
+                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors"
+                                placeholder="Brief description..."
+                            />
                         </div>
                     </div>
 
@@ -163,6 +204,13 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                             )}
                             <div className="absolute inset-0 scanline pointer-events-none opacity-20" />
                             <div className="absolute inset-0 noise pointer-events-none opacity-10" />
+
+                            {/* Verified Badge Preview */}
+                            {isVerified && (
+                                <div className="absolute top-2 right-2 bg-rose-600 text-black p-1">
+                                    <Icon icon="lucide:shield-check" width={16} />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -181,27 +229,25 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                         </select>
                     </div>
                     <div className="md:col-span-2 space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Cover_URL (Auto-populated from YouTube)</label>
-                        <div className="flex gap-2">
-                            <input
-                                name="coverImage"
-                                value={coverUrl}
-                                onChange={(e) => setCoverUrl(e.target.value)}
-                                className="flex-1 bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none"
-                                placeholder="https://..."
-                            />
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-[46px] group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
-                                    <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                                    <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
-                                </div>
-                                <div
-                                    className={`flex items-center gap-3 border px-4 h-[46px] group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
-                                    onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
-                                >
-                                    <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                                    <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
-                                </div>
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Verification & Identity</label>
+                        <div className="grid grid-cols-3 gap-2 h-[46px]">
+                            <div
+                                className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-rose-600 border-rose-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-rose-900'}`}
+                                onClick={() => setIsVerified(!isVerified)}
+                            >
+                                <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={14} />
+                                <span className="text-[10px] font-black uppercase">Verified</span>
+                            </div>
+                            <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                                <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                                <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
+                            </div>
+                            <div
+                                className={`flex items-center gap-3 border px-4 h-full group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
+                                onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
+                            >
+                                <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                                <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
                             </div>
                         </div>
                     </div>
@@ -209,16 +255,28 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Status</label>
-                        <select name="status" defaultValue={initialData?.status} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
-                            <option value="back_alley">BACK_ALLEY</option>
-                            <option value="the_pit">THE_PIT</option>
-                            <option value="archived">ARCHIVED</option>
-                        </select>
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Cover_URL</label>
+                        <input
+                            name="coverImage"
+                            value={coverUrl}
+                            onChange={(e) => setCoverUrl(e.target.value)}
+                            className="bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none w-full"
+                            placeholder="https://..."
+                        />
                     </div>
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Heat_Index (Score)</label>
-                        <input name="score" type="number" defaultValue={initialData?.score || 0} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Status</label>
+                            <select name="status" defaultValue={initialData?.status} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
+                                <option value="back_alley">BACK_ALLEY</option>
+                                <option value="the_pit">THE_PIT</option>
+                                <option value="archived">ARCHIVED</option>
+                            </select>
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Heat_Index</label>
+                            <input name="score" type="number" defaultValue={initialData?.score || 0} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none" />
+                        </div>
                     </div>
                 </div>
             </div>

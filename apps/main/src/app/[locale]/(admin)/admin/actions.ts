@@ -2,10 +2,10 @@
 "use server"
 
 import { getDb, schema } from '@shimokitan/db';
-import { sql, eq, isNotNull } from 'drizzle-orm';
+import { sql, eq, isNotNull, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-import { nanoid, extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
+import { nanoid, extractMediaId, getThumbnailUrl, _ } from '@shimokitan/utils';
 import { uploadImageFromUrl } from '@/lib/r2';
 
 async function processImageField(url: string, id: string, type: 'artifact' | 'zine' | 'profile' | 'collection', isMajor: boolean = false, allowMirroring: boolean = false) {
@@ -26,6 +26,10 @@ async function processImageField(url: string, id: string, type: 'artifact' | 'zi
     }
 }
 
+function generateSlug(text: string, id: string) {
+    return `${_.kebabCase(text)}-${id.slice(0, 4)}`;
+}
+
 export async function seedArtifact(formData: FormData) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
@@ -37,17 +41,24 @@ export async function seedArtifact(formData: FormData) {
     let coverImage = formData.get('coverImage') as string;
     const status = formData.get('status') as any;
     const score = parseInt(formData.get('score') as string || '0');
+    const slug = generateSlug(title, id);
 
     coverImage = await processImageField(coverImage, id, 'artifact');
 
     await db.insert(schema.artifacts).values({
         id,
-        title,
+        slug,
         category,
-        description,
         coverImage,
         status,
         score,
+    });
+
+    await db.insert(schema.artifactsI18n).values({
+        artifactId: id,
+        locale: 'en',
+        title,
+        description,
     });
 
     revalidatePath('/artifacts');
@@ -63,15 +74,22 @@ export async function seedEntity(formData: FormData) {
     const type = formData.get('type') as any;
     const bio = formData.get('bio') as string;
     let avatarUrl = formData.get('avatarUrl') as string;
+    const slug = generateSlug(name, id);
 
     avatarUrl = await processImageField(avatarUrl, id, 'profile');
 
     await db.insert(schema.entities).values({
         id,
-        name,
+        slug,
         type,
-        bio,
         avatarUrl,
+    });
+
+    await db.insert(schema.entitiesI18n).values({
+        entityId: id,
+        locale: 'en',
+        name,
+        bio,
     });
 
     revalidatePath('/admin');
@@ -85,14 +103,21 @@ export async function seedCollection(formData: FormData) {
     const title = formData.get('title') as string;
     const thesis = formData.get('thesis') as string;
     let coverImage = formData.get('coverImage') as string;
+    const slug = generateSlug(title, id);
 
     coverImage = await processImageField(coverImage, id, 'collection');
 
     await db.insert(schema.collections).values({
         id,
+        slug,
+        coverImage,
+    });
+
+    await db.insert(schema.collectionsI18n).values({
+        collectionId: id,
+        locale: 'en',
         title,
         thesis,
-        coverImage,
     });
 
     revalidatePath('/admin');
@@ -112,10 +137,14 @@ export async function seedZine(formData: FormData) {
         id,
         artifactId,
         author,
-        content,
         resonance,
     });
 
+    await db.insert(schema.zinesI18n).values({
+        zineId: id,
+        locale: 'en',
+        content,
+    });
 
     revalidatePath('/admin');
 }
@@ -123,25 +152,28 @@ export async function seedZine(formData: FormData) {
 // Complex Actions
 export async function createFullArtifact(data: {
     title: string;
+    slug?: string;
     category: string;
     description: string;
     coverImage: string;
     status: string;
     score: number;
     isMajor: boolean;
+    isVerified: boolean;
     allowMirroring: boolean;
     resources: any[];
     credits: any[];
     specs: Record<string, string>;
+    locale?: string;
 }) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
-    // 1. Generate ID and Process Image
     const artifactId = nanoid();
+    const locale = (data.locale as any) || 'en';
+    const slug = data.slug || generateSlug(data.title, artifactId);
     let coverUrl = data.coverImage;
 
-    // Fallback: If no cover provided, try to get from primary resource
     if (!coverUrl) {
         const primaryRes = data.resources.find(r => r.isPrimary) || data.resources[0];
         if (primaryRes) {
@@ -153,25 +185,29 @@ export async function createFullArtifact(data: {
 
     const processedCover = await processImageField(coverUrl, artifactId, 'artifact', data.isMajor, data.allowMirroring);
 
-    // 2. Create Artifact
     await db.insert(schema.artifacts).values({
         id: artifactId,
-        title: data.title,
+        slug,
         category: data.category as any,
-        description: data.description,
         coverImage: processedCover,
         status: data.status as any,
         score: data.score,
         specs: data.specs,
         isMajor: data.isMajor,
+        isVerified: data.isVerified,
         allowMirroring: data.allowMirroring
     });
 
-    // 3. Add Resources
+    await db.insert(schema.artifactsI18n).values({
+        artifactId,
+        locale,
+        title: data.title,
+        description: data.description,
+    });
+
     if (data.resources.length > 0) {
         for (const res of data.resources) {
             const externalId = extractMediaId(res.url, res.platform);
-
             await db.insert(schema.artifactResources).values({
                 id: nanoid(),
                 artifactId: artifactId,
@@ -184,7 +220,6 @@ export async function createFullArtifact(data: {
         }
     }
 
-    // 4. Add Credits
     if (data.credits.length > 0) {
         for (const cred of data.credits) {
             await db.insert(schema.artifactCredits).values({
@@ -202,39 +237,56 @@ export async function createFullArtifact(data: {
 
 export async function updateFullArtifact(id: string, data: {
     title: string;
+    slug: string;
     category: string;
     description: string;
     coverImage: string;
     status: string;
     score: number;
     isMajor: boolean;
+    isVerified: boolean;
     allowMirroring: boolean;
     resources: any[];
     credits: any[];
     specs: Record<string, string>;
+    locale?: string;
 }) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
+    const locale = (data.locale as any) || 'en';
     const processedCover = await processImageField(data.coverImage, id, 'artifact', data.isMajor, data.allowMirroring);
 
-    // 1. Update Core
     await db.update(schema.artifacts)
         .set({
-            title: data.title,
+            slug: data.slug,
             category: data.category as any,
-            description: data.description,
             coverImage: processedCover,
             status: data.status as any,
             score: data.score,
             specs: data.specs,
             isMajor: data.isMajor,
+            isVerified: data.isVerified,
             allowMirroring: data.allowMirroring,
             updatedAt: new Date()
         })
         .where(eq(schema.artifacts.id, id));
 
-    // 2. Sync Resources (Delete and Re-insert is simplest for small sets)
+    await db.insert(schema.artifactsI18n)
+        .values({
+            artifactId: id,
+            locale,
+            title: data.title,
+            description: data.description,
+        })
+        .onConflictDoUpdate({
+            target: [schema.artifactsI18n.artifactId, schema.artifactsI18n.locale],
+            set: {
+                title: data.title,
+                description: data.description,
+            }
+        });
+
     await db.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
     if (data.resources.length > 0) {
         for (const res of data.resources) {
@@ -251,7 +303,6 @@ export async function updateFullArtifact(id: string, data: {
         }
     }
 
-    // 3. Sync Credits
     await db.delete(schema.artifactCredits).where(eq(schema.artifactCredits.artifactId, id));
     if (data.credits.length > 0) {
         for (const cred of data.credits) {
@@ -271,30 +322,49 @@ export async function updateFullArtifact(id: string, data: {
 
 export async function updateFullEntity(id: string, data: {
     name: string;
+    slug: string;
     type: string;
     bio: string;
     avatarUrl: string;
     isMajor: boolean;
+    isVerified: boolean;
     allowMirroring: boolean;
     socialLinks: Record<string, string>;
+    locale?: string;
 }) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
+    const locale = (data.locale as any) || 'en';
     const processedAvatar = await processImageField(data.avatarUrl, id, 'profile', data.isMajor, data.allowMirroring);
 
     await db.update(schema.entities)
         .set({
-            name: data.name,
+            slug: data.slug,
             type: data.type as any,
-            bio: data.bio,
             avatarUrl: processedAvatar,
             isMajor: data.isMajor,
+            isVerified: data.isVerified,
             allowMirroring: data.allowMirroring,
             socialLinks: data.socialLinks,
             updatedAt: new Date()
         })
         .where(eq(schema.entities.id, id));
+
+    await db.insert(schema.entitiesI18n)
+        .values({
+            entityId: id,
+            locale,
+            name: data.name,
+            bio: data.bio,
+        })
+        .onConflictDoUpdate({
+            target: [schema.entitiesI18n.entityId, schema.entitiesI18n.locale],
+            set: {
+                name: data.name,
+                bio: data.bio,
+            }
+        });
 
     revalidatePath('/entities');
     revalidatePath(`/entities/${id}`);
@@ -302,11 +372,131 @@ export async function updateFullEntity(id: string, data: {
     revalidatePath('/admin');
 }
 
+export async function createFullEntity(data: {
+    name: string;
+    slug?: string;
+    type: string;
+    bio: string;
+    avatarUrl: string;
+    isMajor: boolean;
+    isVerified: boolean;
+    allowMirroring: boolean;
+    socialLinks: Record<string, string>;
+    locale?: string;
+}) {
+    const db = getDb();
+    if (!db) throw new Error("DB_NOT_INITIALIZED");
+
+    const entityId = nanoid();
+    const locale = (data.locale as any) || 'en';
+    const slug = data.slug || generateSlug(data.name, entityId);
+    const processedAvatar = await processImageField(data.avatarUrl, entityId, 'profile', data.isMajor, data.allowMirroring);
+
+    await db.insert(schema.entities).values({
+        id: entityId,
+        slug,
+        type: data.type as any,
+        avatarUrl: processedAvatar,
+        isMajor: data.isMajor,
+        isVerified: data.isVerified,
+        allowMirroring: data.allowMirroring,
+        socialLinks: data.socialLinks
+    });
+
+    await db.insert(schema.entitiesI18n).values({
+        entityId,
+        locale,
+        name: data.name,
+        bio: data.bio,
+    });
+
+    revalidatePath('/entities');
+    revalidatePath('/admin/entities');
+    revalidatePath('/admin');
+}
+
+export async function createFullCollection(data: {
+    title: string;
+    slug?: string;
+    thesis: string;
+    coverImage: string;
+    locale?: string;
+}) {
+    const db = getDb();
+    if (!db) throw new Error("DB_NOT_INITIALIZED");
+
+    const collectionId = nanoid();
+    const locale = (data.locale as any) || 'en';
+    const slug = data.slug || generateSlug(data.title, collectionId);
+    const processedCover = await processImageField(data.coverImage, collectionId, 'collection');
+
+    await db.insert(schema.collections).values({
+        id: collectionId,
+        slug,
+        coverImage: processedCover,
+    });
+
+    await db.insert(schema.collectionsI18n).values({
+        collectionId,
+        locale,
+        title: data.title,
+        thesis: data.thesis,
+    });
+
+    revalidatePath('/collections');
+    revalidatePath('/admin/collections');
+    revalidatePath('/admin');
+}
+
+export async function updateFullCollection(id: string, data: {
+    title: string;
+    slug: string;
+    thesis: string;
+    coverImage: string;
+    locale?: string;
+}) {
+    const db = getDb();
+    if (!db) throw new Error("DB_NOT_INITIALIZED");
+
+    const locale = (data.locale as any) || 'en';
+    const processedCover = await processImageField(data.coverImage, id, 'collection');
+
+    await db.update(schema.collections)
+        .set({
+            slug: data.slug,
+            coverImage: processedCover,
+            updatedAt: new Date()
+        })
+        .where(eq(schema.collections.id, id));
+
+    await db.insert(schema.collectionsI18n)
+        .values({
+            collectionId: id,
+            locale,
+            title: data.title,
+            thesis: data.thesis,
+        })
+        .onConflictDoUpdate({
+            target: [schema.collectionsI18n.collectionId, schema.collectionsI18n.locale],
+            set: {
+                title: data.title,
+                thesis: data.thesis,
+            }
+        });
+
+    revalidatePath('/collections');
+    revalidatePath(`/collections/${id}`);
+    revalidatePath('/admin/collections');
+    revalidatePath('/admin');
+}
+
 export async function updateCollection(id: string, formData: FormData) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
+    const locale = (formData.get('locale') as any) || 'en';
     const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string || generateSlug(title, id);
     const thesis = formData.get('thesis') as string;
     let coverImage = formData.get('coverImage') as string;
 
@@ -314,21 +504,105 @@ export async function updateCollection(id: string, formData: FormData) {
 
     await db.update(schema.collections)
         .set({
-            title,
-            thesis,
+            slug,
             coverImage,
             updatedAt: new Date()
         })
         .where(eq(schema.collections.id, id));
 
+    await db.insert(schema.collectionsI18n)
+        .values({
+            collectionId: id,
+            locale,
+            title,
+            thesis,
+        })
+        .onConflictDoUpdate({
+            target: [schema.collectionsI18n.collectionId, schema.collectionsI18n.locale],
+            set: {
+                title,
+                thesis,
+            }
+        });
+
     revalidatePath('/admin');
     revalidatePath(`/collections/${id}`);
+}
+
+export async function createFullZine(data: {
+    artifactId: string;
+    author: string;
+    content: string;
+    resonance: number;
+    locale?: string;
+}) {
+    const db = getDb();
+    if (!db) throw new Error("DB_NOT_INITIALIZED");
+
+    const zineId = nanoid();
+    const locale = (data.locale as any) || 'en';
+
+    await db.insert(schema.zines).values({
+        id: zineId,
+        artifactId: data.artifactId,
+        author: data.author,
+        resonance: data.resonance,
+    });
+
+    await db.insert(schema.zinesI18n).values({
+        zineId,
+        locale,
+        content: data.content,
+    });
+
+    revalidatePath('/zines');
+    revalidatePath('/admin/zines');
+    revalidatePath('/admin');
+}
+
+export async function updateFullZine(id: string, data: {
+    artifactId: string;
+    author: string;
+    content: string;
+    resonance: number;
+    locale?: string;
+}) {
+    const db = getDb();
+    if (!db) throw new Error("DB_NOT_INITIALIZED");
+
+    const locale = (data.locale as any) || 'en';
+
+    await db.update(schema.zines)
+        .set({
+            artifactId: data.artifactId,
+            author: data.author,
+            resonance: data.resonance,
+            updatedAt: new Date()
+        })
+        .where(eq(schema.zines.id, id));
+
+    await db.insert(schema.zinesI18n)
+        .values({
+            zineId: id,
+            locale,
+            content: data.content,
+        })
+        .onConflictDoUpdate({
+            target: [schema.zinesI18n.zineId, schema.zinesI18n.locale],
+            set: { content: data.content }
+        });
+
+    revalidatePath('/zines');
+    revalidatePath(`/zines/${id}`);
+    revalidatePath('/admin/zines');
+    revalidatePath('/admin');
 }
 
 export async function updateZine(id: string, formData: FormData) {
     const db = getDb();
     if (!db) throw new Error("DB_NOT_INITIALIZED");
 
+    const locale = (formData.get('locale') as any) || 'en';
     const artifactId = formData.get('artifactId') as string;
     const author = formData.get('author') as string;
     const content = formData.get('content') as string;
@@ -338,47 +612,24 @@ export async function updateZine(id: string, formData: FormData) {
         .set({
             artifactId,
             author,
-            content,
             resonance,
             updatedAt: new Date()
         })
         .where(eq(schema.zines.id, id));
 
+    await db.insert(schema.zinesI18n)
+        .values({
+            zineId: id,
+            locale,
+            content,
+        })
+        .onConflictDoUpdate({
+            target: [schema.zinesI18n.zineId, schema.zinesI18n.locale],
+            set: { content }
+        });
+
     revalidatePath('/admin');
     revalidatePath('/zines');
-}
-
-export async function createFullEntity(data: {
-    name: string;
-    type: string;
-    bio: string;
-    avatarUrl: string;
-    isMajor: boolean;
-    allowMirroring: boolean;
-    socialLinks: Record<string, string>;
-}) {
-    const db = getDb();
-    if (!db) throw new Error("DB_NOT_INITIALIZED");
-
-    const entityId = nanoid();
-    const processedAvatar = await processImageField(data.avatarUrl, entityId, 'profile', data.isMajor, data.allowMirroring);
-
-    await db.insert(schema.entities).values({
-        id: entityId,
-        name: data.name,
-        type: data.type as any,
-        bio: data.bio,
-        avatarUrl: processedAvatar,
-        isMajor: data.isMajor,
-        allowMirroring: data.allowMirroring,
-        socialLinks: data.socialLinks
-    });
-
-    revalidatePath('/entities');
-    revalidatePath('/admin/entities');
-    revalidatePath('/entities');
-    revalidatePath('/admin/entities');
-    revalidatePath('/admin');
 }
 
 export async function deleteArtifact(id: string) {
@@ -392,7 +643,7 @@ export async function deleteArtifact(id: string) {
     if (!item) return;
 
     if (item.deletedAt) {
-        // Permanent Delete
+        // Permanent Delete - cascade will handle i18n
         await db.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
         await db.delete(schema.artifactCredits).where(eq(schema.artifactCredits.artifactId, id));
         await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));

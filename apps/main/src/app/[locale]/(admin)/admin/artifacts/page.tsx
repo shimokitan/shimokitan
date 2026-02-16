@@ -15,15 +15,31 @@ export default async function ArtifactsPage(props: { searchParams: Promise<{ tra
 
     // Fetch Entities for the credits selector
     const db = getDb();
-    const entities = db ? await db.query.entities.findMany({
+    const rawEntities = db ? await db.query.entities.findMany({
         where: isNull(schema.entities.deletedAt),
-        columns: { id: true, name: true, type: true }
+        with: {
+            translations: true
+        }
     }) : [];
 
-    const allArtifacts = db ? await db.query.artifacts.findMany({
+    const entities = rawEntities.map(e => ({
+        id: e.id,
+        name: e.translations?.[0]?.name || "Untitled",
+        type: e.type
+    }));
+
+    const rawArtifacts = db ? await db.query.artifacts.findMany({
         where: isTrash ? isNotNull(schema.artifacts.deletedAt) : isNull(schema.artifacts.deletedAt),
-        orderBy: [desc(schema.artifacts.createdAt)]
+        orderBy: [desc(schema.artifacts.createdAt)],
+        with: {
+            translations: true
+        }
     }) : [];
+
+    const allArtifacts = rawArtifacts.map(a => ({
+        ...a,
+        title: a.translations?.[0]?.title || "Untitled"
+    }));
 
     return (
         <div className="space-y-6">

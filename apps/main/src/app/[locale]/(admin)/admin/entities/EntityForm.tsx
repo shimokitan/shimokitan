@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createFullEntity, updateFullEntity } from '../actions';
 import { useRouter } from 'next/navigation';
+import { _ } from '@shimokitan/utils';
 
 type SocialLink = {
     platform: string;
@@ -15,7 +16,9 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState(initialData?.avatarUrl || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
+    const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
+    const [slug, setSlug] = useState(initialData?.slug || '');
 
     // Dynamic List
     const [socials, setSocials] = useState<SocialLink[]>(
@@ -49,8 +52,10 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                 bio: formData.get('bio') as string,
                 avatarUrl: avatarUrl,
                 isMajor: isMajor,
+                isVerified: isVerified,
                 allowMirroring: allowMirroring,
-                socialLinks: cleanSocials
+                socialLinks: cleanSocials,
+                slug: slug
             };
 
             if (initialData?.id) {
@@ -93,16 +98,32 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-white/5 pointer-events-none" />
                         <div className="absolute inset-0 scanline pointer-events-none opacity-10" />
+                        {isVerified && (
+                            <div className="absolute top-0 right-0 bg-violet-600 text-black p-1 rounded-bl">
+                                <Icon icon="lucide:shield-check" width={16} />
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="flex-1 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
+                    <div className="grid grid-cols-12 gap-4">
+                        <div className="col-span-12 md:col-span-8 space-y-1">
                             <label className="text-[10px] font-mono uppercase text-zinc-400">Name</label>
-                            <input name="name" defaultValue={initialData?.name} required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors" placeholder="Entity Name" />
+                            <input
+                                name="name"
+                                defaultValue={initialData?.translations?.[0]?.name || initialData?.name}
+                                required
+                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
+                                placeholder="Entity Name"
+                                onChange={(e) => {
+                                    if (!slug || slug === initialData?.slug) {
+                                        setSlug(_.kebabCase(e.target.value));
+                                    }
+                                }}
+                            />
                         </div>
-                        <div className="space-y-1">
+                        <div className="col-span-12 md:col-span-4 space-y-1">
                             <label className="text-[10px] font-mono uppercase text-zinc-400">Type</label>
                             <select name="type" defaultValue={initialData?.type} required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors">
                                 <option value="individual">INDIVIDUAL</option>
@@ -114,15 +135,35 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                         </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Bio</label>
-                        <textarea name="bio" defaultValue={initialData?.bio} rows={3} className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors" placeholder="About this entity..." />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Bio</label>
+                            <textarea
+                                name="bio"
+                                defaultValue={initialData?.translations?.[0]?.bio || initialData?.bio}
+                                rows={2}
+                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
+                                placeholder="About this entity..."
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-mono uppercase text-zinc-400">Slug (URL_HANDLE)</label>
+                            <div className="flex gap-2">
+                                <input
+                                    name="slug"
+                                    value={slug}
+                                    onChange={(e) => setSlug(e.target.value)}
+                                    className="flex-1 bg-black border border-zinc-800 p-3 text-[10px] font-mono text-zinc-400 focus:border-violet-600 outline-none"
+                                    placeholder="unique-slug-id"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div className="md:col-span-3 space-y-1">
+                <div className="md:col-span-2 space-y-1">
                     <label className="text-[10px] font-mono uppercase text-zinc-400">Avatar_URL (Upload/Hotlink)</label>
                     <input
                         name="avatarUrl"
@@ -132,13 +173,20 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                         placeholder="https://..."
                     />
                 </div>
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 p-3 h-[46px] group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                <div className="md:col-span-2 grid grid-cols-3 gap-2 h-[46px]">
+                    <div
+                        className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-violet-600 border-violet-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-violet-900'}`}
+                        onClick={() => setIsVerified(!isVerified)}
+                    >
+                        <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={14} />
+                        <span className="text-[10px] font-black uppercase">Verified</span>
+                    </div>
+                    <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
                         <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
                         <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
                     </div>
                     <div
-                        className={`flex items-center gap-3 border p-3 h-[46px] group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
+                        className={`flex items-center gap-3 border px-4 h-full group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
                         onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
                     >
                         <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-violet-600 border-violet-500' : 'bg-transparent border-zinc-700'} transition-colors`} />

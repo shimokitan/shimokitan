@@ -6,8 +6,8 @@ import { getArtifactById } from '@shimokitan/db';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export default async function ArtifactPage(props: { params: Promise<{ id: string }> }) {
-    const { id } = await props.params;
+export default async function ArtifactPage(props: { params: Promise<{ locale: string, id: string }> }) {
+    const { locale, id } = await props.params;
 
     // Fetch by NanoID directly
     const artifact = await getArtifactById(id);
@@ -15,6 +15,11 @@ export default async function ArtifactPage(props: { params: Promise<{ id: string
     if (!artifact) {
         notFound();
     }
+
+    // Get localized content
+    const translation = artifact.translations?.find((t: any) => t.locale === locale) || artifact.translations?.[0];
+    const title = translation?.title || "Untitled";
+    const description = translation?.description || "";
 
     // Helper to get primary resource
     const primaryResource = artifact.resources?.find((r: any) => r.isPrimary) || artifact.resources?.[0];
@@ -31,7 +36,7 @@ export default async function ArtifactPage(props: { params: Promise<{ id: string
                         <div className="bg-violet-600 text-black px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter transform -skew-x-12">
                             SHARD_{artifact.id}
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase italic">{artifact.title}</h1>
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase italic">{title}</h1>
                     </div>
 
                     <div className="flex items-center gap-6 mt-4 md:mt-0 font-mono text-[10px] text-zinc-500 tracking-widest z-10">
@@ -81,7 +86,7 @@ export default async function ArtifactPage(props: { params: Promise<{ id: string
                         <div className="p-6 bg-zinc-950/40 border border-zinc-800/80 rounded-xl backdrop-blur-md">
                             <h2 className="text-xs font-black text-violet-500 uppercase tracking-[0.3em] mb-4">Editorial // Notes</h2>
                             <p className="text-zinc-300 italic text-lg leading-relaxed font-serif">
-                                &ldquo;{artifact.description}&rdquo;
+                                &ldquo;{description}&rdquo;
                             </p>
                         </div>
                     </div>
@@ -176,7 +181,7 @@ export default async function ArtifactPage(props: { params: Promise<{ id: string
                                     </div>
 
                                     <p className="text-sm text-zinc-400 italic leading-relaxed mb-6 line-clamp-4">
-                                        &ldquo;{zine.content}&rdquo;
+                                        &ldquo;{zine.translations?.find((t: any) => t.locale === locale)?.content || zine.translations?.[0]?.content || "No translation available"}&rdquo;
                                     </p>
 
                                     <div className="flex justify-between items-center text-[9px] font-mono uppercase tracking-widest">

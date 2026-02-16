@@ -1,22 +1,31 @@
 "use client"
 
 import React, { useState } from 'react';
-import { seedCollection, updateCollection } from '../actions';
 import { useRouter } from 'next/navigation';
+import { _ } from '@shimokitan/utils';
+import { createFullCollection, updateFullCollection } from '../actions';
 
 export default function CollectionForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [slug, setSlug] = useState(initialData?.slug || '');
 
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
+            const payload = {
+                title: formData.get('title') as string,
+                thesis: formData.get('thesis') as string,
+                coverImage: formData.get('coverImage') as string,
+                slug: slug
+            };
+
             if (initialData?.id) {
-                await updateCollection(initialData.id, formData);
+                await updateFullCollection(initialData.id, payload);
                 alert('Collection Updated!');
                 router.push('/admin/collections');
             } else {
-                await seedCollection(formData);
+                await createFullCollection(payload);
                 alert('Collection Created!');
             }
             router.refresh();
@@ -30,22 +39,39 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
 
     return (
         <form action={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
-                <input
-                    name="title"
-                    defaultValue={initialData?.title}
-                    required
-                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
-                    placeholder="Collection Title"
-                />
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                    <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
+                    <input
+                        name="title"
+                        defaultValue={initialData?.translations?.[0]?.title || initialData?.title}
+                        required
+                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
+                        placeholder="Collection Title"
+                        onChange={(e) => {
+                            if (!slug || slug === initialData?.slug) {
+                                setSlug(_.kebabCase(e.target.value));
+                            }
+                        }}
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-[10px] font-mono uppercase text-zinc-400">Slug (URL_HANDLE)</label>
+                    <input
+                        name="slug"
+                        value={slug}
+                        onChange={(e) => setSlug(e.target.value)}
+                        className="w-full bg-black border border-zinc-800 p-3 text-[10px] font-mono text-zinc-400 focus:border-amber-500 outline-none"
+                        placeholder="unique-slug-id"
+                    />
+                </div>
             </div>
 
             <div className="space-y-1">
                 <label className="text-[10px] font-mono uppercase text-zinc-400">Thesis</label>
                 <textarea
                     name="thesis"
-                    defaultValue={initialData?.thesis}
+                    defaultValue={initialData?.translations?.[0]?.thesis || initialData?.thesis}
                     rows={3}
                     className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none resize-none transition-colors"
                     placeholder="Collection Thesis / Description..."

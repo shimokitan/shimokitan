@@ -11,7 +11,10 @@ export default async function EditCollectionPage(props: { params: Promise<{ id: 
     const db = getDb();
 
     const collection = db ? await db.query.collections.findFirst({
-        where: eq(schema.collections.id, params.id)
+        where: eq(schema.collections.id, params.id),
+        with: {
+            translations: true
+        }
     }) : null;
 
     if (!collection) {

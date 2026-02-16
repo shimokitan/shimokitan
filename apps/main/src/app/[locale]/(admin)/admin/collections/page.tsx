@@ -14,10 +14,18 @@ export default async function CollectionsPage(props: { searchParams: Promise<{ t
     const isTrash = searchParams.trash === 'true';
 
     const db = getDb();
-    const allCollections = db ? await db.query.collections.findMany({
+    const rawCollections = db ? await db.query.collections.findMany({
         where: isTrash ? isNotNull(schema.collections.deletedAt) : isNull(schema.collections.deletedAt),
-        orderBy: [desc(schema.collections.createdAt)]
+        orderBy: [desc(schema.collections.createdAt)],
+        with: {
+            translations: true
+        }
     }) : [];
+
+    const allCollections = rawCollections.map(c => ({
+        ...c,
+        title: c.translations?.[0]?.title || "Untitled"
+    }));
 
     return (
         <div className="space-y-6">

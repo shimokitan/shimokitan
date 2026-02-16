@@ -15,10 +15,18 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
     const isTrash = searchParams.trash === 'true';
 
     const db = getDb();
-    const allEntities = db ? await db.query.entities.findMany({
+    const rawEntities = db ? await db.query.entities.findMany({
         where: isTrash ? isNotNull(schema.entities.deletedAt) : isNull(schema.entities.deletedAt),
-        orderBy: [desc(schema.entities.createdAt)]
+        orderBy: [desc(schema.entities.createdAt)],
+        with: {
+            translations: true
+        }
     }) : [];
+
+    const allEntities = rawEntities.map(e => ({
+        ...e,
+        name: e.translations?.[0]?.name || "Untitled"
+    }));
 
     return (
         <div className="space-y-6">

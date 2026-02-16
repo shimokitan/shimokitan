@@ -11,17 +11,28 @@ export default async function EditZinePage(props: { params: Promise<{ id: string
     const db = getDb();
 
     const zine = db ? await db.query.zines.findFirst({
-        where: eq(schema.zines.id, params.id)
+        where: eq(schema.zines.id, params.id),
+        with: {
+            translations: true
+        }
     }) : null;
 
     if (!zine) {
         notFound();
     }
 
-    const artifacts = db ? await db.query.artifacts.findMany({
+    // Fetch Artifacts for the selector
+    const rawArtifacts = db ? await db.query.artifacts.findMany({
         where: isNull(schema.artifacts.deletedAt),
-        columns: { id: true, title: true }
+        with: {
+            translations: true
+        }
     }) : [];
+
+    const artifacts = rawArtifacts.map(a => ({
+        id: a.id,
+        title: a.translations?.[0]?.title || "Untitled"
+    }));
 
     return (
         <div className="space-y-6">

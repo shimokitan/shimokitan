@@ -11,7 +11,10 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
     const db = getDb();
 
     const entity = db ? await db.query.entities.findFirst({
-        where: eq(schema.entities.id, params.id)
+        where: eq(schema.entities.id, params.id),
+        with: {
+            translations: true
+        }
     }) : null;
 
     if (!entity) {

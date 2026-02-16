@@ -14,7 +14,8 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
         where: eq(schema.artifacts.id, params.id),
         with: {
             credits: true,
-            resources: true
+            resources: true,
+            translations: true
         }
     }) : null;
 
@@ -23,10 +24,18 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
     }
 
     // Fetch Entities for the credits selector
-    const entities = db ? await db.query.entities.findMany({
+    const rawEntities = db ? await db.query.entities.findMany({
         where: isNull(schema.entities.deletedAt),
-        columns: { id: true, name: true, type: true }
+        with: {
+            translations: true
+        }
     }) : [];
+
+    const entities = rawEntities.map(e => ({
+        id: e.id,
+        name: e.translations?.[0]?.name || "Untitled",
+        type: e.type
+    }));
 
     return (
         <div className="space-y-6">
