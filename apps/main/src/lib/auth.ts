@@ -1,23 +1,24 @@
 
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'shkn2026';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const COOKIE_NAME = 'shimokitan_admin_session';
 
 export async function login(password: string) {
-    if (password === ADMIN_PASSWORD) {
-        const cookieStore = await cookies();
-        cookieStore.set(COOKIE_NAME, 'authenticated', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24, // 24 hours
-        });
-        return true;
+    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
+        return false;
     }
-    return false;
+
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE_NAME, 'authenticated', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24, // 24 hours
+    });
+    return true;
 }
 
 export async function logout() {

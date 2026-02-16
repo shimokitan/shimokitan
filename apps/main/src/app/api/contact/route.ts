@@ -49,10 +49,10 @@ export async function POST(request: Request) {
         }
 
         // Determine recipient based on subject
-        let recipient = 'contact@shimokitan.live';
+        let recipient = 'hello@shimokitan.live';
         if (subject === 'support') recipient = 'support@shimokitan.live';
-        else if (subject === 'partnership') recipient = 'business@shimokitan.live';
-        else if (subject === 'bug') recipient = 'engineering@shimokitan.live';
+        else if (subject === 'partnership') recipient = 'partners@shimokitan.live';
+        else if (subject === 'bug') recipient = 'support@shimokitan.live';
 
         const emailSubject = `[Contract Request] ${subject || 'General Inquiry'} from ${name}`;
 

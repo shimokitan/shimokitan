@@ -1,6 +1,7 @@
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
 import { LegalSidebar } from '../../components/layout/LegalSidebar';
+import { CopyMarkdownWrapper } from '../../components/CopyMarkdownWrapper';
 import { CyberpunkShell } from '@shimokitan/ui';
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
@@ -45,7 +46,9 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
                             prose-li:text-zinc-400 prose-li:text-lg prose-li:mb-4
                             prose-ul:list-none prose-ul:pl-0 prose-ul:space-y-4
                             prose-li:before:content-['//'] prose-li:before:text-violet-500 prose-li:before:mr-3 prose-li:before:font-mono prose-li:before:text-sm">
-                            {children}
+                            <CopyMarkdownWrapper>
+                                {children}
+                            </CopyMarkdownWrapper>
                         </article>
                     </main>
                 </div>

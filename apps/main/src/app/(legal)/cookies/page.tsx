@@ -2,26 +2,39 @@ export default function CookiesPage() {
     return (
         <>
             <h1>Cookie Policy</h1>
-            <p>Last Updated: February 14, 2026</p>
-            <p>This Cookie Policy explains how Shimokitan (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) uses cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.</p>
+            <p>Last Updated: February 16, 2026</p>
+            <p>This Cookie Policy explains how Shimokitan uses cookies and similar technologies when you visit our website.</p>
 
             <h2>1. What are Cookies?</h2>
-            <p>Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</p>
+            <p>Cookies are small data files placed on your device when you visit a website. They are widely used to make websites function properly, enhance performance, and provide information to site operators.</p>
 
-            <h2>2. Why do we use Cookies?</h2>
-            <p>We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our website to operate, and we refer to these as &quot;essential&quot; or &quot;strictly necessary&quot; cookies.</p>
+            <h2>2. Cookies We Use</h2>
+            <p>Shimokitan uses a minimal set of cookies. We do <strong>not</strong> use analytics cookies, advertising cookies, or tracking pixels.</p>
 
-            <h2>3. Types of Cookies We Use</h2>
+            <h2>3. Essential / Infrastructure Cookies</h2>
             <ul>
-                <li><strong>Essential Cookies:</strong> These cookies are strictly necessary to provide you with services available through our website and to use some of its features, such as access to secure areas.</li>
-                <li><strong>Analytics Cookies:</strong> These cookies collect information that is used either in aggregate form to help us understand how our website is being used or how effective our marketing campaigns are.</li>
+                <li><strong>Cloudflare cookies</strong> (e.g., <code>__cf_bm</code>, <code>cf_clearance</code>) -- Set by our hosting and CDN provider, Cloudflare, for bot detection, DDoS protection, and security purposes. These are strictly necessary for the secure operation of the site. You cannot opt out of these without leaving the site.</li>
             </ul>
 
-            <h2>4. How can I control Cookies?</h2>
-            <p>You have the right to decide whether to accept or reject cookies. You can set or amend your web browser controls to accept or refuse cookies. If you choose to reject cookies, you may still use our website though your access to some functionality and areas of our website may be restricted.</p>
+            <h2>4. Third-Party Cookies</h2>
+            <ul>
+                <li><strong>YouTube / Google cookies</strong> -- When you view a page containing an embedded YouTube video, Google may set cookies on your device (such as <code>VISITOR_INFO1_LIVE</code>, <code>YSC</code>, and others). These cookies are governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google&apos;s Privacy Policy</a>. We do not control the data collected by these cookies.</li>
+            </ul>
+            <p>In the future, affiliate program integrations (such as Crunchyroll or Apple Music) may introduce additional third-party cookies. This policy will be updated accordingly.</p>
 
-            <h2>5. Contact Us</h2>
-            <p>If you have any questions about our use of cookies or other technologies, please email us at <a href="mailto:support@shimokitan.live">support@shimokitan.live</a>.</p>
+            <h2>5. How to Control Cookies</h2>
+            <p>You can control and manage cookies through your browser settings. Most browsers allow you to:</p>
+            <ul>
+                <li>View what cookies are stored and delete them individually.</li>
+                <li>Block third-party cookies.</li>
+                <li>Block all cookies from specific sites.</li>
+                <li>Block all cookies entirely.</li>
+            </ul>
+            <p>Please note that blocking essential cookies may affect the functionality and availability of the site.</p>
+            <p>For more information on managing cookies, visit <a href="https://www.allaboutcookies.org/manage-cookies/" target="_blank" rel="noopener noreferrer">allaboutcookies.org</a>.</p>
+
+            <h2>6. Contact</h2>
+            <p>If you have questions about our use of cookies, contact us at <a href="mailto:privacy@shimokitan.live">privacy@shimokitan.live</a>.</p>
         </>
     );
 }

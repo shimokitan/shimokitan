@@ -25,6 +25,7 @@ export function Footer({ minimal = false }: FooterProps) {
                             <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
                             <Link href="/community-guidelines" className="hover:text-zinc-300 transition-colors">Guidelines</Link>
                             <Link href="/copyright" className="hover:text-zinc-300 transition-colors">Copyright</Link>
+                            <Link href="/affiliate-disclosure" className="hover:text-zinc-300 transition-colors">Affiliates</Link>
                         </>
                     )}
                     <Link href="/cookies" className="hover:text-zinc-300 transition-colors">Cookies</Link>

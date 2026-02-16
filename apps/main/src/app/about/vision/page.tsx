@@ -1,42 +1,46 @@
-
-import React from 'react';
-import { Badge } from '@shimokitan/ui';
-
 export default function VisionPage() {
     return (
-        <div className="space-y-8">
-            <header className="border-b border-zinc-800 pb-8 mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                    <Badge variant="clean" className="text-emerald-500 border-emerald-500/30">Future</Badge>
-                </div>
-                <h1 className="text-5xl md:text-7xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">
-                    The Vision
-                </h1>
-                <p className="text-xl text-zinc-400 font-light max-w-2xl">
-                    A roadmap to the decentralized future of cultural archiving.
-                </p>
-            </header>
+        <>
+            <h1>Vision and Roadmap</h1>
 
-            <section className="space-y-6">
-                <p>
-                    Culture should not be gated. The future we envision is one where Shimokitan evolves from a centralized archive into a
-                    decentralized protocol for cultural transmission. A network of nodes, each preserving a shard of culture,
-                    interconnected through shared meaning and resonance.
-                </p>
+            <h2>Where We Are Going</h2>
+            <p>Shimokitan started as a personal archive -- a place to catalog the anime, music, and games that matter. The long-term vision is to grow it into a living cultural index that anyone can contribute to, without losing the curatorial soul that makes it different from a list or a tracker.</p>
 
-                <div className="border-l-2 border-emerald-500 pl-6 my-8 prose-quote:not-italic prose-quote:font-mono">
-                    "We are not building a platform. We are building a protocol for vibes."
-                </div>
+            <h2>Phase 1: Foundation</h2>
+            <p>This is where we are now. The core archive is live, with hand-curated artifacts, entities, and collections. All content is managed internally. The focus is on getting the fundamentals right -- data structure, editorial quality, and the overall experience of browsing the archive.</p>
+            <ul>
+                <li>Core artifact database with metadata, resources, and credits.</li>
+                <li>Entity profiles for creators, studios, and labels.</li>
+                <li>Curated collections organized by theme and mood.</li>
+                <li>YouTube embeds for official trailers and music videos.</li>
+                <li>Affiliate links to official streaming and purchase platforms.</li>
+            </ul>
 
-                <h3>Phase 1: Foundation (Current)</h3>
-                <p>Establish the core database, refine the curation tools, and build a community of archivists. <span className="text-emerald-400 font-mono">STATUS: ONLINE</span></p>
+            <h2>Phase 2: Community</h2>
+            <p>The next step is opening the platform to community participation. This means user accounts, personal archives, and the ability to write and publish zines -- written reflections tied to specific artifacts.</p>
+            <ul>
+                <li>User registration and personal profiles.</li>
+                <li>Zine authoring -- personal responses to artifacts, not reviews.</li>
+                <li>Personal shelves for organizing your own artifact collection.</li>
+                <li>Resonance system -- a way to surface meaningful contributions.</li>
+            </ul>
 
-                <h3>Phase 2: Expansion</h3>
-                <p>Open the API for external integrations. Allow third-party clients to connect to the Shimokitan database and build custom interfaces.</p>
+            <h2>Phase 3: Districts</h2>
+            <p>Shimokitan is designed as a district -- and districts expand. The planned extensions include specialized zones for different facets of the culture:</p>
+            <ul>
+                <li><strong>Akiba</strong> -- A dedicated space for interactive media: games, visual novels, and interactive fiction.</li>
+                <li><strong>Kabukicho</strong> -- An age-gated district for mature and adult content, handled with its own set of community guidelines and legal framework.</li>
+            </ul>
+            <p>Each district will share the same underlying infrastructure and archive system, but with its own editorial identity and community standards.</p>
 
-                <h3>Phase 3: Decentralization</h3>
-                <p>Migrate sensitive data to decentralized storage solutions. Implement a governance model where curators are elected by the community based on their contribution resonance.</p>
-            </section>
-        </div>
+            <h2>What We Will Not Do</h2>
+            <p>Some things are intentionally out of scope for Shimokitan:</p>
+            <ul>
+                <li>We will not host pirated media. The archive is an index, not a download site.</li>
+                <li>We will not implement algorithmic feeds. Discovery should be intentional, not dopamine-driven.</li>
+                <li>We will not sell user data. If the platform ever needs revenue beyond affiliate commissions, it will come from something the community values.</li>
+                <li>We will not chase scale at the expense of quality. Growth should follow curation, not the other way around.</li>
+            </ul>
+        </>
     );
 }

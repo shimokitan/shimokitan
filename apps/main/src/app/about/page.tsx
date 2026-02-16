@@ -1,56 +1,35 @@
-
-import React from 'react';
-import { Badge } from '@shimokitan/ui';
-
 export default function AboutPage() {
     return (
-        <div className="space-y-8">
-            <header className="border-b border-zinc-800 pb-8 mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                    <Badge variant="violet" className="text-violet-500 border-violet-500/30">Introduction</Badge>
-                    <span className="text-xs text-zinc-500 font-mono">LAST_UPDATED: 2026-02-15</span>
-                </div>
-                <h1 className="text-5xl md:text-7xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">
-                    What is Shimokitan?
-                </h1>
-                <p className="text-xl text-zinc-400 font-light max-w-2xl">
-                    A digital district forged from the noise of the streets and the silence of the void.
-                </p>
-            </header>
+        <>
+            <h1>About Shimokitan</h1>
 
-            <section className="space-y-6">
-                <p>
-                    Shimokitan is not just a platform; it is a repository of cultural artifacts, a living archive of the underground.
-                    Inspired by the vibrant chaos of Shimokitazawa and the sterile beauty of brutalist architecture, we aim to document the resonance of modern subcultures.
-                </p>
-                <p>
-                    From anime aesthetics to lo-fi beats, from obscure zines to digital fashion, Shimokitan serves as the central hub for
-                    <strong> cataloging, curating, and amplifying </strong> the signals that often get lost in the noise of the mainstream internet.
-                </p>
+            <h2>What is This Place?</h2>
+            <p>Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them -- not as data points or rankings, but as lived experiences worth remembering.</p>
+            <p>Think of it as a personal record collection for everything you care about in Japanese media. Each entry is an <strong>artifact</strong> -- a piece of culture documented with the attention it deserves.</p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12 not-prose">
-                    <div className="p-6 rounded-lg bg-zinc-900/50 border border-zinc-800 space-y-4">
-                        <div className="w-10 h-10 rounded bg-rose-500/10 flex items-center justify-center text-rose-500">
-                            01
-                        </div>
-                        <h3 className="text-white font-black uppercase tracking-wider">Archive</h3>
-                        <p className="text-zinc-500 text-sm">Preserving the ephemeral. Every artifact is stored with metadata ensuring its legacy endures beyond the platform.</p>
-                    </div>
-                    <div className="p-6 rounded-lg bg-zinc-900/50 border border-zinc-800 space-y-4">
-                        <div className="w-10 h-10 rounded bg-violet-500/10 flex items-center justify-center text-violet-500">
-                            02
-                        </div>
-                        <h3 className="text-white font-black uppercase tracking-wider">Curate</h3>
-                        <p className="text-zinc-500 text-sm">Filtering the signal from the noise. Our curators hand-pick collections that define the current frequency.</p>
-                    </div>
-                </div>
+            <h2>Why Shimokitan Exists</h2>
+            <p>The internet has an abundance of databases and trackers for anime, music, and games. Most of them treat culture as spreadsheets -- scores, stats, completion percentages. We wanted something different.</p>
+            <p>Shimokitan is built on the idea that your taste tells a story. The anime that kept you up at night, the album you played on repeat during a specific season, the game that changed how you see things -- these are memories, not metrics. We archive them with that weight.</p>
 
-                <h2>The Mission</h2>
-                <p>
-                    To build a sanctuary for the weird, the niche, and the beautiful. We believe that algorithms have flattened culture,
-                    and it is our duty to reintroduce texture and friction into the digital experience.
-                </p>
-            </section>
-        </div>
+            <h2>How It Works</h2>
+            <p>Shimokitan operates as an <strong>archival index</strong>. We do not host media files. Instead, we catalog and link to official sources -- YouTube for trailers, Crunchyroll for streaming, Apple Music for soundtracks. Every artifact in our system points back to the creators and distributors who made it.</p>
+            <ul>
+                <li><strong>Artifacts</strong> -- The core entries. Anime series, albums, films, games, visual novels. Each has metadata, a cover, embedded media, and editorial context.</li>
+                <li><strong>Entities</strong> -- The people and studios behind the work. Directors, composers, animators, labels, development teams.</li>
+                <li><strong>Collections</strong> -- Curated groupings organized around a theme, a moment, or a mood.</li>
+                <li><strong>Zines</strong> -- Written reflections attached to artifacts. Not reviews, but personal responses to the work.</li>
+            </ul>
+
+            <h2>Who Runs This</h2>
+            <p>Shimokitan is an independent project operated by one person from Indonesia. There is no company, no investors, no board. It exists because the person building it genuinely loves this culture and wanted a better home for it online.</p>
+            <p>The platform is named after <strong>Shimokitazawa</strong> -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, not by algorithm.</p>
+
+            <h2>Open to the World</h2>
+            <p>Shimokitan is built for anyone who shares a deep appreciation for Japanese creative work, regardless of where they are. The platform is free to browse, free to read, and free to explore.</p>
+            <p>Community features -- including user accounts, personal archives, and the ability to contribute zines -- are planned for a future update. For now, everything you see is hand-curated by the team.</p>
+
+            <h2>Get in Touch</h2>
+            <p>If you have questions, suggestions, or just want to say hello, reach out through our <a href="/contact">contact page</a>. You can also find us on <a href="https://x.com/shimokitan_off" target="_blank" rel="noopener noreferrer">X</a> and <a href="https://www.instagram.com/shimokitan.live/" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
+        </>
     );
 }

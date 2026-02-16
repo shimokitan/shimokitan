@@ -6,15 +6,12 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@shimokitan/ui';
 
 const links = [
-    { href: '/privacy', label: 'Privacy Policy' },
-    { href: '/terms', label: 'Terms of Service' },
-    { href: '/community-guidelines', label: 'Guidelines' },
-    { href: '/copyright', label: 'Copyright' },
-    { href: '/cookies', label: 'Cookies' },
-    { href: '/affiliate-disclosure', label: 'Affiliate Disclosure' },
+    { href: '/about', label: 'About Shimokitan' },
+    { href: '/about/vision', label: 'Vision and Roadmap' },
+    { href: '/about/changelog', label: 'Changelog' },
 ];
 
-export function LegalSidebar() {
+export function AboutSidebar() {
     const pathname = usePathname();
 
     return (
@@ -22,7 +19,7 @@ export function LegalSidebar() {
             <div className="flex flex-col gap-1">
                 <div className="mb-6 px-3">
                     <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-500 font-bold">
-                        Legal Documents
+                        About
                     </h3>
                 </div>
                 {links.map((link) => {
@@ -49,16 +46,28 @@ export function LegalSidebar() {
 
             <div className="mt-12 px-3">
                 <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-sm">
-                    <h4 className="text-xs font-semibold text-zinc-300 mb-2">Need Help?</h4>
+                    <h4 className="text-xs font-semibold text-zinc-300 mb-2">Connect</h4>
                     <p className="text-[10px] text-zinc-500 leading-relaxed mb-3">
-                        If you have questions about our policies, please contact our legal team.
+                        Follow us for updates on when new features and districts go live.
                     </p>
-                    <a
-                        href="mailto:legal@shimokitan.live"
-                        className="text-[10px] font-mono text-violet-400 hover:text-violet-300 uppercase tracking-wide border-b border-violet-500/30 hover:border-violet-400 transition-colors pb-0.5"
-                    >
-                        legal@shimokitan.live
-                    </a>
+                    <div className="flex gap-3">
+                        <a
+                            href="https://x.com/shimokitan_off"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] font-mono text-violet-400 hover:text-violet-300 uppercase tracking-wide border-b border-violet-500/30 hover:border-violet-400 transition-colors pb-0.5"
+                        >
+                            X / Twitter
+                        </a>
+                        <a
+                            href="https://www.instagram.com/shimokitan.live/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] font-mono text-violet-400 hover:text-violet-300 uppercase tracking-wide border-b border-violet-500/30 hover:border-violet-400 transition-colors pb-0.5"
+                        >
+                            Instagram
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>

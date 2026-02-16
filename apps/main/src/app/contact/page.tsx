@@ -77,8 +77,8 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <h3 className="text-sm font-mono uppercase tracking-wider text-white font-bold mb-1">Email</h3>
-                                <a href="mailto:support@shimokitan.live" className="text-zinc-500 hover:text-violet-400 transition-colors block">support@shimokitan.live</a>
-                                <a href="mailto:business@shimokitan.live" className="text-zinc-500 hover:text-violet-400 transition-colors block">business@shimokitan.live</a>
+                                <a href="mailto:hello@shimokitan.live" className="text-zinc-500 hover:text-violet-400 transition-colors block">hello@shimokitan.live</a>
+                                <a href="mailto:partners@shimokitan.live" className="text-zinc-500 hover:text-violet-400 transition-colors block">partners@shimokitan.live</a>
                             </div>
                         </div>
                     </div> */}
