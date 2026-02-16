@@ -1,6 +1,5 @@
 
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import sharp from 'sharp';
 import { storagePaths, nanoid } from '@shimokitan/utils';
 
 // Helper to get R2 domain
@@ -27,6 +26,7 @@ export async function uploadImageFromUrl(
 
         // 2. Process with Sharp (Resize/Format) -> WebP
         // We convert to WebP as requested
+        const { default: sharp } = await import('sharp');
         const processedBuffer = await sharp(buffer)
             .webp({ quality: 80 })
             .toBuffer();
