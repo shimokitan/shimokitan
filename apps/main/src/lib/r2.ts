@@ -24,18 +24,18 @@ export async function uploadImageFromUrl(
         const arrayBuffer = await response.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // 2. Process with Sharp (Resize/Format) -> WebP
-        // FALLBACK: Sharp cannot run in Cloudflare Workers (it uses native binaries).
-        // We only attempt processing if we can load the module.
-        let processedBuffer = buffer;
-        try {
-            const { default: sharp } = await import('sharp');
-            processedBuffer = await sharp(buffer)
-                .webp({ quality: 80 })
-                .toBuffer();
-        } catch (e) {
-            console.warn('[R2] Sharp not available in this environment. Uploading raw buffer.');
+        // 2. Validation
+        const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+        if (buffer.length > MAX_SIZE) {
+            throw new Error(`FILE_TOO_LARGE: Image must be under 2MB (Current: ${(buffer.length / 1024 / 1024).toFixed(2)}MB)`);
         }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType !== 'image/webp') {
+            throw new Error(`INVALID_FORMAT: Only WebP images are accepted (Detected: ${contentType})`);
+        }
+
+        const processedBuffer = buffer;
 
         // 3. Generate Path
         const filename = `${nanoid()}.webp`;

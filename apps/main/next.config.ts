@@ -6,7 +6,6 @@ initOpenNextCloudflareForDev();
 const nextConfig: NextConfig = {
   output: "standalone",
   transpilePackages: ["@shimokitan/db", "@shimokitan/ui"],
-  serverExternalPackages: ["sharp"],
   images: {
     remotePatterns: [
       {
