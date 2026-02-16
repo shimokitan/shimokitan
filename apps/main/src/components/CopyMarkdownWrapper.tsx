@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useCallback } from 'react';
 import { Icon } from '@iconify/react';
+import { cn } from "@shimokitan/ui";
 
 /**
  * Converts rendered legal page HTML content to clean Markdown.
@@ -135,16 +136,18 @@ export function CopyMarkdownWrapper({ children }: CopyMarkdownWrapperProps) {
         <div className="relative">
             <button
                 onClick={handleCopy}
-                className="absolute top-0 right-0 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 text-[10px] font-mono uppercase tracking-widest transition-all cursor-pointer backdrop-blur-sm"
+                className="absolute -top-8 right-0 flex items-center gap-2 py-1 border-b border-zinc-800 hover:border-violet-500 text-zinc-400 hover:text-white text-[10px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer group/copy"
                 title="Copy page content as Markdown"
             >
                 <Icon
-                    icon={copied ? 'lucide:check' : 'lucide:clipboard-copy'}
+                    icon={copied ? 'lucide:check' : 'lucide:file-code'}
                     width={12}
                     height={12}
-                    className={copied ? 'text-emerald-400' : ''}
+                    className={copied ? 'text-emerald-400' : 'text-zinc-500 group-hover/copy:text-violet-400 transition-colors'}
                 />
-                {copied ? 'Copied' : 'Copy .md'}
+                <span className={copied ? "text-emerald-400" : "group-hover/copy:text-violet-400"}>
+                    {copied ? 'COPIED' : 'COPY'}
+                </span>
             </button>
             <div ref={contentRef}>
                 {children}

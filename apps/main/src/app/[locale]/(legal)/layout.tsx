@@ -43,16 +43,16 @@ export default async function LegalLayout({ children, params }: { children: Reac
                         <article className="prose prose-invert prose-zinc max-w-none 
                             prose-headings:font-black prose-headings:tracking-tighter prose-headings:uppercase prose-headings:italic prose-headings:text-white
                             
-                            prose-h1:text-4xl md:prose-h1:text-6xl prose-h1:mb-16 prose-h1:pb-8 prose-h1:border-b prose-h1:border-zinc-800
+                            prose-h1:text-4xl md:prose-h1:text-6xl prose-h1:mb-10 prose-h1:pb-8 prose-h1:border-b prose-h1:border-zinc-800
                             prose-h1:leading-none
                             
-                            prose-h2:text-2xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:text-white font-mono prose-h2:uppercase
+                            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-white font-mono prose-h2:uppercase
                             prose-h2:border-l-4 prose-h2:border-violet-500 prose-h2:pl-6 prose-h2:relative
                             
                             /* Make numbered sections stand out if possible */
                             /* We can't easily target '1.' without JS or content changes, but we can make h2 distinctive */
                             
-                            prose-p:text-zinc-400 prose-p:text-lg prose-p:leading-relaxed prose-p:mb-12
+                            prose-p:text-zinc-400 prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6
                             prose-p:font-light prose-p:tracking-wide
                             
                             prose-strong:text-zinc-100 prose-strong:font-bold
