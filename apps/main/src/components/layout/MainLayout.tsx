@@ -17,7 +17,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     const isHomeActive = pathname === "/";
     const isArtifactsActive = pathname?.startsWith("/artifacts");
     const isZinesActive = pathname?.startsWith("/zines");
-    const isPedalboardActive = pathname === "/pedalboard";
+
 
     return (
         <CyberpunkShell>
@@ -40,7 +40,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                             <NavigationLink icon="lucide:radio" label="The District" href="/" active={isHomeActive} />
                             <NavigationLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={isArtifactsActive} />
                             <NavigationLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
-                            <NavigationLink icon="lucide:layers" label="Pedalboard" href="/pedalboard" active={isPedalboardActive} />
+
                             <NavigationLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={isZinesActive} />
 
                             <div className="h-px bg-zinc-800/80 w-full my-1" />

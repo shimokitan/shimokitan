@@ -112,18 +112,3 @@ export async function getEntityById(id: string) {
   });
 }
 
-/**
- * Register a new email for the coming soon list.
- */
-export async function registerResident(email: string) {
-  const db = getDb();
-  if (!db) throw new Error('DATABASE_URL is not defined');
-
-  return await db.insert(schema.residents)
-    .values({
-      id: sql`nanoid()`,
-      email
-    })
-    .onConflictDoNothing({ target: schema.residents.email })
-    .returning();
-}

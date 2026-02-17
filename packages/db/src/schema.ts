@@ -3,14 +3,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
 
-// ------------------------------------------------------------------
-// 1. Residents (Users)
-// ------------------------------------------------------------------
-export const residents = pgTable("residents", {
-    id: text("id").primaryKey(),
-    email: text("email").notNull().unique(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-});
 
 // ------------------------------------------------------------------
 // 2. Entities (Creators, Agencies, Studios)
@@ -18,9 +10,12 @@ export const residents = pgTable("residents", {
 export const entities = pgTable("entities", {
     id: text("id").primaryKey(),
     type: text("type", { enum: ['individual', 'organization', 'agency', 'circle', 'staff'] }).notNull(),
+    slug: text("slug").notNull().unique(),
+    uid: text("uid").unique(), // e.g. UID_SIG_001
+    circuit: text("circuit", { enum: ['major', 'underground', 'ghost'] }).default('underground'),
     avatarUrl: text("avatar_url"),
     socialLinks: jsonb("social_links").default([]),
-    isMajor: boolean("is_major").default(false),
+    isMajor: boolean("is_major").default(false), // Legacy, kept for compatibility
     isVerified: boolean("is_verified").default(false), // Public verification badge
     allowMirroring: boolean("allow_mirroring").default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -43,7 +38,8 @@ export const entitiesI18n = pgTable("entities_i18n", {
 // ------------------------------------------------------------------
 export const artifacts = pgTable("artifacts", {
     id: text("id").primaryKey(),
-    category: text("category", { enum: ['anime', 'music', 'vtuber', 'asmr', 'zine', 'art', 'game'] }).notNull(),
+    category: text("category", { enum: ['anime', 'music'] }).notNull(),
+    slug: text("slug").notNull().unique(),
     coverImage: text("cover_image"),
     status: text("status", { enum: ['the_pit', 'back_alley', 'archived'] }).default('back_alley'),
     score: integer("score").default(0),
@@ -74,7 +70,11 @@ export const artifactsI18n = pgTable("artifacts_i18n", {
 // ------------------------------------------------------------------
 export const collections = pgTable("collections", {
     id: text("id").primaryKey(),
+    slug: text("slug").notNull().unique(), // Added slug
     coverImage: text("cover_image"),
+    isMajor: boolean("is_major").default(false), // Added
+    allowMirroring: boolean("allow_mirroring").default(false), // Added
+    resonance: integer("resonance").default(0), // Added
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -164,13 +164,6 @@ export const verificationRegistry = pgTable("verification_registry", {
     targetIdx: index("idx_verification_target").on(table.targetType, table.targetId),
 }));
 
-// ------------------------------------------------------------------
-// Schemas for validation (Auto-generated)
-// ------------------------------------------------------------------
-export const insertResidentSchema = createInsertSchema(residents).pick({ email: true }).extend({
-    email: z.string().email("INVALID_ENDPOINT_FORMAT"),
-});
-export const selectResidentSchema = createSelectSchema(residents);
 
 // ------------------------------------------------------------------
 // RELATIONS
@@ -307,4 +300,28 @@ export const artifactTags = pgTable("artifact_tags", {
     tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.artifactId, table.tagId] }),
+}));
+
+// 9. Relations for Tags
+export const tagsRelations = relations(tags, ({ many }) => ({
+    translations: many(tagsI18n),
+    artifacts: many(artifactTags),
+}));
+
+export const tagsI18nRelations = relations(tagsI18n, ({ one }) => ({
+    tag: one(tags, {
+        fields: [tagsI18n.tagId],
+        references: [tags.id],
+    }),
+}));
+
+export const artifactTagsRelations = relations(artifactTags, ({ one }) => ({
+    artifact: one(artifacts, {
+        fields: [artifactTags.artifactId],
+        references: [artifacts.id],
+    }),
+    tag: one(tags, {
+        fields: [artifactTags.tagId],
+        references: [tags.id],
+    }),
 }));

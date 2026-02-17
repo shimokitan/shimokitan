@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -32,12 +33,25 @@ type Spec = {
 export default function ArtifactForm({ entities, initialData }: { entities: Entity[], initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
+
+    // Multi-Language State
+    const [translations, setTranslations] = useState(
+        ['en', 'id', 'jp'].map(lang => {
+            const trans = initialData?.translations?.find((t: any) => t.locale === lang);
+            return {
+                locale: lang as 'en' | 'id' | 'jp',
+                title: trans?.title || '',
+                description: trans?.description || ''
+            };
+        })
+    );
 
     // Dynamic Lists
     const [resources, setResources] = useState<Resource[]>(
         initialData?.resources
-            ? initialData.resources.map((r: any) => ({ type: r.type, platform: r.platform, url: r.url, isPrimary: r.isPrimary }))
-            : [{ type: 'other', platform: 'other', url: '', isPrimary: false }]
+            ? initialData.resources.map((r: any) => ({ type: r.type, platform: r.platform, url: r.value, isPrimary: r.isPrimary }))
+            : [{ type: 'mv', platform: 'youtube', url: '', isPrimary: false }]
     );
     const [credits, setCredits] = useState<Credit[]>(
         initialData?.credits
@@ -52,8 +66,8 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
     const [tags, setTags] = useState<{ id?: string, name: string }[]>(
         initialData?.tags
             ? initialData.tags.map((t: any) => ({
-                id: t.tag.id,
-                name: t.tag.translations?.[0]?.name || 'Unknown'
+                id: (t.tag as any).id,
+                name: (t.tag as any).translations?.[0]?.name || 'Unknown'
             }))
             : []
     );
@@ -62,8 +76,11 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
 
+    const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
+        setTranslations(translations.map(t => t.locale === locale ? { ...t, [field]: value } : t));
+    };
 
-    const addResource = () => setResources([...resources, { type: 'other', platform: 'other', url: '', isPrimary: false }]);
+    const addResource = () => setResources([...resources, { type: 'mv', platform: 'youtube', url: '', isPrimary: false }]);
     const removeResource = (idx: number) => setResources(resources.filter((_, i) => i !== idx));
     const updateResource = (idx: number, field: keyof Resource, value: any) => {
         const newResources = [...resources];
@@ -118,26 +135,25 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
             const cleanTags = tags.filter(t => t.name.trim() !== '');
 
             const payload = {
-                title: formData.get('title') as string,
                 category: formData.get('category') as string,
-                description: formData.get('description') as string,
                 coverImage: coverUrl,
                 status: formData.get('status') as string,
                 score: parseInt(formData.get('score') as string) || 0,
-                isMajor: isMajor,
-                isVerified: isVerified,
-                allowMirroring: allowMirroring,
+                isMajor,
+                isVerified,
+                allowMirroring,
                 resources: cleanResources,
                 credits: cleanCredits,
                 specs: cleanSpecs,
-                tags: cleanTags
+                tags: cleanTags,
+                translations: translations.filter(t => t.title.trim() !== '')
             };
 
             if (initialData?.id) {
-                await updateFullArtifact(initialData.id, payload);
+                await updateFullArtifact(initialData.id, payload as any);
                 alert('Artifact Updated!');
             } else {
-                await createFullArtifact(payload);
+                await createFullArtifact(payload as any);
                 alert('Artifact Created!');
             }
 
@@ -153,41 +169,56 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
 
     return (
         <form action={handleSubmit} className="space-y-8">
-            {/* 1. Basic Info */}
+            {/* 1. Basic Info & Translations */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2 border-b border-zinc-800 pb-2 mb-4">
-                    <span className="text-xs font-black uppercase text-rose-500">01 // CORE_DATA</span>
+                    <span className="text-xs font-black uppercase text-rose-500">01 // IDENTITY_DATA</span>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <div className="lg:col-span-8 space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
-                                <input
-                                    name="title"
-                                    defaultValue={initialData?.translations?.[0]?.title || initialData?.title}
-                                    required
-                                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors"
-                                    placeholder="Artifact Title"
-                                />
+                        {/* Tabs for Languages */}
+                        <div className="flex gap-1 bg-zinc-950 p-1 rounded border border-zinc-900 w-fit">
+                            {translations.map(t => (
+                                <button
+                                    key={t.locale}
+                                    type="button"
+                                    onClick={() => setActiveTab(t.locale)}
+                                    className={`px-4 py-1.5 text-[10px] font-black uppercase transition-all ${activeTab === t.locale ? 'bg-rose-600 text-black' : 'text-zinc-500 hover:text-white'}`}
+                                >
+                                    {t.locale}
+                                </button>
+                            ))}
+                        </div>
+
+                        {translations.map(t => (
+                            <div key={t.locale} className={activeTab === t.locale ? 'space-y-6' : 'hidden'}>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-mono uppercase text-zinc-400">Title ({t.locale})</label>
+                                    <input
+                                        value={t.title}
+                                        onChange={(e) => updateTrans(t.locale, 'title', e.target.value)}
+                                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none transition-colors"
+                                        placeholder={`Artifact Title in ${t.locale.toUpperCase()}`}
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-mono uppercase text-zinc-400">Description ({t.locale})</label>
+                                    <textarea
+                                        value={t.description}
+                                        onChange={(e) => updateTrans(t.locale, 'description', e.target.value)}
+                                        rows={4}
+                                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors"
+                                        placeholder={`Brief description in ${t.locale.toUpperCase()}...`}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Description</label>
-                            <textarea
-                                name="description"
-                                defaultValue={initialData?.translations?.[0]?.description || initialData?.description}
-                                rows={4}
-                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none resize-none transition-colors"
-                                placeholder="Brief description..."
-                            />
-                        </div>
+                        ))}
                     </div>
 
                     <div className="lg:col-span-4 space-y-2">
                         <label className="text-[10px] font-mono uppercase text-zinc-400">Visual_Manifest (Preview)</label>
-                        <div className="aspect-video lg:aspect-square bg-zinc-950 border border-zinc-800 rounded relative overflow-hidden group">
+                        <div className="aspect-square bg-zinc-950 border border-zinc-800 rounded relative overflow-hidden group">
                             {coverUrl ? (
                                 <img src={coverUrl} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
@@ -196,10 +227,6 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                                     <span className="text-[8px] uppercase mt-2 font-mono">No_Data</span>
                                 </div>
                             )}
-                            <div className="absolute inset-0 scanline pointer-events-none opacity-20" />
-                            <div className="absolute inset-0 noise pointer-events-none opacity-10" />
-
-                            {/* Verified Badge Preview */}
                             {isVerified && (
                                 <div className="absolute top-2 right-2 bg-rose-600 text-black p-1">
                                     <Icon icon="lucide:shield-check" width={16} />
@@ -215,15 +242,10 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                         <select name="category" defaultValue={initialData?.category} required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-rose-600 outline-none">
                             <option value="music">MUSIC</option>
                             <option value="anime">ANIME</option>
-                            <option value="vtuber">VTUBER</option>
-                            <option value="asmr">ASMR</option>
-                            <option value="zine">ZINE</option>
-                            <option value="art">ART</option>
-                            <option value="game">GAME</option>
                         </select>
                     </div>
                     <div className="md:col-span-2 space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-400">Verification & Identity</label>
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Verification & Persistence</label>
                         <div className="grid grid-cols-3 gap-2 h-[46px]">
                             <div
                                 className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-rose-600 border-rose-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-rose-900'}`}
@@ -377,7 +399,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 {/* Specs */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-4">
-                        <span className="text-xs font-black uppercase text-amber-500">03A // VIBE_SPECS</span>
+                        <span className="text-xs font-black uppercase text-amber-500">03A // CORE_METADATA</span>
                         <button type="button" onClick={addSpec} className="text-[10px] uppercase font-bold text-amber-500 hover:text-white flex items-center gap-1">
                             <Icon icon="lucide:plus" width={12} /> ADD_SPEC
                         </button>
@@ -410,7 +432,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
                 {/* Tags */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-4">
-                        <span className="text-xs font-black uppercase text-pink-500">03B // TAGS (Genres/Identity)</span>
+                        <span className="text-xs font-black uppercase text-pink-500">03B // TAGS (Genres)</span>
                         <button type="button" onClick={addTag} className="text-[10px] uppercase font-bold text-pink-500 hover:text-white flex items-center gap-1">
                             <Icon icon="lucide:plus" width={12} /> ADD_TAG
                         </button>
@@ -469,7 +491,7 @@ export default function ArtifactForm({ entities, initialData }: { entities: Enti
             </div>
 
             <button disabled={isSubmitting} type="submit" className="w-full py-4 bg-rose-600 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all mt-8 disabled:opacity-50">
-                {isSubmitting ? 'INITIALIZING...' : initialData?.id ? 'UPDATE_ARTIFACT_CORE' : 'REGISTER_FULL_ARTIFACT'}
+                {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_ARTIFACT_UPDATES' : 'PUBLISH_NEW_ARTIFACT'}
             </button>
         </form>
     );

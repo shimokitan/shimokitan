@@ -70,6 +70,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Icon icon="lucide:file-text" width={14} className="shrink-0" />
                         {!collapsed && <span className="whitespace-nowrap">Zines</span>}
                     </Link>
+
+                    {!collapsed && <div className="pt-4 pb-2 px-3 text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 whitespace-nowrap">System</div>}
+                    <Link href="/admin/verifications" title="Verifications" className={`flex items-center gap-3 px-3 py-2 text-xs font-black uppercase tracking-widest transition-colors ${pathname === '/admin/verifications' ? 'bg-zinc-900 text-white border-l-2 border-rose-600' : 'text-zinc-500 hover:text-white hover:bg-zinc-900/50'}`}>
+                        <Icon icon="lucide:shield-check" width={14} className="shrink-0" />
+                        {!collapsed && <span className="whitespace-nowrap">Verifications</span>}
+                    </Link>
+                    <Link href="/admin/tags" title="Tags" className={`flex items-center gap-3 px-3 py-2 text-xs font-black uppercase tracking-widest transition-colors ${pathname === '/admin/tags' ? 'bg-zinc-900 text-white border-l-2 border-rose-600' : 'text-zinc-500 hover:text-white hover:bg-zinc-900/50'}`}>
+                        <Icon icon="lucide:tags" width={14} className="shrink-0" />
+                        {!collapsed && <span className="whitespace-nowrap">Tags</span>}
+                    </Link>
                 </nav>
 
                 <div className="mt-auto pt-6 border-t border-zinc-900 overflow-hidden">

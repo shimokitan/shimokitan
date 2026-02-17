@@ -10,11 +10,13 @@ export default async function AdminDashboard() {
     // Safety check just in case db is not initialized yet (though it should be)
     if (!db) return <div>DB Connection Failed</div>;
 
-    const [artifacts, entities, collections, zines] = await Promise.all([
+    const [artifacts, entities, collections, zines, verifications, tags] = await Promise.all([
         db.query.artifacts.findMany({ where: isNull(dbSchema.artifacts.deletedAt), columns: { id: true } }),
         db.query.entities.findMany({ where: isNull(dbSchema.entities.deletedAt), columns: { id: true } }),
         db.query.collections.findMany({ where: isNull(dbSchema.collections.deletedAt), columns: { id: true } }),
         db.query.zines.findMany({ where: isNull(dbSchema.zines.deletedAt), columns: { id: true } }),
+        db.query.verificationRegistry.findMany({ columns: { id: true } }),
+        db.query.tags.findMany({ columns: { id: true } }),
     ]);
 
     const stats = [
@@ -22,6 +24,8 @@ export default async function AdminDashboard() {
         { label: 'Entities', count: entities.length, icon: 'lucide:users', color: 'text-violet-600', href: '/admin/entities' },
         { label: 'Collections', count: collections.length, icon: 'lucide:disc', color: 'text-amber-500', href: '/admin/collections' },
         { label: 'Zines', count: zines.length, icon: 'lucide:file-text', color: 'text-emerald-500', href: '/admin/zines' },
+        { label: 'Verifications', count: verifications.length, icon: 'lucide:shield-check', color: 'text-blue-500', href: '/admin/verifications' },
+        { label: 'Tags', count: tags.length, icon: 'lucide:tags', color: 'text-pink-500', href: '/admin/tags' },
     ];
 
     return (
@@ -39,7 +43,7 @@ export default async function AdminDashboard() {
                 </p>
             </header>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 {stats.map((stat) => (
                     <Link key={stat.label} href={stat.href} className="group block bg-zinc-950/50 border border-zinc-900 p-6 relative overflow-hidden transition-all hover:border-zinc-700">
                         <div className={`absolute top-0 right-0 p-2 opacity-5 transition-opacity group-hover:opacity-10 pointer-events-none ${stat.color}`}>

@@ -6,16 +6,72 @@ import { getEntityById } from '@shimokitan/db';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+const MOCK_ENTITIES_DATA: Record<string, any> = {
+    "yoasobi-signal": {
+        id: "yoasobi-signal",
+        type: "individual",
+        avatarUrl: "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
+        isMajor: true,
+        isVerified: true,
+        allowMirroring: true,
+        translations: [{ locale: "en", name: "YOASOBI", bio: "A 'novel-into-music' unit composed of composer Ayase and vocalist ikura. Documenting the intersection of fiction and resonance in the digital district." }],
+        socialLinks: [{ platform: "Twitter", url: "https://twitter.com/yoasobi_staff" }, { platform: "YouTube", url: "https://youtube.com/yoasobi" }],
+        credits: [
+            { role: "Composer", artifact: { id: "racing-night", title: "Racing into the Night", category: "music", coverImage: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&q=80", score: 98, status: "the_pit" } },
+            { role: "Vocal", artifact: { id: "idol-shard", title: "IDOL // OSHI NO KO", category: "music", coverImage: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800&q=80", score: 94, status: "the_pit" } }
+        ]
+    },
+    "lamp-signal": {
+        id: "lamp-signal",
+        type: "circle",
+        avatarUrl: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80",
+        isMajor: false,
+        isVerified: true,
+        allowMirroring: true,
+        translations: [{ locale: "en", name: "Lamp", bio: "Formed in 2000. ARCHIVE_NOTE: Their sound is a complex layering of bossa nova, 60s pop, and the humidity of a Tokyo summer evening." }],
+        socialLinks: [{ platform: "Instagram", url: "#" }],
+        credits: [
+            { role: "Ensemble", artifact: { id: "lamp-shore", title: "GHOST ON THE SHORE", category: "music", coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80", score: 92, status: "back_alley" } }
+        ]
+    },
+    "ado-signal": {
+        id: "ado-signal",
+        type: "individual",
+        avatarUrl: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=400&q=80",
+        isMajor: true,
+        isVerified: true,
+        allowMirroring: false,
+        translations: [{ locale: "en", name: "ADO", bio: "The silhouette of a new era. A vocal powerhouse mirroring the frustration and energy of the underground through a major-circuit lens." }],
+        socialLinks: [{ platform: "YouTube", url: "#" }],
+        credits: [
+            { role: "Vocal", artifact: { id: "usseewa-shard", title: "USSEEWA", category: "music", coverImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80", score: 99, status: "the_pit" } }
+        ]
+    }
+};
+
 export default async function ArtistPage(props: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await props.params;
 
-    const entity = await getEntityById(id);
+    let entity: any = null;
+
+    // 1. Check Mock Data First
+    if (MOCK_ENTITIES_DATA[id]) {
+        entity = MOCK_ENTITIES_DATA[id];
+    } else {
+        // 2. Try Database with Safety
+        try {
+            entity = await getEntityById(id);
+        } catch (error) {
+            console.error(`SCANNER_ERROR: Failed to retrieve data for entity ${id}. Using ghost-link fallback.`);
+        }
+    }
 
     if (!entity) {
         notFound();
     }
 
-    const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
+    const translations = entity.translations || [];
+    const translation = translations.find((t: any) => t.locale === locale) || translations[0];
     const name = translation?.name || "Anonymous Artist";
     const bio = translation?.bio || "";
 

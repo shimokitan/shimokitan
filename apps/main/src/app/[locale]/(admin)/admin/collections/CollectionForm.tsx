@@ -1,30 +1,54 @@
+
 "use client"
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { _ } from '@shimokitan/utils';
 import { createFullCollection, updateFullCollection } from '../actions';
+import { Icon } from '@iconify/react';
 
 export default function CollectionForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
 
+    // Multi-Language State
+    const [translations, setTranslations] = useState(
+        ['en', 'id', 'jp'].map(lang => {
+            const trans = initialData?.translations?.find((t: any) => t.locale === lang);
+            return {
+                locale: lang as 'en' | 'id' | 'jp',
+                title: trans?.title || '',
+                description: trans?.thesis || '' // mapped to description in form, thesis in DB
+            };
+        })
+    );
+
+    const [coverImage, setCoverImage] = useState(initialData?.coverImage || '');
+    const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
+    const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
+    const [resonance, setResonance] = useState(initialData?.resonance || 0);
+
+    const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
+        setTranslations(translations.map(t => t.locale === locale ? { ...t, [field]: value } : t));
+    };
 
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
             const payload = {
-                title: formData.get('title') as string,
-                thesis: formData.get('thesis') as string,
-                coverImage: formData.get('coverImage') as string,
+                coverImage,
+                isMajor,
+                allowMirroring,
+                resonance,
+                translations: translations.filter(t => t.title.trim() !== '')
             };
 
             if (initialData?.id) {
-                await updateFullCollection(initialData.id, payload);
+                await updateFullCollection(initialData.id, payload as any);
                 alert('Collection Updated!');
                 router.push('/admin/collections');
             } else {
-                await createFullCollection(payload);
+                await createFullCollection(payload as any);
                 alert('Collection Created!');
             }
             router.refresh();
@@ -37,39 +61,78 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
     }
 
     return (
-        <form action={handleSubmit} className="space-y-4">
+        <form action={handleSubmit} className="space-y-6">
+            {/* Tabs for Languages */}
+            <div className="flex gap-1 bg-zinc-950 p-1 rounded border border-zinc-900 w-fit">
+                {translations.map(t => (
+                    <button
+                        key={t.locale}
+                        type="button"
+                        onClick={() => setActiveTab(t.locale)}
+                        className={`px-4 py-1.5 text-[10px] font-black uppercase transition-all ${activeTab === t.locale ? 'bg-amber-500 text-black' : 'text-zinc-500 hover:text-white'}`}
+                    >
+                        {t.locale}
+                    </button>
+                ))}
+            </div>
+
+            {translations.map(t => (
+                <div key={t.locale} className={activeTab === t.locale ? 'space-y-4' : 'hidden'}>
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Title ({t.locale})</label>
+                        <input
+                            value={t.title}
+                            onChange={(e) => updateTrans(t.locale, 'title', e.target.value)}
+                            className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
+                            placeholder={`Collection Title in ${t.locale.toUpperCase()}`}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-mono uppercase text-zinc-400">Thesis ({t.locale})</label>
+                        <textarea
+                            value={t.description}
+                            onChange={(e) => updateTrans(t.locale, 'description', e.target.value)}
+                            rows={3}
+                            className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none resize-none transition-colors"
+                            placeholder={`Collection Thesis in ${t.locale.toUpperCase()}...`}
+                        />
+                    </div>
+                </div>
+            ))}
+
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-[10px] font-mono uppercase text-zinc-400">Title</label>
+                    <label className="text-[10px] font-mono uppercase text-zinc-400">Cover URL</label>
                     <input
-                        name="title"
-                        defaultValue={initialData?.translations?.[0]?.title || initialData?.title}
-                        required
+                        value={coverImage}
+                        onChange={(e) => setCoverImage(e.target.value)}
                         className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
-                        placeholder="Collection Title"
+                        placeholder="https://..."
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-[10px] font-mono uppercase text-zinc-400">Heat_Index</label>
+                    <input
+                        type="number"
+                        value={resonance}
+                        onChange={(e) => setResonance(parseInt(e.target.value) || 0)}
+                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
                     />
                 </div>
             </div>
 
-            <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-zinc-400">Thesis</label>
-                <textarea
-                    name="thesis"
-                    defaultValue={initialData?.translations?.[0]?.thesis || initialData?.thesis}
-                    rows={3}
-                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none resize-none transition-colors"
-                    placeholder="Collection Thesis / Description..."
-                />
-            </div>
-
-            <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-zinc-400">Cover URL</label>
-                <input
-                    name="coverImage"
-                    defaultValue={initialData?.coverImage}
-                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
-                    placeholder="https://..."
-                />
+            <div className="grid grid-cols-2 gap-2 h-[46px]">
+                <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                    <div className={`w-3 h-3 border ${isMajor ? 'bg-amber-600 border-amber-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                    <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
+                </div>
+                <div
+                    className={`flex items-center gap-3 border px-4 h-full group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
+                    onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
+                >
+                    <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-amber-600 border-amber-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                    <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
+                </div>
             </div>
 
             <button
@@ -77,7 +140,7 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
                 type="submit"
                 className="w-full py-4 bg-amber-500 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all mt-4 disabled:opacity-50"
             >
-                {isSubmitting ? 'PROCESSING...' : initialData?.id ? 'UPDATE_COLLECTION' : 'CREATE_COLLECTION'}
+                {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_COLLECTION_UPDATES' : 'PUBLISH_NEW_COLLECTION'}
             </button>
         </form>
     );

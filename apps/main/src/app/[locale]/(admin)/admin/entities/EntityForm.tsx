@@ -1,10 +1,10 @@
+
 "use client"
 
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createFullEntity, updateFullEntity } from '../actions';
 import { useRouter } from 'next/navigation';
-import { _ } from '@shimokitan/utils';
 
 type SocialLink = {
     platform: string;
@@ -14,6 +14,20 @@ type SocialLink = {
 export default function EntityForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
+
+    // Multi-Language State
+    const [translations, setTranslations] = useState(
+        ['en', 'id', 'jp'].map(lang => {
+            const trans = initialData?.translations?.find((t: any) => t.locale === lang);
+            return {
+                locale: lang as 'en' | 'id' | 'jp',
+                name: trans?.name || '',
+                bio: trans?.bio || ''
+            };
+        })
+    );
+
     const [avatarUrl, setAvatarUrl] = useState(initialData?.avatarUrl || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
@@ -28,6 +42,10 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
             : [{ platform: 'twitter', url: '' }]
     );
 
+    const updateTrans = (locale: string, field: 'name' | 'bio', value: string) => {
+        setTranslations(translations.map(t => t.locale === locale ? { ...t, [field]: value } : t));
+    };
+
     const addSocial = () => setSocials([...socials, { platform: 'twitter', url: '' }]);
     const removeSocial = (idx: number) => setSocials(socials.filter((_, i) => i !== idx));
     const updateSocial = (idx: number, field: keyof SocialLink, value: string) => {
@@ -39,25 +57,23 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
-            // Convert dynamic list to JSON object
             const cleanSocials = socials.filter(s => s.platform.trim() && s.url.trim());
 
             const payload = {
-                name: formData.get('name') as string,
                 type: formData.get('type') as string,
-                bio: formData.get('bio') as string,
                 avatarUrl: avatarUrl,
-                isMajor: isMajor,
-                isVerified: isVerified,
-                allowMirroring: allowMirroring,
-                socialLinks: cleanSocials
+                isMajor,
+                isVerified,
+                allowMirroring,
+                socialLinks: cleanSocials,
+                translations: translations.filter(t => t.name.trim() !== '')
             };
 
             if (initialData?.id) {
-                await updateFullEntity(initialData.id, payload);
+                await updateFullEntity(initialData.id, payload as any);
                 alert('Entity Updated!');
             } else {
-                await createFullEntity(payload);
+                await createFullEntity(payload as any);
                 alert('Entity Created!');
             }
 
@@ -80,7 +96,6 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                            /* Vinyl Styled Fallback */
                             <div className="w-full h-full bg-zinc-950 rounded-full border-4 border-zinc-900 flex items-center justify-center relative">
                                 <div className="absolute inset-2 border border-zinc-800 rounded-full" />
                                 <div className="absolute inset-4 border border-zinc-800 rounded-full" />
@@ -91,8 +106,6 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                                 <span className="absolute bottom-2 text-[6px] font-mono text-zinc-600 tracking-tighter uppercase">NO_SIGNAL</span>
                             </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-white/5 pointer-events-none" />
-                        <div className="absolute inset-0 scanline pointer-events-none opacity-10" />
                         {isVerified && (
                             <div className="absolute top-0 right-0 bg-violet-600 text-black p-1 rounded-bl">
                                 <Icon icon="lucide:shield-check" width={16} />
@@ -102,16 +115,45 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                 </div>
 
                 <div className="flex-1 space-y-4">
+                    {/* Tabs for Languages */}
+                    <div className="flex gap-1 bg-zinc-950 p-1 rounded border border-zinc-900 w-fit">
+                        {translations.map(t => (
+                            <button
+                                key={t.locale}
+                                type="button"
+                                onClick={() => setActiveTab(t.locale)}
+                                className={`px-4 py-1.5 text-[10px] font-black uppercase transition-all ${activeTab === t.locale ? 'bg-violet-600 text-black' : 'text-zinc-500 hover:text-white'}`}
+                            >
+                                {t.locale}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="grid grid-cols-12 gap-4">
                         <div className="col-span-12 md:col-span-8 space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Name</label>
-                            <input
-                                name="name"
-                                defaultValue={initialData?.translations?.[0]?.name || initialData?.name}
-                                required
-                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
-                                placeholder="Entity Name"
-                            />
+                            {translations.map(t => (
+                                <div key={t.locale} className={activeTab === t.locale ? 'space-y-4' : 'hidden'}>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-mono uppercase text-zinc-400">Name ({t.locale})</label>
+                                        <input
+                                            value={t.name}
+                                            onChange={(e) => updateTrans(t.locale, 'name', e.target.value)}
+                                            className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
+                                            placeholder={`Entity Name in ${t.locale.toUpperCase()}`}
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-mono uppercase text-zinc-400">Bio ({t.locale})</label>
+                                        <textarea
+                                            value={t.bio}
+                                            onChange={(e) => updateTrans(t.locale, 'bio', e.target.value)}
+                                            rows={2}
+                                            className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
+                                            placeholder={`About this entity in ${t.locale.toUpperCase()}...`}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                         <div className="col-span-12 md:col-span-4 space-y-1">
                             <label className="text-[10px] font-mono uppercase text-zinc-400">Type</label>
@@ -122,29 +164,6 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                                 <option value="circle">CIRCLE</option>
                                 <option value="staff">STAFF</option>
                             </select>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Bio</label>
-                            <textarea
-                                name="bio"
-                                defaultValue={initialData?.translations?.[0]?.bio || initialData?.bio}
-                                rows={2}
-                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
-                                placeholder="About this entity..."
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Bio</label>
-                            <textarea
-                                name="bio"
-                                defaultValue={initialData?.translations?.[0]?.bio || initialData?.bio}
-                                rows={2}
-                                className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
-                                placeholder="About this entity..."
-                            />
                         </div>
                     </div>
                 </div>
@@ -223,7 +242,7 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
             </div>
 
             <button disabled={isSubmitting} type="submit" className="w-full py-4 bg-violet-600 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all mt-4 disabled:opacity-50">
-                {isSubmitting ? 'INITIALIZING_CORE...' : initialData?.id ? 'UPDATE_ENTITY_CORE' : 'REGISTER_ENTITY_LINK'}
+                {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_ENTITY_UPDATES' : 'PUBLISH_NEW_ENTITY'}
             </button>
         </form>
     );

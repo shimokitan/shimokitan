@@ -53,7 +53,7 @@ export const BentoCard = ({
             {children}
         </div>
 
-        {/* Hover Glow Layer */}
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-600/10 via-transparent to-rose-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        {/* Hover Highlight Layer (No Gradients) */}
+        <div className="absolute inset-0 bg-violet-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
 );

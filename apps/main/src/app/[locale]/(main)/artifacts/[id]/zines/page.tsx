@@ -114,7 +114,7 @@ export default function ArtifactZinesPage() {
                         <div className="py-32 text-center">
                             <Icon icon="lucide:ghost" width={48} height={48} className="text-zinc-900 mx-auto mb-6" />
                             <p className="text-xl font-black text-zinc-800 uppercase italic">Silence in the Sector.</p>
-                            <p className="text-[10px] font-mono text-zinc-700 uppercase mt-2">No residents have recorded memories of this artifact yet.</p>
+                            <p className="text-[10px] font-mono text-zinc-700 uppercase mt-2">No entities have recorded memories of this artifact yet.</p>
                         </div>
                     )}
                 </div>

@@ -67,7 +67,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                         <BentoCard minimal className="aspect-video bg-black overflow-hidden relative border-violet-500/20">
                             {primaryResource?.platform === 'youtube' ? (
                                 <iframe
-                                    src={`https://www.youtube.com/embed/${primaryResource.externalId || primaryResource.url.split('v=')[1] || primaryResource.url.split('/').pop()}`}
+                                    src={`https://www.youtube.com/embed/${primaryResource.value.includes('v=') ? primaryResource.value.split('v=')[1].split('&')[0] : primaryResource.value.split('/').pop()}`}
                                     className="absolute inset-0 w-full h-full border-0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
@@ -123,7 +123,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                         <BentoCard title="Gateways" icon="lucide:external-link">
                             <div className="space-y-2">
                                 {artifact.resources?.map((res: any, i: number) => (
-                                    <a key={i} href={res.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-zinc-900/50 border border-zinc-800 rounded-lg hover:bg-violet-600/10 hover:border-violet-500/40 transition-all group">
+                                    <a key={i} href={res.value} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-zinc-900/50 border border-zinc-800 rounded-lg hover:bg-violet-600/10 hover:border-violet-500/40 transition-all group">
                                         <span className="text-xs font-black text-zinc-400 group-hover:text-violet-400 uppercase">{res.platform}</span>
                                         <Icon icon="lucide:arrow-up-right" width={14} height={14} className="text-zinc-600 group-hover:text-violet-500 transition-transform" />
                                     </a>

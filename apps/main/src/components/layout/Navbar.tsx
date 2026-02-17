@@ -9,12 +9,6 @@ import { locales, Locale, getLocalePath, getDictionary } from '@shimokitan/utils
 import { useLocale } from '../../hooks/use-i18n';
 import { usePathname } from 'next/navigation';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
     cn
 } from '@shimokitan/ui';
 
@@ -98,35 +92,6 @@ export function Navbar() {
                         className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
                     />
                 </div>
-                <div className="h-8 w-px bg-zinc-800/80 mx-1 hidden sm:block" />
-
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <button className="w-9 h-9 rounded-sm bg-zinc-900/40 border border-zinc-800/80 flex items-center justify-center hover:bg-violet-600 transition-all hover:scale-105 active:scale-95 group outline-none">
-                            <Icon icon="lucide:user" width={16} height={16} className="text-zinc-400 group-hover:text-white" />
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 bg-zinc-950/95 border-zinc-800 backdrop-blur-xl text-zinc-100 font-mono">
-                        <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-zinc-500">{dict.identity_panel}</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-zinc-800" />
-                        <Link href="/auth/signin">
-                            <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
-                                <Icon icon="lucide:log-in" width={14} height={14} className="mr-2" />
-                                {dict.initialize_session}
-                            </DropdownMenuItem>
-                        </Link>
-                        <Link href="/auth/signup">
-                            <DropdownMenuItem className="text-xs uppercase tracking-tight focus:bg-violet-600 focus:text-white cursor-pointer py-2">
-                                <Icon icon="lucide:user-plus" width={14} height={14} className="mr-2" />
-                                {dict.register_resident}
-                            </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuSeparator className="bg-zinc-800" />
-                        <DropdownMenuItem className="text-[10px] uppercase text-zinc-600 opacity-50 cursor-default">
-                            {dict.guest_protocol}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
         </header>
 
