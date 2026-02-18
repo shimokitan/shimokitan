@@ -13,3 +13,4 @@ This Rule appliead to Shimokitan Project Only
 - ALWAYS MAKES FONT READABLE AND VISIBLE, NOT TOO DARK NOT TOO SMALL
 - WE HAVE i18n Implemented
 - Neon project name is shimokitan : its on shared with me, if find other names ITS NOT RELATED AND SHOULD NEVER GET TOUCHED
+- Always check current library/packages installed

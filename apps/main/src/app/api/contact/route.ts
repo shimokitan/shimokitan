@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -8,6 +9,22 @@ const RATE_LIMIT_DURATION = 60 * 60 * 1000; // 1 hour
 const RATE_LIMIT_MAX_REQUESTS = 5; // 5 requests per hour
 
 const rateLimit = new Map<string, { count: number; expires: number }>();
+
+const contactSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    subject: z.string().optional(),
+    message: z.string().min(1, "Message is required"),
+});
+
+function escapeHtml(unsafe: string) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 export async function POST(request: Request) {
     try {
@@ -38,15 +55,17 @@ export async function POST(request: Request) {
             });
         }
 
-        const { name, email, subject, message } = await request.json();
+        const json = await request.json();
+        const result = contactSchema.safeParse(json);
 
-        // Basic validation
-        if (!name || !email || !message) {
+        if (!result.success) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: 'Validation failed', details: result.error.flatten() },
                 { status: 400 }
             );
         }
+
+        const { name, email, subject, message } = result.data;
 
         // Determine recipient based on subject
         let recipient = 'hello@shimokitan.live';
@@ -56,17 +75,22 @@ export async function POST(request: Request) {
 
         const emailSubject = `[Contract Request] ${subject || 'General Inquiry'} from ${name}`;
 
+        // Prevent XSS in email clients
+        const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
+        const safeName = escapeHtml(name);
+        const safeSubject = escapeHtml(subject || '');
+
         const data = await resend.emails.send({
             from: 'contact@mail.shimokitan.live',
             to: recipient,
             subject: emailSubject,
             html: `
-                <h1>New Transmission from ${name}</h1>
+                <h1>New Transmission from ${safeName}</h1>
                 <p><strong>Channel:</strong> ${email}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
+                <p><strong>Subject:</strong> ${safeSubject}</p>
                 <hr />
                 <p><strong>Message:</strong></p>
-                <p>${message.replace(/\n/g, '<br>')}</p>
+                <p>${safeMessage}</p>
                 <hr />
                 <p><small>Sent from Shimokitan Contact Form</small></p>
             `,

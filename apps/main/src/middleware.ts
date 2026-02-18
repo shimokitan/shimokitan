@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { locales, defaultLocale } from '@shimokitan/utils';
+import { AUTH_COOKIE_NAMES } from '@/lib/auth-neon/constants';
 
 export const runtime = 'experimental-edge';
 
@@ -54,25 +55,24 @@ export function middleware(request: NextRequest) {
     const subPathname = '/' + segments.slice(2).join('/');
 
     // 2. Pedalboard Authentication Check (Real Auth Integration)
-    if (subPathname.startsWith('/pedalboard') && subPathname !== '/pedalboard/login') {
-        const sessionToken =
-            request.cookies.get('neon-auth.session_token')?.value ||
-            request.cookies.get('__Secure-neon-auth.session_token')?.value ||
-            request.cookies.get('neon_auth_session')?.value; // Fallback for transition
+    if (subPathname.startsWith('/pedalboard')) {
+        const sessionToken = AUTH_COOKIE_NAMES.find(name => request.cookies.get(name)?.value);
 
         if (!sessionToken) {
             return NextResponse.redirect(new URL(`/${locale}/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`, request.url));
         }
     }
 
-    // 3. Maintenance mode check
-    const IS_MAINTENANCE = process.env.NODE_ENV === 'production';
+    // 3. Maintenance mode check (Environment Variable Driven)
+    const IS_MAINTENANCE = process.env.MAINTENANCE_MODE === 'true';
+
     if (IS_MAINTENANCE) {
         const isLegalRoute = LEGAL_ROUTES.some(route =>
             subPathname.toLowerCase() === route.toLowerCase() ||
             subPathname.toLowerCase().startsWith(route.toLowerCase() + '/')
         );
 
+        // Allow static assets and legal routes
         if (
             subPathname.startsWith('/_next') ||
             subPathname.startsWith('/api') ||
@@ -84,6 +84,7 @@ export function middleware(request: NextRequest) {
             return NextResponse.next();
         }
 
+        // Redirect all other traffic to maintenance
         return NextResponse.rewrite(new URL(`/${locale}/maintenance`, request.url));
     }
 

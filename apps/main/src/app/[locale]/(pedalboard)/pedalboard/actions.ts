@@ -5,6 +5,38 @@ import { getDb, schema, eq, sql } from '@shimokitan/db';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import { slugify } from '@shimokitan/utils';
+import {
+    entitySchema,
+    artifactSchema,
+    collectionSchema,
+    zineSchema,
+    tagSchema,
+    verificationSchema
+} from '@/lib/validations/pedalboard';
+import { z } from 'zod';
+
+// --- AUTH HELPERS ---
+async function requireUser() {
+    const user = await ensureUserSync();
+    if (!user) throw new Error('Unauthorized_Signal: Identity_Lost');
+    return user;
+}
+
+async function requireArchitect() {
+    const user = await requireUser();
+    if (user.role !== 'architect' && user.role !== 'founder') {
+        throw new Error('Forbidden_Signal: Architects_Only');
+    }
+    return user;
+}
+
+async function requireFounder() {
+    const user = await requireUser();
+    if (user.role !== 'founder') {
+        throw new Error('Forbidden_Signal: Founders_Only');
+    }
+    return user;
+}
 
 // --- AUTH & RBAC ---
 export async function ensureUserSync() {
@@ -14,50 +46,69 @@ export async function ensureUserSync() {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    let existing = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.id, session.user.id)
+    const userId = session.user.id;
+    const userEmail = session.user.email;
+
+    // 1. Try to find the user by ID first (Fast Path)
+    const existingById = await db.query.users.findFirst({
+        where: (u, { eq }) => eq(u.id, userId)
     });
 
-    // Handle pre-registered users by email
-    if (!existing) {
-        existing = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.email, session.user.email)
-        });
-
-        if (existing) {
-            // Update the ID to match the auth provider's ID
+    if (existingById) {
+        // Sync email if changed on provider side
+        if (existingById.email !== userEmail) {
             await db.update(schema.users)
-                .set({ id: session.user.id })
-                .where(eq(schema.users.email, session.user.email));
+                .set({ email: userEmail, updatedAt: new Date() })
+                .where(eq(schema.users.id, userId));
         }
+        return { ...session.user, role: existingById.role };
     }
 
-    if (!existing) {
+    // 2. If not found by ID, try to find by Email (Account Linking / Migration Path)
+    const existingByEmail = await db.query.users.findFirst({
+        where: (u, { eq }) => eq(u.email, userEmail)
+    });
+
+    if (existingByEmail) {
+        // User exists with this email but different ID. Update to new Auth ID.
+        await db.update(schema.users)
+            .set({ id: userId, updatedAt: new Date() })
+            .where(eq(schema.users.email, userEmail));
+
+        return { ...session.user, role: existingByEmail.role };
+    }
+
+    // 3. Create new user with Race Condition handling
+    try {
         const newUser = {
-            id: session.user.id,
-            email: session.user.email,
-            role: 'resident' as const, // Default role for new signals
+            id: userId,
+            email: userEmail,
+            role: 'resident' as const,
         };
         await db.insert(schema.users).values(newUser);
         return { ...session.user, role: 'resident' };
+    } catch (error: any) {
+        // Postgres unique_violation code '23505'
+        if (error.code === '23505') {
+            // Fetch one last time - someone else must have created it
+            const racingUser = await db.query.users.findFirst({
+                where: (u, { or, eq }) => or(eq(u.id, userId), eq(u.email, userEmail))
+            });
+            if (racingUser) return { ...session.user, role: racingUser.role };
+        }
+        console.error('User_Sync_Critical_Failure:', error);
+        throw new Error('Identity_Establishment_Failed');
     }
-
-    return { ...session.user, role: existing.role };
 }
 
 export async function requestArchitectAccess() {
-    const { data: session } = await auth.getSession();
-    if (!session?.user) {
-        throw new Error('Unauthorized_Access_Signal_Lost');
-    }
-
+    const user = await requireUser();
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    // Check if already requested
     const existing = await db.query.verificationRegistry.findFirst({
         where: (vr, { and, eq }) => and(
-            eq(vr.targetId, session.user.id),
+            eq(vr.targetId, user.id),
             eq(vr.targetType, 'role_upgrade'),
             eq(vr.status, 'pending')
         )
@@ -69,11 +120,11 @@ export async function requestArchitectAccess() {
 
     await db.insert(schema.verificationRegistry).values({
         id: `VR_${nanoid(10)}`,
-        targetId: session.user.id,
+        targetId: user.id,
         targetType: 'role_upgrade',
         status: 'pending',
-        issuer: session.user.id,
-        internalNotes: `Architect promotion request from ${session.user.email} (${session.user.name})`,
+        issuer: user.id,
+        internalNotes: `Architect promotion request from ${user.email} (${user.name})`,
     });
 
     revalidatePath('/[locale]/pedalboard', 'page');
@@ -81,12 +132,7 @@ export async function requestArchitectAccess() {
 }
 
 export async function approveRoleUpgrade(verificationId: string) {
-    const { data: session } = await auth.getSession();
-    // Only founders can approve
-    if (session?.user?.role !== 'founder' && process.env.NODE_ENV === 'production') {
-        throw new Error('Founder_Privilege_Required');
-    }
-
+    const user = await requireFounder();
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
@@ -99,16 +145,14 @@ export async function approveRoleUpgrade(verificationId: string) {
     }
 
     await db.transaction(async (tx) => {
-        // 1. Approve the request
         await tx.update(schema.verificationRegistry)
             .set({
                 status: 'approved',
-                grantedBy: session?.user?.name || 'Architect_Oversight',
+                grantedBy: user.name || 'Architect_Oversight',
                 updatedAt: new Date()
             })
             .where(eq(schema.verificationRegistry.id, verificationId));
 
-        // 2. Upgrade the user
         await tx.update(schema.users)
             .set({
                 role: 'architect',
@@ -122,33 +166,36 @@ export async function approveRoleUpgrade(verificationId: string) {
     return { success: true };
 }
 
-// --- ENTITIES ---
+// --- ENTITIES (Founder Only) ---
 
-export async function createFullEntity(data: any) {
+export async function createFullEntity(data: z.infer<typeof entitySchema>) {
+    await requireFounder();
+    const validated = entitySchema.parse(data);
+
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const entityId = `ENT_${nanoid(10)}`;
-    const slug = slugify(data.translations?.[0]?.name || entityId);
+    const slug = slugify(validated.translations?.[0]?.name || entityId);
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.entities).values({
             id: entityId,
-            type: data.type,
+            type: validated.type,
             slug,
-            avatarUrl: data.avatarUrl,
-            isMajor: data.isMajor,
-            isVerified: data.isVerified,
-            allowMirroring: data.allowMirroring,
-            socialLinks: data.socialLinks,
+            avatarUrl: validated.avatarUrl || null,
+            isMajor: validated.isMajor,
+            isVerified: validated.isVerified,
+            allowMirroring: validated.allowMirroring,
+            socialLinks: validated.socialLinks,
         });
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.entitiesI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     entityId,
                     locale: t.locale,
-                    name: t.name,
+                    name: t.name || '', // Ensure not null validation passes if schema allowed optional
                     bio: t.bio,
                 }))
             );
@@ -159,31 +206,33 @@ export async function createFullEntity(data: any) {
     return { id: entityId };
 }
 
-export async function updateFullEntity(id: string, data: any) {
+export async function updateFullEntity(id: string, data: z.infer<typeof entitySchema>) {
+    await requireFounder();
+    const validated = entitySchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
         await tx.update(schema.entities)
             .set({
-                type: data.type,
-                avatarUrl: data.avatarUrl,
-                isMajor: data.isMajor,
-                isVerified: data.isVerified,
-                allowMirroring: data.allowMirroring,
-                socialLinks: data.socialLinks,
+                type: validated.type,
+                avatarUrl: validated.avatarUrl || null,
+                isMajor: validated.isMajor,
+                isVerified: validated.isVerified,
+                allowMirroring: validated.allowMirroring,
+                socialLinks: validated.socialLinks,
                 updatedAt: new Date(),
             })
             .where(eq(schema.entities.id, id));
 
         await tx.delete(schema.entitiesI18n).where(eq(schema.entitiesI18n.entityId, id));
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.entitiesI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     entityId: id,
                     locale: t.locale,
-                    name: t.name,
+                    name: t.name || '',
                     bio: t.bio,
                 }))
             );
@@ -194,43 +243,45 @@ export async function updateFullEntity(id: string, data: any) {
     return { success: true };
 }
 
-// --- ARTIFACTS ---
+// --- ARTIFACTS (Architect+) ---
 
-export async function createFullArtifact(data: any) {
+export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
+    await requireArchitect();
+    const validated = artifactSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const artifactId = `ART_${nanoid(10)}`;
-    const slug = slugify(data.translations?.[0]?.title || artifactId);
+    const slug = slugify(validated.translations?.[0]?.title || artifactId);
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.artifacts).values({
             id: artifactId,
-            category: data.category,
+            category: validated.category,
             slug,
-            coverImage: data.coverImage,
-            status: data.status,
-            score: data.score,
-            specs: data.specs,
-            isMajor: data.isMajor,
-            isVerified: data.isVerified,
-            allowMirroring: data.allowMirroring,
+            coverImage: validated.coverImage || null,
+            status: validated.status,
+            score: validated.score,
+            specs: validated.specs,
+            isMajor: validated.isMajor,
+            isVerified: validated.isVerified,
+            allowMirroring: validated.allowMirroring,
         });
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.artifactsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     artifactId,
                     locale: t.locale,
-                    title: t.title,
+                    title: t.title || '',
                     description: t.description,
                 }))
             );
         }
 
-        if (data.resources?.length) {
+        if (validated.resources?.length) {
             await tx.insert(schema.artifactResources).values(
-                data.resources.map((r: any) => ({
+                validated.resources.map((r) => ({
                     id: `RES_${nanoid(10)}`,
                     artifactId,
                     type: r.type,
@@ -241,9 +292,9 @@ export async function createFullArtifact(data: any) {
             );
         }
 
-        if (data.credits?.length) {
+        if (validated.credits?.length) {
             await tx.insert(schema.artifactCredits).values(
-                data.credits.map((c: any) => ({
+                validated.credits.map((c) => ({
                     id: `CRD_${nanoid(10)}`,
                     artifactId,
                     entityId: c.entityId,
@@ -252,11 +303,11 @@ export async function createFullArtifact(data: any) {
             );
         }
 
-        // Handle Tags
-        if (data.tags?.length) {
-            for (const tagName of data.tags.map((t: any) => t.name)) {
+        if (validated.tags?.length) {
+            for (const tagObj of validated.tags) {
+                const tagName = tagObj.name;
+                // Simplified tag handling - ideally this should be optimized
                 let tag = await tx.query.tags.findFirst({
-                    with: { translations: true },
                     where: (tags, { exists, and, eq }) => exists(
                         tx.select().from(schema.tagsI18n).where(and(
                             eq(schema.tagsI18n.tagId, tags.id),
@@ -281,41 +332,44 @@ export async function createFullArtifact(data: any) {
     return { id: artifactId };
 }
 
-export async function updateFullArtifact(id: string, data: any) {
+export async function updateFullArtifact(id: string, data: z.infer<typeof artifactSchema>) {
+    await requireArchitect();
+    const validated = artifactSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
         await tx.update(schema.artifacts)
             .set({
-                category: data.category,
-                coverImage: data.coverImage,
-                status: data.status,
-                score: data.score,
-                specs: data.specs,
-                isMajor: data.isMajor,
-                isVerified: data.isVerified,
-                allowMirroring: data.allowMirroring,
+                category: validated.category,
+                coverImage: validated.coverImage || null,
+                status: validated.status,
+                score: validated.score,
+                specs: validated.specs,
+                isMajor: validated.isMajor,
+                isVerified: validated.isVerified,
+                allowMirroring: validated.allowMirroring,
                 updatedAt: new Date(),
             })
             .where(eq(schema.artifacts.id, id));
 
         await tx.delete(schema.artifactsI18n).where(eq(schema.artifactsI18n.artifactId, id));
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.artifactsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     artifactId: id,
                     locale: t.locale,
-                    title: t.title,
+                    title: t.title || '',
                     description: t.description,
                 }))
             );
         }
 
+        // Resources, Credits, Tags logic remains same as create but with delete first
         await tx.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
-        if (data.resources?.length) {
+        if (validated.resources?.length) {
             await tx.insert(schema.artifactResources).values(
-                data.resources.map((r: any) => ({
+                validated.resources.map((r) => ({
                     id: `RES_${nanoid(10)}`,
                     artifactId: id,
                     type: r.type,
@@ -327,9 +381,9 @@ export async function updateFullArtifact(id: string, data: any) {
         }
 
         await tx.delete(schema.artifactCredits).where(eq(schema.artifactCredits.artifactId, id));
-        if (data.credits?.length) {
+        if (validated.credits?.length) {
             await tx.insert(schema.artifactCredits).values(
-                data.credits.map((c: any) => ({
+                validated.credits.map((c) => ({
                     id: `CRD_${nanoid(10)}`,
                     artifactId: id,
                     entityId: c.entityId,
@@ -339,8 +393,9 @@ export async function updateFullArtifact(id: string, data: any) {
         }
 
         await tx.delete(schema.artifactTags).where(eq(schema.artifactTags.artifactId, id));
-        if (data.tags?.length) {
-            for (const tagName of data.tags.map((t: any) => t.name)) {
+        if (validated.tags?.length) {
+            for (const tagObj of validated.tags) {
+                const tagName = tagObj.name;
                 let tag = await tx.query.tags.findFirst({
                     where: (tags, { exists, and, eq }) => exists(
                         tx.select().from(schema.tagsI18n).where(and(
@@ -366,32 +421,34 @@ export async function updateFullArtifact(id: string, data: any) {
     return { success: true };
 }
 
-// --- COLLECTIONS ---
+// --- COLLECTIONS (Founder Only) ---
 
-export async function createFullCollection(data: any) {
+export async function createFullCollection(data: z.infer<typeof collectionSchema>) {
+    await requireFounder();
+    const validated = collectionSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const collectionId = `COL_${nanoid(10)}`;
-    const slug = slugify(data.translations?.[0]?.title || collectionId);
+    const slug = slugify(validated.translations?.[0]?.title || collectionId);
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.collections).values({
             id: collectionId,
             slug,
-            coverImage: data.coverImage,
-            isMajor: data.isMajor,
-            allowMirroring: data.allowMirroring,
-            resonance: data.resonance,
+            coverImage: validated.coverImage || null,
+            isMajor: validated.isMajor,
+            allowMirroring: validated.allowMirroring,
+            resonance: validated.resonance,
         });
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.collectionsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     collectionId,
                     locale: t.locale,
-                    title: t.title,
-                    thesis: t.description,
+                    title: t.title || '',
+                    thesis: t.thesis || t.description,
                 }))
             );
         }
@@ -401,29 +458,31 @@ export async function createFullCollection(data: any) {
     return { id: collectionId };
 }
 
-export async function updateFullCollection(id: string, data: any) {
+export async function updateFullCollection(id: string, data: z.infer<typeof collectionSchema>) {
+    await requireFounder();
+    const validated = collectionSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
         await tx.update(schema.collections)
             .set({
-                coverImage: data.coverImage,
-                isMajor: data.isMajor,
-                allowMirroring: data.allowMirroring,
-                resonance: data.resonance,
+                coverImage: validated.coverImage || null,
+                isMajor: validated.isMajor,
+                allowMirroring: validated.allowMirroring,
+                resonance: validated.resonance,
                 updatedAt: new Date(),
             })
             .where(eq(schema.collections.id, id));
 
         await tx.delete(schema.collectionsI18n).where(eq(schema.collectionsI18n.collectionId, id));
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.collectionsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     collectionId: id,
                     locale: t.locale,
-                    title: t.title,
-                    thesis: t.description,
+                    title: t.title || '',
+                    thesis: t.thesis || t.description,
                 }))
             );
         }
@@ -433,9 +492,11 @@ export async function updateFullCollection(id: string, data: any) {
     return { success: true };
 }
 
-// --- ZINES ---
+// --- ZINES (Architect+) ---
 
-export async function createFullZine(data: any) {
+export async function createFullZine(data: z.infer<typeof zineSchema>) {
+    await requireArchitect();
+    const validated = zineSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
@@ -444,17 +505,17 @@ export async function createFullZine(data: any) {
     await db.transaction(async (tx) => {
         await tx.insert(schema.zines).values({
             id: zineId,
-            artifactId: data.artifactId,
-            author: data.author,
-            resonance: data.resonance,
+            artifactId: validated.artifactId,
+            author: validated.author || 'Anonymous',
+            resonance: validated.resonance,
         });
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.zinesI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     zineId,
                     locale: t.locale,
-                    content: t.content,
+                    content: t.content || '',
                 }))
             );
         }
@@ -464,27 +525,29 @@ export async function createFullZine(data: any) {
     return { id: zineId };
 }
 
-export async function updateFullZine(id: string, data: any) {
+export async function updateFullZine(id: string, data: z.infer<typeof zineSchema>) {
+    await requireArchitect();
+    const validated = zineSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
         await tx.update(schema.zines)
             .set({
-                artifactId: data.artifactId,
-                author: data.author,
-                resonance: data.resonance,
+                artifactId: validated.artifactId,
+                author: validated.author,
+                resonance: validated.resonance,
                 updatedAt: new Date(),
             })
             .where(eq(schema.zines.id, id));
 
         await tx.delete(schema.zinesI18n).where(eq(schema.zinesI18n.zineId, id));
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.zinesI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     zineId: id,
                     locale: t.locale,
-                    content: t.content,
+                    content: t.content || '',
                 }))
             );
         }
@@ -494,9 +557,11 @@ export async function updateFullZine(id: string, data: any) {
     return { success: true };
 }
 
-// --- TAGS ---
+// --- TAGS (Founder Only) ---
 
-export async function createFullTag(data: any) {
+export async function createFullTag(data: z.infer<typeof tagSchema>) {
+    await requireFounder();
+    const validated = tagSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
@@ -505,15 +570,15 @@ export async function createFullTag(data: any) {
     await db.transaction(async (tx) => {
         await tx.insert(schema.tags).values({
             id: tagId,
-            category: data.category,
+            category: validated.category,
         });
 
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.tagsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     tagId,
                     locale: t.locale,
-                    name: t.name,
+                    name: t.name || '',
                 }))
             );
         }
@@ -523,25 +588,27 @@ export async function createFullTag(data: any) {
     return { id: tagId };
 }
 
-export async function updateFullTag(id: string, data: any) {
+export async function updateFullTag(id: string, data: z.infer<typeof tagSchema>) {
+    await requireFounder();
+    const validated = tagSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
         await tx.update(schema.tags)
             .set({
-                category: data.category,
+                category: validated.category,
                 updatedAt: new Date(),
             })
             .where(eq(schema.tags.id, id));
 
         await tx.delete(schema.tagsI18n).where(eq(schema.tagsI18n.tagId, id));
-        if (data.translations?.length) {
+        if (validated.translations?.length) {
             await tx.insert(schema.tagsI18n).values(
-                data.translations.map((t: any) => ({
+                validated.translations.map((t) => ({
                     tagId: id,
                     locale: t.locale,
-                    name: t.name,
+                    name: t.name || '',
                 }))
             );
         }
@@ -551,9 +618,11 @@ export async function updateFullTag(id: string, data: any) {
     return { success: true };
 }
 
-// --- VERIFICATIONS ---
+// --- VERIFICATIONS (Founder Only) ---
 
-export async function createVerification(data: any) {
+export async function createVerification(data: z.infer<typeof verificationSchema>) {
+    await requireFounder();
+    const validated = verificationSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
@@ -561,34 +630,36 @@ export async function createVerification(data: any) {
 
     await db.insert(schema.verificationRegistry).values({
         id: verificationId,
-        targetId: data.targetId,
-        targetType: data.targetType,
-        status: data.status || 'pending',
-        issuer: data.issuer,
-        r2Key: data.r2Key,
-        grantedBy: data.grantedBy,
-        expiresAt: data.expiresAt,
-        internalNotes: data.internalNotes,
+        targetId: validated.targetId,
+        targetType: validated.targetType,
+        status: validated.status,
+        issuer: validated.issuer,
+        r2Key: validated.r2Key,
+        grantedBy: validated.grantedBy,
+        expiresAt: validated.expiresAt ? new Date(validated.expiresAt) : undefined,
+        internalNotes: validated.internalNotes,
     });
 
     revalidatePath('/[locale]/pedalboard/verifications', 'page');
     return { id: verificationId };
 }
 
-export async function updateVerification(id: string, data: any) {
+export async function updateVerification(id: string, data: z.infer<typeof verificationSchema>) {
+    await requireFounder();
+    const validated = verificationSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.update(schema.verificationRegistry)
         .set({
-            targetId: data.targetId,
-            targetType: data.targetType,
-            status: data.status,
-            issuer: data.issuer,
-            r2Key: data.r2Key,
-            grantedBy: data.grantedBy,
-            expiresAt: data.expiresAt,
-            internalNotes: data.internalNotes,
+            targetId: validated.targetId,
+            targetType: validated.targetType,
+            status: validated.status,
+            issuer: validated.issuer,
+            r2Key: validated.r2Key,
+            grantedBy: validated.grantedBy,
+            expiresAt: validated.expiresAt ? new Date(validated.expiresAt) : undefined,
+            internalNotes: validated.internalNotes,
             updatedAt: new Date(),
         })
         .where(eq(schema.verificationRegistry.id, id));
@@ -597,46 +668,46 @@ export async function updateVerification(id: string, data: any) {
     return { success: true };
 }
 
-// --- DELETE ACTIONS (Soft Deletes where supported) ---
+// --- DELETE ACTIONS (Founder Only) ---
 
 export async function deleteEntity(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.update(schema.entities).set({ deletedAt: new Date() }).where(eq(schema.entities.id, id));
+    if (db) await db.update(schema.entities).set({ deletedAt: new Date() }).where(eq(schema.entities.id, id));
     revalidatePath('/[locale]/pedalboard/entities', 'page');
 }
 
 export async function deleteArtifact(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.update(schema.artifacts).set({ deletedAt: new Date() }).where(eq(schema.artifacts.id, id));
+    if (db) await db.update(schema.artifacts).set({ deletedAt: new Date() }).where(eq(schema.artifacts.id, id));
     revalidatePath('/[locale]/pedalboard/artifacts', 'page');
 }
 
 export async function deleteCollection(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.update(schema.collections).set({ deletedAt: new Date() }).where(eq(schema.collections.id, id));
+    if (db) await db.update(schema.collections).set({ deletedAt: new Date() }).where(eq(schema.collections.id, id));
     revalidatePath('/[locale]/pedalboard/collections', 'page');
 }
 
 export async function deleteZine(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.update(schema.zines).set({ deletedAt: new Date() }).where(eq(schema.zines.id, id));
+    if (db) await db.update(schema.zines).set({ deletedAt: new Date() }).where(eq(schema.zines.id, id));
     revalidatePath('/[locale]/pedalboard/zines', 'page');
 }
 
 export async function deleteTag(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.delete(schema.tags).where(eq(schema.tags.id, id));
+    if (db) await db.delete(schema.tags).where(eq(schema.tags.id, id));
     revalidatePath('/[locale]/pedalboard/tags', 'page');
 }
 
 export async function deleteVerification(id: string) {
+    await requireFounder();
     const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-    await db.delete(schema.verificationRegistry).where(eq(schema.verificationRegistry.id, id));
+    if (db) await db.delete(schema.verificationRegistry).where(eq(schema.verificationRegistry.id, id));
     revalidatePath('/[locale]/pedalboard/verifications', 'page');
 }

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { auth } from '@/lib/auth-neon/server';
 import { RequestAccessButton } from './_components/RequestAccessButton';
 import { ensureUserSync } from './actions';
+import { redirect } from 'next/navigation';
 
 interface PageProps {
     searchParams: Promise<{ mode?: string }>;
@@ -20,7 +21,10 @@ export default async function PedalboardPage({ searchParams }: PageProps) {
 
     // Real Auth Integration & User Provisioning
     const user = await ensureUserSync();
-    const currentRole = (user?.role as string)?.toUpperCase() || 'GHOST';
+    if (!user) {
+        redirect('/auth/signin?callbackUrl=/pedalboard');
+    }
+    const currentRole = (user.role as string)?.toUpperCase() || 'GHOST';
 
     // Fetch Metrics for Registry Mode
     const [artifacts, entities, verifications] = await Promise.all([

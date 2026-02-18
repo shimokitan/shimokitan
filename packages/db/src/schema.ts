@@ -31,7 +31,6 @@ export const users = pgTable("users", {
     email: text("email").notNull().unique(),
     role: text("role", { enum: ['founder', 'architect', 'resident', 'ghost'] }).default('resident').notNull(),
     entityId: text("entity_id").references(() => entities.id), // Link to their public persona (e.g. Artist profile)
-    passwordHash: text("password_hash"), // Simple auth for now
     resonanceMultiplier: integer("resonance_multiplier").default(100), // Dilution factor for Zines
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
