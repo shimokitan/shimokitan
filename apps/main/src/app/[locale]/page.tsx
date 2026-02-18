@@ -15,10 +15,10 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
     return <div>DB_CONNECTION_ERROR</div>;
   }
 
-  console.log("AppPage: DB Initialized and ready for query");
+
   try {
     const testQuery = await db.execute(sql`SELECT 1`);
-    console.log("Diagnostic SQL check:", testQuery);
+
   } catch (e: any) {
     console.error("Diagnostic SQL check failed:", e.message);
   }
@@ -43,7 +43,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 6);
 
-    console.log(`AppPage: Fetched ${spotlightArtifacts.length} spotlight artifacts`);
+
   } catch (e: any) {
     console.error("Spotlight Fetch Failed:", e.message);
   }
@@ -74,7 +74,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
         description: z.artifact.translations?.[0]?.description || ""
       } : null
     }));
-    console.log(`AppPage: Fetched ${recentZines.length} recent zines`);
+
   } catch (e: any) {
     console.error("Zines Fetch Failed:", e.message);
   }
@@ -97,7 +97,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
         description: rawFeatured.translations?.[0]?.description || ""
       };
     }
-    console.log("AppPage: Featured artifact fetch complete");
+
   } catch (e: any) {
     console.error("Featured Fetch Failed:", e.message);
   }
@@ -121,7 +121,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       avatar: e.avatarUrl || "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
       highlights: [] // We could fetch credits here if needed
     }));
-    console.log(`AppPage: Fetched ${entities.length} entities`);
+
   } catch (e: any) {
     console.error("Entities Fetch Failed:", e.message);
   }
