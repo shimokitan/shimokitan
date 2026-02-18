@@ -55,7 +55,11 @@ export function middleware(request: NextRequest) {
 
     // 2. Pedalboard Authentication Check (Real Auth Integration)
     if (subPathname.startsWith('/pedalboard') && subPathname !== '/pedalboard/login') {
-        const sessionToken = request.cookies.get('neon_auth_session')?.value;
+        const sessionToken =
+            request.cookies.get('neon-auth.session_token')?.value ||
+            request.cookies.get('__Secure-neon-auth.session_token')?.value ||
+            request.cookies.get('neon_auth_session')?.value; // Fallback for transition
+
         if (!sessionToken) {
             return NextResponse.redirect(new URL(`/${locale}/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`, request.url));
         }

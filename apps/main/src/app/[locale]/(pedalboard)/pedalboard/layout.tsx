@@ -18,9 +18,14 @@ export default function PedalboardLayout({ children }: { children: React.ReactNo
     }
 
     const handleLogout = async () => {
-        await authClient.signOut();
-        router.push('/auth/signin');
-        router.refresh();
+        try {
+            await authClient.signOut();
+        } catch (error) {
+            console.warn('SignOut_Signal_Interrupted:', error);
+        } finally {
+            router.push('/auth/signin');
+            router.refresh();
+        }
     };
 
     return (

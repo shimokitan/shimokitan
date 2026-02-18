@@ -18,6 +18,20 @@ export async function ensureUserSync() {
         where: (u, { eq }) => eq(u.id, session.user.id)
     });
 
+    // Handle pre-registered users by email
+    if (!existing) {
+        existing = await db.query.users.findFirst({
+            where: (u, { eq }) => eq(u.email, session.user.email)
+        });
+
+        if (existing) {
+            // Update the ID to match the auth provider's ID
+            await db.update(schema.users)
+                .set({ id: session.user.id })
+                .where(eq(schema.users.email, session.user.email));
+        }
+    }
+
     if (!existing) {
         const newUser = {
             id: session.user.id,

@@ -223,10 +223,10 @@ export default async function PedalboardPage({ searchParams }: PageProps) {
 
                         <div className="mb-2">
                             <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">
-                                Founder_01
+                                {user?.name || 'GHOST_SIGNAL'}
                             </h1>
                             <p className="text-zinc-500 font-mono text-xs mt-2 uppercase tracking-widest">
-                                @shimokitan.founder // District_Mayor
+                                @{user?.email?.split('@')[0] || 'unknown'} // {currentRole}_SECTOR
                             </p>
                         </div>
                     </div>
@@ -259,8 +259,8 @@ export default async function PedalboardPage({ searchParams }: PageProps) {
                                     <div className="flex-1 space-y-3">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-xs font-black text-white uppercase tracking-tight italic">Founder_01</span>
-                                                <span className="text-[10px] font-mono text-zinc-600 uppercase">@shimokitan_founder</span>
+                                                <span className="text-xs font-black text-white uppercase tracking-tight italic">{user?.name}</span>
+                                                <span className="text-[10px] font-mono text-zinc-600 uppercase">@{user?.email?.split('@')[0]}</span>
                                                 <span className="text-zinc-700">·</span>
                                                 <span className="text-[10px] font-mono text-zinc-600">{zine.updatedAt}</span>
                                             </div>
