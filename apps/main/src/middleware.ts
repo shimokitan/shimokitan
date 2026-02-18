@@ -53,11 +53,11 @@ export function middleware(request: NextRequest) {
     const locale = segments[1];
     const subPathname = '/' + segments.slice(2).join('/');
 
-    // 2. Admin Authentication Check
-    if (subPathname.startsWith('/admin') && subPathname !== '/admin/login') {
-        const token = request.cookies.get('shimokitan_admin_session')?.value;
-        if (token !== 'authenticated') {
-            return NextResponse.redirect(new URL(`/${locale}/admin/login`, request.url));
+    // 2. Pedalboard Authentication Check (Real Auth Integration)
+    if (subPathname.startsWith('/pedalboard') && subPathname !== '/pedalboard/login') {
+        const sessionToken = request.cookies.get('neon_auth_session')?.value;
+        if (!sessionToken) {
+            return NextResponse.redirect(new URL(`/${locale}/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`, request.url));
         }
     }
 

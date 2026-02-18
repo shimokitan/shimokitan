@@ -409,7 +409,7 @@
             "subtitle": "Kepatuhan Hukum dan Fondasi",
             "l1": "Penulisan ulang lengkap seluruh halaman hukum (Kebijakan Privasi, Ketentuan Layanan, dll).",
             "l2": "Penambahan halaman Pengungkapan Afiliasi.",
-            "l3": "Peningkatan keamanan autentikasi admin.",
+            "l3": "Peningkatan keamanan autentikasi pedalboard.",
             "l4": "Fitur salin-sebagai-markdown pada halaman hukum dan tentang.",
             "l5": "Penyempurnaan halaman segera-hadir untuk menghapus pengumpulan data."
         },
@@ -418,7 +418,7 @@
             "subtitle": "Reaktivasi Inti",
             "l1": "Penulisan ulang platform menggunakan Next.js App Router.",
             "l2": "Integrasi Drizzle ORM dengan Neon PostgreSQL.",
-            "l3": "Pembangunan konsol admin untuk pengelolaan artefak, entitas, dan koleksi.",
+            "l3": "Pembangunan konsol pedalboard untuk pengelolaan artefak, entitas, dan koleksi.",
             "l4": "Implementasi sistem desain UI baru dengan CyberpunkShell.",
             "l5": "Penambahan pipeline aset R2 untuk pemrosesan gambar."
         },

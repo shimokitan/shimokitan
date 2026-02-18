@@ -1,10 +1,46 @@
 "use client"
 
-import React from 'react';
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
+import { authClient } from '@/lib/auth-neon/client';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+import { useState, FormEvent, Suspense } from 'react';
 
-export default function SignInPage() {
+function SignInContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackURL = searchParams.get('callbackUrl') || '/pedalboard';
+    const [isPending, setIsPending] = useState(false);
+
+    async function handleSignIn(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsPending(true);
+
+        const formData = new FormData(e.currentTarget);
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        try {
+            const { error } = await authClient.signIn.email({
+                email,
+                password,
+                callbackURL
+            });
+
+            if (error) {
+                toast.error(`Auth_Failure: ${error.message || 'Signal_Corrupted'}`);
+            } else {
+                toast.success('Identity_Established: Welcome back.');
+                router.push(callbackURL);
+            }
+        } catch (err: any) {
+            toast.error('System_Critical: Connection to Neon Auth lost.');
+        } finally {
+            setIsPending(false);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-black text-violet-100 flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-violet-600/50">
             {/* RAW TEXTURE OVERLAYS */}
@@ -30,7 +66,7 @@ export default function SignInPage() {
                     </h2>
                 </header>
 
-                <form className="max-w-xl space-y-12" onSubmit={(e) => e.preventDefault()}>
+                <form className="max-w-xl space-y-12" onSubmit={handleSignIn}>
 
                     <div className="relative group">
                         <div className="absolute -left-10 top-2 text-violet-600/50">
@@ -43,6 +79,8 @@ export default function SignInPage() {
                             </div>
                             <input
                                 type="email"
+                                name="email"
+                                required
                                 className="bg-transparent border-b border-zinc-800 focus:border-violet-600 text-xl py-2 font-medium outline-none text-white placeholder:text-zinc-700 transition-colors w-full"
                                 placeholder="user@example.com"
                                 autoFocus
@@ -61,6 +99,8 @@ export default function SignInPage() {
                             </div>
                             <input
                                 type="password"
+                                name="password"
+                                required
                                 className="bg-transparent border-b border-zinc-800 focus:border-violet-600 text-xl py-2 font-medium outline-none text-white placeholder:text-zinc-700 transition-colors w-full"
                                 placeholder="••••••••"
                             />
@@ -68,8 +108,12 @@ export default function SignInPage() {
                     </div>
 
                     <div className="pt-8 flex flex-col md:flex-row items-start md:items-center gap-8">
-                        <button className="relative px-12 py-4 bg-white text-black font-black italic text-xl uppercase tracking-tighter hover:bg-violet-600 hover:text-white transition-all shadow-[6px_6px_0px_#2e1065] hover:shadow-none translate-y-[0px] hover:translate-x-[2px] hover:translate-y-[2px]">
-                            ESTABLISH.
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="relative px-12 py-4 bg-white text-black font-black italic text-xl uppercase tracking-tighter hover:bg-violet-600 hover:text-white transition-all shadow-[6px_6px_0px_#2e1065] hover:shadow-none translate-y-[0px] hover:translate-x-[2px] hover:translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isPending ? 'NEGOTIATING...' : 'ESTABLISH.'}
                         </button>
 
                         <div className="flex flex-col gap-2">
@@ -91,8 +135,24 @@ export default function SignInPage() {
             <aside className="fixed bottom-0 left-0 w-full border-t border-zinc-800/30 bg-zinc-950/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-6 py-4 text-[10px] shrink-0 z-50 gap-4 text-zinc-500">
                 <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono uppercase tracking-tight items-center">
                     <div className="flex gap-4">
-                        <Icon icon="logos:google-icon" width={14} height={14} className="grayscale hover:grayscale-0 transition-all cursor-pointer" />
-                        <Icon icon="lucide:github" width={14} height={14} className="hover:text-white transition-colors cursor-pointer" />
+                        <div
+                            onClick={async () => {
+                                await authClient.signIn.social({ provider: 'google', callbackURL });
+                            }}
+                            className="flex items-center gap-2 cursor-pointer group"
+                        >
+                            <Icon icon="logos:google-icon" width={14} height={14} className="grayscale group-hover:grayscale-0 transition-all" />
+                            <span className="group-hover:text-white transition-colors">GOOGLE_UPLINK</span>
+                        </div>
+                        <div
+                            onClick={async () => {
+                                await authClient.signIn.social({ provider: 'github', callbackURL });
+                            }}
+                            className="flex items-center gap-2 cursor-pointer group"
+                        >
+                            <Icon icon="lucide:github" width={14} height={14} className="group-hover:text-white transition-colors" />
+                            <span className="group-hover:text-white transition-colors">GITHUB_BRIDGE</span>
+                        </div>
                     </div>
                 </div>
 
@@ -108,5 +168,13 @@ export default function SignInPage() {
                 </div>
             </aside>
         </div>
+    );
+}
+
+export default function SignInPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-violet-600 font-mono text-xs animate-pulse uppercase">Syncing_Bridges...</div>}>
+            <SignInContent />
+        </Suspense>
     );
 }

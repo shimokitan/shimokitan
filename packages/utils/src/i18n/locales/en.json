@@ -409,7 +409,7 @@
             "subtitle": "Legal Compliance and Foundation",
             "l1": "Complete rewrite of all legal pages (Privacy Policy, Terms of Service, Cookie Policy, Copyright Policy, Community Guidelines).",
             "l2": "Added Affiliate Disclosure page.",
-            "l3": "Strengthened admin authentication security.",
+            "l3": "Strengthened pedalboard authentication security.",
             "l4": "Added copy-as-markdown functionality to legal and about pages.",
             "l5": "Refined coming-soon page to remove data collection."
         },
@@ -418,7 +418,7 @@
             "subtitle": "Core Reactivation",
             "l1": "Complete rewrite of the platform on Next.js App Router.",
             "l2": "Integrated Drizzle ORM with Neon PostgreSQL.",
-            "l3": "Built the admin console for artifact, entity, and collection management.",
+            "l3": "Built the pedalboard console for artifact, entity, and collection management.",
             "l4": "Implemented the new UI design system with CyberpunkShell and district theming.",
             "l5": "Added R2 asset pipeline for image processing and storage."
         },

@@ -23,6 +23,20 @@ export const entities = pgTable("entities", {
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 
+// ------------------------------------------------------------------
+// 2.5. Users (The People behind the Signal Chain)
+// ------------------------------------------------------------------
+export const users = pgTable("users", {
+    id: text("id").primaryKey(),
+    email: text("email").notNull().unique(),
+    role: text("role", { enum: ['founder', 'architect', 'resident', 'ghost'] }).default('resident').notNull(),
+    entityId: text("entity_id").references(() => entities.id), // Link to their public persona (e.g. Artist profile)
+    passwordHash: text("password_hash"), // Simple auth for now
+    resonanceMultiplier: integer("resonance_multiplier").default(100), // Dilution factor for Zines
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
 export const entitiesI18n = pgTable("entities_i18n", {
     entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
     locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
@@ -147,12 +161,14 @@ export const zinesI18n = pgTable("zines_i18n", {
 export const verificationRegistry = pgTable("verification_registry", {
     id: text("id").primaryKey(),
     targetId: text("target_id").notNull(), // Links to either artifactId or entityId
-    targetType: text("target_type", { enum: ['artifact', 'entity'] }).notNull(),
+    targetType: text("target_type", { enum: ['artifact', 'entity', 'role_upgrade'] }).notNull(),
+    status: text("status", { enum: ['pending', 'approved', 'rejected'] }).default('pending'),
 
     // R2 Coordinates
-    r2Key: text("r2_key").notNull(), // The filename/path in your private R2 bucket
+    r2Key: text("r2_key"), // Optional for role upgrades, required for assets
 
     // Internal Metadata
+    issuer: text("issuer"), // User who requested or entity claiming verification
     grantedBy: text("granted_by"), // "Artist Name" or "Company Rep"
     grantedAt: timestamp("granted_at", { withTimezone: true }).defaultNow(),
     expiresAt: timestamp("expires_at", { withTimezone: true }), // For temporary licenses
@@ -195,6 +211,13 @@ export const entitiesRelations = relations(entities, ({ many }) => ({
     credits: many(artifactCredits),
     verifications: many(verificationRegistry, {
         relationName: "entity_verifications"
+    }),
+}));
+
+export const usersRelations = relations(users, ({ one }) => ({
+    entity: one(entities, {
+        fields: [users.entityId],
+        references: [entities.id],
     }),
 }));
 

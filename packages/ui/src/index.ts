@@ -49,6 +49,18 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuRadioGroup,
 } from "./components/ui/dropdown-menu";
+export {
+    Sheet,
+    SheetPortal,
+    SheetOverlay,
+    SheetTrigger,
+    SheetClose,
+    SheetContent,
+    SheetHeader,
+    SheetFooter,
+    SheetTitle,
+    SheetDescription,
+} from "./components/ui/sheet";
 
 // --- Composite Components ---
 export { AudioWidget } from "./components/AudioWidget";

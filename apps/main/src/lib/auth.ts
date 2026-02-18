@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-const COOKIE_NAME = 'shimokitan_admin_session';
+const COOKIE_NAME = 'shimokitan_pedalboard_session';
 
 export async function login(password: string) {
     if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {

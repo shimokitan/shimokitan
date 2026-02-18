@@ -1,10 +1,45 @@
 "use client"
 
-import React from 'react';
-import { Icon } from '@iconify/react';
 import Link from 'next/link';
+import { authClient } from '@/lib/auth-neon/client';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { useState, FormEvent } from 'react';
 
 export default function SignUpPage() {
+    const router = useRouter();
+    const [isPending, setIsPending] = useState(false);
+
+    async function handleSignUp(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsPending(true);
+
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get('name') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        try {
+            const { error } = await authClient.signUp.email({
+                email,
+                password,
+                name,
+                callbackURL: '/pedalboard'
+            });
+
+            if (error) {
+                toast.error(`Census_Failure: ${error.message || 'Signal_Corrupted'}`);
+            } else {
+                toast.success('Identity_Established: Entry granted.');
+                router.push('/pedalboard');
+            }
+        } catch (err: any) {
+            toast.error('System_Critical: Connection to Neon Auth lost.');
+        } finally {
+            setIsPending(false);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans selection:bg-rose-600/50">
             {/* RAW TEXTURE OVERLAYS */}
@@ -34,7 +69,7 @@ export default function SignUpPage() {
                     </h1>
                 </header>
 
-                <form className="space-y-16" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-16" onSubmit={handleSignUp}>
                     {/* INPUT 01: HANDLE */}
                     <div className="relative group">
                         <label className="absolute -top-6 left-0 text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-950 px-2 flex items-center gap-2">
@@ -42,6 +77,8 @@ export default function SignUpPage() {
                         </label>
                         <input
                             type="text"
+                            name="name"
+                            required
                             className="w-full bg-transparent border-b-2 border-zinc-900 text-3xl font-black italic uppercase tracking-tighter outline-none focus:border-rose-600 text-white placeholder:text-zinc-800 transition-colors pb-2"
                             placeholder="username"
                         />
@@ -56,6 +93,8 @@ export default function SignUpPage() {
                             </label>
                             <input
                                 type="email"
+                                name="email"
+                                required
                                 className="w-full bg-transparent border-b border-zinc-900 text-lg font-medium text-zinc-100 outline-none focus:border-rose-600 placeholder:text-zinc-700 transition-colors py-2"
                                 placeholder="email@example.com"
                             />
@@ -68,6 +107,8 @@ export default function SignUpPage() {
                             </label>
                             <input
                                 type="password"
+                                name="password"
+                                required
                                 className="w-full bg-transparent border-b border-zinc-900 text-lg font-medium text-zinc-100 outline-none focus:border-rose-600 placeholder:text-zinc-700 transition-colors py-2"
                                 placeholder="••••••••"
                             />
@@ -85,10 +126,14 @@ export default function SignUpPage() {
                             </Link>
                         </div>
 
-                        <button className="relative px-8 py-4 group/btn">
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="relative px-8 py-4 group/btn disabled:opacity-50"
+                        >
                             <div className="absolute inset-0 bg-rose-600 -rotate-1 group-hover/btn:rotate-0 transition-transform shadow-[6px_6px_0px_#000]" />
-                            <span className="relative z-10 text-xl font-black italic tracking-tighter uppercase text-black">
-                                ENTER_SECTOR
+                            <span className="relative z-10 text-xl font-black italic tracking-tighter uppercase text-black font-bold">
+                                {isPending ? 'PROCESSING...' : 'ENTER_SECTOR'}
                             </span>
                         </button>
                     </div>
