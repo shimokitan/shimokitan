@@ -19,6 +19,7 @@ interface BasicInfoSectionProps {
     setCoverUrl: (url: string) => void;
     category: string;
     setCategory: (val: string) => void;
+    userRole?: string;
     status: string;
     setStatus: (val: string) => void;
     score: number;
@@ -40,6 +41,7 @@ export default function BasicInfoSection({
     setCoverUrl,
     category,
     setCategory,
+    userRole,
     status,
     setStatus,
     score,
@@ -135,10 +137,11 @@ export default function BasicInfoSection({
                         className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-zinc-600 outline-none appearance-none"
                     >
                         <option value="music">MUSIC_TRACK</option>
-                        <option value="anime">ANIME_FEATURE</option>
-                        <option value="manga">MANGA_PUBLICATION</option>
+                        {userRole === 'founder' && <option value="anime">ANIME_FEATURE</option>}
+                        {/* Phase 1: Focused Launch (Anime & Music Only) */}
+                        {/* <option value="manga">MANGA_PUBLICATION</option>
                         <option value="software">SOFTWARE_SUITE</option>
-                        <option value="merch">PHYSICAL_GOODS</option>
+                        <option value="merch">PHYSICAL_GOODS</option> */}
                     </select>
                 </div>
                 <div className="space-y-1">

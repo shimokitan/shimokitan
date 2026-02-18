@@ -3,7 +3,7 @@ import React from 'react';
 import { getDb, schema, eq } from '@shimokitan/db';
 import CollectionForm from '../CollectionForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { notFound } from 'next/navigation';
 
 export default async function EditCollectionPage(props: { params: Promise<{ id: string }> }) {

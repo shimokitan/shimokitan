@@ -2,7 +2,7 @@
 import React from 'react';
 import TagForm from '../TagForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 export default async function NewTagPage() {
     return (

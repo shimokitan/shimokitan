@@ -3,7 +3,7 @@ import React, { Suspense } from 'react';
 import { getDb, schema, eq, isNull } from '@shimokitan/db';
 import ArtifactForm from '../ArtifactForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { notFound } from 'next/navigation';
 
 export default async function EditArtifactPage(props: { params: Promise<{ id: string }> }) {

@@ -3,7 +3,7 @@ import React from 'react';
 import { getDb, schema, eq } from '@shimokitan/db';
 import TagForm from '../TagForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 export default async function EditTagPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;

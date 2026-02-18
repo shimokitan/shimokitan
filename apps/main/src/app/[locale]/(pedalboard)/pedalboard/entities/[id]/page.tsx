@@ -3,7 +3,7 @@ import React from 'react';
 import { getDb, schema, eq } from '@shimokitan/db';
 import EntityForm from '../EntityForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { notFound } from 'next/navigation';
 
 export default async function EditEntityPage(props: { params: Promise<{ id: string }> }) {

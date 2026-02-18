@@ -7,7 +7,7 @@ import ArtifactRegistry from './components/ArtifactRegistry';
 import { deleteArtifact } from '../actions';
 
 import { isNull, isNotNull } from 'drizzle-orm';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import AnilistGlobalSearch from './components/AnilistGlobalSearch';
 import { ensureUserSync } from '../actions';
 import { redirect } from 'next/navigation';

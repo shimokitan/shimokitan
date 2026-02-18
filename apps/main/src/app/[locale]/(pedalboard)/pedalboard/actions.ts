@@ -14,6 +14,8 @@ import {
     verificationSchema
 } from '@/lib/validations/pedalboard';
 import { z } from 'zod';
+import { generateStoragePath } from '@shimokitan/utils';
+import { uploadFileToR2 } from '@/lib/r2';
 
 // --- AUTH HELPERS ---
 async function requireUser() {
@@ -39,6 +41,7 @@ async function requireFounder() {
 }
 
 // --- AUTH & RBAC ---
+
 export async function ensureUserSync() {
     const { data: session } = await auth.getSession();
     if (!session?.user) return null;
@@ -48,49 +51,67 @@ export async function ensureUserSync() {
 
     const userId = session.user.id;
     const userEmail = session.user.email;
+    const userName = session.user.name;
+    const userImage = session.user.image;
 
-    // 1. Try to find the user by ID first (Fast Path)
-    const existingById = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.id, userId)
-    });
-
-    if (existingById) {
-        // Sync email if changed on provider side
-        if (existingById.email !== userEmail) {
-            await db.update(schema.users)
-                .set({ email: userEmail, updatedAt: new Date() })
-                .where(eq(schema.users.id, userId));
-        }
-        return { ...session.user, role: existingById.role };
-    }
-
-    // 2. If not found by ID, try to find by Email (Account Linking / Migration Path)
-    const existingByEmail = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.email, userEmail)
-    });
-
-    if (existingByEmail) {
-        // User exists with this email but different ID. Update to new Auth ID.
-        await db.update(schema.users)
-            .set({ id: userId, updatedAt: new Date() })
-            .where(eq(schema.users.email, userEmail));
-
-        return { ...session.user, role: existingByEmail.role };
-    }
-
-    // 3. Create new user with Race Condition handling
     try {
+        // 1. Try to find the user by ID first (Fast Path)
+        const existingById = await db.query.users.findFirst({
+            where: (u, { eq }) => eq(u.id, userId)
+        });
+
+        if (existingById) {
+            // Sync email/name/image if changed on provider side and user hasn't customized them?
+            // For now, just sync email and basic info if missing
+            const updateObj: any = {};
+            if (existingById.email !== userEmail) updateObj.email = userEmail;
+            if (!existingById.name && userName) updateObj.name = userName;
+            if (!existingById.avatarUrl && userImage) updateObj.avatarUrl = userImage;
+
+            if (Object.keys(updateObj).length > 0) {
+                updateObj.updatedAt = new Date();
+                await db.update(schema.users)
+                    .set(updateObj)
+                    .where(eq(schema.users.id, userId));
+            }
+
+            return { ...session.user, role: existingById.role };
+        }
+
+        // 2. If not found by ID, try to find by Email (Account Linking / Migration Path)
+        const existingByEmail = await db.query.users.findFirst({
+            where: (u, { eq }) => eq(u.email, userEmail)
+        });
+
+        if (existingByEmail) {
+            // User exists with this email but different ID. Update to new Auth ID.
+            await db.update(schema.users)
+                .set({
+                    id: userId,
+                    name: existingByEmail.name || userName,
+                    avatarUrl: existingByEmail.avatarUrl || userImage,
+                    updatedAt: new Date()
+                })
+                .where(eq(schema.users.email, userEmail));
+
+            return { ...session.user, role: existingByEmail.role };
+        }
+
+        // 3. Create new user
         const newUser = {
             id: userId,
             email: userEmail,
+            name: userName,
+            avatarUrl: userImage,
             role: 'resident' as const,
         };
         await db.insert(schema.users).values(newUser);
+
         return { ...session.user, role: 'resident' };
+
     } catch (error: any) {
         // Postgres unique_violation code '23505'
         if (error.code === '23505') {
-            // Fetch one last time - someone else must have created it
             const racingUser = await db.query.users.findFirst({
                 where: (u, { or, eq }) => or(eq(u.id, userId), eq(u.email, userEmail))
             });
@@ -100,6 +121,7 @@ export async function ensureUserSync() {
         throw new Error('Identity_Establishment_Failed');
     }
 }
+
 
 export async function requestArchitectAccess() {
     const user = await requireUser();
@@ -710,4 +732,49 @@ export async function deleteVerification(id: string) {
     const db = getDb();
     if (db) await db.delete(schema.verificationRegistry).where(eq(schema.verificationRegistry.id, id));
     revalidatePath('/[locale]/pedalboard/verifications', 'page');
+}
+
+// --- STORAGE & PROFILE (All Users) ---
+
+export async function uploadToR2Action(formData: FormData) {
+    const user = await requireUser();
+    const file = formData.get('file') as File;
+    const context = formData.get('context') as 'artifacts' | 'profiles' | 'zines';
+
+    if (!file) throw new Error('No_File_Targeted');
+
+    const fileId = nanoid(12);
+    const extension = file.name.split('.').pop() || 'webp';
+    const key = generateStoragePath({
+        mediaType: 'images',
+        context,
+        identifier: user.id,
+        filename: `${fileId}.${extension}`
+    });
+
+    const buffer = await file.arrayBuffer();
+    const publicUrl = await uploadFileToR2(buffer, key, file.type);
+
+    return { publicUrl, key };
+}
+
+export async function updateUserProfile(data: { name: string; status: string; bio: string; avatarUrl?: string; headerUrl?: string }) {
+    const user = await requireUser();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    await db.update(schema.users)
+        .set({
+            name: data.name,
+            status: data.status,
+            bio: data.bio,
+            avatarUrl: data.avatarUrl,
+            headerUrl: data.headerUrl,
+            updatedAt: new Date()
+        })
+        .where(eq(schema.users.id, user.id));
+
+    revalidatePath('/[locale]/pedalboard', 'page');
+    revalidatePath('/[locale]/pedalboard/profile/edit', 'page');
+    return { success: true };
 }

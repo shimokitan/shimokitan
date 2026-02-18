@@ -60,6 +60,12 @@ export const storagePaths = {
         generateStoragePath({ mediaType: 'images', context: 'profiles', identifier: userId, filename }),
 
     /**
+     * Path for a User's header/banner image.
+     */
+    userHeader: (userId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'images', context: 'profiles', identifier: userId, filename }),
+
+    /**
      * Path for a Collection's cover image.
      */
     collectionImage: (collectionId: string, filename: string) =>

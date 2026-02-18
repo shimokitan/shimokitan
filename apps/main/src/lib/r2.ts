@@ -75,10 +75,30 @@ export async function uploadImageFromUrl(
 
     } catch (error) {
         console.error('[R2] Upload failed:', error);
-        // Fallback: If upload fails, just return the original URL so the app doesn't break,
-        // but log the error. Or should we throw?
-        // User said "keep the link/url > download > upload".
-        // If processing fails, typically we want to know.
         throw error;
     }
+}
+
+/**
+ * Uploads a raw file/buffer to R2 via binding.
+ */
+export async function uploadFileToR2(
+    file: Buffer | ArrayBuffer | string,
+    key: string,
+    contentType: string = 'image/webp'
+): Promise<string> {
+    const { env } = await getCloudflareContext();
+    const bucket = (env as any).MY_BUCKET;
+
+    if (!bucket) {
+        throw new Error("MY_BUCKET binding not found in Cloudflare context");
+    }
+
+    await bucket.put(key, file, {
+        httpMetadata: {
+            contentType,
+        }
+    });
+
+    return `${R2_DOMAIN}/${key}`;
 }

@@ -14,3 +14,7 @@ binding = "ASSETS"
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
 service = "shimokitan-main"
+
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "shimokitan-assets"

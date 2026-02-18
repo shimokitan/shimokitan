@@ -36,7 +36,7 @@ type Spec = {
     value: string;
 };
 
-export default function ArtifactForm({ entities, initialData, onComplete }: { entities: Entity[], initialData?: any, onComplete?: () => void }) {
+export default function ArtifactForm({ entities, initialData, onComplete, userRole }: { entities: Entity[], initialData?: any, onComplete?: () => void, userRole?: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const anilistId = searchParams.get('anilist_id');
@@ -241,6 +241,7 @@ export default function ArtifactForm({ entities, initialData, onComplete }: { en
                 setCoverUrl={setCoverUrl}
                 category={category}
                 setCategory={setCategory}
+                userRole={userRole}
                 status={status}
                 setStatus={setStatus}
                 score={score}

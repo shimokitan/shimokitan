@@ -1,3 +1,4 @@
+"use client"
 
 import { useParams, usePathname } from 'next/navigation';
 import { Locale, defaultLocale, getLocalePath } from '@shimokitan/utils';

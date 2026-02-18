@@ -20,6 +20,8 @@ export {
     DialogTrigger,
 } from "./components/ui/dialog";
 export { Toaster } from "./components/ui/sonner";
+export { Input } from "./components/ui/input";
+export { Textarea } from "./components/ui/textarea";
 export {
     Select,
     SelectContent,

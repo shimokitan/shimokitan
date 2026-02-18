@@ -3,7 +3,7 @@ import React from 'react';
 import { getDb, schema, eq, isNull } from '@shimokitan/db';
 import VerificationForm from '../VerificationForm';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 export default async function EditVerificationPage(props: { params: Promise<{ id: string }> }) {
     const { id } = await props.params;

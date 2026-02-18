@@ -14,6 +14,7 @@ export const entities = pgTable("entities", {
     uid: text("uid").unique(), // e.g. UID_SIG_001
     circuit: text("circuit", { enum: ['major', 'underground', 'ghost'] }).default('underground'),
     avatarUrl: text("avatar_url"),
+    headerUrl: text("header_url"),
     socialLinks: jsonb("social_links").default([]),
     isMajor: boolean("is_major").default(false), // Legacy, kept for compatibility
     isVerified: boolean("is_verified").default(false), // Public verification badge
@@ -29,8 +30,13 @@ export const entities = pgTable("entities", {
 export const users = pgTable("users", {
     id: text("id").primaryKey(),
     email: text("email").notNull().unique(),
+    name: text("name"),
+    bio: text("bio"),
+    avatarUrl: text("avatar_url"),
+    headerUrl: text("header_url"),
+    status: text("status"),
     role: text("role", { enum: ['founder', 'architect', 'resident', 'ghost'] }).default('resident').notNull(),
-    entityId: text("entity_id").references(() => entities.id), // Link to their public persona (e.g. Artist profile)
+    entityId: text("entity_id").references(() => entities.id), // Link to their professional persona (Artist, Studio, Agency)
     resonanceMultiplier: integer("resonance_multiplier").default(100), // Dilution factor for Zines
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
@@ -40,6 +46,7 @@ export const entitiesI18n = pgTable("entities_i18n", {
     entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
     locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
     name: text("name").notNull(),
+    status: text("status"),
     bio: text("bio"),
 }, (table) => ({
     pk: primaryKey({ columns: [table.entityId, table.locale] }),

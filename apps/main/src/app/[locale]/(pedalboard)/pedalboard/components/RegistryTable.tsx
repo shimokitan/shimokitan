@@ -4,7 +4,7 @@
 import React from 'react';
 import { Badge } from '@shimokitan/ui';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import DeleteButton from './DeleteButton';
 
 export default function RegistryTable({

@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { usePathname, useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-neon/client';
+import { Toaster } from '@shimokitan/ui';
 
 export default function PedalboardLayoutClient({ children, user }: { children: React.ReactNode, user?: any }) {
     const pathname = usePathname();
@@ -78,6 +79,7 @@ export default function PedalboardLayoutClient({ children, user }: { children: R
             <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
                 {children}
             </main>
+            <Toaster />
         </div>
     );
 }

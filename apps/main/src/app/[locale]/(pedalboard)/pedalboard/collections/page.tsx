@@ -8,7 +8,7 @@ import CollectionRegistry from './components/CollectionRegistry';
 import CollectionForm from './CollectionForm';
 
 import { isNull, isNotNull } from 'drizzle-orm';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { ensureUserSync } from '../actions';
 import { redirect } from 'next/navigation';
 

@@ -8,7 +8,7 @@ import ZineRegistry from './components/ZineRegistry';
 import ZineForm from './ZineForm';
 
 import { isNull, isNotNull } from 'drizzle-orm';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { ensureUserSync } from '../actions';
 import { redirect } from 'next/navigation';
 

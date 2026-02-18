@@ -66,3 +66,29 @@ export function getThumbnailUrl(id: string | null, platform: string): string | n
             return null;
     }
 }
+
+/**
+ * Generates a Cloudflare-optimized image URL.
+ * Applies WebP format and 80% quality by default as per Phase 1 requirements.
+ * 
+ * @param url - The original image URL (R2 or external)
+ * @param options - Transformation options (width, height, fit, quality)
+ */
+export function getOptimizedImageUrl(
+    url: string | null,
+    options: { width?: number; height?: number; fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad'; quality?: number } = {}
+): string | null {
+    if (!url) return null;
+
+    // Use default quality 80 if not specified
+    const quality = options.quality ?? 80;
+    const params = [`format=webp`, `quality=${quality}`];
+
+    if (options.width) params.push(`width=${options.width}`);
+    if (options.height) params.push(`height=${options.height}`);
+    if (options.fit) params.push(`fit=${options.fit}`);
+
+    // Cloudflare Image Resizing endpoint
+    // Format: /cdn-cgi/image/{params}/{url}
+    return `/cdn-cgi/image/${params.join(',')}/${url}`;
+}
