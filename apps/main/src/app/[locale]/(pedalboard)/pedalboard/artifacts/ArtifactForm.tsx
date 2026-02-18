@@ -7,11 +7,13 @@ import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 import { createFullArtifact, updateFullArtifact } from '../actions';
 import { toast } from 'sonner';
 
+import { Icon } from '@iconify/react';
 import AnilistSync from './components/AnilistSync';
 import BasicInfoSection from './components/BasicInfoSection';
 import ResourcesSection from './components/ResourcesSection';
 import MetadataSection from './components/MetadataSection';
 import CreditsSection from './components/CreditsSection';
+import EntitySearchPicker from './components/EntitySearchPicker';
 
 type Entity = {
     id: string;
@@ -225,6 +227,23 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
         }
     }
 
+    const upsertSpec = (key: string, value: string) => {
+        const idx = specs.findIndex(s => s.key === key);
+        if (idx !== -1) {
+            updateSpec(idx, 'value', value);
+        } else {
+            setSpecs(prev => [...prev, { key, value }]);
+        }
+    };
+
+    const upsertCredit = (role: string, entityId: string | null) => {
+        setCredits(prev => {
+            const filtered = prev.filter(c => c.role !== role);
+            if (!entityId) return filtered;
+            return [...filtered, { role, entityId }];
+        });
+    };
+
     return (
         <form onSubmit={handleSubmit} className="space-y-12">
             {/* Context Awareness Section */}
@@ -254,6 +273,36 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                 setAllowMirroring={setAllowMirroring}
             />
 
+            {(category === 'anime' || category === 'music') && (
+                <div className="space-y-4 bg-zinc-950/40 p-6 border border-zinc-900 rounded-sm">
+                    <div className="flex items-center gap-2 mb-4 border-b border-zinc-900 pb-2">
+                        <Icon icon="lucide:briefcase" className="text-violet-500" width={14} />
+                        <span className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">02 // Professional_Registry</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {category === 'anime' && (
+                            <EntitySearchPicker
+                                label="Production_Studio"
+                                type="organization"
+                                value={credits.find(c => c.role === 'studio')?.entityId}
+                                onSelect={(entity) => upsertCredit('studio', entity?.id || null)}
+                                placeholder="Search or register studio..."
+                            />
+                        )}
+                        {category === 'music' && (
+                            <EntitySearchPicker
+                                label="Record_Label"
+                                type="organization"
+                                value={credits.find(c => c.role === 'label')?.entityId}
+                                onSelect={(entity) => upsertCredit('label', entity?.id || null)}
+                                placeholder="Search or register label..."
+                            />
+                        )}
+                        {/* You can add more specific professional roles here */}
+                    </div>
+                </div>
+            )}
+
             <ResourcesSection
                 resources={resources}
                 setResources={setResources}
@@ -266,6 +315,7 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                 category={category}
                 specs={specs}
                 updateSpec={updateSpec}
+                upsertSpec={upsertSpec}
                 addSpec={addSpec}
                 removeSpec={removeSpec}
                 tags={tags}

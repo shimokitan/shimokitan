@@ -20,6 +20,7 @@ interface MetadataSectionProps {
     category: string;
     specs: Spec[];
     updateSpec: (idx: number, field: keyof Spec, value: string) => void;
+    upsertSpec: (key: string, value: string) => void;
     addSpec: () => void;
     removeSpec: (idx: number) => void;
     tags: Tag[];
@@ -32,6 +33,7 @@ export default function MetadataSection({
     category,
     specs,
     updateSpec,
+    upsertSpec,
     addSpec,
     removeSpec,
     tags,
@@ -45,6 +47,7 @@ export default function MetadataSection({
                 category={category}
                 specs={specs}
                 updateSpec={updateSpec}
+                upsertSpec={upsertSpec}
                 addSpec={addSpec}
                 removeSpec={removeSpec}
             />

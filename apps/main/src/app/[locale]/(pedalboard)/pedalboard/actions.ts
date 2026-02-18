@@ -228,6 +228,68 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
     return { id: entityId };
 }
 
+export async function searchEntities(query: string, type?: string) {
+    await requireUser();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    const results = await db.query.entities.findMany({
+        where: (e, { and, eq, ilike, exists }) => {
+            const conditions = [];
+            if (type) conditions.push(eq(e.type, type as any));
+
+            // Search in translations
+            conditions.push(exists(
+                db.select().from(schema.entitiesI18n)
+                    .where(and(
+                        eq(schema.entitiesI18n.entityId, e.id),
+                        ilike(schema.entitiesI18n.name, `%${query}%`)
+                    ))
+            ));
+
+            return and(...conditions);
+        },
+        with: {
+            translations: true
+        },
+        limit: 10
+    });
+
+    return results.map(e => ({
+        id: e.id,
+        name: e.translations.find(t => t.locale === 'en')?.name || e.translations[0]?.name || 'Unknown_Entity',
+        type: e.type,
+        slug: e.slug
+    }));
+}
+
+export async function quickCreateEntity(name: string, type: string) {
+    await requireArchitect(); // On-the-fly creation requires at least Architect
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    const entityId = `ENT_${nanoid(10)}`;
+    const slug = slugify(name || entityId);
+
+    await db.transaction(async (tx) => {
+        await tx.insert(schema.entities).values({
+            id: entityId,
+            type: type as any,
+            slug,
+            isVerified: false,
+        });
+
+        await tx.insert(schema.entitiesI18n).values({
+            entityId,
+            locale: 'en',
+            name: name,
+        });
+    });
+
+    revalidatePath('/[locale]/pedalboard/entities', 'page');
+    return { id: entityId, name };
+}
+
 export async function updateFullEntity(id: string, data: z.infer<typeof entitySchema>) {
     await requireFounder();
     const validated = entitySchema.parse(data);

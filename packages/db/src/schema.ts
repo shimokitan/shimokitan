@@ -36,11 +36,22 @@ export const users = pgTable("users", {
     headerUrl: text("header_url"),
     status: text("status"),
     role: text("role", { enum: ['founder', 'architect', 'resident', 'ghost'] }).default('resident').notNull(),
-    entityId: text("entity_id").references(() => entities.id), // Link to their professional persona (Artist, Studio, Agency)
     resonanceMultiplier: integer("resonance_multiplier").default(100), // Dilution factor for Zines
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
+
+// ------------------------------------------------------------------
+// 2.6. Professional Management (The Link between User and Entity)
+// ------------------------------------------------------------------
+export const entityManagers = pgTable("entity_managers", {
+    userId: text("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
+    role: text("role", { enum: ['owner', 'admin', 'editor'] }).default('editor').notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.entityId] }),
+}));
 
 export const entitiesI18n = pgTable("entities_i18n", {
     entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
@@ -218,18 +229,27 @@ export const entitiesRelations = relations(entities, ({ many }) => ({
     verifications: many(verificationRegistry, {
         relationName: "entity_verifications"
     }),
+    managers: many(entityManagers),
 }));
 
-export const usersRelations = relations(users, ({ one }) => ({
-    entity: one(entities, {
-        fields: [users.entityId],
-        references: [entities.id],
-    }),
+export const usersRelations = relations(users, ({ many }) => ({
+    managedEntities: many(entityManagers),
 }));
 
 export const entitiesI18nRelations = relations(entitiesI18n, ({ one }) => ({
     entity: one(entities, {
         fields: [entitiesI18n.entityId],
+        references: [entities.id],
+    }),
+}));
+
+export const entityManagersRelations = relations(entityManagers, ({ one }) => ({
+    user: one(users, {
+        fields: [entityManagers.userId],
+        references: [users.id],
+    }),
+    entity: one(entities, {
+        fields: [entityManagers.entityId],
         references: [entities.id],
     }),
 }));

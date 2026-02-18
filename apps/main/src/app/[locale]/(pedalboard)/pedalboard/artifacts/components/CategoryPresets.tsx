@@ -8,6 +8,7 @@ interface CategoryPresetsProps {
     category: string;
     specs: { key: string; value: string }[];
     updateSpec: (idx: number, field: 'key' | 'value', value: string) => void;
+    upsertSpec: (key: string, value: string) => void;
     addSpec: () => void;
     removeSpec: (idx: number) => void;
 }
@@ -16,6 +17,7 @@ export default function CategoryPresets({
     category,
     specs,
     updateSpec,
+    upsertSpec,
     addSpec,
     removeSpec
 }: CategoryPresetsProps) {
@@ -33,7 +35,6 @@ export default function CategoryPresets({
             case 'manga':
                 return [
                     { key: 'episodes', label: category === 'anime' ? 'Episode_Count' : 'Chapter_Count', placeholder: 'e.g. 12' },
-                    { key: 'studio', label: category === 'anime' ? 'Studio' : 'Publisher', placeholder: 'e.g. MAPPA' },
                     { key: 'year', label: 'Release_Year', placeholder: 'e.g. 2024' },
                     { key: 'anilist_id', label: 'AniList_Ref', placeholder: 'e.g. 153518' }
                 ];
@@ -79,13 +80,7 @@ export default function CategoryPresets({
                             <input
                                 value={specValue}
                                 onChange={(e) => {
-                                    const existingIdx = specs.findIndex(s => s.key === preset.key);
-                                    if (existingIdx !== -1) {
-                                        updateSpec(existingIdx, 'value', e.target.value);
-                                    } else {
-                                        // Auto-add spec if it doesn't exist
-                                        // This requires a slightly smarter parent, let's just show them as inputs
-                                    }
+                                    upsertSpec(preset.key, e.target.value);
                                 }}
                                 // To make it work cleanly, we'll suggest parent to pre-fill these keys
                                 className="w-full bg-black border border-zinc-800 p-2 text-xs text-white focus:border-violet-600 outline-none transition-colors"
