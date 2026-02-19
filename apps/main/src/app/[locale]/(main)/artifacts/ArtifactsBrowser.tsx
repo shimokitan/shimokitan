@@ -12,6 +12,8 @@ type Artifact = {
     coverImage: string | null;
     status: string | null;
     score: number | null;
+    isMajor: boolean;
+    isVerified: boolean;
 };
 
 const categories = [
@@ -91,7 +93,13 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                 isTall && "md:row-span-2"
                             )}
                         >
-                            <BentoCard minimal className="h-full border-zinc-900 shadow-xl p-0 hover:z-10 overflow-hidden">
+                            <BentoCard
+                                minimal
+                                className={cn(
+                                    "h-full border-zinc-900 shadow-xl p-0 hover:z-10 overflow-hidden transition-all duration-500",
+                                    artifact.isMajor && "border-rose-900/50 bg-rose-950/5 shadow-rose-950/20"
+                                )}
+                            >
                                 <div className="relative h-full flex flex-col">
                                     <div className={cn(
                                         "relative overflow-hidden grayscale group-hover/item:grayscale-0 transition-all duration-700",
@@ -104,7 +112,12 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
 
-                                        <div className="absolute top-2 right-2">
+                                        <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+                                            {artifact.isVerified && (
+                                                <div className="w-4 h-4 rounded-full bg-rose-600 flex items-center justify-center shadow-[0_0_10px_rgba(225,29,72,0.5)]">
+                                                    <Icon icon="lucide:check" width={8} className="text-white" />
+                                                </div>
+                                            )}
                                             <Badge variant={artifact.status === 'the_pit' ? 'distortion' : 'clean'} className="text-[7px] py-0 px-1 border-none shadow-[0_0_10px_black]">
                                                 {artifact.status === 'the_pit' ? 'PIT' : 'ALLEY'}
                                             </Badge>

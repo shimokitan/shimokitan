@@ -14,14 +14,14 @@ import { Fragment } from 'react';
 
 interface PageProps {
     params: Promise<{ locale: string }>;
-    searchParams: Promise<{ mode?: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function PedalboardPage({ params, searchParams }: PageProps) {
     const db = getDb();
     if (!db) return <div>DB Connection Failed</div>;
 
-    const [{ mode = 'resident' }, { locale }] = await Promise.all([searchParams, params]);
+    const [{ locale }] = await Promise.all([params]);
 
     // Real Auth Integration & User Provisioning
     const user = await ensureUserSync();
@@ -44,28 +44,8 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
         handle: user?.email?.split('@')[0] || 'unknown'
     };
 
-    // Fetch Metrics / Registry Data
-    const [artifacts, entities, verifications] = await Promise.all([
-        db.query.artifacts.findMany({ where: isNull(dbSchema.artifacts.deletedAt), columns: { id: true } }),
-        db.query.entities.findMany({ where: isNull(dbSchema.entities.deletedAt), columns: { id: true } }),
-        db.query.verificationRegistry.findMany({ columns: { id: true } }),
-    ]);
-
     const isFounder = currentRole === 'FOUNDER';
     const isArchitect = currentRole === 'ARCHITECT' || isFounder;
-
-    // Fetch Portfolio Data (Real)
-    const myPortfolio = await db.query.artifacts.findMany({
-        where: (art, { isNull, and }) => isNull(art.deletedAt),
-        limit: 4,
-        orderBy: [desc(dbSchema.artifacts.createdAt)],
-        with: {
-            translations: {
-                where: (t, { eq }) => eq(t.locale, 'en')
-            },
-            zines: true
-        }
-    });
 
     // Fetch Zine Feed (Real)
     const zineFeedFromDb = await db.query.zines.findMany({
@@ -76,6 +56,7 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
             translations: {
                 where: (t, { eq }) => eq(t.locale, 'en')
             },
+            author: true,
             artifact: {
                 with: {
                     translations: {
@@ -102,160 +83,12 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
         title: z.artifact?.translations?.[0]?.title || 'Unknown Artifact',
         artifact: z.artifact?.translations?.[0]?.title || 'UNSET',
         content: z.translations?.[0]?.content || 'Signal fragmentation detected...',
-        author: z.author,
+        author: z.author?.name || 'Anonymous',
         updatedAt: 'recently', // Simplified for now
         views: '0',
         heat: `+${z.resonance || 0}`,
         tags: z.artifact?.tags?.map(t => `#${t.tag.translations?.[0]?.name}`).slice(0, 2) || []
     }));
-
-    if (mode === 'registry') {
-        if (!isFounder) {
-            return (
-                <div className="p-12 border border-rose-900 bg-rose-950/20 text-center space-y-4">
-                    <Icon icon="lucide:shield-alert" width={48} className="mx-auto text-rose-600" />
-                    <h2 className="text-2xl font-black text-white italic uppercase">Access_Denied</h2>
-                    <p className="text-zinc-500 text-xs font-mono">Insufficient_Privileges // Sector_Founders_Only</p>
-                    <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Resident_Feed</Link>
-                </div>
-            );
-        }
-
-        return (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                <header className="flex justify-between items-end">
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Registry_Console</h2>
-                        <p className="text-zinc-500 text-[10px] font-mono tracking-[0.2em] uppercase mt-1">District Governance & Global Library</p>
-                    </div>
-                    {/* Unified Quick Action for Founder */}
-                    <Link href="/pedalboard/artifacts/new" className="bg-rose-600 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-rose-500 transition-all flex items-center gap-2">
-                        <Icon icon="lucide:plus" width={14} />
-                        New_Artifact
-                    </Link>
-                </header>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-black border border-zinc-900 p-6 space-y-4">
-                        <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Global_Status</div>
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center bg-zinc-900/30 p-3">
-                                <span className="text-xs font-mono text-zinc-400">ARTIFACT_COUNT</span>
-                                <span className="text-xl font-black text-white">{artifacts.length}</span>
-                            </div>
-                            <div className="flex justify-between items-center bg-zinc-900/30 p-3">
-                                <span className="text-xs font-mono text-zinc-400">RESIDENTS</span>
-                                <span className="text-xl font-black text-white">{entities.length}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Link href="/pedalboard/verifications" className="bg-blue-950/10 border border-blue-900/30 p-6 hover:border-blue-500/50 transition-all group lg:col-span-2">
-                        <div className="flex justify-between items-start mb-12">
-                            <Icon icon="lucide:shield-check" width={32} className="text-blue-900 group-hover:text-blue-500 transition-colors" />
-                            <span className="text-[10px] font-mono text-blue-900 uppercase">Verification_Queue</span>
-                        </div>
-                        <div>
-                            <div className="text-3xl font-black text-white uppercase italic tracking-tight">Access Control</div>
-                            <div className="text-sm text-zinc-500 mt-2">Promote Residents to Architects or verify new District Entities.</div>
-                            <div className="mt-4 inline-flex items-center gap-2 bg-blue-600 px-3 py-1 text-xs font-black text-white uppercase">
-                                {verifications.length} Pending
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* Quick Portfolio in Registry for Founder */}
-                    <div className="lg:col-span-3 space-y-4">
-                        <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
-                            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500">Recent_Artifacts</h3>
-                            <Link href="/pedalboard/artifacts" className="text-[10px] font-bold text-rose-500 uppercase hover:text-rose-400">Manage_Library_ &rarr;</Link>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            {myPortfolio.map(art => (
-                                <Link key={art.id} href={`/pedalboard/artifacts/${art.id}`} className="bg-zinc-900/30 border border-zinc-800 p-4 h-32 flex flex-col justify-between group hover:border-zinc-700 transition-all">
-                                    <div className="text-sm font-black text-white uppercase group-hover:text-rose-500 transition-colors italic truncate">{art.translations?.[0]?.title || 'Untitled'}</div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[8px] font-mono text-zinc-600 uppercase">Signal_{art.id.slice(-4)}</span>
-                                        <span className="text-[8px] font-mono text-rose-500 uppercase">[{art.zines?.length || 0} Zines]</span>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // --- MODE: WORKBENCH (Architect/Artist Tools) ---
-    if (mode === 'workbench') {
-        if (!isArchitect) {
-            return (
-                <div className="p-12 border border-rose-900 bg-rose-950/20 text-center space-y-4">
-                    <Icon icon="lucide:lock" width={48} className="mx-auto text-rose-600" />
-                    <h2 className="text-2xl font-black text-white italic uppercase">Workbench_Locked</h2>
-                    <p className="text-zinc-500 text-xs font-mono">Signal_Extraction_Unauthorized // Architects_Only</p>
-                    <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Resident_Feed</Link>
-                </div>
-            );
-        }
-
-        return (
-            <div className="space-y-10 animate-in fade-in duration-500">
-                <header className="flex justify-between items-end border-b border-zinc-900 pb-8">
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase italic tracking-tighter text-white">Artist_Workbench</h2>
-                        <p className="text-zinc-500 text-[10px] font-mono tracking-[0.2em] uppercase mt-1">Creation & Deployment Monitor</p>
-                    </div>
-                    <Link href="/pedalboard/artifacts/new" className="bg-rose-600 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-rose-500 transition-all flex items-center gap-2">
-                        <Icon icon="lucide:plus" width={14} />
-                        New_Artifact
-                    </Link>
-                </header>
-
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <div className="lg:col-span-3 space-y-6">
-                        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500">My_Portfolio</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {myPortfolio.map(art => (
-                                <Link key={art.id} href={`/pedalboard/artifacts/${art.id}`} className="bg-zinc-900/30 border border-zinc-800 p-6 flex flex-col justify-between h-48 group hover:border-zinc-700 transition-all">
-                                    <div>
-                                        <div className="flex justify-between items-center mb-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-tighter">{art.category}</span>
-                                                <span className="text-[10px] font-mono text-rose-500 uppercase tracking-tighter">[{art.zines?.length || 0} Zines]</span>
-                                            </div>
-                                            <span className={`text-[8px] font-bold px-1.5 py-0.5 ${art.status === 'back_alley' ? 'bg-emerald-500 text-emerald-950' : 'bg-amber-500 text-amber-950'}`}>
-                                                {art.status === 'back_alley' ? 'LIVE' : art.status?.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div className="text-xl font-black text-white uppercase group-hover:text-rose-500 transition-colors italic">{art.translations?.[0]?.title || 'Untitled'}</div>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <div className="text-[10px] font-mono text-zinc-600 uppercase transition-colors underline underline-offset-4 group-hover:text-white">Edit_Artifact_&_Emit_Signals</div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500">Artist_Meta</h3>
-                        <div className="bg-black border border-zinc-900 p-6 space-y-6">
-                            <div>
-                                <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1">Total_Impressions</div>
-                                <div className="text-3xl font-black text-white tracking-tighter italic">0</div>
-                            </div>
-                            <div>
-                                <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1">Artist_Resonance</div>
-                                <div className="text-3xl font-black text-emerald-500 tracking-tighter italic">+0%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     // --- MODE: RESIDENT (Public Persona / Twitter Style) ---
 
@@ -407,10 +240,10 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
                         {/* Founder-specific Block */}
                         {isFounder && (
                             <div className="space-y-4">
-                                <Link href="?mode=registry" className={`${mode === 'registry' ? 'border-rose-700' : 'border-zinc-800'} flex items-center justify-between group p-3 border bg-zinc-900/20 hover:border-rose-700 transition-all`}>
+                                <Link href="/pedalboard/console" className="border-zinc-800 flex items-center justify-between group p-3 border bg-zinc-900/20 hover:border-rose-700 transition-all">
                                     <div className="flex items-center gap-3">
                                         <Icon icon="lucide:database-zap" width={16} className="text-rose-600" />
-                                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white">System_Registry</span>
+                                        <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white">System_Console</span>
                                     </div>
                                     <Icon icon="lucide:chevron-right" width={14} className="text-zinc-800" />
                                 </Link>
@@ -420,7 +253,7 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
                         {/* Architect+ Block */}
                         {isArchitect && (
                             <div className="space-y-4">
-                                <Link href="?mode=workbench" className={`${mode === 'workbench' ? 'border-blue-700' : 'border-zinc-800'} flex items-center justify-between group p-3 border bg-zinc-900/20 hover:border-blue-700 transition-all`}>
+                                <Link href="/pedalboard/workbench" className="border-zinc-800 flex items-center justify-between group p-3 border bg-zinc-900/20 hover:border-blue-700 transition-all">
                                     <div className="flex items-center gap-3">
                                         <Icon icon="lucide:layout-dashboard" width={16} className="text-blue-600" />
                                         <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white">Workbench_Terminal</span>

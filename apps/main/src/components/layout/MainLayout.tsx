@@ -17,6 +17,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     const isHomeActive = pathname === "/";
     const isArtifactsActive = pathname?.startsWith("/artifacts");
     const isZinesActive = pathname?.startsWith("/zines");
+    const isPedalboardActive = pathname?.startsWith("/pedalboard");
 
 
     return (
@@ -42,6 +43,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                             <NavigationLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
 
                             <NavigationLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={isZinesActive} />
+                            <NavigationLink icon="lucide:command" label="Pedalboard" href="/pedalboard" active={isPedalboardActive} />
 
                             <div className="h-px bg-zinc-800/80 w-full my-1" />
                             <NavigationLink icon="lucide:headphones" label="Mixtapes" />

@@ -11,6 +11,7 @@ interface Entity {
     id: string;
     name: string;
     type: string;
+    avatarUrl?: string | null;
 }
 
 interface EntitySearchPickerProps {
@@ -19,6 +20,7 @@ interface EntitySearchPickerProps {
     value?: string; // entityId
     onSelect: (entity: Entity | null) => void;
     placeholder?: string;
+    entities?: Entity[]; // Optional pre-loaded entities to find names
 }
 
 export default function EntitySearchPicker({
@@ -26,13 +28,26 @@ export default function EntitySearchPicker({
     type,
     value,
     onSelect,
-    placeholder = "Search or create..."
+    placeholder = "Search or create...",
+    entities = []
 }: EntitySearchPickerProps) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Entity[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedName, setSelectedName] = useState('');
+
+    // Sync selectedName if value changes and we have entities
+    useEffect(() => {
+        if (value) {
+            const ent = entities.find(e => e.id === value);
+            if (ent) {
+                setSelectedName(ent.name);
+            }
+        } else {
+            setSelectedName('');
+        }
+    }, [value, entities]);
 
     const fetchEntities = useCallback(
         debounce(async (q: string) => {
@@ -118,9 +133,20 @@ export default function EntitySearchPicker({
                                     }}
                                     className="w-full text-left p-2 hover:bg-zinc-900 flex items-center justify-between group"
                                 >
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-zinc-300 group-hover:text-white">{entity.name}</span>
-                                        <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">{entity.type} // {entity.id}</span>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-sm bg-zinc-900 border border-zinc-800 overflow-hidden flex-shrink-0">
+                                            {entity.avatarUrl ? (
+                                                <img src={entity.avatarUrl} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-zinc-700">
+                                                    <Icon icon="lucide:user" width={14} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-zinc-300 group-hover:text-white">{entity.name}</span>
+                                            <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">{entity.type} // {entity.id}</span>
+                                        </div>
                                     </div>
                                     <Icon icon="lucide:arrow-right" className="text-zinc-800 group-hover:text-violet-500 opacity-0 group-hover:opacity-100 transition-all" width={10} />
                                 </button>
@@ -141,8 +167,46 @@ export default function EntitySearchPicker({
                         )
                     )}
                     {!query.trim() && results.length === 0 && !isLoading && (
-                        <div className="p-4 text-center text-[9px] text-zinc-700 uppercase">
-                            Begin typing to pulse search...
+                        <div className="p-1">
+                            {entities.length > 0 ? (
+                                <>
+                                    <div className="px-2 py-1.5 text-[8px] font-mono text-zinc-600 uppercase tracking-widest border-b border-zinc-900 mb-1">Existing_Records</div>
+                                    {entities.slice(0, 10).map((entity) => (
+                                        <button
+                                            key={entity.id}
+                                            type="button"
+                                            onClick={() => {
+                                                onSelect(entity);
+                                                setSelectedName(entity.name);
+                                                setIsOpen(false);
+                                                setQuery('');
+                                            }}
+                                            className="w-full text-left p-2 hover:bg-zinc-900 flex items-center justify-between group"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-sm bg-zinc-900 border border-zinc-800 overflow-hidden flex-shrink-0">
+                                                    {entity.avatarUrl ? (
+                                                        <img src={entity.avatarUrl} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-zinc-700">
+                                                            <Icon icon="lucide:user" width={14} />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs text-zinc-300 group-hover:text-white">{entity.name}</span>
+                                                    <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">{entity.type} // {entity.id}</span>
+                                                </div>
+                                            </div>
+                                            <Icon icon="lucide:arrow-right" className="text-zinc-800 group-hover:text-violet-500 opacity-0 group-hover:opacity-100 transition-all" width={10} />
+                                        </button>
+                                    ))}
+                                </>
+                            ) : (
+                                <div className="p-4 text-center text-[9px] text-zinc-700 uppercase">
+                                    No records available. Begin typing to search...
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

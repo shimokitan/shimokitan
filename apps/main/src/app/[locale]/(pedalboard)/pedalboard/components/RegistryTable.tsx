@@ -145,6 +145,16 @@ export default function RegistryTable({
                     </div>
                 )}
             </div>
+
+            <div className="flex items-center justify-between text-[9px] font-mono uppercase text-zinc-600 border-t border-zinc-900 pt-2 px-1">
+                <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span>SYSTEM_READY // AWAITING_INPUT</span>
+                </div>
+                <div>
+                    DISPLAYING {filteredData.length} OF {data.length} RECORDS
+                </div>
+            </div>
         </div>
     );
 }

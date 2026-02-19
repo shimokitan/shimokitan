@@ -9,7 +9,7 @@ import { relations } from "drizzle-orm";
 // ------------------------------------------------------------------
 export const entities = pgTable("entities", {
     id: text("id").primaryKey(),
-    type: text("type", { enum: ['individual', 'organization', 'agency', 'circle', 'staff'] }).notNull(),
+    type: text("type", { enum: ['individual', 'organization', 'agency', 'circle'] }).notNull(),
     slug: text("slug").notNull().unique(),
     uid: text("uid").unique(), // e.g. UID_SIG_001
     circuit: text("circuit", { enum: ['major', 'underground', 'ghost'] }).default('underground'),
@@ -19,6 +19,7 @@ export const entities = pgTable("entities", {
     isMajor: boolean("is_major").default(false), // Legacy, kept for compatibility
     isVerified: boolean("is_verified").default(false), // Public verification badge
     allowMirroring: boolean("allow_mirroring").default(false),
+    profileType: text("profile_type", { enum: ['social', 'professional'] }).default('professional').notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -134,11 +135,26 @@ export const collectionArtifacts = pgTable("collection_artifacts", {
 // 5. Credits & Resources
 // ------------------------------------------------------------------
 export const artifactCredits = pgTable("artifact_credits", {
-    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }),
-    entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }),
+    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
+    entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
     role: text("role").notNull(),
+    displayRole: text("display_role"),
+    contributorClass: text("contributor_class", {
+        enum: ['author', 'collaborator', 'staff']
+    }).default('staff').notNull(),
+    isPrimary: boolean("is_primary").default(false).notNull(),
+    position: integer("position").default(0).notNull(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.artifactId, table.entityId, table.role] }),
+}));
+
+export const unitMembers = pgTable("unit_members", {
+    unitId: text("unit_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
+    memberId: text("member_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
+    memberRole: text("member_role"),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.unitId, table.memberId] }),
 }));
 export const artifactResources = pgTable("artifact_resources", {
     id: text("id").primaryKey(),
@@ -157,7 +173,7 @@ export const artifactResources = pgTable("artifact_resources", {
 export const zines = pgTable("zines", {
     id: text("id").primaryKey(),
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }),
-    author: text("author").notNull(),
+    authorId: text("author_id").references(() => users.id).notNull(),
     resonance: integer("resonance").default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
@@ -230,6 +246,21 @@ export const entitiesRelations = relations(entities, ({ many }) => ({
         relationName: "entity_verifications"
     }),
     managers: many(entityManagers),
+    members: many(unitMembers, { relationName: "unit_members" }),
+    units: many(unitMembers, { relationName: "member_units" }),
+}));
+
+export const unitMembersRelations = relations(unitMembers, ({ one }) => ({
+    unit: one(entities, {
+        fields: [unitMembers.unitId],
+        references: [entities.id],
+        relationName: "unit_members",
+    }),
+    member: one(entities, {
+        fields: [unitMembers.memberId],
+        references: [entities.id],
+        relationName: "member_units",
+    }),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -284,6 +315,10 @@ export const zinesRelations = relations(zines, ({ one, many }) => ({
     artifact: one(artifacts, {
         fields: [zines.artifactId],
         references: [artifacts.id],
+    }),
+    author: one(users, {
+        fields: [zines.authorId],
+        references: [users.id],
     }),
 }));
 

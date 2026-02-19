@@ -6,12 +6,25 @@ import { Icon } from '@iconify/react';
 import { createFullEntity, updateFullEntity } from '../actions';
 import { useRouter } from 'next/navigation';
 
+import EntitySearchPicker from '../artifacts/components/EntitySearchPicker';
+
 type SocialLink = {
     platform: string;
     url: string;
 };
 
-export default function EntityForm({ initialData }: { initialData?: any }) {
+type Member = {
+    memberId: string;
+    memberRole: string;
+};
+
+export default function EntityForm({
+    initialData,
+    entities = []
+}: {
+    initialData?: any,
+    entities?: { id: string, name: string, type: string, avatarUrl: string | null }[]
+}) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
@@ -29,9 +42,16 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
     );
 
     const [avatarUrl, setAvatarUrl] = useState(initialData?.avatarUrl || '');
+    const [circuit, setCircuit] = useState(initialData?.circuit || 'underground');
+    const [profileType, setProfileType] = useState(initialData?.profileType || 'professional');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
+
+    const [type, setType] = useState(initialData?.type || 'individual');
+    const [members, setMembers] = useState<Member[]>(
+        initialData?.members?.map((m: any) => ({ memberId: m.memberId, memberRole: m.memberRole })) || []
+    );
 
     // Dynamic List
     const [socials, setSocials] = useState<SocialLink[]>(
@@ -54,19 +74,30 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
         setSocials(newSocials);
     };
 
+    const addMember = () => setMembers([...members, { memberId: '', memberRole: '' }]);
+    const removeMember = (idx: number) => setMembers(members.filter((_, i) => i !== idx));
+    const updateMember = (idx: number, field: keyof Member, value: string) => {
+        const newMembers = [...members];
+        newMembers[idx] = { ...newMembers[idx], [field]: value };
+        setMembers(newMembers);
+    };
+
     async function handleSubmit(formData: FormData) {
         setIsSubmitting(true);
         try {
             const cleanSocials = socials.filter(s => s.platform.trim() && s.url.trim());
 
             const payload = {
-                type: formData.get('type') as string,
+                type: type,
                 avatarUrl: avatarUrl,
-                isMajor,
+                circuit: circuit,
+                profileType: profileType,
+                isMajor: circuit === 'major' || isMajor,
                 isVerified,
                 allowMirroring,
                 socialLinks: cleanSocials,
-                translations: translations.filter(t => t.name.trim() !== '')
+                translations: translations.filter(t => t.name.trim() !== ''),
+                members: type === 'circle' ? members.filter(m => m.memberId) : []
             };
 
             if (initialData?.id) {
@@ -155,15 +186,53 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                                 </div>
                             ))}
                         </div>
-                        <div className="col-span-12 md:col-span-4 space-y-1">
-                            <label className="text-[10px] font-mono uppercase text-zinc-400">Type</label>
-                            <select name="type" defaultValue={initialData?.type} required className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors">
-                                <option value="individual">INDIVIDUAL</option>
-                                <option value="organization">ORGANIZATION</option>
-                                <option value="agency">AGENCY</option>
-                                <option value="circle">CIRCLE</option>
-                                <option value="staff">STAFF</option>
-                            </select>
+                        <div className="col-span-12 md:col-span-4 space-y-4">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-mono uppercase text-zinc-400">Identity_Type</label>
+                                <select
+                                    name="type"
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value as any)}
+                                    required
+                                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
+                                >
+                                    <option value="individual">INDIVIDUAL</option>
+                                    <option value="organization">ORGANIZATION</option>
+                                    <option value="agency">AGENCY</option>
+                                    <option value="circle">CIRCLE (UNIT)</option>
+                                </select>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-mono uppercase text-zinc-400">Operational_Circuit</label>
+                                <select
+                                    value={circuit}
+                                    onChange={(e) => setCircuit(e.target.value as any)}
+                                    className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
+                                >
+                                    <option value="underground">UNDERGROUND_ECHO</option>
+                                    <option value="major">MAJOR_CIRCUIT</option>
+                                    <option value="ghost">GHOST_SIGNAL</option>
+                                </select>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-mono uppercase text-zinc-400">Profile_Context</label>
+                                <div className="grid grid-cols-2 gap-2 h-[46px]">
+                                    <button
+                                        type="button"
+                                        onClick={() => setProfileType('professional')}
+                                        className={`text-[10px] font-black uppercase border transition-all ${profileType === 'professional' ? 'bg-white text-black border-white' : 'bg-transparent text-zinc-500 border-zinc-800'}`}
+                                    >
+                                        Professional
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setProfileType('social')}
+                                        className={`text-[10px] font-black uppercase border transition-all ${profileType === 'social' ? 'bg-white text-black border-white' : 'bg-transparent text-zinc-500 border-zinc-800'}`}
+                                    >
+                                        Social
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,6 +270,47 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                     </div>
                 </div>
             </div>
+
+            {/* Unit Members Section */}
+            {type === 'circle' && (
+                <div className="space-y-4 pt-4 border-t border-zinc-900">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-black uppercase text-violet-500">02 // UNIT_COMPOSITION_LEDGER</span>
+                        <button type="button" onClick={addMember} className="text-[10px] uppercase font-bold text-violet-500 hover:text-white flex items-center gap-1">
+                            <Icon icon="lucide:plus" width={12} /> ADD_MEMBER
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {members.map((member, i) => (
+                            <div key={i} className="flex gap-2 items-center bg-zinc-950 p-3 border border-zinc-900 rounded-sm">
+                                <EntitySearchPicker
+                                    label=""
+                                    type="individual"
+                                    value={member.memberId}
+                                    onSelect={(entity) => updateMember(i, 'memberId', entity?.id || '')}
+                                    placeholder="Search Resident..."
+                                    entities={entities}
+                                />
+                                <input
+                                    value={member.memberRole || ''}
+                                    onChange={(e) => updateMember(i, 'memberRole', e.target.value)}
+                                    placeholder="Role (e.g. Vocalist)"
+                                    className="bg-black border border-zinc-800 p-2 text-xs text-white flex-1 font-mono"
+                                />
+                                <button type="button" onClick={() => removeMember(i)} className="text-rose-500 hover:text-rose-400 p-1">
+                                    <Icon icon="lucide:trash-2" width={14} />
+                                </button>
+                            </div>
+                        ))}
+                        {members.length === 0 && (
+                            <div className="col-span-full border border-zinc-900 border-dashed p-8 text-center">
+                                <span className="text-[10px] font-mono text-zinc-600 uppercase">NO_MEMBERS_ASSIGNED // Unit is a ghost vessel.</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Social Links */}
             <div className="space-y-4 pt-4 border-t border-zinc-900">
@@ -241,9 +351,22 @@ export default function EntityForm({ initialData }: { initialData?: any }) {
                 </div>
             </div>
 
-            <button disabled={isSubmitting} type="submit" className="w-full py-4 bg-violet-600 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all mt-4 disabled:opacity-50">
-                {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_ENTITY_UPDATES' : 'PUBLISH_NEW_ENTITY'}
-            </button>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+                <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="py-4 bg-zinc-950 border border-zinc-800 text-zinc-500 font-black uppercase text-xs tracking-[0.2em] hover:bg-zinc-900 hover:text-white transition-all shadow-lg"
+                >
+                    EXIT_WITHOUT_COMMIT
+                </button>
+                <button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="py-4 bg-violet-600 text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-white transition-all disabled:opacity-50 shadow-lg"
+                >
+                    {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_UPDATES' : 'PUBLISH_ENTITY'}
+                </button>
+            </div>
         </form>
     );
 }

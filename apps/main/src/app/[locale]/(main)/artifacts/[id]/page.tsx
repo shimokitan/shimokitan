@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { BentoCard, Badge } from '@shimokitan/ui';
+import { BentoCard, Badge, cn } from '@shimokitan/ui';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getArtifactById } from '@shimokitan/db';
 import Link from 'next/link';
@@ -29,14 +29,28 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
 
                 {/* 1. Header: The Masking Tape Label */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-950 border-y border-zinc-800 p-3 relative overflow-hidden group">
+                <div className={cn(
+                    "flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-950 border-y p-3 relative overflow-hidden group transition-all duration-700",
+                    artifact.isMajor ? "border-rose-600/50 shadow-[0_0_30px_rgba(225,29,72,0.05)]" : "border-zinc-800"
+                )}>
+                    {artifact.isMajor && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-rose-600/5 via-transparent to-rose-600/5 animate-pulse" />
+                    )}
                     <div className="absolute inset-0 bg-white/[0.02] -skew-x-12 translate-x-1/2 pointer-events-none" />
 
                     <div className="flex items-center gap-4 z-10">
-                        <div className="bg-violet-600 text-black px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter transform -skew-x-12">
-                            SHARD_{artifact.id}
+                        <div className={cn(
+                            "px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter transform -skew-x-12",
+                            artifact.isMajor ? "bg-rose-600 text-white" : "bg-violet-600 text-black"
+                        )}>
+                            {artifact.isMajor ? "MAJOR_STATION_LINK" : `SHARD_${artifact.id}`}
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase italic">{title}</h1>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase italic">{title}</h1>
+                            {artifact.isVerified && (
+                                <Icon icon="lucide:check-circle-2" className="text-rose-500" width={20} />
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-6 mt-4 md:mt-0 font-mono text-[10px] text-zinc-500 tracking-widest z-10">
@@ -54,7 +68,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                         <div className="w-px h-6 bg-zinc-800" />
                         <div className="flex flex-col items-end">
                             <span className="text-zinc-600 uppercase">Resonance</span>
-                            <span className="text-violet-500 font-black">+{artifact.score}</span>
+                            <span className="text-rose-500 font-black">+{artifact.score}</span>
                         </div>
                     </div>
                 </div>
@@ -83,6 +97,31 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
                         </BentoCard>
 
+                        {/* Zone A: Lead Deck (Primary Contributors) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {artifact.credits?.filter((c: any) => c.isPrimary && (c.contributorClass === 'author' || c.contributorClass === 'collaborator'))
+                                .sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0))
+                                .map((credit: any, i: number) => (
+                                    <div key={`lead-${i}`} className="p-4 bg-zinc-950 border border-zinc-900 rounded-xl flex items-center gap-4 group/lead hover:border-violet-500/50 transition-all duration-500">
+                                        <div className="w-14 h-14 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden flex-shrink-0 group-hover/lead:border-violet-500/30 transition-colors">
+                                            {credit.entity.avatarUrl ? (
+                                                <img src={credit.entity.avatarUrl} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-zinc-700">
+                                                    <Icon icon="lucide:user" width={24} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-violet-500 font-black uppercase tracking-[0.2em]">{credit.displayRole || credit.role}</span>
+                                            <Link href={`/artists/${credit.entityId}`} className="text-lg font-black tracking-tight text-white group-hover/lead:text-rose-500 transition-colors">
+                                                {credit.entity.translations?.find((t: any) => t.locale === locale)?.name || credit.entity.translations?.[0]?.name || "Anonymous"}
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+
                         <div className="p-6 bg-zinc-950/40 border border-zinc-800/80 rounded-xl backdrop-blur-md">
                             <h2 className="text-xs font-black text-violet-500 uppercase tracking-[0.3em] mb-4">Editorial // Notes</h2>
                             <p className="text-zinc-300 italic text-lg leading-relaxed font-serif">
@@ -94,24 +133,32 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                     {/* Side B: The Controls */}
                     <div className="md:col-span-4 space-y-4">
 
-                        {/* Credits Pedal */}
-                        <BentoCard title="Credits" icon="lucide:book-user">
-                            <div className="space-y-4 font-mono">
-                                {artifact.credits?.map((credit: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-end border-b border-zinc-800/50 pb-2">
-                                        <span className="text-[10px] text-zinc-500 uppercase">{credit.role}</span>
-                                        <Link href={`/artists/${credit.entityId}`} className="text-xs font-bold text-white hover:text-violet-400 transition-colors">
-                                            {credit.entity.translations?.find((t: any) => t.locale === locale)?.name || credit.entity.translations?.[0]?.name || "Anonymous Resident"}
-                                        </Link>
-                                    </div>
-                                ))}
+                        {/* Zone B: Audit Trail (Staff & Secondary Credits) */}
+                        <BentoCard title="Audit Trail" icon="lucide:clipboard-list">
+                            <div className="space-y-2 font-mono">
+                                {artifact.credits?.filter((c: any) => !c.isPrimary || c.contributorClass === 'staff')
+                                    .sort((a: any, b: any) => (a.position ?? 0) - (b.position ?? 0))
+                                    .map((credit: any, i: number) => (
+                                        <div key={`audit-${i}`} className="flex justify-between items-baseline gap-4 border-b border-zinc-900/50 pb-1 group/audit">
+                                            <span className="text-[9px] text-zinc-600 uppercase flex-shrink-0">{credit.displayRole || credit.role}</span>
+                                            <div className="h-px bg-zinc-900/30 flex-1 mb-1" />
+                                            <Link href={`/artists/${credit.entityId}`} className="text-[10px] font-bold text-zinc-400 hover:text-white transition-colors">
+                                                {credit.entity.translations?.find((t: any) => t.locale === locale)?.name || credit.entity.translations?.[0]?.name || "Anon"}
+                                            </Link>
+                                        </div>
+                                    ))}
 
-                                <div className="pt-2">
-                                    <div className="text-[9px] text-zinc-600 mb-2 uppercase">Tags // Vibe_Signature</div>
+                                <div className="pt-4">
+                                    <div className="text-[9px] text-zinc-600 mb-2 uppercase tracking-widest">Metadata_Sig</div>
                                     <div className="flex flex-wrap gap-1.5">
+                                        {artifact.tags?.map((at: any, i: number) => (
+                                            <span key={`tag-${i}`} className="px-1.5 py-0.5 bg-zinc-900 text-[8px] font-black text-zinc-500 rounded-sm uppercase italic">
+                                                #{at.tag.translations?.find((t: any) => t.locale === locale)?.name || at.tag.translations?.[0]?.name}
+                                            </span>
+                                        ))}
                                         {Object.entries(artifact.specs as any || {}).map(([key, val], i) => (
-                                            <span key={i} className="px-2 py-0.5 bg-zinc-800/50 border border-zinc-700/50 text-[9px] text-zinc-400 rounded-sm">
-                                                {String(val).toUpperCase()}
+                                            <span key={`spec-${i}`} className="px-1.5 py-0.5 bg-zinc-900/50 text-[8px] text-zinc-600 rounded-sm uppercase">
+                                                {key}:{String(val).toUpperCase()}
                                             </span>
                                         ))}
                                     </div>
@@ -172,11 +219,15 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     </div>
 
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-                                            <Icon icon="lucide:user" className="text-zinc-600" width={14} height={14} />
+                                        <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center overflow-hidden">
+                                            {zine.author?.avatarUrl ? (
+                                                <img src={zine.author.avatarUrl} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Icon icon="lucide:user" className="text-zinc-600" width={14} height={14} />
+                                            )}
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black text-zinc-200 uppercase">{zine.author}</span>
+                                            <span className="text-[10px] font-black text-zinc-200 uppercase">{zine.author?.name || "Resident"}</span>
                                         </div>
                                     </div>
 

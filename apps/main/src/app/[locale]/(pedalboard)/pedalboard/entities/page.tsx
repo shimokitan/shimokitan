@@ -66,6 +66,25 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
                 </div>
             </header>
 
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                    { label: 'Total_Entities', value: allEntities.length, icon: 'lucide:users', color: 'text-white' },
+                    { label: 'Major_Circuits', value: allEntities.filter(e => e.circuit === 'major').length, icon: 'lucide:zap', color: 'text-violet-500' },
+                    { label: 'Underground', value: allEntities.filter(e => e.circuit === 'underground').length, icon: 'lucide:radio', color: 'text-emerald-500' },
+                    { label: 'Ghost_Signals', value: allEntities.filter(e => e.circuit === 'ghost').length, icon: 'lucide:ghost', color: 'text-zinc-500' },
+                ].map((stat, i) => (
+                    <div key={i} className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-sm flex items-center gap-4 group hover:border-zinc-800 transition-colors">
+                        <div className={`p-2 bg-zinc-900/50 rounded-full ${stat.color} bg-opacity-10`}>
+                            <Icon icon={stat.icon} width={18} className={stat.color} />
+                        </div>
+                        <div>
+                            <div className="text-[10px] uppercase font-mono text-zinc-500">{stat.label}</div>
+                            <div className="text-xl font-black italic text-white tracking-tighter">{stat.value}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
             <section className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-zinc-900 pb-4">
                     <Icon icon={isTrash ? "lucide:trash-2" : "lucide:list"} className={isTrash ? "text-rose-500" : "text-zinc-500"} width={18} />

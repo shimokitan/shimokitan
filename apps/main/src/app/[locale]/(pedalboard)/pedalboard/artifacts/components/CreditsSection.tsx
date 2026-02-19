@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
+import EntitySearchPicker from './EntitySearchPicker';
 
 interface Entity {
     id: string;
@@ -13,12 +14,16 @@ interface Entity {
 interface Credit {
     entityId: string;
     role: string;
+    displayRole?: string;
+    contributorClass: 'author' | 'collaborator' | 'staff';
+    isPrimary: boolean;
+    position: number;
 }
 
 interface CreditsSectionProps {
     entities: Entity[];
     credits: Credit[];
-    updateCredit: (idx: number, field: keyof Credit, value: string) => void;
+    updateCredit: (idx: number, field: keyof Credit, value: any) => void;
     addCredit: () => void;
     removeCredit: (idx: number) => void;
 }
@@ -45,30 +50,68 @@ export default function CreditsSection({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {credits.map((credit, i) => (
-                    <div key={i} className="flex gap-2 items-center bg-zinc-900/20 p-2 rounded border border-zinc-900 transition-all hover:border-zinc-800">
-                        <select
-                            value={credit.entityId}
-                            onChange={(e) => updateCredit(i, 'entityId', e.target.value)}
-                            className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-400 flex-1 outline-none appearance-none"
-                        >
-                            <option value="">Select_Entity...</option>
-                            {entities.map(e => (
-                                <option key={e.id} value={e.id}>{e.name} ({e.type})</option>
-                            ))}
-                        </select>
-                        <input
-                            value={credit.role}
-                            onChange={(e) => updateCredit(i, 'role', e.target.value)}
-                            placeholder="Contribution (e.g. Lead Vocals)"
-                            className="bg-black border border-zinc-800 p-2 text-[10px] font-mono text-zinc-300 w-1/2 outline-none focus:border-zinc-700"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => removeCredit(i)}
-                            className="p-2 text-zinc-700 hover:text-rose-500 transition-colors"
-                        >
-                            <Icon icon="lucide:x" width={12} />
-                        </button>
+                    <div key={i} className="flex flex-col gap-2 bg-zinc-950 p-4 border border-zinc-900 rounded-sm">
+                        <div className="flex gap-2 items-center">
+                            <EntitySearchPicker
+                                label=""
+                                type="individual"
+                                value={credit.entityId}
+                                onSelect={(entity) => updateCredit(i, 'entityId', entity?.id || '')}
+                                placeholder="Search residency..."
+                                entities={entities}
+                            />
+                            <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => updateCredit(i, 'isPrimary', !credit.isPrimary)}
+                                    className={`p-2 border transition-all ${credit.isPrimary ? 'bg-amber-600/20 border-amber-600 text-amber-500' : 'bg-black border-zinc-800 text-zinc-700'}`}
+                                    title="Set as Primary"
+                                >
+                                    <Icon icon={credit.isPrimary ? "lucide:star" : "lucide:star-off"} width={14} />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => removeCredit(i)}
+                                    className="p-2 bg-black border border-zinc-800 text-zinc-700 hover:text-rose-500 hover:border-rose-900 transition-all"
+                                >
+                                    <Icon icon="lucide:trash-2" width={14} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <input
+                                value={credit.role}
+                                onChange={(e) => updateCredit(i, 'role', e.target.value)}
+                                placeholder="Functional Role (e.g. Lead Vocals)"
+                                className="bg-black border border-zinc-900 p-2 text-[10px] font-mono text-zinc-400 outline-none focus:border-violet-500/50"
+                            />
+                            <input
+                                value={credit.displayRole || ''}
+                                onChange={(e) => updateCredit(i, 'displayRole', e.target.value)}
+                                placeholder="Display Role (e.g. Center)"
+                                className="bg-black border border-zinc-900 p-2 text-[10px] font-mono text-zinc-400 outline-none focus:border-violet-500/50"
+                            />
+                        </div>
+
+                        <div className="flex gap-2">
+                            <select
+                                value={credit.contributorClass}
+                                onChange={(e) => updateCredit(i, 'contributorClass', e.target.value)}
+                                className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 outline-none flex-1"
+                            >
+                                <option value="author">Class: Author</option>
+                                <option value="collaborator">Class: Collaborator</option>
+                                <option value="staff">Class: Staff</option>
+                            </select>
+                            <input
+                                type="number"
+                                value={credit.position}
+                                onChange={(e) => updateCredit(i, 'position', parseInt(e.target.value) || 0)}
+                                placeholder="Pos"
+                                className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 w-16 outline-none"
+                            />
+                        </div>
                     </div>
                 ))}
             </div>

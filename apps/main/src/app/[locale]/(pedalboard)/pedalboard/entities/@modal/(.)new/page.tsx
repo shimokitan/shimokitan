@@ -9,8 +9,21 @@ import {
     SheetDescription
 } from '@shimokitan/ui';
 import InterceptedClose from '../../../artifacts/@modal/(.)[id]/InterceptedClose';
+import { getDb } from '@shimokitan/db';
 
 export default async function InterceptedEntityCreate() {
+    const db = getDb();
+    const allEntities = db ? await db.query.entities.findMany({
+        where: (e, { isNull }) => isNull(e.deletedAt),
+        with: { translations: true }
+    }) : [];
+
+    const entitySelectData = allEntities.map(e => ({
+        id: e.id,
+        name: e.translations?.[0]?.name || "Untitled",
+        type: e.type,
+        avatarUrl: e.avatarUrl
+    }));
     return (
         <Sheet defaultOpen={true}>
             <InterceptedClose />
@@ -21,7 +34,7 @@ export default async function InterceptedEntityCreate() {
                 </SheetHeader>
 
                 <div className="mt-4">
-                    <EntityForm />
+                    <EntityForm entities={entitySelectData} />
                 </div>
             </SheetContent>
         </Sheet>

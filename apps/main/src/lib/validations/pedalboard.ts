@@ -3,12 +3,15 @@ import { z } from 'zod';
 
 // --- Shared Constants (Matching DB Schema) ---
 export const LOCALES = ['en', 'id', 'jp'] as const;
-export const ENTITY_TYPES = ['individual', 'organization', 'agency', 'circle', 'staff'] as const;
+export const ENTITY_TYPES = ['individual', 'organization', 'agency', 'circle'] as const;
+export const CONTRIBUTOR_CLASSES = ['author', 'collaborator', 'staff'] as const;
+export const PROFILE_TYPES = ['social', 'professional'] as const;
 export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;
 export const ARTIFACT_STATUSES = ['the_pit', 'back_alley', 'archived'] as const;
 export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other'] as const;
 export const VERIFICATION_TARGET_TYPES = ['artifact', 'entity', 'role_upgrade'] as const;
 export const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'] as const;
+export const CIRCUITS = ['major', 'underground', 'ghost'] as const;
 
 // --- Shared Helpers ---
 
@@ -32,10 +35,19 @@ const resourceSchema = z.object({
 const creditSchema = z.object({
     entityId: z.string().min(1),
     role: z.string().min(1),
+    displayRole: z.string().optional(),
+    contributorClass: z.enum(CONTRIBUTOR_CLASSES).default('staff'),
+    isPrimary: z.boolean().default(false),
+    position: z.number().default(0),
 });
 
 const tagRefSchema = z.object({
     name: z.string().min(1),
+});
+
+const unitMemberSchema = z.object({
+    memberId: z.string().min(1),
+    memberRole: z.string().optional(),
 });
 
 // --- Main Schemas ---
@@ -43,11 +55,13 @@ const tagRefSchema = z.object({
 export const entitySchema = z.object({
     type: z.enum(ENTITY_TYPES),
     avatarUrl: z.string().url().optional().or(z.literal('')),
+    circuit: z.enum(CIRCUITS).default('underground'),
     isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
-    allowMirroring: z.boolean().default(true),
+    profileType: z.enum(PROFILE_TYPES).default('professional'),
     socialLinks: z.any().optional(), // JSON
     translations: z.array(translationSchema).optional(),
+    members: z.array(unitMemberSchema).optional(),
 });
 
 export const artifactSchema = z.object({
@@ -59,6 +73,7 @@ export const artifactSchema = z.object({
     isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
     allowMirroring: z.boolean().default(true),
+    verificationId: z.string().optional(), // Link to pending proof
     translations: z.array(translationSchema).optional(),
     resources: z.array(resourceSchema).optional(),
     credits: z.array(creditSchema).optional(),
@@ -75,7 +90,7 @@ export const collectionSchema = z.object({
 
 export const zineSchema = z.object({
     artifactId: z.string().min(1),
-    author: z.string().optional(),
+    authorId: z.string().min(1),
     resonance: z.number().optional(),
     translations: z.array(translationSchema).optional(),
 });

@@ -1,10 +1,20 @@
-import { neon, NeonQueryFunction } from '@neondatabase/serverless';
-import { drizzle, NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle, NeonDatabase } from 'drizzle-orm/neon-serverless';
 import * as schema from './schema';
 import { eq, desc, sql } from 'drizzle-orm';
 
-let sqlInstance: NeonQueryFunction<boolean, boolean>;
-let dbInstance: NeonHttpDatabase<typeof schema>;
+// Required for environments where global WebSocket is not available (like local Node)
+// In Bun or Cloudflare, WebSocket is globally defined.
+if (typeof WebSocket === 'undefined') {
+  // Use dynamic import to avoid bundling 'ws' where not needed
+  import('ws').then((ws) => {
+    neonConfig.webSocketConstructor = ws.default;
+  }).catch(() => {
+    console.warn('WebSocket is not defined and "ws" package could not be loaded.');
+  });
+}
+
+let dbInstance: NeonDatabase<typeof schema>;
 
 export function getDb() {
   if (!dbInstance) {
@@ -13,8 +23,8 @@ export function getDb() {
       console.warn('DATABASE_URL is not defined. Database operations will fail.');
       return null;
     }
-    sqlInstance = neon(databaseUrl);
-    dbInstance = drizzle(sqlInstance, { schema });
+    const pool = new Pool({ connectionString: databaseUrl });
+    dbInstance = drizzle(pool, { schema });
   }
   return dbInstance;
 }
@@ -55,7 +65,17 @@ export async function getArtifactById(id: string) {
       resources: true,
       zines: {
         with: {
-          translations: true
+          translations: true,
+          author: true,
+        }
+      },
+      tags: {
+        with: {
+          tag: {
+            with: {
+              translations: true
+            }
+          }
         }
       }
     }

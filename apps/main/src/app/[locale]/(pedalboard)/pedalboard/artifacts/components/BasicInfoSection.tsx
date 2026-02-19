@@ -30,6 +30,7 @@ interface BasicInfoSectionProps {
     setIsMajor: (val: boolean) => void;
     allowMirroring: boolean;
     setAllowMirroring: (val: boolean) => void;
+    lockFlags?: boolean;
 }
 
 export default function BasicInfoSection({
@@ -51,7 +52,8 @@ export default function BasicInfoSection({
     isMajor,
     setIsMajor,
     allowMirroring,
-    setAllowMirroring
+    setAllowMirroring,
+    lockFlags = false
 }: BasicInfoSectionProps) {
     return (
         <div className="space-y-6">
@@ -177,17 +179,19 @@ export default function BasicInfoSection({
                     <div className="flex gap-2 h-[46px]">
                         <button
                             type="button"
-                            onClick={() => setIsVerified(!isVerified)}
-                            className={`flex-1 flex items-center justify-center gap-2 border transition-all ${isVerified ? 'bg-zinc-100 border-zinc-100 text-black' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                            title="Mark as Verified Content"
+                            onClick={() => !lockFlags && setIsVerified(!isVerified)}
+                            className={`flex-1 flex items-center justify-center gap-2 border transition-all ${isVerified ? 'bg-zinc-100 border-zinc-100 text-black' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'} ${lockFlags ? 'cursor-not-allowed opacity-80' : ''}`}
+                            title={lockFlags ? "Verified via Protocol Proof" : "Mark as Verified Content"}
+                            disabled={lockFlags}
                         >
                             <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={14} />
                         </button>
                         <button
                             type="button"
-                            onClick={() => setIsMajor(!isMajor)}
-                            className={`flex-1 flex items-center justify-center gap-2 border transition-all ${isMajor ? 'bg-rose-600 border-rose-600 text-white' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                            title="Mark as Major Label"
+                            onClick={() => !lockFlags && setIsMajor(!isMajor)}
+                            className={`flex-1 flex items-center justify-center gap-2 border transition-all ${isMajor ? 'bg-rose-600 border-rose-600 text-white' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'} ${lockFlags ? 'cursor-not-allowed opacity-40' : ''}`}
+                            title={lockFlags ? "Major Signal Restricted" : "Mark as Major Label"}
+                            disabled={lockFlags}
                         >
                             <Icon icon="lucide:star" width={14} />
                         </button>

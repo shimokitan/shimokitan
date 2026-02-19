@@ -31,6 +31,10 @@ type Resource = {
 type Credit = {
     entityId: string;
     role: string;
+    displayRole?: string;
+    contributorClass: 'author' | 'collaborator' | 'staff';
+    isPrimary: boolean;
+    position: number;
 };
 
 type Spec = {
@@ -38,7 +42,21 @@ type Spec = {
     value: string;
 };
 
-export default function ArtifactForm({ entities, initialData, onComplete, userRole }: { entities: Entity[], initialData?: any, onComplete?: () => void, userRole?: string }) {
+export default function ArtifactForm({
+    entities,
+    initialData,
+    onComplete,
+    userRole,
+    verificationId,
+    initialMajor
+}: {
+    entities: Entity[],
+    initialData?: any,
+    onComplete?: () => void,
+    userRole?: string,
+    verificationId?: string,
+    initialMajor?: boolean
+}) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const anilistId = searchParams.get('anilist_id');
@@ -77,7 +95,14 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
     );
     const [credits, setCredits] = useState<Credit[]>(
         initialData?.credits
-            ? initialData.credits.map((c: any) => ({ entityId: c.entityId, role: c.role }))
+            ? initialData.credits.map((c: any) => ({
+                entityId: c.entityId,
+                role: c.role,
+                displayRole: c.displayRole,
+                contributorClass: c.contributorClass,
+                isPrimary: c.isPrimary,
+                position: c.position,
+            }))
             : []
     );
     const [specs, setSpecs] = useState<Spec[]>(
@@ -95,8 +120,8 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
     const [category, setCategory] = useState(initialData?.category || (anilistId ? 'anime' : 'music'));
     const [status, setStatus] = useState(initialData?.status || 'the_pit');
     const [score, setScore] = useState(initialData?.score || 0);
-    const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
-    const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
+    const [isMajor, setIsMajor] = useState(initialData?.isMajor ?? initialMajor ?? false);
+    const [isVerified, setIsVerified] = useState(initialData?.isVerified ?? (!!verificationId));
     const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
 
     // --- Handlers ---
@@ -154,9 +179,15 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
         setResources(newResources);
     };
 
-    const addCredit = () => setCredits([...credits, { entityId: '', role: '' }]);
+    const addCredit = () => setCredits([...credits, {
+        entityId: '',
+        role: '',
+        contributorClass: 'staff',
+        isPrimary: false,
+        position: credits.length
+    }]);
     const removeCredit = (idx: number) => setCredits(credits.filter((_, i) => i !== idx));
-    const updateCredit = (idx: number, field: keyof Credit, value: string) => {
+    const updateCredit = (idx: number, field: keyof Credit, value: any) => {
         const newCredits = [...credits];
         newCredits[idx] = { ...newCredits[idx], [field]: value };
         setCredits(newCredits);
@@ -202,7 +233,8 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                 credits: cleanCredits,
                 specs: cleanSpecs,
                 tags: cleanTags,
-                translations: translations.filter(t => t.title.trim() !== '')
+                translations: translations.filter(t => t.title.trim() !== ''),
+                verificationId: verificationId || undefined
             };
 
             if (initialData?.id) {
@@ -240,7 +272,13 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
         setCredits(prev => {
             const filtered = prev.filter(c => c.role !== role);
             if (!entityId) return filtered;
-            return [...filtered, { role, entityId }];
+            return [...filtered, {
+                role,
+                entityId,
+                contributorClass: 'staff',
+                isPrimary: false,
+                position: prev.length
+            }];
         });
     };
 
@@ -271,6 +309,7 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                 setIsMajor={setIsMajor}
                 allowMirroring={allowMirroring}
                 setAllowMirroring={setAllowMirroring}
+                lockFlags={!!verificationId}
             />
 
             {(category === 'anime' || category === 'music') && (
@@ -287,6 +326,7 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                                 value={credits.find(c => c.role === 'studio')?.entityId}
                                 onSelect={(entity) => upsertCredit('studio', entity?.id || null)}
                                 placeholder="Search or register studio..."
+                                entities={entities}
                             />
                         )}
                         {category === 'music' && (
@@ -296,6 +336,7 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                                 value={credits.find(c => c.role === 'label')?.entityId}
                                 onSelect={(entity) => upsertCredit('label', entity?.id || null)}
                                 placeholder="Search or register label..."
+                                entities={entities}
                             />
                         )}
                         {/* You can add more specific professional roles here */}
@@ -346,12 +387,22 @@ export default function ArtifactForm({ entities, initialData, onComplete, userRo
                         </div>
                     </div>
                 </div>
-                <button
-                    disabled={isSubmitting}
-                    className="w-full py-4 bg-white text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-rose-600 hover:text-white transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-                >
-                    {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_REGISTRY_CHANGES' : 'REGISTER_NEW_ARTIFACT'}
-                </button>
+                <div className="grid grid-cols-4 gap-3">
+                    <button
+                        type="button"
+                        onClick={() => router.push('/pedalboard/artifacts')}
+                        className="col-span-1 py-4 bg-zinc-950 border border-zinc-900 text-zinc-600 font-black uppercase text-xs tracking-[0.2em] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
+                    >
+                        <Icon icon="lucide:arrow-left" width={14} />
+                        EXIT
+                    </button>
+                    <button
+                        disabled={isSubmitting}
+                        className="col-span-3 py-4 bg-white text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-rose-600 hover:text-white transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                    >
+                        {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_REGISTRY_CHANGES' : 'REGISTER_NEW_ARTIFACT'}
+                    </button>
+                </div>
             </div>
         </form>
     );

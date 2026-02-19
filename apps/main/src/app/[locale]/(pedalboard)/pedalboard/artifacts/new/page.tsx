@@ -1,7 +1,7 @@
 
 import React, { Suspense } from 'react';
 import { getDb, schema } from '@shimokitan/db';
-import ArtifactForm from '../ArtifactForm';
+import NewArtifactTerminal from './NewArtifactTerminal';
 import { isNull } from 'drizzle-orm';
 import { auth } from '@/lib/auth-neon/server';
 
@@ -21,7 +21,8 @@ export default async function NewArtifactPage() {
     const entities = rawEntities.map(e => ({
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
-        type: e.type
+        type: e.type,
+        avatarUrl: e.avatarUrl
     }));
 
     const user = await db.query.users.findFirst({
@@ -36,7 +37,7 @@ export default async function NewArtifactPage() {
             </header>
 
             <Suspense fallback={<div className="text-white font-mono text-xs animate-pulse p-12 text-center uppercase tracking-widest bg-zinc-950/20 border border-zinc-900">Configuring_Interface...</div>}>
-                <ArtifactForm
+                <NewArtifactTerminal
                     entities={entities}
                     userRole={user?.role}
                 />

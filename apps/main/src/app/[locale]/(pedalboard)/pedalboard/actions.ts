@@ -15,7 +15,7 @@ import {
 } from '@/lib/validations/pedalboard';
 import { z } from 'zod';
 import { generateStoragePath } from '@shimokitan/utils';
-import { uploadFileToR2 } from '@/lib/r2';
+import { uploadFileToR2, uploadImageFromUrl } from '@/lib/r2';
 
 // --- AUTH HELPERS ---
 async function requireUser() {
@@ -43,7 +43,15 @@ async function requireFounder() {
 // --- AUTH & RBAC ---
 
 export async function ensureUserSync() {
-    const { data: session } = await auth.getSession();
+    let session;
+    try {
+        const result = await auth.getSession();
+        session = result.data;
+    } catch (e) {
+        console.error("Auth Session Error in ensureUserSync:", e);
+        return null; // Assume unauthorized if session check fails violently
+    }
+
     if (!session?.user) return null;
 
     const db = getDb();
@@ -167,6 +175,8 @@ export async function approveRoleUpgrade(verificationId: string) {
     }
 
     await db.transaction(async (tx) => {
+        const entityId = `ENT_${nanoid(10)}`;
+
         await tx.update(schema.verificationRegistry)
             .set({
                 status: 'approved',
@@ -181,6 +191,34 @@ export async function approveRoleUpgrade(verificationId: string) {
                 updatedAt: new Date()
             })
             .where(eq(schema.users.id, request.targetId));
+
+        // Create Entity for the new Architect
+        const creator = await tx.query.users.findFirst({
+            where: eq(schema.users.id, request.targetId)
+        });
+
+        await tx.insert(schema.entities).values({
+            id: entityId,
+            type: 'individual',
+            profileType: 'professional',
+            slug: slugify(creator?.name || `architect-${nanoid(4)}`),
+            avatarUrl: creator?.avatarUrl,
+        });
+
+        if (creator?.name) {
+            await tx.insert(schema.entitiesI18n).values({
+                entityId,
+                locale: 'en',
+                name: creator.name,
+            });
+        }
+
+        // Link User to Entity as Owner
+        await tx.insert(schema.entityManagers).values({
+            userId: request.targetId,
+            entityId,
+            role: 'owner',
+        });
     });
 
     revalidatePath('/[locale]/pedalboard', 'layout');
@@ -206,9 +244,10 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
             type: validated.type,
             slug,
             avatarUrl: validated.avatarUrl || null,
+            circuit: validated.circuit,
             isMajor: validated.isMajor,
             isVerified: validated.isVerified,
-            allowMirroring: validated.allowMirroring,
+            profileType: validated.profileType,
             socialLinks: validated.socialLinks,
         });
 
@@ -219,6 +258,16 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
                     locale: t.locale,
                     name: t.name || '', // Ensure not null validation passes if schema allowed optional
                     bio: t.bio,
+                }))
+            );
+        }
+
+        if (validated.type === 'circle' && validated.members?.length) {
+            await tx.insert(schema.unitMembers).values(
+                validated.members.map((m) => ({
+                    unitId: entityId,
+                    memberId: m.memberId,
+                    memberRole: m.memberRole,
                 }))
             );
         }
@@ -259,7 +308,9 @@ export async function searchEntities(query: string, type?: string) {
         id: e.id,
         name: e.translations.find(t => t.locale === 'en')?.name || e.translations[0]?.name || 'Unknown_Entity',
         type: e.type,
-        slug: e.slug
+        slug: e.slug,
+        avatarUrl: e.avatarUrl,
+        circuit: e.circuit
     }));
 }
 
@@ -301,9 +352,10 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
             .set({
                 type: validated.type,
                 avatarUrl: validated.avatarUrl || null,
+                circuit: validated.circuit,
                 isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
-                allowMirroring: validated.allowMirroring,
+                profileType: validated.profileType,
                 socialLinks: validated.socialLinks,
                 updatedAt: new Date(),
             })
@@ -318,6 +370,18 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
                     locale: t.locale,
                     name: t.name || '',
                     bio: t.bio,
+                }))
+            );
+        }
+
+        // --- Sync Unit Members ---
+        await tx.delete(schema.unitMembers).where(eq(schema.unitMembers.unitId, id));
+        if (validated.type === 'circle' && validated.members?.length) {
+            await tx.insert(schema.unitMembers).values(
+                validated.members.map((m) => ({
+                    unitId: id,
+                    memberId: m.memberId,
+                    memberRole: m.memberRole,
                 }))
             );
         }
@@ -338,12 +402,25 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     const artifactId = `ART_${nanoid(10)}`;
     const slug = slugify(validated.translations?.[0]?.title || artifactId);
 
+    // --- Always R2 for Cover Image ---
+    let coverImage = validated.coverImage;
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
+        try {
+            // Upload to R2 and get local public URL
+            coverImage = await uploadImageFromUrl(coverImage, artifactId, 'artifact');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+            // We keep the original URL as fallback if upload fails, 
+            // but log it for investigation
+        }
+    }
+
     await db.transaction(async (tx) => {
         await tx.insert(schema.artifacts).values({
             id: artifactId,
             category: validated.category,
             slug,
-            coverImage: validated.coverImage || null,
+            coverImage: coverImage || null,
             status: validated.status,
             score: validated.score,
             specs: validated.specs,
@@ -351,6 +428,17 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
             isVerified: validated.isVerified,
             allowMirroring: validated.allowMirroring,
         });
+
+        // Link Verification if provided
+        if (validated.verificationId) {
+            await tx.update(schema.verificationRegistry)
+                .set({
+                    targetId: artifactId,
+                    targetType: 'artifact',
+                    updatedAt: new Date()
+                })
+                .where(eq(schema.verificationRegistry.id, validated.verificationId));
+        }
 
         if (validated.translations?.length) {
             await tx.insert(schema.artifactsI18n).values(
@@ -379,10 +467,13 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
         if (validated.credits?.length) {
             await tx.insert(schema.artifactCredits).values(
                 validated.credits.map((c) => ({
-                    id: `CRD_${nanoid(10)}`,
                     artifactId,
                     entityId: c.entityId,
                     role: c.role,
+                    displayRole: c.displayRole,
+                    contributorClass: c.contributorClass,
+                    isPrimary: c.isPrimary,
+                    position: c.position,
                 }))
             );
         }
@@ -422,11 +513,21 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
+    // --- Always R2 for Cover Image ---
+    let coverImage = validated.coverImage;
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
+        try {
+            coverImage = await uploadImageFromUrl(coverImage, id, 'artifact');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+        }
+    }
+
     await db.transaction(async (tx) => {
         await tx.update(schema.artifacts)
             .set({
                 category: validated.category,
-                coverImage: validated.coverImage || null,
+                coverImage: coverImage || null,
                 status: validated.status,
                 score: validated.score,
                 specs: validated.specs,
@@ -468,10 +569,13 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         if (validated.credits?.length) {
             await tx.insert(schema.artifactCredits).values(
                 validated.credits.map((c) => ({
-                    id: `CRD_${nanoid(10)}`,
                     artifactId: id,
                     entityId: c.entityId,
                     role: c.role,
+                    displayRole: c.displayRole,
+                    contributorClass: c.contributorClass,
+                    isPrimary: c.isPrimary,
+                    position: c.position,
                 }))
             );
         }
@@ -590,7 +694,7 @@ export async function createFullZine(data: z.infer<typeof zineSchema>) {
         await tx.insert(schema.zines).values({
             id: zineId,
             artifactId: validated.artifactId,
-            author: validated.author || 'Anonymous',
+            authorId: validated.authorId,
             resonance: validated.resonance,
         });
 
@@ -619,7 +723,7 @@ export async function updateFullZine(id: string, data: z.infer<typeof zineSchema
         await tx.update(schema.zines)
             .set({
                 artifactId: validated.artifactId,
-                author: validated.author,
+                authorId: validated.authorId,
                 resonance: validated.resonance,
                 updatedAt: new Date(),
             })
@@ -797,6 +901,36 @@ export async function deleteVerification(id: string) {
 }
 
 // --- STORAGE & PROFILE (All Users) ---
+
+export async function createIndieVerificationAction(formData: FormData) {
+    const user = await requireUser();
+    const file = formData.get('file') as File;
+
+    if (!file) throw new Error('SIGNAL_LOST: NO_PROOF_FILE');
+
+    const db = getDb();
+    if (!db) throw new Error('SYSTEM_ERROR: DB_STATION_OFFLINE');
+
+    const verificationId = `VER_${nanoid(10)}`;
+    const extension = file.name.split('.').pop() || 'pdf';
+
+    // Upload Proof to R2
+    const key = `verifications/indie/${verificationId}/${nanoid(5)}.${extension}`;
+    const buffer = await file.arrayBuffer();
+    const publicUrl = await uploadFileToR2(buffer, key, file.type);
+
+    await db.insert(schema.verificationRegistry).values({
+        id: verificationId,
+        targetId: 'PENDING_SIGNAL', // Atomic link update happens in createFullArtifact
+        targetType: 'artifact',
+        status: 'pending',
+        issuer: user.id,
+        r2Key: key,
+        internalNotes: 'AUTO_GENERATED: PROOF_OF_HOSTING_PERMIT',
+    });
+
+    return { verificationId, publicUrl };
+}
 
 export async function uploadToR2Action(formData: FormData) {
     const user = await requireUser();

@@ -1,25 +1,22 @@
 
 import React from 'react';
-import { getDb, schema, eq } from '@shimokitan/db';
+import { getDb, schema, isNull } from '@shimokitan/db';
 import EntityForm from '../EntityForm';
 import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
-import { notFound } from 'next/navigation';
+import { ensureUserSync } from '../../actions';
+import { redirect } from 'next/navigation';
 
-export default async function EditEntityPage(props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
+export default async function NewEntityPage() {
+    const user = await ensureUserSync();
+    if (!user || (user.role !== 'founder' && user.role !== 'architect')) {
+        redirect('/pedalboard');
+    }
+
     const db = getDb();
 
-    const entity = db ? await db.query.entities.findFirst({
-        where: eq(schema.entities.id, params.id),
-        with: {
-            translations: true,
-            members: true
-        }
-    }) : null;
-
     const allEntities = db ? await db.query.entities.findMany({
-        where: (e, { isNull }) => isNull(e.deletedAt),
+        where: isNull(schema.entities.deletedAt),
         with: { translations: true }
     }) : [];
 
@@ -30,10 +27,6 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
         avatarUrl: e.avatarUrl
     }));
 
-    if (!entity) {
-        notFound();
-    }
-
     return (
         <div className="space-y-6">
             <header className="flex items-end justify-between border-b border-zinc-900 pb-4">
@@ -42,10 +35,10 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
                         <Link href="/pedalboard/entities" className="text-zinc-500 hover:text-white transition-colors">
                             <Icon icon="lucide:arrow-left" width={14} />
                         </Link>
-                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">System_Registry / Update</span>
+                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">System_Registry / Initialize</span>
                     </div>
                     <h1 className="text-2xl font-black italic tracking-tighter uppercase text-white">
-                        Edit <span className="text-violet-600">Entity.</span>
+                        Register <span className="text-violet-600">Entity.</span>
                     </h1>
                 </div>
             </header>
@@ -55,7 +48,8 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                         <Icon icon="lucide:fingerprint" width={160} />
                     </div>
-                    <EntityForm initialData={entity} entities={entitySelectData} />
+                    {/* No initialData passed means create mode */}
+                    <EntityForm entities={entitySelectData} />
                 </section>
             </div>
         </div>

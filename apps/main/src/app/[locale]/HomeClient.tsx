@@ -20,7 +20,7 @@ type Artifact = {
 
 type Zine = {
     id: string;
-    artifact_id: string;
+    artifactId: string;
     author: string;
     content: string;
     resonance: number | null;
@@ -92,7 +92,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
 const MOCK_ZINES: (Zine & { artifact: Artifact })[] = [
     {
         id: "zine-1",
-        artifact_id: "cowboy-bebop-shard",
+        artifactId: "cowboy-bebop-shard",
         author: "JetBlack_98",
         content: "We were just kids looking at the stars, now we are just data points in the ash.",
         resonance: 42,
@@ -100,7 +100,7 @@ const MOCK_ZINES: (Zine & { artifact: Artifact })[] = [
     },
     {
         id: "zine-2",
-        artifact_id: "lain-wired",
+        artifactId: "lain-wired",
         author: "Alice_8bit",
         content: "I felt her pulse in the CPU fan last night. The district is waking up.",
         resonance: 88,
@@ -108,7 +108,7 @@ const MOCK_ZINES: (Zine & { artifact: Artifact })[] = [
     },
     {
         id: "zine-3",
-        artifact_id: "lamp-shore",
+        artifactId: "lamp-shore",
         author: "Mina_Bossa",
         content: "This album tastes like cold coffee and expensive nostalgia.",
         resonance: 12,
@@ -116,7 +116,7 @@ const MOCK_ZINES: (Zine & { artifact: Artifact })[] = [
     },
     {
         id: "zine-4",
-        artifact_id: "casiopea-mint",
+        artifactId: "casiopea-mint",
         author: "Fusion_Kid",
         content: "My fingers hurt just listening to that bass line. Peak human era.",
         resonance: 65,

@@ -4,7 +4,18 @@ import { redirect } from 'next/navigation';
 import PedalboardLayoutClient from './layout.client';
 
 export default async function PedalboardLayout({ children }: { children: React.ReactNode }) {
-    const { data: session } = await auth.getSession();
+    let session;
+    try {
+        const result = await auth.getSession();
+        session = result.data;
+    } catch (e: any) {
+        // If it's a redirect error (from Next.js), we MUST re-throw it
+        if (e.digest?.startsWith('NEXT_REDIRECT')) throw e;
+
+        // If it's the cookie modification error or other auth errors, force signin
+        console.error("Auth Session Error in Layout:", e);
+        redirect('/auth/signin');
+    }
 
     if (!session) {
         redirect('/auth/signin');

@@ -11,9 +11,11 @@ export default async function PublicZinesPage() {
     const zines = await db.query.zines.findMany({
         orderBy: [desc(schema.zines.createdAt)],
         with: {
-            artifact: true
+            artifact: true,
+            author: true,
+            translations: true
         }
-    } as any);
+    });
 
     return (
         <MainLayout>
@@ -40,7 +42,7 @@ export default async function PublicZinesPage() {
                                 {/* Artifact Reference */}
                                 <div className="flex flex-col gap-2">
                                     <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Resonating With //</span>
-                                    <Link href={`/artifacts/${zine.artifact_id}`} className="text-xl font-black uppercase italic group-hover:text-rose-500 transition-colors truncate">
+                                    <Link href={`/artifacts/${zine.artifactId}`} className="text-xl font-black uppercase italic group-hover:text-rose-500 transition-colors truncate">
                                         {zine.artifact?.title || "Unknown Shard"}
                                     </Link>
                                 </div>
@@ -49,18 +51,22 @@ export default async function PublicZinesPage() {
                                 <div className="relative z-10">
                                     <Icon icon="lucide:quote" className="text-rose-600/20 mb-4" width={32} height={32} />
                                     <p className="text-zinc-400 font-serif italic text-lg leading-relaxed">
-                                        &ldquo;{zine.content}&rdquo;
+                                        &ldquo;{zine.translations?.[0]?.content || "Signal fragmentation detected..."}&rdquo;
                                     </p>
                                 </div>
 
                                 {/* Author & Resonance */}
                                 <div className="mt-auto pt-8 border-t border-zinc-900/50 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center p-2">
-                                            <Icon icon="lucide:user" className="text-zinc-600" width={18} height={18} />
+                                        <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center p-0 overflow-hidden">
+                                            {zine.author?.avatarUrl ? (
+                                                <img src={zine.author.avatarUrl} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Icon icon="lucide:user" className="text-zinc-600" width={18} height={18} />
+                                            )}
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-black uppercase text-zinc-200">{zine.author}</span>
+                                            <span className="text-xs font-black uppercase text-zinc-200">{zine.author?.name || "Resident"}</span>
                                         </div>
                                     </div>
 

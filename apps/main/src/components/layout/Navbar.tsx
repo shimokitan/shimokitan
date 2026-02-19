@@ -11,6 +11,8 @@ import { usePathname } from 'next/navigation';
 import {
     cn
 } from '@shimokitan/ui';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-neon/client';
 
 export function Navbar() {
     const time = useTime();
@@ -24,6 +26,16 @@ export function Navbar() {
         if (segments.length <= 1) return `/${locale}`;
         segments[1] = locale;
         return segments.join("/");
+    };
+
+    const { data: session, isPending } = authClient.useSession();
+    const user = session?.user;
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await authClient.signOut();
+        router.push('/auth/signin');
+        router.refresh();
     };
 
     return (
@@ -92,6 +104,47 @@ export function Navbar() {
                         className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
                     />
                 </div>
+
+                <div className="h-4 w-px bg-zinc-800 mx-2 hidden sm:block" />
+
+                {!isPending && (
+                    <>
+                        {user ? (
+                            <div className="flex items-center gap-4 animate-in fade-in duration-300">
+                                <div className="flex items-center gap-3">
+                                    <div className="hidden sm:flex flex-col items-end leading-none">
+                                        <span className="text-white text-[10px] font-black uppercase tracking-tight">{user.name || 'Resident'}</span>
+                                    </div>
+                                    <div className="w-8 h-8 rounded-sm bg-zinc-900 border border-zinc-800 overflow-hidden">
+                                        {user.image ? (
+                                            <img src={user.image} alt={user.name || ''} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                                                <Icon icon="lucide:user" width={16} />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="p-1 px-2 text-zinc-600 hover:text-rose-500 transition-colors border border-transparent hover:border-zinc-800 rounded-sm"
+                                        title="Disconnect"
+                                    >
+                                        <Icon icon="lucide:power" width={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <Link
+                                href="/auth/signin"
+                                className="flex items-center gap-2 px-4 py-1.5 bg-violet-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-violet-500 transition-all shadow-lg shadow-violet-900/20"
+                            >
+                                <Icon icon="lucide:power" width={14} />
+                                {dict.initialize_session}
+                            </Link>
+                        )}
+                    </>
+                )}
             </div>
         </header>
 

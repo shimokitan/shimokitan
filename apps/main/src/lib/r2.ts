@@ -31,14 +31,16 @@ export async function uploadImageFromUrl(
         }
 
         const contentType = response.headers.get('content-type');
-        if (contentType !== 'image/webp') {
-            throw new Error(`INVALID_FORMAT: Only WebP images are accepted (Detected: ${contentType})`);
+        const allowedTypes = ['image/webp', 'image/jpeg', 'image/png'];
+        if (!contentType || !allowedTypes.includes(contentType)) {
+            throw new Error(`INVALID_FORMAT: Supported formats: WebP, JPEG, PNG (Detected: ${contentType})`);
         }
 
         const processedBuffer = buffer;
 
         // 3. Generate Path
-        const filename = `${nanoid()}.webp`;
+        const extension = contentType?.split('/').pop() || 'webp';
+        const filename = `${nanoid()}.${extension}`;
         let key = '';
 
         if (type === 'artifact') {
@@ -64,7 +66,7 @@ export async function uploadImageFromUrl(
 
         await bucket.put(key, processedBuffer, {
             httpMetadata: {
-                contentType: 'image/webp',
+                contentType: contentType || 'image/webp',
             }
         });
 

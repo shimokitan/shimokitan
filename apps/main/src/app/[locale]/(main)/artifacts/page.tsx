@@ -16,7 +16,9 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
             category: a.category,
             coverImage: a.coverImage,
             status: a.status,
-            score: a.score
+            score: a.score,
+            isMajor: a.isMajor,
+            isVerified: a.isVerified
         };
     });
 

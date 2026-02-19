@@ -43,7 +43,8 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
     const entities = rawEntities.map(e => ({
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
-        type: e.type
+        type: e.type,
+        avatarUrl: e.avatarUrl
     }));
 
     return (

@@ -61,13 +61,15 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
             translations: true
           }
         },
-        translations: true
+        translations: true,
+        author: true
       }
     });
 
     recentZines = rawZines.map((z: any) => ({
       ...z,
       content: z.translations?.[0]?.content || "",
+      author: z.author?.name || "Anonymous",
       artifact: z.artifact ? {
         ...z.artifact,
         title: z.artifact.translations?.[0]?.title || "Untitled",
