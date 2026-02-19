@@ -43,15 +43,13 @@ export default async function NewEntityPage() {
                 </div>
             </header>
 
-            <div className="max-w-4xl">
-                <section className="bg-zinc-950/50 border border-zinc-900 p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                        <Icon icon="lucide:fingerprint" width={160} />
-                    </div>
-                    {/* No initialData passed means create mode */}
-                    <EntityForm entities={entitySelectData} />
-                </section>
-            </div>
+            <section className="bg-zinc-950/50 border border-zinc-900 p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <Icon icon="lucide:fingerprint" width={160} />
+                </div>
+                {/* No initialData passed means create mode */}
+                <EntityForm entities={entitySelectData} />
+            </section>
         </div>
     );
 }

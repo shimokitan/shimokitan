@@ -121,7 +121,7 @@ export default function EntityForm({
             <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-shrink-0 space-y-2">
                     <label className="text-[10px] font-mono uppercase text-zinc-400 block">Lifeform_ID</label>
-                    <div className="w-32 h-32 bg-zinc-950 border border-zinc-900 rounded-full relative overflow-hidden group shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center">
+                    <div className="w-56 h-56 bg-zinc-950 border border-zinc-900 rounded-full relative overflow-hidden group shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center">
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -129,15 +129,15 @@ export default function EntityForm({
                                 <div className="absolute inset-2 border border-zinc-800 rounded-full" />
                                 <div className="absolute inset-4 border border-zinc-800 rounded-full" />
                                 <div className="absolute inset-6 border border-zinc-800 rounded-full" />
-                                <div className="w-8 h-8 bg-zinc-900 rounded-full border border-zinc-700 flex items-center justify-center">
-                                    <div className="w-2 h-2 bg-zinc-950 rounded-full" />
+                                <div className="w-12 h-12 bg-zinc-900 rounded-full border border-zinc-700 flex items-center justify-center">
+                                    <div className="w-3 h-3 bg-zinc-950 rounded-full" />
                                 </div>
-                                <span className="absolute bottom-2 text-[6px] font-mono text-zinc-600 tracking-tighter uppercase">NO_SIGNAL</span>
+                                <span className="absolute bottom-4 text-[8px] font-mono text-zinc-600 tracking-tighter uppercase">NO_SIGNAL</span>
                             </div>
                         )}
                         {isVerified && (
-                            <div className="absolute top-0 right-0 bg-violet-600 text-black p-1 rounded-bl">
-                                <Icon icon="lucide:shield-check" width={16} />
+                            <div className="absolute top-0 right-0 bg-violet-600 text-black p-1.5 rounded-bl">
+                                <Icon icon="lucide:shield-check" width={20} />
                             </div>
                         )}
                     </div>
@@ -158,8 +158,8 @@ export default function EntityForm({
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-12 gap-4">
-                        <div className="col-span-12 md:col-span-8 space-y-1">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <div className="space-y-4">
                             {translations.map(t => (
                                 <div key={t.locale} className={activeTab === t.locale ? 'space-y-4' : 'hidden'}>
                                     <div className="space-y-1">
@@ -176,7 +176,7 @@ export default function EntityForm({
                                         <textarea
                                             value={t.bio}
                                             onChange={(e) => updateTrans(t.locale, 'bio', e.target.value)}
-                                            rows={2}
+                                            rows={8}
                                             className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none resize-none transition-colors"
                                             placeholder={`About this entity in ${t.locale.toUpperCase()}...`}
                                         />
@@ -184,7 +184,8 @@ export default function EntityForm({
                                 </div>
                             ))}
                         </div>
-                        <div className="col-span-12 md:col-span-4 space-y-4">
+
+                        <div className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-mono uppercase text-zinc-400">Identity_Type</label>
                                 <select
@@ -231,36 +232,38 @@ export default function EntityForm({
                                     </button>
                                 </div>
                             </div>
+
+                            <div className="space-y-4 pt-4">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-mono uppercase text-zinc-400">Avatar_URL (Upload/Hotlink)</label>
+                                    <input
+                                        name="avatarUrl"
+                                        value={avatarUrl}
+                                        onChange={(e) => setAvatarUrl(e.target.value)}
+                                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
+                                        placeholder="https://..."
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 h-[46px]">
+                                    <div
+                                        className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-violet-600 border-violet-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-violet-900'}`}
+                                        onClick={() => setIsVerified(!isVerified)}
+                                    >
+                                        <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={14} />
+                                        <span className="text-[10px] font-black uppercase">Verified</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                                        <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                                        <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div className="md:col-span-2 space-y-1">
-                    <label className="text-[10px] font-mono uppercase text-zinc-400">Avatar_URL (Upload/Hotlink)</label>
-                    <input
-                        name="avatarUrl"
-                        value={avatarUrl}
-                        onChange={(e) => setAvatarUrl(e.target.value)}
-                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-violet-600 outline-none transition-colors"
-                        placeholder="https://..."
-                    />
-                </div>
-                <div className="md:col-span-2 grid grid-cols-2 gap-2 h-[46px]">
-                    <div
-                        className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-violet-600 border-violet-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-violet-900'}`}
-                        onClick={() => setIsVerified(!isVerified)}
-                    >
-                        <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={14} />
-                        <span className="text-[10px] font-black uppercase">Verified</span>
-                    </div>
-                    <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
-                        <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                        <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Unit Members Section */}
             {type === 'circle' && (
