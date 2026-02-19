@@ -122,7 +122,6 @@ export default function ArtifactForm({
     const [score, setScore] = useState(initialData?.score || 0);
     const [isMajor, setIsMajor] = useState(initialData?.isMajor ?? initialMajor ?? false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified ?? (!!verificationId));
-    const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
 
     // --- Handlers ---
     const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
@@ -228,7 +227,6 @@ export default function ArtifactForm({
                 score,
                 isMajor,
                 isVerified,
-                allowMirroring,
                 resources: cleanResources,
                 credits: cleanCredits,
                 specs: cleanSpecs,
@@ -307,8 +305,6 @@ export default function ArtifactForm({
                 setIsVerified={setIsVerified}
                 isMajor={isMajor}
                 setIsMajor={setIsMajor}
-                allowMirroring={allowMirroring}
-                setAllowMirroring={setAllowMirroring}
                 lockFlags={!!verificationId}
             />
 

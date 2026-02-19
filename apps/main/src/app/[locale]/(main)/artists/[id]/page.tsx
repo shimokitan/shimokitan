@@ -13,7 +13,6 @@ const MOCK_ENTITIES_DATA: Record<string, any> = {
         avatarUrl: "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
         isMajor: true,
         isVerified: true,
-        allowMirroring: true,
         translations: [{ locale: "en", name: "YOASOBI", bio: "A 'novel-into-music' unit composed of composer Ayase and vocalist ikura. Documenting the intersection of fiction and resonance in the digital district." }],
         socialLinks: [{ platform: "Twitter", url: "https://twitter.com/yoasobi_staff" }, { platform: "YouTube", url: "https://youtube.com/yoasobi" }],
         credits: [
@@ -27,7 +26,6 @@ const MOCK_ENTITIES_DATA: Record<string, any> = {
         avatarUrl: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80",
         isMajor: false,
         isVerified: true,
-        allowMirroring: true,
         translations: [{ locale: "en", name: "Lamp", bio: "Formed in 2000. ARCHIVE_NOTE: Their sound is a complex layering of bossa nova, 60s pop, and the humidity of a Tokyo summer evening." }],
         socialLinks: [{ platform: "Instagram", url: "#" }],
         credits: [
@@ -40,7 +38,6 @@ const MOCK_ENTITIES_DATA: Record<string, any> = {
         avatarUrl: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=400&q=80",
         isMajor: true,
         isVerified: true,
-        allowMirroring: false,
         translations: [{ locale: "en", name: "ADO", bio: "The silhouette of a new era. A vocal powerhouse mirroring the frustration and energy of the underground through a major-circuit lens." }],
         socialLinks: [{ platform: "YouTube", url: "#" }],
         credits: [
@@ -137,14 +134,10 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
                                 <p className="text-sm text-zinc-400 leading-relaxed font-serif italic">
                                     &ldquo;{bio || "Metadata corrupted or purged. No dossier available."}&rdquo;
                                 </p>
-                                <div className="pt-4 border-t border-zinc-900 grid grid-cols-2 gap-4">
+                                <div className="pt-4 border-t border-zinc-900">
                                     <div className="flex flex-col">
                                         <span className="text-[8px] text-zinc-600 uppercase font-mono tracking-widest">Class</span>
                                         <span className="text-xs font-bold text-zinc-400 capitalize">{entity.isMajor ? 'Major Circuit' : 'Underground'}</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[8px] text-zinc-600 uppercase font-mono tracking-widest">Mirroring</span>
-                                        <span className="text-xs font-bold text-zinc-400">{entity.allowMirroring ? 'ENABLED' : 'RESTRICTED'}</span>
                                     </div>
                                 </div>
                             </div>

@@ -94,7 +94,7 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
                 </div>
 
                 <div className="bg-zinc-950/20 rounded-lg p-1 border border-zinc-900">
-                    <EntityRegistry data={allEntities} />
+                    <EntityRegistry data={allEntities} isTrash={isTrash} />
                 </div>
             </section>
         </div>

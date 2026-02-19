@@ -72,7 +72,6 @@ export const artifactSchema = z.object({
     specs: z.any().optional(), // JSON
     isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
-    allowMirroring: z.boolean().default(true),
     verificationId: z.string().optional(), // Link to pending proof
     translations: z.array(translationSchema).optional(),
     resources: z.array(resourceSchema).optional(),
@@ -83,7 +82,6 @@ export const artifactSchema = z.object({
 export const collectionSchema = z.object({
     coverImage: z.string().url().optional().or(z.literal('')),
     isMajor: z.boolean().default(false),
-    allowMirroring: z.boolean().default(true),
     resonance: z.number().optional(),
     translations: z.array(translationSchema).optional(),
 });

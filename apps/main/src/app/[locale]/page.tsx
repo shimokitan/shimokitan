@@ -117,7 +117,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
 
     entities = rawEntities.map((e: any) => ({
       id: e.id,
-      name: e.translations?.[0]?.name || "Anonymous Resident",
+      name: e.translations?.[0]?.name || "Anonymous Entity",
       type: e.circuit === 'major' ? "Major_Circuit" : "Underground_Echo",
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
       avatar: e.avatarUrl || "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",

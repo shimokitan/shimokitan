@@ -25,7 +25,6 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
 
     const [coverImage, setCoverImage] = useState(initialData?.coverImage || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
-    const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
     const [resonance, setResonance] = useState(initialData?.resonance || 0);
 
     const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
@@ -38,7 +37,6 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
             const payload = {
                 coverImage,
                 isMajor,
-                allowMirroring,
                 resonance,
                 translations: translations.filter(t => t.title.trim() !== '')
             };
@@ -121,18 +119,9 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 h-[46px]">
-                <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
-                    <div className={`w-3 h-3 border ${isMajor ? 'bg-amber-600 border-amber-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                    <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
-                </div>
-                <div
-                    className={`flex items-center gap-3 border px-4 h-full group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
-                    onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
-                >
-                    <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-amber-600 border-amber-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                    <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
-                </div>
+            <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-[46px] group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
+                <div className={`w-3 h-3 border ${isMajor ? 'bg-amber-600 border-amber-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
+                <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
             </div>
 
             <button

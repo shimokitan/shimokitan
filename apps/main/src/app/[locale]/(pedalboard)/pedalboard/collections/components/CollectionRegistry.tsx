@@ -3,13 +3,18 @@
 
 import React from 'react';
 import RegistryTable from '../../components/RegistryTable';
-import { deleteCollection } from '../../actions';
+import { deleteCollection, purgeCollection, restoreCollection } from '../../actions';
 
-export default function CollectionRegistry({ data }: { data: any[] }) {
+export default function CollectionRegistry({ data, isTrash = false }: { data: any[], isTrash?: boolean }) {
     return (
         <RegistryTable
             data={data}
-            onDelete={deleteCollection}
+            onDelete={isTrash ? purgeCollection : deleteCollection}
+            onRestore={isTrash ? restoreCollection : undefined}
+            deleteProps={isTrash ? {
+                confirmMessage: 'PERMANENT_PURGE_WARNING: THIS_COLLECTION_SIGNAL_WILL_BE_TERMINATED. CONTINUE?',
+                title: 'PURGE_PERMANENTLY'
+            } : undefined}
             editUrl={(row) => `/pedalboard/collections/${row.id}`}
             columns={[
                 { key: 'title', label: 'Title', render: (val) => <span className="font-bold text-white uppercase tracking-tight">{val}</span> },

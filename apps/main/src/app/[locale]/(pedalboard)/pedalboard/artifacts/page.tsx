@@ -91,7 +91,7 @@ export default async function ArtifactsPage(props: { searchParams: Promise<{ tra
                 </div>
 
                 <div className="bg-zinc-950/20 rounded-lg p-1 border border-zinc-900">
-                    <ArtifactRegistry data={allArtifacts} />
+                    <ArtifactRegistry data={allArtifacts} isTrash={isTrash} />
                 </div>
             </section>
         </div>

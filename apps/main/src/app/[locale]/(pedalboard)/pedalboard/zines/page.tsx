@@ -95,7 +95,7 @@ export default async function ZinesPage(props: { searchParams: Promise<{ trash?:
                 </div>
 
                 <div className="bg-zinc-950/20 rounded-lg p-1 border border-zinc-900">
-                    <ZineRegistry data={allZines as any} />
+                    <ZineRegistry data={allZines as any} isTrash={isTrash} />
                 </div>
             </section>
         </div>

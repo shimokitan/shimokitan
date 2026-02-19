@@ -46,7 +46,6 @@ export default function EntityForm({
     const [profileType, setProfileType] = useState(initialData?.profileType || 'professional');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
-    const [allowMirroring, setAllowMirroring] = useState(initialData?.allowMirroring || false);
 
     const [type, setType] = useState(initialData?.type || 'individual');
     const [members, setMembers] = useState<Member[]>(
@@ -94,7 +93,6 @@ export default function EntityForm({
                 profileType: profileType,
                 isMajor: circuit === 'major' || isMajor,
                 isVerified,
-                allowMirroring,
                 socialLinks: cleanSocials,
                 translations: translations.filter(t => t.name.trim() !== ''),
                 members: type === 'circle' ? members.filter(m => m.memberId) : []
@@ -249,7 +247,7 @@ export default function EntityForm({
                         placeholder="https://..."
                     />
                 </div>
-                <div className="md:col-span-2 grid grid-cols-3 gap-2 h-[46px]">
+                <div className="md:col-span-2 grid grid-cols-2 gap-2 h-[46px]">
                     <div
                         className={`flex items-center justify-center gap-2 border cursor-pointer transition-all ${isVerified ? 'bg-violet-600 border-violet-500 text-black' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-violet-900'}`}
                         onClick={() => setIsVerified(!isVerified)}
@@ -260,13 +258,6 @@ export default function EntityForm({
                     <div className="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 h-full group cursor-pointer" onClick={() => setIsMajor(!isMajor)}>
                         <div className={`w-3 h-3 border ${isMajor ? 'bg-rose-600 border-rose-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
                         <span className={`text-[10px] font-mono uppercase ${isMajor ? 'text-white' : 'text-zinc-500'}`}>Major_Label</span>
-                    </div>
-                    <div
-                        className={`flex items-center gap-3 border px-4 h-full group transition-all ${isMajor ? 'bg-zinc-900 border-zinc-800 cursor-not-allowed opacity-50' : 'bg-zinc-950 border-zinc-800 cursor-pointer'}`}
-                        onClick={() => !isMajor && setAllowMirroring(!allowMirroring)}
-                    >
-                        <div className={`w-3 h-3 border ${allowMirroring && !isMajor ? 'bg-violet-600 border-violet-500' : 'bg-transparent border-zinc-700'} transition-colors`} />
-                        <span className={`text-[10px] font-mono uppercase ${allowMirroring && !isMajor ? 'text-white' : 'text-zinc-500'}`}>Mirror_Clearance</span>
                     </div>
                 </div>
             </div>
@@ -289,7 +280,7 @@ export default function EntityForm({
                                     type="individual"
                                     value={member.memberId}
                                     onSelect={(entity) => updateMember(i, 'memberId', entity?.id || '')}
-                                    placeholder="Search Resident..."
+                                    placeholder="Search Entity..."
                                     entities={entities}
                                 />
                                 <input

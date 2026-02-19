@@ -29,7 +29,7 @@ export default async function ConsolePage({ params }: PageProps) {
                 <Icon icon="lucide:shield-alert" width={48} className="mx-auto text-rose-600" />
                 <h2 className="text-2xl font-black text-white italic uppercase">Access_Denied</h2>
                 <p className="text-zinc-500 text-xs font-mono">Insufficient_Privileges // Sector_Founders_Only</p>
-                <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Resident_Feed</Link>
+                <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Entities_Feed</Link>
             </div>
         );
     }
@@ -123,7 +123,7 @@ export default async function ConsolePage({ params }: PageProps) {
                             <Icon icon="lucide:users" width={20} />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight group-hover:text-violet-500 transition-colors">Resident_Control</h3>
+                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight group-hover:text-violet-500 transition-colors">Entities_Control</h3>
                             <p className="text-zinc-500 text-xs mt-2 leading-relaxed">
                                 Manage registered entities, artists, and unit assignments.
                             </p>
@@ -214,7 +214,7 @@ export default async function ConsolePage({ params }: PageProps) {
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-violet-900" />
-                            <span>RESIDENTS: {entities.length}</span>
+                            <span>ENTITIES: {entities.length}</span>
                         </div>
                     </div>
                 </div>

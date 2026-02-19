@@ -236,6 +236,17 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const entityId = `ENT_${nanoid(10)}`;
+
+    // --- Always R2 for Avatar ---
+    let avatarUrl = validated.avatarUrl;
+    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('assets.shimokitan.com'))) {
+        try {
+            avatarUrl = await uploadImageFromUrl(avatarUrl, entityId, 'profile');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+        }
+    }
+
     const slug = slugify(validated.translations?.[0]?.name || entityId);
 
     await db.transaction(async (tx) => {
@@ -243,7 +254,7 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
             id: entityId,
             type: validated.type,
             slug,
-            avatarUrl: validated.avatarUrl || null,
+            avatarUrl: avatarUrl || null,
             circuit: validated.circuit,
             isMajor: validated.isMajor,
             isVerified: validated.isVerified,
@@ -347,11 +358,21 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
+    // --- Always R2 for Avatar ---
+    let avatarUrl = validated.avatarUrl;
+    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('assets.shimokitan.com'))) {
+        try {
+            avatarUrl = await uploadImageFromUrl(avatarUrl, id, 'profile');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+        }
+    }
+
     await db.transaction(async (tx) => {
         await tx.update(schema.entities)
             .set({
                 type: validated.type,
-                avatarUrl: validated.avatarUrl || null,
+                avatarUrl: avatarUrl || null,
                 circuit: validated.circuit,
                 isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
@@ -426,7 +447,6 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
             specs: validated.specs,
             isMajor: validated.isMajor,
             isVerified: validated.isVerified,
-            allowMirroring: validated.allowMirroring,
         });
 
         // Link Verification if provided
@@ -533,7 +553,6 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 specs: validated.specs,
                 isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
-                allowMirroring: validated.allowMirroring,
                 updatedAt: new Date(),
             })
             .where(eq(schema.artifacts.id, id));
@@ -618,15 +637,25 @@ export async function createFullCollection(data: z.infer<typeof collectionSchema
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const collectionId = `COL_${nanoid(10)}`;
+
+    // --- Always R2 for Cover ---
+    let coverImage = validated.coverImage;
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
+        try {
+            coverImage = await uploadImageFromUrl(coverImage, collectionId, 'collection');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+        }
+    }
+
     const slug = slugify(validated.translations?.[0]?.title || collectionId);
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.collections).values({
             id: collectionId,
             slug,
-            coverImage: validated.coverImage || null,
+            coverImage: coverImage || null,
             isMajor: validated.isMajor,
-            allowMirroring: validated.allowMirroring,
             resonance: validated.resonance,
         });
 
@@ -652,12 +681,21 @@ export async function updateFullCollection(id: string, data: z.infer<typeof coll
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
+    // --- Always R2 for Cover ---
+    let coverImage = validated.coverImage;
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
+        try {
+            coverImage = await uploadImageFromUrl(coverImage, id, 'collection');
+        } catch (e) {
+            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
+        }
+    }
+
     await db.transaction(async (tx) => {
         await tx.update(schema.collections)
             .set({
-                coverImage: validated.coverImage || null,
+                coverImage: coverImage || null,
                 isMajor: validated.isMajor,
-                allowMirroring: validated.allowMirroring,
                 resonance: validated.resonance,
                 updatedAt: new Date(),
             })
@@ -883,6 +921,62 @@ export async function deleteZine(id: string) {
     await requireFounder();
     const db = getDb();
     if (db) await db.update(schema.zines).set({ deletedAt: new Date() }).where(eq(schema.zines.id, id));
+    revalidatePath('/[locale]/pedalboard/zines', 'page');
+}
+
+export async function purgeEntity(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.delete(schema.entities).where(eq(schema.entities.id, id));
+    revalidatePath('/[locale]/pedalboard/entities', 'page');
+}
+
+export async function purgeArtifact(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));
+    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+}
+
+export async function purgeCollection(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.delete(schema.collections).where(eq(schema.collections.id, id));
+    revalidatePath('/[locale]/pedalboard/collections', 'page');
+}
+
+export async function purgeZine(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.delete(schema.zines).where(eq(schema.zines.id, id));
+    revalidatePath('/[locale]/pedalboard/zines', 'page');
+}
+
+export async function restoreEntity(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.update(schema.entities).set({ deletedAt: null }).where(eq(schema.entities.id, id));
+    revalidatePath('/[locale]/pedalboard/entities', 'page');
+}
+
+export async function restoreArtifact(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.update(schema.artifacts).set({ deletedAt: null }).where(eq(schema.artifacts.id, id));
+    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+}
+
+export async function restoreCollection(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.update(schema.collections).set({ deletedAt: null }).where(eq(schema.collections.id, id));
+    revalidatePath('/[locale]/pedalboard/collections', 'page');
+}
+
+export async function restoreZine(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (db) await db.update(schema.zines).set({ deletedAt: null }).where(eq(schema.zines.id, id));
     revalidatePath('/[locale]/pedalboard/zines', 'page');
 }
 

@@ -3,13 +3,18 @@
 
 import React from 'react';
 import RegistryTable from '../../components/RegistryTable';
-import { deleteArtifact } from '../../actions';
+import { deleteArtifact, purgeArtifact, restoreArtifact } from '../../actions';
 
-export default function ArtifactRegistry({ data }: { data: any[] }) {
+export default function ArtifactRegistry({ data, isTrash = false }: { data: any[], isTrash?: boolean }) {
     return (
         <RegistryTable
             data={data}
-            onDelete={deleteArtifact}
+            onDelete={isTrash ? purgeArtifact : deleteArtifact}
+            onRestore={isTrash ? restoreArtifact : undefined}
+            deleteProps={isTrash ? {
+                confirmMessage: 'PERMANENT_PURGE_WARNING: THIS_ACTION_CANNOT_BE_REVERSED. CONTINUE?',
+                title: 'PURGE_PERMANENTLY'
+            } : undefined}
             editUrl={(row) => `/pedalboard/artifacts/${row.id}`}
             columns={[
                 { key: 'title', label: 'TITLE_IDENTIFIER', render: (val) => <span className="font-bold text-white uppercase tracking-tight">{val}</span> },

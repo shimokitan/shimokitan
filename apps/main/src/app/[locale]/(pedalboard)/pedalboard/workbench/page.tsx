@@ -30,7 +30,7 @@ export default async function WorkbenchPage({ params }: PageProps) {
                 <Icon icon="lucide:lock" width={48} className="mx-auto text-rose-600" />
                 <h2 className="text-2xl font-black text-white italic uppercase">Workbench_Locked</h2>
                 <p className="text-zinc-500 text-xs font-mono">Signal_Extraction_Unauthorized // Architects_Only</p>
-                <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Resident_Feed</Link>
+                <Link href="/pedalboard" className="inline-block text-rose-500 underline underline-offset-4 text-xs font-black uppercase">Return_To_Entities_Feed</Link>
             </div>
         );
     }

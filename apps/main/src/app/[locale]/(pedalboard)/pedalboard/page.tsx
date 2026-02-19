@@ -267,7 +267,7 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
                             <div className="text-[10px] font-mono text-zinc-700 uppercase mb-4 px-1">Internal_Registry</div>
                             {[
                                 { label: 'Artifact_Pool', icon: 'lucide:package', href: '/pedalboard/artifacts' },
-                                { label: 'Residents', icon: 'lucide:users', href: '/pedalboard/entities' },
+                                { label: 'Entities', icon: 'lucide:users', href: '/pedalboard/entities' },
                                 { label: 'Digital_Tags', icon: 'lucide:tags', href: '/pedalboard/tags' },
                             ].map((item) => (
                                 <Link key={item.label} href={item.href} className="flex items-center gap-3 p-3 text-zinc-500 hover:text-white hover:bg-zinc-950 transition-all group">

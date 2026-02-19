@@ -74,7 +74,7 @@ export default async function CollectionsPage(props: { searchParams: Promise<{ t
                 </div>
 
                 <div className="bg-zinc-950/20 rounded-lg p-1 border border-zinc-900">
-                    <CollectionRegistry data={allCollections} />
+                    <CollectionRegistry data={allCollections} isTrash={isTrash} />
                 </div>
             </section>
         </div>

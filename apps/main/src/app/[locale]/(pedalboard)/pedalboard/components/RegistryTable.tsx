@@ -6,17 +6,22 @@ import { Badge } from '@shimokitan/ui';
 import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
 import DeleteButton from './DeleteButton';
+import RestoreButton from './RestoreButton';
 
 export default function RegistryTable({
     data,
     columns,
     onDelete,
+    deleteProps = {},
+    onRestore,
     editUrl,
     actions = true
 }: {
     data: any[],
     columns: { key: string, label: string, render?: (val: any, row: any) => React.ReactNode }[],
     onDelete?: (id: string) => Promise<any>,
+    deleteProps?: { confirmMessage?: string, title?: string },
+    onRestore?: (id: string) => Promise<any>,
     editUrl?: (row: any) => string,
     actions?: boolean
 }) {
@@ -131,7 +136,8 @@ export default function RegistryTable({
                                                     <Icon icon="lucide:terminal" width={14} />
                                                 </Link>
                                             )}
-                                            {onDelete && <DeleteButton id={row.id} action={onDelete} />}
+                                            {onRestore && <RestoreButton id={row.id} action={onRestore} />}
+                                            {onDelete && <DeleteButton id={row.id} action={onDelete} {...deleteProps} />}
                                         </div>
                                     </td>
                                 )}

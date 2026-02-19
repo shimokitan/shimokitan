@@ -28,8 +28,6 @@ interface BasicInfoSectionProps {
     setIsVerified: (val: boolean) => void;
     isMajor: boolean;
     setIsMajor: (val: boolean) => void;
-    allowMirroring: boolean;
-    setAllowMirroring: (val: boolean) => void;
     lockFlags?: boolean;
 }
 
@@ -51,8 +49,6 @@ export default function BasicInfoSection({
     setIsVerified,
     isMajor,
     setIsMajor,
-    allowMirroring,
-    setAllowMirroring,
     lockFlags = false
 }: BasicInfoSectionProps) {
     return (
@@ -194,14 +190,6 @@ export default function BasicInfoSection({
                             disabled={lockFlags}
                         >
                             <Icon icon="lucide:star" width={14} />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setAllowMirroring(!allowMirroring)}
-                            className={`flex-1 flex items-center justify-center gap-2 border transition-all ${allowMirroring ? 'bg-violet-600 border-violet-600 text-white' : 'bg-transparent border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
-                            title="Allow R2 Proxy Mirroring"
-                        >
-                            <Icon icon="lucide:hard-drive-upload" width={14} />
                         </button>
                     </div>
                 </div>

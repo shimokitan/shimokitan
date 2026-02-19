@@ -178,7 +178,7 @@ export default function HomeClient({
     const entities = initialEntities && initialEntities.length > 0 ? initialEntities : MOCK_ENTITIES;
 
     const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
-    // Resident Registry - No rotation
+    // Entity Registry - No rotation
     const [activeEntity, setActiveEntity] = useState<number>(0);
 
     const [randomFreq, setRandomFreq] = useState<string>("000");
@@ -333,7 +333,7 @@ export default function HomeClient({
             </BentoCard>
 
             {/* 4. Resident Mirroring */}
-            <BentoCard className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4" title="Resident Mirroring" icon="lucide:users">
+            <BentoCard className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4" title="Entity Mirroring" icon="lucide:users">
                 <div className="grid grid-cols-2 gap-2 h-full">
                     {entities.map((entity) => (
                         <Link key={entity.id} href={`/artists/${entity.id}`} className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950">
@@ -367,7 +367,7 @@ export default function HomeClient({
             )}
 
             {/* 6. District Residents List */}
-            <BentoCard className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-2 md:row-start-4 px-2 relative overflow-hidden" title="District Residents" icon="lucide:user-check">
+            <BentoCard className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-2 md:row-start-4 px-2 relative overflow-hidden" title="District Entities" icon="lucide:user-check">
                 <div className="flex flex-col gap-2 h-full py-2">
                     {entities.slice(0, 3).map((entity) => (
                         <Link key={entity.id} href={`/artists/${entity.id}`} className="flex items-center gap-3 p-1.5 rounded bg-zinc-900/40 border border-zinc-800/80 hover:border-violet-500/50 hover:bg-violet-500/5 transition-all group">
