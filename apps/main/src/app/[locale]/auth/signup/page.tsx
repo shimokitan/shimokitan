@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { authClient } from '@/lib/auth-neon/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useState, FormEvent } from 'react';
 import { Icon } from '@iconify/react';
+import { PasswordInput } from '@/components/auth/PasswordInput';
+import { useState, FormEvent } from 'react';
 
 export default function SignUpPage() {
     const router = useRouter();
@@ -40,7 +41,8 @@ export default function SignUpPage() {
                 toast.success('Comm_Link_Established. Awaiting verification.');
             }
         } catch (err: any) {
-            toast.error('System_Critical: Connection to Neon Auth lost.');
+            const errorMessage = err.body?.message || err.message || 'Signal_Corrupted';
+            toast.error(`Census_Failure: ${errorMessage}`);
         } finally {
             setIsPending(false);
         }
@@ -136,12 +138,12 @@ export default function SignUpPage() {
                                     <label className="absolute -top-6 left-0 text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-950 px-2 flex items-center gap-2">
                                         <span className="text-rose-600">03_</span> PASSWORD <span className="text-zinc-700 font-mono text-[9px] hidden sm:inline-block">{'//'} ACCESS_CODE</span>
                                     </label>
-                                    <input
-                                        type="password"
+                                    <PasswordInput
                                         name="password"
                                         required
-                                        className="w-full bg-transparent border-b border-zinc-900 text-lg font-medium text-zinc-100 outline-none focus:border-rose-600 placeholder:text-zinc-700 transition-colors py-2"
+                                        className="border-zinc-900 py-2 text-lg font-medium text-zinc-100 placeholder:text-zinc-700"
                                         placeholder="••••••••"
+                                        accentColor="rose"
                                     />
                                 </div>
                             </div>

@@ -10,11 +10,11 @@ function VerifyEmailContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
-    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+    const [status, setStatus] = useState<'verifying' | 'success' | 'error' | 'waiting'>('verifying');
 
     useEffect(() => {
         async function check() {
-            // 1. Check if we are already authenticated (API might have handled verification and redirected here with cookie)
+            // 1. Check if we are already authenticated
             const { data } = await authClient.getSession();
             if (data?.user) {
                 setStatus('success');
@@ -24,30 +24,25 @@ function VerifyEmailContent() {
                 return;
             }
 
-            // 2. If not authenticated, check for token to perform client-side verification
+            // 2. If no session, check for token
             if (token) {
                 try {
                     const { error } = await authClient.verifyEmail({
-                        query: {
-                            token: token
-                        }
+                        query: { token: token }
                     });
 
                     if (error) {
-                        console.error(error);
                         setStatus('error');
                     } else {
                         setStatus('success');
-                        setTimeout(() => {
-                            router.push('/pedalboard');
-                        }, 2000);
+                        setTimeout(() => router.push('/pedalboard'), 2000);
                     }
                 } catch (err) {
                     setStatus('error');
                 }
             } else {
-                // No token and no session -> likely validity error
-                setStatus('error');
+                // No token and no session -> User might have just landed here after signup
+                setStatus('waiting');
             }
         }
 
@@ -103,6 +98,25 @@ function VerifyEmailContent() {
                                     Identity confirmed. Entering sector...
                                 </p>
                             </div>
+                        </div>
+                    )}
+
+                    {status === 'waiting' && (
+                        <div className="space-y-6 animate-in zoom-in-95 duration-300">
+                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 mx-auto flex items-center justify-center text-rose-600 mb-6">
+                                <Icon icon="lucide:mail" width={32} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">
+                                    AWAIT_SIGNAL
+                                </h2>
+                                <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mt-4 px-8 leading-relaxed">
+                                    Check your comm-link inbox for the verification sequence.
+                                </p>
+                            </div>
+                            <Link href="/auth/signin" className="inline-block pt-4 border-b border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-colors">
+                                Return_To_Base
+                            </Link>
                         </div>
                     )}
 

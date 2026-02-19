@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { authClient } from '@/lib/auth-neon/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { PasswordInput } from '@/components/auth/PasswordInput';
 import { useState, FormEvent, Suspense } from 'react';
 
 function SignInContent() {
@@ -35,7 +36,9 @@ function SignInContent() {
                 router.push(callbackURL);
             }
         } catch (err: any) {
-            toast.error('System_Critical: Connection to Neon Auth lost.');
+            // Extract meaningful error message from Better Auth / Neon Auth exception
+            const errorMessage = err.body?.message || err.message || 'Signal_Corrupted';
+            toast.error(`System_Error: ${errorMessage}`);
         } finally {
             setIsPending(false);
         }
@@ -97,12 +100,12 @@ function SignInContent() {
                                 <label className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Password</label>
                                 <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest hidden sm:block">Access_Code</span>
                             </div>
-                            <input
-                                type="password"
+                            <PasswordInput
                                 name="password"
                                 required
-                                className="bg-transparent border-b border-zinc-800 focus:border-violet-600 text-xl py-2 font-medium outline-none text-white placeholder:text-zinc-700 transition-colors w-full"
+                                className="text-xl py-2 text-white placeholder:text-zinc-700"
                                 placeholder="••••••••"
+                                accentColor="violet"
                             />
                         </div>
                     </div>
@@ -120,7 +123,10 @@ function SignInContent() {
                             <Link href="/auth/signup" className="text-zinc-500 text-[10px] font-black italic uppercase hover:text-white transition-colors border-b border-zinc-900 pb-0.5">
                                 [ NO_IDENTIFIER? // REGISTER ]
                             </Link>
-                            <span className="text-[7px] font-mono text-zinc-700 uppercase tracking-widest italic">Sector_TYO_Dist_00</span>
+                            <Link href="/auth/forgot-password" className="text-zinc-600 text-[9px] font-black italic uppercase hover:text-violet-500 transition-colors">
+                                [ LOST_SIGNAL? // RECOVERY ]
+                            </Link>
+                            <span className="text-[7px] font-mono text-zinc-700 uppercase tracking-widest italic pt-2">Sector_TYO_Dist_00</span>
                         </div>
                     </div>
                 </form>
