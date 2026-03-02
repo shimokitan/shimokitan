@@ -10,7 +10,7 @@ import { deleteEntity } from '../actions';
 
 import { isNull, isNotNull } from 'drizzle-orm';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function EntitiesPage(props: { searchParams: Promise<{ trash?: string }> }) {
@@ -71,7 +71,7 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
                     { label: 'Total_Entities', value: allEntities.length, icon: 'lucide:users', color: 'text-white' },
                     { label: 'Major_Circuits', value: allEntities.filter(e => e.circuit === 'major').length, icon: 'lucide:zap', color: 'text-violet-500' },
                     { label: 'Underground', value: allEntities.filter(e => e.circuit === 'underground').length, icon: 'lucide:radio', color: 'text-emerald-500' },
-                    { label: 'Ghost_Signals', value: allEntities.filter(e => e.circuit === 'ghost').length, icon: 'lucide:ghost', color: 'text-zinc-500' },
+                    { label: 'Archived_Signals', value: allEntities.filter(e => e.circuit === 'archived').length, icon: 'lucide:archive', color: 'text-zinc-500' },
                 ].map((stat, i) => (
                     <div key={i} className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-sm flex items-center gap-4 group hover:border-zinc-800 transition-colors">
                         <div className={`p-2 bg-zinc-900/50 rounded-full ${stat.color} bg-opacity-10`}>

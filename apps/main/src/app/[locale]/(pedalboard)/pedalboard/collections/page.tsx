@@ -9,7 +9,7 @@ import CollectionForm from './CollectionForm';
 
 import { isNull, isNotNull } from 'drizzle-orm';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function CollectionsPage(props: { searchParams: Promise<{ trash?: string }> }) {

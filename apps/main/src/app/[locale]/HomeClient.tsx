@@ -16,6 +16,7 @@ type Artifact = {
     score: number | null;
     status: string | null;
     specs: any;
+    videoUrl?: string | null;
 };
 
 type Zine = {
@@ -31,7 +32,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "cowboy-bebop-shard",
         title: "COWBOY BEBOP // THE ASH REGISTRY",
         category: "anime",
-        coverImage: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=1200&q=80",
+        coverImage: null,
         description: "A Jazz-fueled drift through the Martian craters, documented as a series of expensive memories and broken cigarette filters.",
         score: 98,
         status: "the_pit",
@@ -41,7 +42,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "lain-wired",
         title: "SERIAL EXPERIMENTS LAIN // NODE_01",
         category: "anime",
-        coverImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+        coverImage: null,
         description: "No matter where you are, everyone is always connected. The architecture of the Wired documented for the first time.",
         score: 94,
         status: "back_alley",
@@ -51,7 +52,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "lamp-shore",
         title: "LAMP // GHOST ON THE SHORE",
         category: "music",
-        coverImage: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800&q=80",
+        coverImage: null,
         description: "The sound of rain in a 1970s coffee shop in Shibuya. A collection of bossa-nova rhythms and city-pop ghosts.",
         score: 89,
         status: "back_alley",
@@ -61,7 +62,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "fishmans-long",
         title: "FISHMANS // LONG SEASON (98.12.28)",
         category: "music",
-        coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80",
+        coverImage: null,
         description: "A 35-minute suspension of time. The final transmission from the Akasaka Blitz. Pure resonance.",
         score: 96,
         status: "the_pit",
@@ -71,7 +72,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "perfect-blue",
         title: "PERFECT BLUE // IDOL_GLITCH",
         category: "anime",
-        coverImage: "https://images.unsplash.com/photo-1453306458620-5bbef13a5bca?w=800&q=80",
+        coverImage: null,
         description: "The breakdown of identity archived in high-fidelity. Who is the real Mima?",
         score: 92,
         status: "back_alley",
@@ -81,7 +82,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
         id: "casiopea-mint",
         title: "CASIOPEA // MINT JAMS (LIVE)",
         category: "music",
-        coverImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80",
+        coverImage: null,
         description: "Technical perfection documented in a single evening. The definition of the Japanese Fusion frequency.",
         score: 87,
         status: "back_alley",
@@ -130,7 +131,7 @@ const MOCK_ENTITIES = [
         name: "YOASOBI",
         type: "Major_Circuit",
         uid: "UID_SIG_001",
-        avatar: "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
+        avatar: null,
         highlights: ["Racing into the Night", "IDOL"]
     },
     {
@@ -138,7 +139,7 @@ const MOCK_ENTITIES = [
         name: "Lamp",
         type: "Underground_Echo",
         uid: "UID_SIG_042",
-        avatar: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80",
+        avatar: null,
         highlights: ["Ghost on the Shore", "Cool Evening"]
     },
     {
@@ -146,7 +147,7 @@ const MOCK_ENTITIES = [
         name: "ADO",
         type: "Major_Circuit",
         uid: "UID_SIG_077",
-        avatar: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=400&q=80",
+        avatar: null,
         highlights: ["USSEEWA", "GIRA GIRA"]
     },
     {
@@ -154,7 +155,7 @@ const MOCK_ENTITIES = [
         name: "EVE",
         type: "Underground_Echo",
         uid: "UID_SIG_009",
-        avatar: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80",
+        avatar: null,
         highlights: ["Kaikai Kitan", "Dramaturgy"]
     }
 ];
@@ -195,12 +196,19 @@ export default function HomeClient({
             {/* 1. Hero / Asymmetrical Editorial Dossier */}
             <div className="col-span-2 md:col-span-3 md:row-span-3 relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl flex flex-col md:flex-row">
                 {/* Left Side: Visual Archive */}
-                <div className="w-full md:w-2/3 relative h-64 md:h-auto overflow-hidden border-r border-zinc-900">
-                    <img
-                        src={heroArtifact?.coverImage || "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=1200&q=80"}
-                        alt="Magazine Cover"
-                        className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 opacity-50 group-hover:opacity-70"
-                    />
+                <div className="w-full md:w-2/3 relative h-64 md:h-auto overflow-hidden border-r border-zinc-900 bg-zinc-900">
+                    {heroArtifact?.coverImage ? (
+                        <img
+                            src={heroArtifact.coverImage}
+                            alt="Magazine Cover"
+                            className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 opacity-50 group-hover:opacity-70"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-800">
+                            <Icon icon="lucide:image-off" width={48} className="opacity-50" />
+                            <span className="text-[10px] font-mono mt-2 tracking-widest">NO_VISUAL_DATA</span>
+                        </div>
+                    )}
                     {/* Flat Legibility Overlays (No Gradients) */}
                     <div className="absolute inset-x-0 bottom-0 h-24 bg-zinc-950/80 backdrop-blur-sm p-6 flex flex-col justify-end">
                         <div className="flex items-center gap-2 mb-2">
@@ -265,7 +273,13 @@ export default function HomeClient({
                                 }}
                             >
                                 <div className="bg-white p-1.5 md:p-2 rounded-lg shadow-2xl border-2 border-zinc-800 w-28 sm:w-32 md:w-40 text-black">
-                                    <img src={item.coverImage || undefined} alt={item.title} className="w-full h-24 md:h-32 object-cover rounded" />
+                                    {item.coverImage ? (
+                                        <img src={item.coverImage} alt={item.title} className="w-full h-24 md:h-32 object-cover rounded" />
+                                    ) : (
+                                        <div className="w-full h-24 md:h-32 bg-zinc-200 rounded flex items-center justify-center border border-dashed border-zinc-400">
+                                            <Icon icon="lucide:image-off" width={24} className="text-zinc-400" />
+                                        </div>
+                                    )}
                                     <div className="mt-1.5 text-[9px] md:text-[10px] font-bold truncate">{item.title}</div>
                                     <Badge variant="distortion" className="text-[8px] mt-1">{item.category}</Badge>
                                 </div>
@@ -337,7 +351,13 @@ export default function HomeClient({
                 <div className="grid grid-cols-2 gap-2 h-full">
                     {entities.map((entity) => (
                         <Link key={entity.id} href={`/artists/${entity.id}`} className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950">
-                            <img src={entity.avatar} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                            {entity.avatar ? (
+                                <img src={entity.avatar} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-950 text-zinc-800">
+                                    <Icon icon="lucide:user" width={32} />
+                                </div>
+                            )}
                             <div className="absolute inset-0 bg-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/60 backdrop-blur-sm transform translate-y-full group-hover:translate-y-0 transition-transform">
                                 <div className="text-[6px] font-black text-white uppercase text-center truncate">{entity.name}</div>
@@ -352,8 +372,15 @@ export default function HomeClient({
                 <Link href={`/artifacts/${featuredArtifact.id}`} className="col-span-1 md:col-span-1 md:row-span-2 md:col-start-1 md:row-start-4">
                     <BentoCard className="h-full" title={dict.home.in_the_pit} icon="lucide:flame">
                         <div className="flex flex-col h-full">
-                            <div className="relative flex-1 rounded-lg overflow-hidden mb-2">
-                                <img src={featuredArtifact.coverImage || undefined} className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500" />
+                            <div className="relative flex-1 rounded-lg overflow-hidden mb-2 bg-zinc-950">
+                                {featuredArtifact.coverImage ? (
+                                    <img src={featuredArtifact.coverImage} className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800">
+                                        <Icon icon="lucide:image-off" width={32} />
+                                        <span className="text-[8px] font-mono mt-1 tracking-widest">NO_VISUAL_DATA</span>
+                                    </div>
+                                )}
                                 {/* Solid Flat Overlay */}
                                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-zinc-950/60 flex flex-col justify-end p-2">
                                     <div className="text-[6px] font-mono text-rose-500 uppercase tracking-tighter">High_Resonance // 0.96</div>
@@ -371,9 +398,13 @@ export default function HomeClient({
                 <div className="flex flex-col gap-2 h-full py-2">
                     {entities.slice(0, 3).map((entity) => (
                         <Link key={entity.id} href={`/artists/${entity.id}`} className="flex items-center gap-3 p-1.5 rounded bg-zinc-900/40 border border-zinc-800/80 hover:border-violet-500/50 hover:bg-violet-500/5 transition-all group">
-                            <div className="w-10 h-10 shrink-0 relative">
-                                <img src={entity.avatar} className="w-full h-full object-cover rounded grayscale group-hover:grayscale-0 transition-all shadow-lg" />
-                                <div className="absolute -top-1 -right-1 bg-emerald-500 w-2 h-2 rounded-full border border-black" />
+                            <div className="w-10 h-10 shrink-0 relative bg-zinc-900 rounded border border-zinc-800 shadow-lg overflow-hidden flex items-center justify-center text-zinc-700">
+                                {entity.avatar ? (
+                                    <img src={entity.avatar} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                                ) : (
+                                    <Icon icon="lucide:user" width={16} />
+                                )}
+                                <div className="absolute -top-1 -right-1 bg-emerald-500 w-2 h-2 rounded-full border border-black z-10" />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="text-[9px] font-black text-white uppercase italic tracking-tighter group-hover:text-violet-400 truncate">{entity.name}</div>
@@ -395,18 +426,27 @@ export default function HomeClient({
 
             {/* 8. Video */}
             <BentoCard className="col-span-2 md:col-span-2 md:row-span-4 md:col-start-4 md:row-start-4 overflow-hidden p-0 bg-black" minimal>
-                <iframe
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                    className="w-full h-full border-0"
-                    allowFullScreen
-                />
+                {featuredArtifact?.videoUrl ? (
+                    <iframe
+                        src={featuredArtifact.videoUrl}
+                        className="w-full h-full border-0"
+                        allowFullScreen
+                    />
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800 bg-zinc-950">
+                        <Icon icon="lucide:video-off" width={48} className="opacity-50" />
+                        <span className="text-[10px] font-mono mt-2 tracking-widest">NO_VIDEO_SIGNAL</span>
+                    </div>
+                )}
             </BentoCard>
 
             {/* 9. Editorial */}
             <BentoCard className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0" minimal>
                 <div className="flex h-full w-full">
-                    <div className="w-1/2 relative hidden md:block">
-                        <img src={heroArtifact?.coverImage || undefined} className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:opacity-60 transition-opacity" />
+                    <div className="w-1/2 relative hidden md:block bg-zinc-900">
+                        {heroArtifact?.coverImage && (
+                            <img src={heroArtifact.coverImage} className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:opacity-60 transition-opacity" />
+                        )}
                         {/* Shard Overlay - Sharp Split */}
                         <div className="absolute right-0 top-0 bottom-0 w-8 bg-zinc-950" />
                     </div>

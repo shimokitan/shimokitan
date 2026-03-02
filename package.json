@@ -7,22 +7,17 @@
         "packages/*"
     ],
     "scripts": {
-        "build": "turbo build",
-        "dev": "turbo dev",
-        "lint": "turbo lint",
-        "type-check": "turbo type-check",
-        "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-        "deploy:main": "turbo run deploy:cf --filter=main"
+        "sync-env": "bun -e \"import fs from 'node:fs'; fs.copyFileSync('.env.local', 'apps/main/.env.local')\"",
+        "build": "bun run sync-env && bun x turbo build",
+        "dev": "bun run sync-env && bun x turbo dev",
+        "lint": "bun run sync-env && bun x turbo lint",
+        "type-check": "bun run sync-env && bun x turbo type-check",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {
-        "@opennextjs/cloudflare": "^1.16.5",
+        "@types/node": "^20",
         "prettier": "^3.4.2",
         "turbo": "^2.3.3",
-        "typescript": "^5.7.3",
-        "wrangler": "^4.65.0"
-    },
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.992.0",
-        "@aws-sdk/s3-request-presigner": "^3.992.0"
+        "typescript": "^5.7.3"
     }
 }

@@ -5,7 +5,8 @@ import { Icon } from '@iconify/react';
 import { getDb, schema, desc, isNull } from '@shimokitan/db';
 import Link from '@/components/Link';
 import VerificationRegistry from './components/VerificationRegistry';
-import { deleteVerification, ensureUserSync } from '../actions';
+import { deleteVerification } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function VerificationsPage() {

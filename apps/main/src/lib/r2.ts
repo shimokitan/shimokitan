@@ -1,13 +1,44 @@
 
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { storagePaths, nanoid } from '@shimokitan/utils';
+import { Buffer } from 'node:buffer';
 
 // Helper to get R2 domain
-const R2_DOMAIN = process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://assets.shimokitan.com';
+const R2_DOMAIN = process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://cdn.shimokitan.live';
+
+// S3 Client for R2 initialization
+let s3Client: S3Client | null = null;
 
 /**
- * Uploads an image from a URL to R2, processing it with Sharp.
- * Returns the public URL of the uploaded asset.
+ * Internal helper to get the S3 Client for Cloudflare R2.
+ */
+function getS3Client() {
+    if (s3Client) return s3Client;
+
+    const endpoint = process.env.R2_ENDPOINT;
+    const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+
+    if (!endpoint || !accessKeyId || !secretAccessKey) {
+        throw new Error("R2_CONFIG_MISSING: Ensure R2_ENDPOINT, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY are defined.");
+    }
+
+    s3Client = new S3Client({
+        region: "auto",
+        endpoint: endpoint,
+        credentials: {
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey,
+        },
+    });
+
+    return s3Client;
+}
+
+/**
+ * Uploads an image from a URL to R2.
+ * Mirror-or-Bust: All external assets must be mirrored to our internal storage.
+ * returns the public URL of the uploaded asset.
  */
 export async function uploadImageFromUrl(
     url: string,
@@ -15,31 +46,19 @@ export async function uploadImageFromUrl(
     type: 'artifact' | 'zine' | 'profile' | 'collection' = 'artifact'
 ): Promise<string> {
     try {
-        console.log(`[R2] Processing image from: ${url}`);
-
-        // 1. Fetch the image
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+        if (!response.ok) throw new Error(`FETCH_FAILED: External source returned ${response.status}`);
 
         const arrayBuffer = await response.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
+        const contentType = response.headers.get('content-type') || 'image/webp';
 
-        // 2. Validation
-        const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB limit
         if (buffer.length > MAX_SIZE) {
-            throw new Error(`FILE_TOO_LARGE: Image must be under 2MB (Current: ${(buffer.length / 1024 / 1024).toFixed(2)}MB)`);
+            throw new Error(`FILE_TOO_LARGE: Asset must be under 10MB (Detected: ${(buffer.length / 1024 / 1024).toFixed(2)}MB)`);
         }
 
-        const contentType = response.headers.get('content-type');
-        const allowedTypes = ['image/webp', 'image/jpeg', 'image/png'];
-        if (!contentType || !allowedTypes.includes(contentType)) {
-            throw new Error(`INVALID_FORMAT: Supported formats: WebP, JPEG, PNG (Detected: ${contentType})`);
-        }
-
-        const processedBuffer = buffer;
-
-        // 3. Generate Path
-        const extension = contentType?.split('/').pop() || 'webp';
+        const extension = contentType.split('/').pop()?.split('+')[0] || 'webp';
         const filename = `${nanoid()}.${extension}`;
         let key = '';
 
@@ -52,55 +71,41 @@ export async function uploadImageFromUrl(
         } else if (type === 'collection') {
             key = storagePaths.collectionImage(contextId, filename);
         } else {
-            throw new Error('Invalid upload context type');
+            throw new Error('INVALID_CONTEXT: Unknown upload type');
         }
 
-        // 4. Upload to R2 via Binding
-        // In OpenNext/Cloudflare, we access bindings via getCloudflareContext
-        const { env } = await getCloudflareContext();
-        const bucket = (env as any).MY_BUCKET;
+        await uploadFileToR2(buffer, key, contentType);
 
-        if (!bucket) {
-            throw new Error("MY_BUCKET binding not found in Cloudflare context");
-        }
-
-        await bucket.put(key, processedBuffer, {
-            httpMetadata: {
-                contentType: contentType || 'image/webp',
-            }
-        });
-
-        console.log(`[R2] Uploaded to: ${key}`);
-
-        // 5. Return Public URL
         return `${R2_DOMAIN}/${key}`;
 
     } catch (error) {
-        console.error('[R2] Upload failed:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('[R2_MIRROR_FAILURE]', error);
+        }
         throw error;
     }
 }
 
 /**
- * Uploads a raw file/buffer to R2 via binding.
+ * Uploads a raw file/buffer to R2 via S3 SDK.
  */
 export async function uploadFileToR2(
     file: Buffer | ArrayBuffer | string,
     key: string,
     contentType: string = 'image/webp'
 ): Promise<string> {
-    const { env } = await getCloudflareContext();
-    const bucket = (env as any).MY_BUCKET;
+    const client = getS3Client();
+    const bucketName = process.env.R2_BUCKET_NAME || 'shimokitan';
+    const body = Buffer.isBuffer(file) ? file : Buffer.from(file as any);
 
-    if (!bucket) {
-        throw new Error("MY_BUCKET binding not found in Cloudflare context");
-    }
-
-    await bucket.put(key, file, {
-        httpMetadata: {
-            contentType,
-        }
+    const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
     });
+
+    await client.send(command);
 
     return `${R2_DOMAIN}/${key}`;
 }

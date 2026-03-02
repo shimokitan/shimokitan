@@ -3,7 +3,7 @@
 
 import React from 'react';
 import RegistryTable from '../../components/RegistryTable';
-import { deleteArtifact, purgeArtifact, restoreArtifact } from '../../actions';
+import { deleteArtifact, purgeArtifact, restoreArtifact } from '../../actions/artifacts';
 
 export default function ArtifactRegistry({ data, isTrash = false }: { data: any[], isTrash?: boolean }) {
     return (

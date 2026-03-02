@@ -4,7 +4,7 @@
 import React, { useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
-import { createFullArtifact, updateFullArtifact } from '../actions';
+import { createFullArtifact, updateFullArtifact } from '../actions/artifacts';
 import { toast } from 'sonner';
 
 import { Icon } from '@iconify/react';

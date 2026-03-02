@@ -1,20 +1,16 @@
 
 import React from 'react';
 import { getDb, schema, eq } from '@shimokitan/db';
-import { ensureUserSync } from '../../actions';
+import { ensureUserSync } from '../../auth-helpers';
 import ProfileForm from './ProfileForm';
 import { redirect } from 'next/navigation';
 
 export default async function ProfileEditPage() {
-    console.log('[DEBUG] Accessing ProfileEditPage');
     const user = await ensureUserSync();
 
     if (!user) {
-        console.log('[DEBUG] No User - Redirecting to signin');
         redirect('/auth/signin?callbackUrl=/pedalboard/profile/edit');
     }
-
-    console.log('[DEBUG] User Found:', user.email);
 
     const db = getDb();
     if (!db) return <div>DB OFF</div>;
@@ -23,10 +19,7 @@ export default async function ProfileEditPage() {
         where: eq(schema.users.id, user.id),
     });
 
-    console.log('[DEBUG] Profile Found:', !!userProfile);
-
     if (!userProfile) {
-        console.log('[DEBUG] Profile Missing - Redirecting back to pedalboard');
         redirect('/pedalboard');
     }
 

@@ -41,7 +41,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                     <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">District // Artist_Registry</span>
                 </div>
                 <h1 className="text-5xl font-black italic tracking-tighter uppercase line-height-[0.8] mb-4">
-                    The <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-rose-500">Inhabitants.</span>
+                    The <span className="text-transparent bg-clip-text bg-linear-to-r from-violet-500 to-rose-500">Inhabitants.</span>
                 </h1>
                 <p className="text-zinc-500 max-w-xl text-xs uppercase font-mono tracking-tight">
                     The architects of the district's resonance. Creators, agencies, and circles operating within the analog shadows.
@@ -85,11 +85,18 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 p-1 transform group-hover:-rotate-3 transition-transform duration-500">
-                                <img
-                                    src={entity.avatarUrl || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${entity.id}`}
-                                    alt={entity.name}
-                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                                />
+                                {entity.avatarUrl ? (
+                                    <img
+                                        src={entity.avatarUrl}
+                                        alt={entity.name}
+                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-700">
+                                        <div className="w-2 h-2 bg-zinc-800 rounded-full mb-1" />
+                                        <span className="text-[6px] font-mono tracking-tighter">NO_SIGNAL</span>
+                                    </div>
+                                )}
                             </div>
                             <div className="flex flex-col flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5 mb-1">
@@ -119,7 +126,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
             </div>
             {filteredEntities.length === 0 && (
                 <div className="py-20 text-center border border-dashed border-zinc-900">
-                    <span className="text-zinc-700 font-mono text-xs uppercase uppercase">No artists matching the current frequency.</span>
+                    <span className="text-zinc-700 font-mono text-xs uppercase">No artists matching the current frequency.</span>
                 </div>
             )}
         </div>

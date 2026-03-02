@@ -43,7 +43,6 @@ export default function EntityForm({
 
     const [avatarUrl, setAvatarUrl] = useState(initialData?.avatarUrl || '');
     const [circuit, setCircuit] = useState(initialData?.circuit || 'underground');
-    const [profileType, setProfileType] = useState(initialData?.profileType || 'professional');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
 
@@ -90,7 +89,6 @@ export default function EntityForm({
                 type: type,
                 avatarUrl: avatarUrl,
                 circuit: circuit,
-                profileType: profileType,
                 isMajor: circuit === 'major' || isMajor,
                 isVerified,
                 socialLinks: cleanSocials,
@@ -107,7 +105,7 @@ export default function EntityForm({
             }
 
             router.refresh();
-            if (initialData?.id) router.push('/pedalboard/entities');
+            router.push('/pedalboard/entities');
         } catch (e) {
             console.error(e);
             alert(`Failed to ${initialData?.id ? 'update' : 'create'} entity`);
@@ -210,28 +208,10 @@ export default function EntityForm({
                                 >
                                     <option value="underground">UNDERGROUND_ECHO</option>
                                     <option value="major">MAJOR_CIRCUIT</option>
-                                    <option value="ghost">GHOST_SIGNAL</option>
+                                    <option value="archived">ARCHIVED_SIGNAL</option>
                                 </select>
                             </div>
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-mono uppercase text-zinc-400">Profile_Context</label>
-                                <div className="grid grid-cols-2 gap-2 h-[46px]">
-                                    <button
-                                        type="button"
-                                        onClick={() => setProfileType('professional')}
-                                        className={`text-[10px] font-black uppercase border transition-all ${profileType === 'professional' ? 'bg-white text-black border-white' : 'bg-transparent text-zinc-500 border-zinc-800'}`}
-                                    >
-                                        Professional
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setProfileType('social')}
-                                        className={`text-[10px] font-black uppercase border transition-all ${profileType === 'social' ? 'bg-white text-black border-white' : 'bg-transparent text-zinc-500 border-zinc-800'}`}
-                                    >
-                                        Social
-                                    </button>
-                                </div>
-                            </div>
+
 
                             <div className="space-y-4 pt-4">
                                 <div className="space-y-1">
@@ -299,7 +279,7 @@ export default function EntityForm({
                         ))}
                         {members.length === 0 && (
                             <div className="col-span-full border border-zinc-900 border-dashed p-8 text-center">
-                                <span className="text-[10px] font-mono text-zinc-600 uppercase">NO_MEMBERS_ASSIGNED // Unit is a ghost vessel.</span>
+                                <span className="text-[10px] font-mono text-zinc-600 uppercase">NO_MEMBERS_ASSIGNED // Unit is an archived vessel.</span>
                             </div>
                         )}
                     </div>

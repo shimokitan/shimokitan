@@ -11,7 +11,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
   const db = getDb();
 
   if (!db) {
-    console.warn("Database initialization failed - db is null");
+    if (process.env.NODE_ENV !== 'production') console.warn("Database initialization failed - db is null");
     return <div>DB_CONNECTION_ERROR</div>;
   }
 
@@ -20,7 +20,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
     const testQuery = await db.execute(sql`SELECT 1`);
 
   } catch (e: any) {
-    console.error("Diagnostic SQL check failed:", e.message);
+    if (process.env.NODE_ENV !== 'production') console.error("Diagnostic SQL check failed:", e.message);
   }
 
   // 1. Fetch Spotlight Artifacts (Highest Score)
@@ -45,7 +45,7 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
 
 
   } catch (e: any) {
-    console.error("Spotlight Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== 'production') console.error("Spotlight Fetch Failed:", e.message);
   }
 
   // 2. Fetch Recent Zines + their related artifacts
@@ -78,30 +78,46 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
     }));
 
   } catch (e: any) {
-    console.error("Zines Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== 'production') console.error("Zines Fetch Failed:", e.message);
   }
 
   // 3. Featured Artifact (The one in "The Pit")
-  let featuredArtifact = null;
+  let featuredArtifact: any = null;
   try {
     const rawFeatured = await db.query.artifacts.findFirst({
       where: eq(schema.artifacts.status, 'the_pit'),
       orderBy: [desc(schema.artifacts.createdAt)],
       with: {
-        translations: true
+        translations: true,
+        resources: true
       }
     });
 
     if (rawFeatured) {
+      let videoUrl = null;
+      const primaryVideo = rawFeatured.resources?.find((r: any) => r.type === 'video' || r.platform === 'youtube');
+      if (primaryVideo) {
+        if (primaryVideo.value.includes('youtube.com/watch?v=')) {
+          const vId = primaryVideo.value.split('v=')[1]?.split('&')[0];
+          videoUrl = `https://www.youtube.com/embed/${vId}`;
+        } else if (primaryVideo.value.includes('youtu.be/')) {
+          const vId = primaryVideo.value.split('youtu.be/')[1]?.split('?')[0];
+          videoUrl = `https://www.youtube.com/embed/${vId}`;
+        } else {
+          videoUrl = primaryVideo.value;
+        }
+      }
+
       featuredArtifact = {
         ...rawFeatured,
         title: rawFeatured.translations?.[0]?.title || "Untitled",
-        description: rawFeatured.translations?.[0]?.description || ""
+        description: rawFeatured.translations?.[0]?.description || "",
+        videoUrl: videoUrl
       };
     }
 
   } catch (e: any) {
-    console.error("Featured Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== 'production') console.error("Featured Fetch Failed:", e.message);
   }
 
   // 4. Fetch Entities (Lifeforms)
@@ -120,12 +136,12 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       name: e.translations?.[0]?.name || "Anonymous Entity",
       type: e.circuit === 'major' ? "Major_Circuit" : "Underground_Echo",
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
-      avatar: e.avatarUrl || "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
+      avatar: e.avatarUrl || null,
       highlights: [] // We could fetch credits here if needed
     }));
 
   } catch (e: any) {
-    console.error("Entities Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== 'production') console.error("Entities Fetch Failed:", e.message);
   }
 
   return (

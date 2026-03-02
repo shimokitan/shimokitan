@@ -3,10 +3,15 @@ import React, { Suspense } from 'react';
 import { getDb, schema } from '@shimokitan/db';
 import NewArtifactTerminal from './NewArtifactTerminal';
 import { isNull } from 'drizzle-orm';
-import { auth } from '@/lib/auth-neon/server';
+import { ensureUserSync } from '../../auth-helpers';
+import { redirect } from 'next/navigation';
 
 export default async function NewArtifactPage() {
-    const { data: session } = await auth.getSession();
+    const user = await ensureUserSync();
+    if (!user || (user.role !== 'founder' && user.role !== 'architect')) {
+        redirect('/pedalboard');
+    }
+
     const db = getDb();
     if (!db) return <div>DB OFF</div>;
 
@@ -24,10 +29,6 @@ export default async function NewArtifactPage() {
         type: e.type,
         avatarUrl: e.avatarUrl
     }));
-
-    const user = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.id, session?.user?.id || ''),
-    });
 
     return (
         <div className="max-w-4xl mx-auto py-12">

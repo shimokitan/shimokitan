@@ -6,61 +6,18 @@ import { getEntityById } from '@shimokitan/db';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-const MOCK_ENTITIES_DATA: Record<string, any> = {
-    "yoasobi-signal": {
-        id: "yoasobi-signal",
-        type: "individual",
-        avatarUrl: "https://images.unsplash.com/photo-1514525253361-9f7a83707e4d?w=400&q=80",
-        isMajor: true,
-        isVerified: true,
-        translations: [{ locale: "en", name: "YOASOBI", bio: "A 'novel-into-music' unit composed of composer Ayase and vocalist ikura. Documenting the intersection of fiction and resonance in the digital district." }],
-        socialLinks: [{ platform: "Twitter", url: "https://twitter.com/yoasobi_staff" }, { platform: "YouTube", url: "https://youtube.com/yoasobi" }],
-        credits: [
-            { role: "Composer", artifact: { id: "racing-night", title: "Racing into the Night", category: "music", coverImage: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&q=80", score: 98, status: "the_pit" } },
-            { role: "Vocal", artifact: { id: "idol-shard", title: "IDOL // OSHI NO KO", category: "music", coverImage: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=800&q=80", score: 94, status: "the_pit" } }
-        ]
-    },
-    "lamp-signal": {
-        id: "lamp-signal",
-        type: "circle",
-        avatarUrl: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=400&q=80",
-        isMajor: false,
-        isVerified: true,
-        translations: [{ locale: "en", name: "Lamp", bio: "Formed in 2000. ARCHIVE_NOTE: Their sound is a complex layering of bossa nova, 60s pop, and the humidity of a Tokyo summer evening." }],
-        socialLinks: [{ platform: "Instagram", url: "#" }],
-        credits: [
-            { role: "Ensemble", artifact: { id: "lamp-shore", title: "GHOST ON THE SHORE", category: "music", coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80", score: 92, status: "back_alley" } }
-        ]
-    },
-    "ado-signal": {
-        id: "ado-signal",
-        type: "individual",
-        avatarUrl: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=400&q=80",
-        isMajor: true,
-        isVerified: true,
-        translations: [{ locale: "en", name: "ADO", bio: "The silhouette of a new era. A vocal powerhouse mirroring the frustration and energy of the underground through a major-circuit lens." }],
-        socialLinks: [{ platform: "YouTube", url: "#" }],
-        credits: [
-            { role: "Vocal", artifact: { id: "usseewa-shard", title: "USSEEWA", category: "music", coverImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80", score: 99, status: "the_pit" } }
-        ]
-    }
-};
+
 
 export default async function ArtistPage(props: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await props.params;
 
     let entity: any = null;
 
-    // 1. Check Mock Data First
-    if (MOCK_ENTITIES_DATA[id]) {
-        entity = MOCK_ENTITIES_DATA[id];
-    } else {
-        // 2. Try Database with Safety
-        try {
-            entity = await getEntityById(id);
-        } catch (error) {
-            console.error(`SCANNER_ERROR: Failed to retrieve data for entity ${id}. Using ghost-link fallback.`);
-        }
+    // 1. Try Database with Safety
+    try {
+        entity = await getEntityById(id);
+    } catch (error) {
+        console.error(`SCANNER_ERROR: Failed to retrieve data for entity ${id}.`);
     }
 
     if (!entity) {
@@ -81,16 +38,23 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
 
                 {/* 1. Profile Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-950 border-y border-zinc-800 p-4 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-white/[0.01] -skew-x-12 translate-x-1/2 pointer-events-none" />
+                    <div className="absolute inset-0 bg-white/1 -skew-x-12 translate-x-1/2 pointer-events-none" />
 
                     <div className="flex items-center gap-6 z-10">
                         <div className="relative">
                             <div className="w-20 h-20 bg-zinc-900 border border-zinc-800 p-1 transform -rotate-3 overflow-hidden">
-                                <img
-                                    src={entity.avatarUrl || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${entity.id}`}
-                                    alt={name}
-                                    className="w-full h-full object-cover grayscale"
-                                />
+                                {entity.avatarUrl ? (
+                                    <img
+                                        src={entity.avatarUrl}
+                                        alt={name}
+                                        className="w-full h-full object-cover grayscale"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-700">
+                                        <div className="w-2 h-2 bg-zinc-800 rounded-full mb-1" />
+                                        <span className="text-[6px] font-mono tracking-tighter">NO_SIGNAL</span>
+                                    </div>
+                                )}
                                 <div className="absolute inset-0 bg-violet-500/10 mix-blend-overlay" />
                             </div>
                             {entity.isVerified && (
@@ -174,12 +138,19 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
 
                                     return (
                                         <Link key={i} href={`/artifacts/${artifact.id}`} className="group relative block bg-zinc-950 border border-zinc-900 hover:border-violet-500/30 transition-all duration-500 overflow-hidden">
-                                            <div className="aspect-[21/9] relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
-                                                <img
-                                                    src={artifact.coverImage || '/placeholder.png'}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                                            <div className="aspect-21/9 relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                                                {artifact.coverImage ? (
+                                                    <img
+                                                        src={artifact.coverImage}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-800">
+                                                        <Icon icon="lucide:image-off" width={24} />
+                                                        <span className="text-[8px] font-mono mt-1">NO_VISUAL_DATA</span>
+                                                    </div>
+                                                )}
+                                                <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-80" />
 
                                                 <div className="absolute bottom-2 left-3 right-3">
                                                     <div className="text-[8px] text-violet-500 font-black uppercase tracking-widest mb-1">{credit.role}</div>

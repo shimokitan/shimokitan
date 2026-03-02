@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { isNull, schema as dbSchema, getDb } from '@shimokitan/db';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 import { desc } from '@shimokitan/db';
 
@@ -54,7 +54,7 @@ export default async function WorkbenchPage({ params }: PageProps) {
         <div className="space-y-10 animate-in fade-in duration-500">
             <header className="flex justify-between items-end border-b border-zinc-900 pb-8">
                 <div>
-                    <h2 className="text-3xl font-black italic uppercase italic tracking-tighter text-white">Artist_Workbench</h2>
+                    <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Artist_Workbench</h2>
                     <p className="text-zinc-500 text-[10px] font-mono tracking-[0.2em] uppercase mt-1">Creation & Deployment Monitor</p>
                 </div>
                 <Link href="/pedalboard/artifacts/new" className="bg-rose-600 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-rose-500 transition-all flex items-center gap-2">

@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { isNull, isNotNull, schema as dbSchema, getDb } from '@shimokitan/db';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 import { desc } from '@shimokitan/db';
 

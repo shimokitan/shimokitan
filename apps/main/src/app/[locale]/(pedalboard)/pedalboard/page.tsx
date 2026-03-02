@@ -6,7 +6,7 @@ import { isNull, schema as dbSchema, getDb } from '@shimokitan/db';
 import Link from '@/components/Link';
 import { auth } from '@/lib/auth-neon/server';
 import { RequestAccessButton } from './_components/RequestAccessButton';
-import { ensureUserSync } from './actions';
+import { ensureUserSync } from './auth-helpers';
 import { redirect } from 'next/navigation';
 import { getOptimizedImageUrl } from '@shimokitan/utils';
 import { desc, and } from '@shimokitan/db';

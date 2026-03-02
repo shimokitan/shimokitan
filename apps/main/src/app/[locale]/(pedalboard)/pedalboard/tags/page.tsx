@@ -1,11 +1,14 @@
 
+
+
 import React from 'react';
 export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { getDb, schema, desc, eq } from '@shimokitan/db';
 import Link from '@/components/Link';
 import TagRegistry from './components/TagRegistry';
-import { deleteTag, ensureUserSync } from '../actions';
+import { deleteTag } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function TagsPage() {

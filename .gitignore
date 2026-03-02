@@ -17,6 +17,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+shimokitan-template
+
 # Testing
 coverage
 

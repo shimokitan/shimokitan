@@ -9,7 +9,7 @@ import ZineForm from './ZineForm';
 
 import { isNull, isNotNull } from 'drizzle-orm';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function ZinesPage(props: { searchParams: Promise<{ trash?: string }> }) {

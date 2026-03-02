@@ -1,10 +1,9 @@
 'use server';
 
-import { auth } from '@/lib/auth-neon/server';
 import { getDb, schema, eq, sql } from '@shimokitan/db';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
-import { slugify } from '@shimokitan/utils';
+import { slugify, generateStoragePath } from '@shimokitan/utils';
 import {
     entitySchema,
     artifactSchema,
@@ -14,121 +13,8 @@ import {
     verificationSchema
 } from '@/lib/validations/pedalboard';
 import { z } from 'zod';
-import { generateStoragePath } from '@shimokitan/utils';
 import { uploadFileToR2, uploadImageFromUrl } from '@/lib/r2';
-
-// --- AUTH HELPERS ---
-async function requireUser() {
-    const user = await ensureUserSync();
-    if (!user) throw new Error('Unauthorized_Signal: Identity_Lost');
-    return user;
-}
-
-async function requireArchitect() {
-    const user = await requireUser();
-    if (user.role !== 'architect' && user.role !== 'founder') {
-        throw new Error('Forbidden_Signal: Architects_Only');
-    }
-    return user;
-}
-
-async function requireFounder() {
-    const user = await requireUser();
-    if (user.role !== 'founder') {
-        throw new Error('Forbidden_Signal: Founders_Only');
-    }
-    return user;
-}
-
-// --- AUTH & RBAC ---
-
-export async function ensureUserSync() {
-    let session;
-    try {
-        const result = await auth.getSession();
-        session = result.data;
-    } catch (e) {
-        console.error("Auth Session Error in ensureUserSync:", e);
-        return null; // Assume unauthorized if session check fails violently
-    }
-
-    if (!session?.user) return null;
-
-    const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-
-    const userId = session.user.id;
-    const userEmail = session.user.email;
-    const userName = session.user.name;
-    const userImage = session.user.image;
-
-    try {
-        // 1. Try to find the user by ID first (Fast Path)
-        const existingById = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.id, userId)
-        });
-
-        if (existingById) {
-            // Sync email/name/image if changed on provider side and user hasn't customized them?
-            // For now, just sync email and basic info if missing
-            const updateObj: any = {};
-            if (existingById.email !== userEmail) updateObj.email = userEmail;
-            if (!existingById.name && userName) updateObj.name = userName;
-            if (!existingById.avatarUrl && userImage) updateObj.avatarUrl = userImage;
-
-            if (Object.keys(updateObj).length > 0) {
-                updateObj.updatedAt = new Date();
-                await db.update(schema.users)
-                    .set(updateObj)
-                    .where(eq(schema.users.id, userId));
-            }
-
-            return { ...session.user, role: existingById.role };
-        }
-
-        // 2. If not found by ID, try to find by Email (Account Linking / Migration Path)
-        const existingByEmail = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.email, userEmail)
-        });
-
-        if (existingByEmail) {
-            // User exists with this email but different ID. Update to new Auth ID.
-            await db.update(schema.users)
-                .set({
-                    id: userId,
-                    name: existingByEmail.name || userName,
-                    avatarUrl: existingByEmail.avatarUrl || userImage,
-                    updatedAt: new Date()
-                })
-                .where(eq(schema.users.email, userEmail));
-
-            return { ...session.user, role: existingByEmail.role };
-        }
-
-        // 3. Create new user
-        const newUser = {
-            id: userId,
-            email: userEmail,
-            name: userName,
-            avatarUrl: userImage,
-            role: 'resident' as const,
-        };
-        await db.insert(schema.users).values(newUser);
-
-        return { ...session.user, role: 'resident' };
-
-    } catch (error: any) {
-        // Postgres unique_violation code '23505'
-        if (error.code === '23505') {
-            const racingUser = await db.query.users.findFirst({
-                where: (u, { or, eq }) => or(eq(u.id, userId), eq(u.email, userEmail))
-            });
-            if (racingUser) return { ...session.user, role: racingUser.role };
-        }
-        console.error('User_Sync_Critical_Failure:', error);
-        throw new Error('Identity_Establishment_Failed');
-    }
-}
+import { requireUser, requireArchitect, requireFounder, ensureUserSync } from './auth-helpers';
 
 
 export async function requestArchitectAccess() {
@@ -200,7 +86,6 @@ export async function approveRoleUpgrade(verificationId: string) {
         await tx.insert(schema.entities).values({
             id: entityId,
             type: 'individual',
-            profileType: 'professional',
             slug: slugify(creator?.name || `architect-${nanoid(4)}`),
             avatarUrl: creator?.avatarUrl,
         });
@@ -239,12 +124,9 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
 
     // --- Always R2 for Avatar ---
     let avatarUrl = validated.avatarUrl;
-    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('assets.shimokitan.com'))) {
-        try {
-            avatarUrl = await uploadImageFromUrl(avatarUrl, entityId, 'profile');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-        }
+    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
+        // Strict Mirror-or-Bust: Error bubbles up to UI
+        avatarUrl = await uploadImageFromUrl(avatarUrl, entityId, 'profile');
     }
 
     const slug = slugify(validated.translations?.[0]?.name || entityId);
@@ -258,7 +140,6 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
             circuit: validated.circuit,
             isMajor: validated.isMajor,
             isVerified: validated.isVerified,
-            profileType: validated.profileType,
             socialLinks: validated.socialLinks,
         });
 
@@ -360,12 +241,9 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
 
     // --- Always R2 for Avatar ---
     let avatarUrl = validated.avatarUrl;
-    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('assets.shimokitan.com'))) {
-        try {
-            avatarUrl = await uploadImageFromUrl(avatarUrl, id, 'profile');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-        }
+    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
+        // Strict Mirror-or-Bust: Error bubbles up to UI
+        avatarUrl = await uploadImageFromUrl(avatarUrl, id, 'profile');
     }
 
     await db.transaction(async (tx) => {
@@ -376,7 +254,6 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
                 circuit: validated.circuit,
                 isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
-                profileType: validated.profileType,
                 socialLinks: validated.socialLinks,
                 updatedAt: new Date(),
             })
@@ -412,221 +289,7 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
     return { success: true };
 }
 
-// --- ARTIFACTS (Architect+) ---
-
-export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
-    await requireArchitect();
-    const validated = artifactSchema.parse(data);
-    const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-
-    const artifactId = `ART_${nanoid(10)}`;
-    const slug = slugify(validated.translations?.[0]?.title || artifactId);
-
-    // --- Always R2 for Cover Image ---
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
-        try {
-            // Upload to R2 and get local public URL
-            coverImage = await uploadImageFromUrl(coverImage, artifactId, 'artifact');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-            // We keep the original URL as fallback if upload fails, 
-            // but log it for investigation
-        }
-    }
-
-    await db.transaction(async (tx) => {
-        await tx.insert(schema.artifacts).values({
-            id: artifactId,
-            category: validated.category,
-            slug,
-            coverImage: coverImage || null,
-            status: validated.status,
-            score: validated.score,
-            specs: validated.specs,
-            isMajor: validated.isMajor,
-            isVerified: validated.isVerified,
-        });
-
-        // Link Verification if provided
-        if (validated.verificationId) {
-            await tx.update(schema.verificationRegistry)
-                .set({
-                    targetId: artifactId,
-                    targetType: 'artifact',
-                    updatedAt: new Date()
-                })
-                .where(eq(schema.verificationRegistry.id, validated.verificationId));
-        }
-
-        if (validated.translations?.length) {
-            await tx.insert(schema.artifactsI18n).values(
-                validated.translations.map((t) => ({
-                    artifactId,
-                    locale: t.locale,
-                    title: t.title || '',
-                    description: t.description,
-                }))
-            );
-        }
-
-        if (validated.resources?.length) {
-            await tx.insert(schema.artifactResources).values(
-                validated.resources.map((r) => ({
-                    id: `RES_${nanoid(10)}`,
-                    artifactId,
-                    type: r.type,
-                    platform: r.platform,
-                    value: r.url,
-                    isPrimary: r.isPrimary,
-                }))
-            );
-        }
-
-        if (validated.credits?.length) {
-            await tx.insert(schema.artifactCredits).values(
-                validated.credits.map((c) => ({
-                    artifactId,
-                    entityId: c.entityId,
-                    role: c.role,
-                    displayRole: c.displayRole,
-                    contributorClass: c.contributorClass,
-                    isPrimary: c.isPrimary,
-                    position: c.position,
-                }))
-            );
-        }
-
-        if (validated.tags?.length) {
-            for (const tagObj of validated.tags) {
-                const tagName = tagObj.name;
-                // Simplified tag handling - ideally this should be optimized
-                let tag = await tx.query.tags.findFirst({
-                    where: (tags, { exists, and, eq }) => exists(
-                        tx.select().from(schema.tagsI18n).where(and(
-                            eq(schema.tagsI18n.tagId, tags.id),
-                            eq(schema.tagsI18n.name, tagName)
-                        ))
-                    )
-                });
-
-                if (!tag) {
-                    const newTagId = `TAG_${nanoid(10)}`;
-                    await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
-                    await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
-                    tag = { id: newTagId } as any;
-                }
-
-                await tx.insert(schema.artifactTags).values({ artifactId, tagId: tag!.id });
-            }
-        }
-    });
-
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
-    return { id: artifactId };
-}
-
-export async function updateFullArtifact(id: string, data: z.infer<typeof artifactSchema>) {
-    await requireArchitect();
-    const validated = artifactSchema.parse(data);
-    const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-
-    // --- Always R2 for Cover Image ---
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
-        try {
-            coverImage = await uploadImageFromUrl(coverImage, id, 'artifact');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-        }
-    }
-
-    await db.transaction(async (tx) => {
-        await tx.update(schema.artifacts)
-            .set({
-                category: validated.category,
-                coverImage: coverImage || null,
-                status: validated.status,
-                score: validated.score,
-                specs: validated.specs,
-                isMajor: validated.isMajor,
-                isVerified: validated.isVerified,
-                updatedAt: new Date(),
-            })
-            .where(eq(schema.artifacts.id, id));
-
-        await tx.delete(schema.artifactsI18n).where(eq(schema.artifactsI18n.artifactId, id));
-        if (validated.translations?.length) {
-            await tx.insert(schema.artifactsI18n).values(
-                validated.translations.map((t) => ({
-                    artifactId: id,
-                    locale: t.locale,
-                    title: t.title || '',
-                    description: t.description,
-                }))
-            );
-        }
-
-        // Resources, Credits, Tags logic remains same as create but with delete first
-        await tx.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
-        if (validated.resources?.length) {
-            await tx.insert(schema.artifactResources).values(
-                validated.resources.map((r) => ({
-                    id: `RES_${nanoid(10)}`,
-                    artifactId: id,
-                    type: r.type,
-                    platform: r.platform,
-                    value: r.url,
-                    isPrimary: r.isPrimary,
-                }))
-            );
-        }
-
-        await tx.delete(schema.artifactCredits).where(eq(schema.artifactCredits.artifactId, id));
-        if (validated.credits?.length) {
-            await tx.insert(schema.artifactCredits).values(
-                validated.credits.map((c) => ({
-                    artifactId: id,
-                    entityId: c.entityId,
-                    role: c.role,
-                    displayRole: c.displayRole,
-                    contributorClass: c.contributorClass,
-                    isPrimary: c.isPrimary,
-                    position: c.position,
-                }))
-            );
-        }
-
-        await tx.delete(schema.artifactTags).where(eq(schema.artifactTags.artifactId, id));
-        if (validated.tags?.length) {
-            for (const tagObj of validated.tags) {
-                const tagName = tagObj.name;
-                let tag = await tx.query.tags.findFirst({
-                    where: (tags, { exists, and, eq }) => exists(
-                        tx.select().from(schema.tagsI18n).where(and(
-                            eq(schema.tagsI18n.tagId, tags.id),
-                            eq(schema.tagsI18n.name, tagName)
-                        ))
-                    )
-                });
-
-                if (!tag) {
-                    const newTagId = `TAG_${nanoid(10)}`;
-                    await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
-                    await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
-                    tag = { id: newTagId } as any;
-                }
-
-                await tx.insert(schema.artifactTags).values({ artifactId: id, tagId: tag!.id });
-            }
-        }
-    });
-
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
-    return { success: true };
-}
+// --- ARTIFACTS (Moved to actions/artifacts.ts) ---
 
 // --- COLLECTIONS (Founder Only) ---
 
@@ -640,12 +303,9 @@ export async function createFullCollection(data: z.infer<typeof collectionSchema
 
     // --- Always R2 for Cover ---
     let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
-        try {
-            coverImage = await uploadImageFromUrl(coverImage, collectionId, 'collection');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-        }
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
+        // Strict Mirror-or-Bust: Error bubbles up to UI
+        coverImage = await uploadImageFromUrl(coverImage, collectionId, 'collection');
     }
 
     const slug = slugify(validated.translations?.[0]?.title || collectionId);
@@ -683,12 +343,9 @@ export async function updateFullCollection(id: string, data: z.infer<typeof coll
 
     // --- Always R2 for Cover ---
     let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('assets.shimokitan.com'))) {
-        try {
-            coverImage = await uploadImageFromUrl(coverImage, id, 'collection');
-        } catch (e) {
-            console.error('Signal_Alert: R2_Mirroring_Failed:', e);
-        }
+    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
+        // Strict Mirror-or-Bust: Error bubbles up to UI
+        coverImage = await uploadImageFromUrl(coverImage, id, 'collection');
     }
 
     await db.transaction(async (tx) => {
@@ -903,12 +560,6 @@ export async function deleteEntity(id: string) {
     revalidatePath('/[locale]/pedalboard/entities', 'page');
 }
 
-export async function deleteArtifact(id: string) {
-    await requireFounder();
-    const db = getDb();
-    if (db) await db.update(schema.artifacts).set({ deletedAt: new Date() }).where(eq(schema.artifacts.id, id));
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
-}
 
 export async function deleteCollection(id: string) {
     await requireFounder();
@@ -931,12 +582,6 @@ export async function purgeEntity(id: string) {
     revalidatePath('/[locale]/pedalboard/entities', 'page');
 }
 
-export async function purgeArtifact(id: string) {
-    await requireFounder();
-    const db = getDb();
-    if (db) await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
-}
 
 export async function purgeCollection(id: string) {
     await requireFounder();
@@ -959,12 +604,6 @@ export async function restoreEntity(id: string) {
     revalidatePath('/[locale]/pedalboard/entities', 'page');
 }
 
-export async function restoreArtifact(id: string) {
-    await requireFounder();
-    const db = getDb();
-    if (db) await db.update(schema.artifacts).set({ deletedAt: null }).where(eq(schema.artifacts.id, id));
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
-}
 
 export async function restoreCollection(id: string) {
     await requireFounder();
@@ -1034,16 +673,18 @@ export async function uploadToR2Action(formData: FormData) {
     if (!file) throw new Error('No_File_Targeted');
 
     const fileId = nanoid(12);
+    const buffer = Buffer.from(await file.arrayBuffer() as any);
+    const contentType = file.type;
     const extension = file.name.split('.').pop() || 'webp';
+
     const key = generateStoragePath({
-        mediaType: 'images',
+        mediaType: contentType.startsWith('audio/') ? 'audio' : (contentType.startsWith('image/') ? 'images' : 'raw'),
         context,
         identifier: user.id,
         filename: `${fileId}.${extension}`
     });
 
-    const buffer = await file.arrayBuffer();
-    const publicUrl = await uploadFileToR2(buffer, key, file.type);
+    const publicUrl = await uploadFileToR2(buffer, key, contentType);
 
     return { publicUrl, key };
 }
@@ -1053,13 +694,24 @@ export async function updateUserProfile(data: { name: string; status: string; bi
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
+    let avatarUrl = data.avatarUrl;
+    let headerUrl = data.headerUrl;
+
+    // Strict mirroring for manual profile updates
+    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
+        avatarUrl = await uploadImageFromUrl(avatarUrl, user.id, 'profile');
+    }
+    if (headerUrl && (headerUrl.startsWith('http') && !headerUrl.includes('cdn.shimokitan.live'))) {
+        headerUrl = await uploadImageFromUrl(headerUrl, user.id, 'profile');
+    }
+
     await db.update(schema.users)
         .set({
             name: data.name,
             status: data.status,
             bio: data.bio,
-            avatarUrl: data.avatarUrl,
-            headerUrl: data.headerUrl,
+            avatarUrl: avatarUrl || null,
+            headerUrl: headerUrl || null,
             updatedAt: new Date()
         })
         .where(eq(schema.users.id, user.id));
@@ -1067,4 +719,72 @@ export async function updateUserProfile(data: { name: string; status: string; bi
     revalidatePath('/[locale]/pedalboard', 'page');
     revalidatePath('/[locale]/pedalboard/profile/edit', 'page');
     return { success: true };
+}
+
+/**
+ * --- MIRRORING MAINTENANCE (Founder Only) ---
+ * Phase 3: Global Audit & Migration
+ * Scans for external hotlinks and mirrors them to R2.
+ */
+export async function mirrorMaintenanceAction() {
+    await requireFounder();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    const results = {
+        entities: 0,
+        artifacts: 0,
+        collections: 0,
+        errors: [] as string[]
+    };
+
+    try {
+        // 1. Entities
+        const entitiesList = await db.query.entities.findMany();
+        for (const entity of entitiesList) {
+            if (entity.avatarUrl && (entity.avatarUrl.startsWith('http') && !entity.avatarUrl.includes('cdn.shimokitan.live'))) {
+                try {
+                    const newUrl = await uploadImageFromUrl(entity.avatarUrl, entity.id, 'profile');
+                    await db.update(schema.entities).set({ avatarUrl: newUrl }).where(eq(schema.entities.id, entity.id));
+                    results.entities++;
+                } catch (e: any) {
+                    results.errors.push(`Entity_Mirror_Fail [${entity.id}]: ${e.message}`);
+                }
+            }
+        }
+
+        // 2. Artifacts
+        const artifactsList = await db.query.artifacts.findMany();
+        for (const artifact of artifactsList) {
+            if (artifact.coverImage && (artifact.coverImage.startsWith('http') && !artifact.coverImage.includes('cdn.shimokitan.live'))) {
+                try {
+                    const newUrl = await uploadImageFromUrl(artifact.coverImage, artifact.id, 'artifact');
+                    await db.update(schema.artifacts).set({ coverImage: newUrl }).where(eq(schema.artifacts.id, artifact.id));
+                    results.artifacts++;
+                } catch (e: any) {
+                    results.errors.push(`Artifact_Mirror_Fail [${artifact.id}]: ${e.message}`);
+                }
+            }
+        }
+
+        // 3. Collections
+        const collectionsList = await db.query.collections.findMany();
+        for (const col of collectionsList) {
+            if (col.coverImage && (col.coverImage.startsWith('http') && !col.coverImage.includes('cdn.shimokitan.live'))) {
+                try {
+                    const newUrl = await uploadImageFromUrl(col.coverImage, col.id, 'collection');
+                    await db.update(schema.collections).set({ coverImage: newUrl }).where(eq(schema.collections.id, col.id));
+                    results.collections++;
+                } catch (e: any) {
+                    results.errors.push(`Collection_Mirror_Fail [${col.id}]: ${e.message}`);
+                }
+            }
+        }
+    } catch (critical: any) {
+        if (process.env.NODE_ENV !== 'production') console.error('[MAINTENANCE_CRITICAL]:', critical);
+        throw new Error(`MAINTENANCE_ABORTED: ${critical.message}`);
+    }
+
+    revalidatePath('/[locale]/pedalboard', 'layout');
+    return { success: true, results };
 }

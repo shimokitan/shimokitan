@@ -40,7 +40,7 @@ export const MOCK_USER: User = {
     id: 'user_001',
     name: 'Xavier_Dusk',
     handle: '@xavier_shkn',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80',
+    avatar: '',
     bio: 'Resonating with distortion and high-fidelity haunts since 2018. Architect of the Pit.',
     collectionArtifactIds: ['art_001', 'art_002', 'art_003'],
     stats: {
@@ -87,7 +87,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Bocchi the Rock!',
         category: 'anime',
         editorialDescription: 'A fuzz-drenched anthem for the bedroom guitarists. Best watched when you\'re feeling a little glitchy.',
-        coverImage: 'https://images.unsplash.com/photo-1548502669-522718227b26?w=1200&q=80',
+        coverImage: '',
         status: 'the_pit',
         heatIndex: 892,
         metadata: {
@@ -105,7 +105,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Neon Genesis Evangelion OST',
         category: 'music',
         editorialDescription: 'The high-fidelity haunt of the 90s. Violins meeting industrial static in the shadow of giants.',
-        coverImage: 'https://images.unsplash.com/photo-1619983081563-430f63602796?w=1200&q=80',
+        coverImage: '',
         status: 'back_alley',
         heatIndex: 1240,
         metadata: {
@@ -122,7 +122,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Akiba Maid War',
         category: 'anime',
         editorialDescription: 'The Gutter-Punk edge of Akihabara. Blood, sweat, and moe in the underground live houses.',
-        coverImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&q=80',
+        coverImage: '',
         status: 'back_alley',
         heatIndex: 562,
         metadata: {
@@ -140,7 +140,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Steins;Gate',
         category: 'anime',
         editorialDescription: 'An urban gothic mystery where time is the greatest friction of all.',
-        coverImage: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80',
+        coverImage: '',
         status: 'back_alley',
         heatIndex: 2105,
         metadata: {
@@ -158,7 +158,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'FLCL Progressive',
         category: 'anime',
         editorialDescription: 'Pure abstract kinetic energy. A distortion of reality that rejects the linear.',
-        coverImage: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=600&q=80',
+        coverImage: '',
         status: 'the_pit',
         heatIndex: 742,
         metadata: {
@@ -176,7 +176,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Cowboy Bebop OST 1',
         category: 'music',
         editorialDescription: 'The jazz-punk blueprint for the digital district. Tank! is the anthem of the archive.',
-        coverImage: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600&q=80',
+        coverImage: '',
         status: 'back_alley',
         heatIndex: 3500,
         metadata: {
@@ -193,7 +193,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Duvet / Lain Soundtrack',
         category: 'music',
         editorialDescription: 'The sound of the Wired. Gentle, haunting, and deeply connected to the digital void.',
-        coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80',
+        coverImage: '',
         status: 'back_alley',
         heatIndex: 1820,
         metadata: {
@@ -210,7 +210,7 @@ export const MOCK_ARTIFACTS: Record<string, Artifact> = {
         title: 'Edgerunners Selection',
         category: 'music',
         editorialDescription: 'Electronic static from the Night City gutters. Hard-hitting distortion and synth-wave grief.',
-        coverImage: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=600&q=80',
+        coverImage: '',
         status: 'the_pit',
         heatIndex: 4201,
         metadata: {

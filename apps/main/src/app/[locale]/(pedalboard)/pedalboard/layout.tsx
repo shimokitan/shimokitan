@@ -1,12 +1,14 @@
 import React from 'react';
-import { auth } from '@/lib/auth-neon/server';
+import { getSession } from './auth-helpers';
 import { redirect } from 'next/navigation';
 import PedalboardLayoutClient from './layout.client';
+
+export const dynamic = 'force-dynamic';
 
 export default async function PedalboardLayout({ children }: { children: React.ReactNode }) {
     let session;
     try {
-        const result = await auth.getSession();
+        const result = await getSession();
         session = result.data;
     } catch (e: any) {
         // If it's a redirect error (from Next.js), we MUST re-throw it

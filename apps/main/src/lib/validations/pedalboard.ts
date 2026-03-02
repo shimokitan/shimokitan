@@ -5,13 +5,13 @@ import { z } from 'zod';
 export const LOCALES = ['en', 'id', 'jp'] as const;
 export const ENTITY_TYPES = ['individual', 'organization', 'agency', 'circle'] as const;
 export const CONTRIBUTOR_CLASSES = ['author', 'collaborator', 'staff'] as const;
-export const PROFILE_TYPES = ['social', 'professional'] as const;
+
 export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;
 export const ARTIFACT_STATUSES = ['the_pit', 'back_alley', 'archived'] as const;
 export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other'] as const;
 export const VERIFICATION_TARGET_TYPES = ['artifact', 'entity', 'role_upgrade'] as const;
 export const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'] as const;
-export const CIRCUITS = ['major', 'underground', 'ghost'] as const;
+export const CIRCUITS = ['major', 'underground', 'archived'] as const;
 
 // --- Shared Helpers ---
 
@@ -58,7 +58,6 @@ export const entitySchema = z.object({
     circuit: z.enum(CIRCUITS).default('underground'),
     isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
-    profileType: z.enum(PROFILE_TYPES).default('professional'),
     socialLinks: z.any().optional(), // JSON
     translations: z.array(translationSchema).optional(),
     members: z.array(unitMemberSchema).optional(),

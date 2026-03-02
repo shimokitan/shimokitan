@@ -4,12 +4,12 @@ export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { getDb, schema, desc } from '@shimokitan/db';
 import ArtifactRegistry from './components/ArtifactRegistry';
-import { deleteArtifact } from '../actions';
+import { deleteArtifact } from '../actions/artifacts';
 
 import { isNull, isNotNull } from 'drizzle-orm';
 import Link from '@/components/Link';
 import AnilistGlobalSearch from './components/AnilistGlobalSearch';
-import { ensureUserSync } from '../actions';
+import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function ArtifactsPage(props: { searchParams: Promise<{ trash?: string }> }) {

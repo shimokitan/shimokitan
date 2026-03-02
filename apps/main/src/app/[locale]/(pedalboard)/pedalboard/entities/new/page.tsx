@@ -4,7 +4,7 @@ import { getDb, schema, isNull } from '@shimokitan/db';
 import EntityForm from '../EntityForm';
 import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
-import { ensureUserSync } from '../../actions';
+import { ensureUserSync } from '../../auth-helpers';
 import { redirect } from 'next/navigation';
 
 export default async function NewEntityPage() {

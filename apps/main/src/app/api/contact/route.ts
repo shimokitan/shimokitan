@@ -2,7 +2,11 @@ import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) throw new Error('Missing RESEND_API_KEY');
+    return new Resend(apiKey);
+};
 
 // Simple in-memory rate limiting
 const RATE_LIMIT_DURATION = 60 * 60 * 1000; // 1 hour
@@ -80,6 +84,7 @@ export async function POST(request: Request) {
         const safeName = escapeHtml(name);
         const safeSubject = escapeHtml(subject || '');
 
+        const resend = getResend();
         const data = await resend.emails.send({
             from: 'contact@mail.shimokitan.live',
             to: recipient,

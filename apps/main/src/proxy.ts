@@ -4,18 +4,12 @@ import type { NextRequest } from 'next/server';
 import { locales, defaultLocale } from '@shimokitan/utils';
 import { AUTH_COOKIE_NAMES } from '@/lib/auth-neon/constants';
 
-export const runtime = 'experimental-edge';
-
-const LEGAL_ROUTES = ['/terms', '/privacy', '/community-guidelines', '/copyright', '/cookies', '/contact', '/about', '/about/vision'];
-
 function getLocale(request: NextRequest): string {
-    // Check cookie first
     const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
     if (cookieLocale && (locales as any).includes(cookieLocale)) {
         return cookieLocale;
     }
 
-    // Then check accept-language header
     const acceptLanguage = request.headers.get('accept-language');
     if (acceptLanguage) {
         if (acceptLanguage.includes('id')) return 'id';
@@ -25,7 +19,11 @@ function getLocale(request: NextRequest): string {
     return defaultLocale;
 }
 
-export function middleware(request: NextRequest) {
+/**
+ * Next.js 16 "Proxy" (formerly Middleware).
+ * This function handles routing, locales, and authentication checks.
+ */
+export default function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // 1. Handle Locale Prefixing
@@ -34,11 +32,10 @@ export function middleware(request: NextRequest) {
     );
 
     if (!pathnameHasLocale) {
-        // Skip for static assets, api, etc.
         if (
             pathname.startsWith('/_next') ||
             pathname.startsWith('/api') ||
-            pathname.includes('.') || // e.g. favicon.ico
+            pathname.includes('.') ||
             pathname === '/robots.txt'
         ) {
             return NextResponse.next();
@@ -49,12 +46,11 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(request.nextUrl);
     }
 
-    // Extract locale and sub-pathname for further checks
     const segments = pathname.split('/');
     const locale = segments[1];
     const subPathname = '/' + segments.slice(2).join('/');
 
-    // 2. Pedalboard Authentication Check (Real Auth Integration)
+    // 2. Authentication Check
     if (subPathname.startsWith('/pedalboard')) {
         const sessionToken = AUTH_COOKIE_NAMES.find(name => request.cookies.get(name)?.value);
 
@@ -63,43 +59,11 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    // 3. Maintenance mode check (Environment Variable Driven)
-    const IS_MAINTENANCE = process.env.MAINTENANCE_MODE === 'true';
-
-    if (IS_MAINTENANCE) {
-        const isLegalRoute = LEGAL_ROUTES.some(route =>
-            subPathname.toLowerCase() === route.toLowerCase() ||
-            subPathname.toLowerCase().startsWith(route.toLowerCase() + '/')
-        );
-
-        // Allow static assets and legal routes
-        if (
-            subPathname.startsWith('/_next') ||
-            subPathname.startsWith('/api') ||
-            subPathname === '/favicon.ico' ||
-            subPathname === '/robots.txt' ||
-            isLegalRoute ||
-            subPathname === '/maintenance'
-        ) {
-            return NextResponse.next();
-        }
-
-        // Redirect all other traffic to maintenance
-        return NextResponse.rewrite(new URL(`/${locale}/maintenance`, request.url));
-    }
-
     return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
         '/((?!api|_next/static|_next/image|favicon.ico).*)',
     ],
 };

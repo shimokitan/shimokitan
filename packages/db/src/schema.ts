@@ -12,13 +12,12 @@ export const entities = pgTable("entities", {
     type: text("type", { enum: ['individual', 'organization', 'agency', 'circle'] }).notNull(),
     slug: text("slug").notNull().unique(),
     uid: text("uid").unique(), // e.g. UID_SIG_001
-    circuit: text("circuit", { enum: ['major', 'underground', 'ghost'] }).default('underground'),
+    circuit: text("circuit", { enum: ['major', 'underground', 'archived'] }).default('underground'),
     avatarUrl: text("avatar_url"),
     headerUrl: text("header_url"),
     socialLinks: jsonb("social_links").default([]),
     isMajor: boolean("is_major").default(false), // Legacy, kept for compatibility
     isVerified: boolean("is_verified").default(false), // Public verification badge
-    profileType: text("profile_type", { enum: ['social', 'professional'] }).default('professional').notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
