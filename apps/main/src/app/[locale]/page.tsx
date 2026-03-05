@@ -1,6 +1,6 @@
 import React from "react";
 import { MainLayout } from "../../components/layout/MainLayout";
-import { getDb, schema, desc, eq, isNull, sql } from "@shimokitan/db";
+import { getDb, schema, desc, eq, isNull, sql, and } from "@shimokitan/db";
 import HomeClient from "./HomeClient";
 import { Locale, getDictionary } from "@shimokitan/utils";
 
@@ -86,11 +86,11 @@ export default async function AppPage({
       author: z.author?.name || "Anonymous",
       artifact: z.artifact
         ? {
-            ...z.artifact,
-            title: z.artifact.translations?.[0]?.title || "Untitled",
-            description: z.artifact.translations?.[0]?.description || "",
-            coverImage: z.artifact.cover?.url || null,
-          }
+          ...z.artifact,
+          title: z.artifact.translations?.[0]?.title || "Untitled",
+          description: z.artifact.translations?.[0]?.description || "",
+          coverImage: z.artifact.cover?.url || null,
+        }
         : null,
     }));
   } catch (e: any) {
@@ -102,7 +102,10 @@ export default async function AppPage({
   let featuredArtifact: any = null;
   try {
     const rawFeatured = await db.query.artifacts.findFirst({
-      where: eq(schema.artifacts.status, "the_pit"),
+      where: and(
+        eq(schema.artifacts.status, "the_pit"),
+        eq(schema.artifacts.category, "anime")
+      ),
       orderBy: sql`RANDOM()`,
       with: {
         cover: true,
@@ -213,6 +216,8 @@ export default async function AppPage({
         dict={dict}
         weatherTemp={weatherTemp}
         totalResonance={totalResonance}
+        artifactCount={spotlightArtifacts.length}
+        entityCount={entities.length}
       />
     </MainLayout>
   );

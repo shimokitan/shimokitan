@@ -16,7 +16,13 @@
     "home": {
         "title": "SHIMOKITAN // DISTRIK DIGITAL",
         "description": "SHIMOKITAN adalah sebuah distrik bagi para peminat budaya Jepang yang mendokumentasikan anime, gim, dan musik mereka sebagai pengalaman nyata — bukan sekadar data. Terinspirasi dari gang-gang sempit di Shimokitazawa, di sinilah selera Anda menjadi arsip pengalaman yang terkurasi.",
-        "initialize": "INISIALISASI",
+        "tagline": "Arsip budaya yang hidup, bukan sekadar data.",
+        "nav_archive": "Masuk Arsip",
+        "nav_entities": "Entitas",
+        "nav_zines": "Zine",
+        "stats_artifacts": "artefak",
+        "stats_entities": "entitas",
+        "stats_version": "v2.0.26",
         "recent_shards": "Shard Terbaru",
         "district": "Distrik",
         "signal_stable": "SINYAL_STABIL",
@@ -27,10 +33,7 @@
         "in_the_pit": "In The Pit",
         "district_entities": "Entitas Distrik",
         "playlist": "Daftar Putar",
-        "view_shard": "LIHAT_SHARD",
-        "editorial_sigil": "SIGIL_EDITORIAL",
-        "featured_title": "Runtuhnya Narasi.",
-        "featured_description": "Distrik ini bukanlah sebuah lokasi; melainkan sebuah frekuensi. Saat sinyal-sinyal tumpang tindih, arsitektur realitas mulai melebur menjadi resonansi data murni."
+        "view_shard": "LIHAT_SHARD"
     },
     "contact": {
         "title": "BANGUN KONEKSI",

@@ -16,7 +16,13 @@
     "home": {
         "title": "SHIMOKITAN // DIGITAL DISTRICT",
         "description": "The digital back-alleys of Japanese culture. Archive anime, music, and games as lived memories—not data points.",
-        "initialize": "INITIALIZE",
+        "tagline": "An archive of lived culture, not data points.",
+        "nav_archive": "Enter Archive",
+        "nav_entities": "Entities",
+        "nav_zines": "Zines",
+        "stats_artifacts": "artifacts",
+        "stats_entities": "entities",
+        "stats_version": "v2.0.26",
         "recent_shards": "Recent Shards",
         "district": "District",
         "signal_stable": "SIGNAL_STABLE",
@@ -27,10 +33,7 @@
         "in_the_pit": "In The Pit",
         "district_entities": "District Entities",
         "playlist": "Playlist",
-        "view_shard": "VIEW_SHARD",
-        "editorial_sigil": "EDITORIAL_SIGIL",
-        "featured_title": "Narrative Collapse.",
-        "featured_description": "The district is not a location; it is a frequency. When the signals overlap, the architecture of the real begins to dissolve into pure data resonance."
+        "view_shard": "VIEW_SHARD"
     },
     "contact": {
         "title": "ESTABLISH CONNECTION",

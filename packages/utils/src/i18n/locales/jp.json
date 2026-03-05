@@ -16,7 +16,13 @@
     "home": {
         "title": "SHIMOKITAN // デジタル・ディストリクト",
         "description": "SHIMOKITANは、アニメ、ゲーム、音楽を単なるデータポイントではなく「生きた経験」として記録する、日本文化愛好家のためのディストリクト（街区）です。下北沢の路地裏にインスパイアされたこの場所で、あなたの感性はキュレーションされた体験のアーカイブへと変わります。",
-        "initialize": "INITIALIZE",
+        "tagline": "生きた文化のアーカイブ。データポイントではなく。",
+        "nav_archive": "アーカイブへ",
+        "nav_entities": "エンティティ",
+        "nav_zines": "ZINE",
+        "stats_artifacts": "アーティファクト",
+        "stats_entities": "エンティティ",
+        "stats_version": "v2.0.26",
         "recent_shards": "最近のシャード",
         "district": "ディストリクト",
         "signal_stable": "SIGNAL_STABLE",
@@ -27,10 +33,7 @@
         "in_the_pit": "In The Pit",
         "district_entities": "ディストリクト・エンティティ",
         "playlist": "プレイリスト",
-        "view_shard": "シャードを表示",
-        "editorial_sigil": "EDITORIAL_SIGIL",
-        "featured_title": "物語の崩壊。",
-        "featured_description": "ディストリクトは場所ではなく、周波数です。シグナルが重なり合うとき、現実の構造は純粋なデータ共鳴へと溶け込み始めます。"
+        "view_shard": "シャードを表示"
     },
     "contact": {
         "title": "コネクション確立",

@@ -35,6 +35,8 @@ export default function HomeClient({
   entities,
   weatherTemp,
   totalResonance,
+  artifactCount,
+  entityCount,
   dict,
 }: {
   spotlightArtifacts: Artifact[];
@@ -43,6 +45,8 @@ export default function HomeClient({
   entities: any[];
   weatherTemp: string;
   totalResonance: string;
+  artifactCount: number;
+  entityCount: number;
   dict: Dictionary;
 }) {
   const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
@@ -65,30 +69,75 @@ export default function HomeClient({
     <div className="grid grid-cols-2 md:grid-cols-5 md:grid-rows-7 gap-3 h-auto md:h-full">
       {/* 1. Hero / District Branding */}
       <div className="col-span-2 md:col-span-2 md:row-span-3 relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl">
-        <div className="h-full p-6 md:p-8 flex flex-col justify-between relative">
+        {/* Scanline overlay */}
+        <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.1)_2px,rgba(255,255,255,0.1)_4px)]" />
+
+        <div className="h-full p-6 md:p-8 flex flex-col items-center justify-center text-center relative">
           <div className="absolute top-0 right-0 w-12 h-12 border-t border-r border-zinc-800" />
 
           <div>
-            <div className="flex items-center gap-3 mb-4 md:mb-6">
+            <div className="flex items-center justify-center gap-3 mb-4 md:mb-6">
               <span className="w-8 h-px bg-zinc-800" />
               <span className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest">
                 {dict.home.district}
               </span>
+              <span className="w-8 h-px bg-zinc-800" />
             </div>
 
-            <h2 className="flex flex-col text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter uppercase italic leading-[0.85]">
+            <h2 className="flex flex-col items-center text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter uppercase italic leading-[0.85]">
               <span className="text-zinc-800">SHIMO</span>
               <span className="text-white">KITAN</span>
               <span className="text-violet-600 text-[11px] font-mono tracking-[0.5em] mt-2 italic">
                 DIGITAL_DISTRICT
               </span>
             </h2>
+
+            {/* Tagline */}
+            <p className="text-zinc-400 text-xs font-mono mt-4 tracking-wide leading-relaxed mx-auto max-w-[260px]">
+              &quot;{dict.home.tagline}&quot;
+            </p>
           </div>
 
-          <div className="mt-8 md:mt-0">
-            <p className="text-zinc-500 text-[11px] font-mono leading-relaxed uppercase tracking-wider line-clamp-4">
-              {dict.home.description}
-            </p>
+          {/* Quick-nav links */}
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <Link
+                href="/artifacts"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
+              >
+                <Icon icon="lucide:archive" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
+                {dict.home.nav_archive}
+              </Link>
+              <Link
+                href="/artists"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
+              >
+                <Icon icon="lucide:users" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
+                {dict.home.nav_entities}
+              </Link>
+              <Link
+                href="/zines"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
+              >
+                <Icon icon="lucide:notebook-pen" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
+                {dict.home.nav_zines}
+              </Link>
+            </div>
+
+            {/* Stats strip */}
+            <div className="flex items-center justify-center gap-4 text-[10px] font-mono text-zinc-600 uppercase tracking-wider">
+              <span className="flex items-center gap-1.5">
+                <Icon icon="lucide:database" width={10} className="text-violet-500/70" />
+                <span className="text-zinc-400 font-bold">{artifactCount}</span> {dict.home.stats_artifacts}
+              </span>
+              <span className="w-px h-3 bg-zinc-800" />
+              <span className="flex items-center gap-1.5">
+                <Icon icon="lucide:user-check" width={10} className="text-violet-500/70" />
+                <span className="text-zinc-400 font-bold">{entityCount}</span> {dict.home.stats_entities}
+              </span>
+              <span className="w-px h-3 bg-zinc-800" />
+              <span className="text-zinc-700">{dict.home.stats_version}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -512,61 +561,69 @@ export default function HomeClient({
         title="Featured Archives"
         icon="lucide:disc"
       >
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
-          {/* Primary — tall vertical slot */}
-          {spotlightArtifacts[0] && (
-            <Link
-              href={`/artifacts/${spotlightArtifacts[0].id}`}
-              className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
-            >
-              {spotlightArtifacts[0].coverImage ? (
-                <img
-                  src={spotlightArtifacts[0].coverImage}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                  alt={spotlightArtifacts[0].title}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-zinc-950 text-zinc-800">
-                  <Icon icon="lucide:music" width={32} />
-                </div>
-              )}
-              <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-zinc-950/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
-                <div className="text-[9px] font-black text-white uppercase truncate">
-                  {spotlightArtifacts[0].title}
-                </div>
-                <div className="text-[8px] font-mono text-violet-400 uppercase mt-0.5 tracking-widest">
-                  {spotlightArtifacts[0].category}
-                </div>
-              </div>
-            </Link>
-          )}
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[160px] md:h-full">
+          {(() => {
+            const animeArtifact = spotlightArtifacts.find((a) => a.category === "anime");
+            const otherArtifacts = spotlightArtifacts.filter((a) => a.id !== animeArtifact?.id).slice(0, 2);
+            return (
+              <>
+                {/* Primary — tall vertical slot (always anime) */}
+                {animeArtifact && (
+                  <Link
+                    href={`/artifacts/${animeArtifact.id}`}
+                    className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
+                  >
+                    {animeArtifact.coverImage ? (
+                      <img
+                        src={animeArtifact.coverImage}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        alt={animeArtifact.title}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-zinc-950 text-zinc-800">
+                        <Icon icon="lucide:music" width={32} />
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-zinc-950/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
+                      <div className="text-[9px] font-black text-white uppercase truncate">
+                        {animeArtifact.title}
+                      </div>
+                      <div className="text-[8px] font-mono text-violet-400 uppercase mt-0.5 tracking-widest">
+                        {animeArtifact.category}
+                      </div>
+                    </div>
+                  </Link>
+                )}
 
-          {/* Secondary — two horizontal slots stacked */}
-          {spotlightArtifacts.slice(1, 3).map((artifact) => (
-            <Link
-              key={artifact.id}
-              href={`/artifacts/${artifact.id}`}
-              className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950"
-            >
-              {artifact.coverImage ? (
-                <img
-                  src={artifact.coverImage}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                  alt={artifact.title}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-zinc-950 text-zinc-800">
-                  <Icon icon="lucide:music" width={24} />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
-                <div className="text-[8px] font-black text-white uppercase truncate px-0.5">
-                  {artifact.title}
-                </div>
-              </div>
-            </Link>
-          ))}
+                {/* Secondary — two horizontal slots stacked */}
+                {otherArtifacts.map((artifact) => (
+                  <Link
+                    key={artifact.id}
+                    href={`/artifacts/${artifact.id}`}
+                    className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950"
+                  >
+                    {artifact.coverImage ? (
+                      <img
+                        src={artifact.coverImage}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        alt={artifact.title}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-zinc-950 text-zinc-800">
+                        <Icon icon="lucide:music" width={24} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
+                      <div className="text-[8px] font-black text-white uppercase truncate px-0.5">
+                        {artifact.title}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            );
+          })()}
         </div>
       </BentoCard>
 
