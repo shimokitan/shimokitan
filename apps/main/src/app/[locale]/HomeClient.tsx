@@ -87,18 +87,22 @@ export default function HomeClient({
           </div>
 
           <div className="mt-8 md:mt-0">
-            <div className="flex flex-col gap-4">
-              <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-none italic select-none">
-                SHIMOKITAN
-                <br />
-                <span className="text-violet-500">RESISTANCE</span>
-              </h1>
-              <p className="max-w-md text-xs md:text-base text-zinc-500 leading-relaxed font-medium">
-                A decentralized broadcast network operating in the gaps of reality.
-                Broadcasting from the heart of Shimokitazawa.
-                Capture shards, follow artists, and preserve the resonance.
-              </p>
-            </div>
+            <p className="text-zinc-500 text-[11px] font-mono leading-relaxed uppercase tracking-wider mb-6 line-clamp-4">
+              {dict.home.description}
+            </p>
+
+            <Link
+              href={`/artifacts/${heroArtifact?.id}`}
+              className="inline-flex items-center justify-between w-full bg-zinc-900 border border-zinc-800 text-white p-4 hover:bg-violet-600 hover:border-violet-500 transition-all group"
+            >
+              <span className="text-xs font-black tracking-[0.2em]">
+                {dict.home.initialize}
+              </span>
+              <Icon
+                icon="lucide:arrow-right"
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </Link>
           </div>
         </div>
 
