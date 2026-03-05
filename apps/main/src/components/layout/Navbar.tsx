@@ -162,7 +162,7 @@ export function Navbar() {
                 <div className="flex md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <button className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/50 rounded border border-zinc-800">
+                            <button suppressHydrationWarning className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/50 rounded border border-zinc-800">
                                 <Icon icon="lucide:menu" width={20} />
                             </button>
                         </SheetTrigger>

@@ -62,10 +62,10 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                     {/* Children / Page Content */}
                     <main className={cn(
                         "flex-1 z-30 min-h-0 custom-scroll",
-                        noScroll ? "overflow-hidden h-full" : "overflow-y-auto"
+                        noScroll ? "overflow-hidden h-full" : "overflow-y-auto overflow-x-hidden"
                     )}>
                         {children}
-                        <div className="md:hidden shrink-0">
+                        <div className="md:hidden shrink-0 mt-6 pb-6">
                             <Footer />
                         </div>
                     </main>

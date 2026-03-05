@@ -23,7 +23,7 @@ export default async function LegalLayout({ children, params }: { children: Reac
     };
     return (
         <CyberpunkShell>
-            <div className="bg-black text-zinc-300 flex flex-col font-sans selection:bg-violet-500/30 selection:text-violet-200 min-h-screen">
+            <div className="bg-black text-zinc-300 flex flex-col font-sans selection:bg-violet-500/30 selection:text-violet-200 h-screen overflow-y-auto custom-scroll">
                 {/* Dynamic Background Mesh */}
                 <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
                     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-900/5 rounded-full blur-[120px]" />

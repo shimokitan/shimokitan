@@ -84,10 +84,12 @@ export default function HomeClient({
               <span className="w-8 h-px bg-zinc-800" />
             </div>
 
-            <h2 className="flex flex-col items-center text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter uppercase italic leading-[0.85]">
-              <span className="text-zinc-800">SHIMO</span>
-              <span className="text-white">KITAN</span>
-              <span className="text-violet-600 text-[11px] font-mono tracking-[0.5em] mt-2 italic">
+            <h2 className="flex flex-col items-center py-2 text-center">
+              <div className="flex flex-col md:flex-row items-center md:gap-3 text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter uppercase italic leading-[0.85] md:leading-none">
+                <span className="text-zinc-800 drop-shadow-sm">SHIMO</span>
+                <span className="text-white drop-shadow-md">KITAN</span>
+              </div>
+              <span className="text-violet-600 text-[11px] font-mono tracking-[0.5em] mt-2 md:mt-4 italic drop-shadow-none">
                 DIGITAL_DISTRICT
               </span>
             </h2>
@@ -293,7 +295,7 @@ export default function HomeClient({
 
       {/* 3. Featured Card Stack */}
       <BentoCard
-        className="col-span-2 md:col-span-1 md:row-span-3 overflow-visible min-h-[340px] md:min-h-0"
+        className="col-span-2 md:col-span-1 md:row-span-3 overflow-hidden md:overflow-visible min-h-[340px] md:min-h-0"
         title={dict.home.recent_shards}
         icon="lucide:star"
       >
