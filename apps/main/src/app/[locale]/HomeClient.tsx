@@ -258,35 +258,33 @@ export default function HomeClient({
               <span className="w-7">3:50</span>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button className="text-zinc-600 hover:text-white transition-colors">
-                  <Icon icon="lucide:skip-back" width={14} />
-                </button>
-                <button
-                  onClick={() => {
-                    station.toggle();
-                    if (station.isMinimized) station.setMinimized(false);
-                  }}
-                  className={cn(
-                    "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300",
-                    station.isInitialized
-                      ? "bg-white text-black shadow-lg"
-                      : "bg-zinc-800 text-zinc-600 border border-zinc-700"
-                  )}
-                >
-                  <Icon icon={station.isInitialized ? "lucide:pause" : "lucide:play"} width={16} className={!station.isInitialized ? "ml-0.5" : ""} />
-                </button>
-                <button className="text-zinc-600 hover:text-white transition-colors">
-                  <Icon icon="lucide:skip-forward" width={14} />
-                </button>
-              </div>
+            <div className="flex items-center justify-center gap-4">
+              <button className="text-zinc-600 hover:text-white transition-colors">
+                <Icon icon="lucide:skip-back" width={14} />
+              </button>
+              <button
+                onClick={() => {
+                  station.toggle();
+                  if (station.isMinimized) station.setMinimized(false);
+                }}
+                className={cn(
+                  "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300",
+                  station.isInitialized
+                    ? "bg-white text-black shadow-lg"
+                    : "bg-zinc-800 text-zinc-600 border border-zinc-700"
+                )}
+              >
+                <Icon icon={station.isInitialized ? "lucide:pause" : "lucide:play"} width={16} className={!station.isInitialized ? "ml-0.5" : ""} />
+              </button>
+              <button className="text-zinc-600 hover:text-white transition-colors">
+                <Icon icon="lucide:skip-forward" width={14} />
+              </button>
+            </div>
 
-              <div className="flex items-center gap-2 w-20">
-                <Icon icon="lucide:volume-2" width={12} className="text-zinc-600" />
-                <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-zinc-500 w-[80%]" />
-                </div>
+            <div className="flex items-center justify-center gap-2 mx-auto w-24">
+              <Icon icon="lucide:volume-2" width={12} className="text-zinc-600" />
+              <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-full bg-zinc-500 w-[80%]" />
               </div>
             </div>
           </div>
@@ -313,15 +311,15 @@ export default function HomeClient({
                       : `rotate(${i === 0 ? -12 : i === 1 ? 5 : -6}deg) translateX(${(i - 1) * 20}px) translateY(${i * 10}px)`,
                 }}
               >
-                <div className="bg-white p-1.5 md:p-2 rounded-lg shadow-2xl border-2 border-zinc-800 w-28 sm:w-32 md:w-40 text-black">
+                <div className="bg-white p-2 md:p-2.5 rounded-lg shadow-2xl border-2 border-zinc-800 w-32 sm:w-40 md:w-48 text-black">
                   {item.coverImage ? (
                     <img
                       src={item.coverImage}
                       alt={item.title}
-                      className="w-full h-24 md:h-32 object-cover rounded"
+                      className="w-full h-28 sm:h-32 md:h-40 object-cover rounded"
                     />
                   ) : (
-                    <div className="w-full h-24 md:h-32 bg-zinc-200 rounded flex items-center justify-center border border-dashed border-zinc-400">
+                    <div className="w-full h-28 sm:h-32 md:h-40 bg-zinc-200 rounded flex items-center justify-center border border-dashed border-zinc-400">
                       <Icon
                         icon="lucide:image-off"
                         width={24}
