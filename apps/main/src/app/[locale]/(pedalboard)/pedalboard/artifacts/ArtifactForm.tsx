@@ -5,7 +5,10 @@ import React, { useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 import { createFullArtifact, updateFullArtifact } from '../actions/artifacts';
+import { uploadMediaAction } from '../media-actions';
+import { nanoid } from 'nanoid';
 import { toast } from 'sonner';
+
 
 import { Icon } from '@iconify/react';
 import AnilistSync from './components/AnilistSync';
@@ -116,12 +119,62 @@ export default function ArtifactForm({
             : []
     );
 
+    const [artifactId] = useState(initialData?.id || nanoid());
+    const [coverId, setCoverId] = useState<string | null>(initialData?.coverId || null);
     const [coverUrl, setCoverUrl] = useState(initialData?.coverImage || '');
+    const [pendingCoverFile, setPendingCoverFile] = useState<File | null>(null);
+    const [pendingCoverUrl, setPendingCoverUrl] = useState<string | null>(null);
+
+    const [posterId, setPosterId] = useState<string | null>(initialData?.posterId || null);
+    const [posterUrl, setPosterUrl] = useState(initialData?.posterImage || '');
+    const [pendingPosterFile, setPendingPosterFile] = useState<File | null>(null);
+    const [pendingPosterUrl, setPendingPosterUrl] = useState<string | null>(null);
+
+
     const [category, setCategory] = useState(initialData?.category || (anilistId ? 'anime' : 'music'));
     const [status, setStatus] = useState(initialData?.status || 'the_pit');
     const [score, setScore] = useState(initialData?.score || 0);
     const [isMajor, setIsMajor] = useState(initialData?.isMajor ?? initialMajor ?? false);
     const [isVerified, setIsVerified] = useState(initialData?.isVerified ?? (!!verificationId));
+
+    const handleExternalCover = async (url: string) => {
+        if (!url) return;
+        setCoverUrl(url); // Optimistic UI
+        setPendingCoverUrl(url);
+        setPendingCoverFile(null);
+    };
+
+    const handleCoverFileSelect = (file: File, objectUrl: string) => {
+        setCoverUrl(objectUrl);
+        setPendingCoverFile(file);
+        setPendingCoverUrl(null);
+    };
+
+    const handleCoverUrlSelect = (url: string) => {
+        setCoverUrl(url);
+        setPendingCoverUrl(url);
+        setPendingCoverFile(null);
+    };
+
+    const handleExternalPoster = async (url: string) => {
+        if (!url) return;
+        setPosterUrl(url);
+        setPendingPosterUrl(url);
+        setPendingPosterFile(null);
+    };
+
+    const handlePosterFileSelect = (file: File, objectUrl: string) => {
+        setPosterUrl(objectUrl);
+        setPendingPosterFile(file);
+        setPendingPosterUrl(null);
+    };
+
+    const handlePosterUrlSelect = (url: string) => {
+        setPosterUrl(url);
+        setPendingPosterUrl(url);
+        setPendingPosterFile(null);
+    };
+
 
     // --- Handlers ---
     const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
@@ -155,10 +208,13 @@ export default function ArtifactForm({
             setTags(data.genres.map((g: string) => ({ name: g })));
         }
 
-        // Sync Image
+        // Sync Image (Legacy mapping into Cover, but now we also map to Poster)
         if (data.coverImage?.extraLarge) {
-            setCoverUrl(data.coverImage.extraLarge);
+            handleExternalPoster(data.coverImage.extraLarge);
+            // If cover is empty, also use it as an optimistic cover
+            if (!coverUrl) handleExternalCover(data.coverImage.extraLarge);
         }
+
 
         toast.success(`Synced metadata for: ${data.title.english || data.title.romaji}`);
     }, []);
@@ -170,10 +226,10 @@ export default function ArtifactForm({
         if (field === 'isPrimary' && value === true) newResources.forEach(r => r.isPrimary = false);
         newResources[idx] = { ...newResources[idx], [field]: value };
 
-        if (field === 'url' && (!coverUrl || coverUrl.includes('img.youtube.com'))) {
+        if (field === 'url' && (!coverUrl || coverUrl.includes('img.youtube.com') || coverUrl.includes('s4.anilist.co'))) {
             const id = extractMediaId(value, newResources[idx].platform);
             const thumb = getThumbnailUrl(id, newResources[idx].platform);
-            if (thumb) setCoverUrl(thumb);
+            if (thumb) handleExternalCover(thumb);
         }
         setResources(newResources);
     };
@@ -212,6 +268,58 @@ export default function ArtifactForm({
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            let finalCoverId = coverId;
+            let finalCoverUrl = coverUrl;
+
+            // Handle delayed image upload: COVER
+            if (pendingCoverFile) {
+                toast.info('Uploading local cover image...');
+                const formData = new FormData();
+                formData.append('file', pendingCoverFile);
+                formData.append('context', 'artifact_asset');
+                formData.append('artifactId', artifactId);
+                formData.append('role', 'cover');
+                const res = await uploadMediaAction(formData);
+                finalCoverId = res.mediaId;
+                finalCoverUrl = res.url;
+            } else if (pendingCoverUrl) {
+                toast.info('Downloading external cover image...');
+                const formData = new FormData();
+                formData.append('url', pendingCoverUrl);
+                formData.append('context', 'artifact_asset');
+                formData.append('artifactId', artifactId);
+                formData.append('role', 'cover');
+                const res = await uploadMediaAction(formData);
+                finalCoverId = res.mediaId;
+                finalCoverUrl = res.url;
+            }
+
+            // Handle delayed image upload: POSTER
+            let finalPosterId = posterId;
+            let finalPosterUrl = posterUrl;
+            if (pendingPosterFile) {
+                toast.info('Uploading local poster image...');
+                const formData = new FormData();
+                formData.append('file', pendingPosterFile);
+                formData.append('context', 'artifact_asset');
+                formData.append('artifactId', artifactId);
+                formData.append('role', 'poster');
+                const res = await uploadMediaAction(formData);
+                finalPosterId = res.mediaId;
+                finalPosterUrl = res.url;
+            } else if (pendingPosterUrl) {
+                toast.info('Downloading external poster image...');
+                const formData = new FormData();
+                formData.append('url', pendingPosterUrl);
+                formData.append('context', 'artifact_asset');
+                formData.append('artifactId', artifactId);
+                formData.append('role', 'poster');
+                const res = await uploadMediaAction(formData);
+                finalPosterId = res.mediaId;
+                finalPosterUrl = res.url;
+            }
+
+
             const cleanResources = resources.filter(r => r.url.trim() !== '');
             const cleanCredits = credits.filter(c => c.entityId.trim() !== '');
             const cleanSpecs = specs.reduce((acc, curr) => {
@@ -221,10 +329,13 @@ export default function ArtifactForm({
             const cleanTags = tags.filter(t => t.name.trim() !== '');
 
             const payload = {
+                id: artifactId,
                 category,
-                coverImage: coverUrl,
+                coverId: finalCoverId,
+                posterId: finalPosterId,
                 status,
                 score,
+
                 isMajor,
                 isVerified,
                 resources: cleanResources,
@@ -247,7 +358,7 @@ export default function ArtifactForm({
                 onComplete();
             } else {
                 router.refresh();
-                if (initialData?.id) router.push('/pedalboard/artifacts');
+                router.push('/pedalboard/artifacts');
             }
         } catch (e) {
             console.error(e);
@@ -292,8 +403,18 @@ export default function ArtifactForm({
                 setActiveTab={setActiveTab}
                 translations={translations}
                 updateTrans={updateTrans}
+                coverId={coverId}
+                setCoverId={setCoverId}
                 coverUrl={coverUrl}
                 setCoverUrl={setCoverUrl}
+                onCoverFileSelect={handleCoverFileSelect}
+                onCoverUrlSelect={handleCoverUrlSelect}
+                posterId={posterId}
+                setPosterId={setPosterId}
+                posterUrl={posterUrl}
+                setPosterUrl={setPosterUrl}
+                onPosterFileSelect={handlePosterFileSelect}
+                onPosterUrlSelect={handlePosterUrlSelect}
                 category={category}
                 setCategory={setCategory}
                 userRole={userRole}

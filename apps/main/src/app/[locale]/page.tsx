@@ -1,26 +1,31 @@
+import React from "react";
+import { MainLayout } from "../../components/layout/MainLayout";
+import { getDb, schema, desc, eq, isNull, sql } from "@shimokitan/db";
+import HomeClient from "./HomeClient";
+import { Locale, getDictionary } from "@shimokitan/utils";
 
-import React from 'react';
-import { MainLayout } from '../../components/layout/MainLayout';
-import { getDb, schema, desc, eq, isNull, sql } from '@shimokitan/db';
-import HomeClient from './HomeClient';
-import { Locale, getDictionary } from '@shimokitan/utils';
+export const dynamic = "force-dynamic";
 
-export default async function AppPage({ params }: { params: Promise<{ locale: Locale }> }) {
+export default async function AppPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
   const { locale } = await params;
   const dict = getDictionary(locale);
   const db = getDb();
 
   if (!db) {
-    if (process.env.NODE_ENV !== 'production') console.warn("Database initialization failed - db is null");
+    if (process.env.NODE_ENV !== "production")
+      console.warn("Database initialization failed - db is null");
     return <div>DB_CONNECTION_ERROR</div>;
   }
 
-
   try {
     const testQuery = await db.execute(sql`SELECT 1`);
-
   } catch (e: any) {
-    if (process.env.NODE_ENV !== 'production') console.error("Diagnostic SQL check failed:", e.message);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Diagnostic SQL check failed:", e.message);
   }
 
   // 1. Fetch Spotlight Artifacts (Highest Score)
@@ -30,22 +35,26 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       where: isNull(schema.artifacts.deletedAt),
       limit: 12, // Fetch more to allow in-memory sorting
       with: {
-        translations: true
-      }
+        cover: true,
+        translations: {
+          where: eq(schema.artifactsI18n.locale, locale),
+        },
+      },
     });
 
     // Map translations and sort by score manually
-    spotlightArtifacts = rawArtifacts.map((a: any) => ({
-      ...a,
-      title: a.translations?.[0]?.title || "Untitled",
-      description: a.translations?.[0]?.description || ""
-    }))
+    spotlightArtifacts = rawArtifacts
+      .map((a: any) => ({
+        ...a,
+        title: a.translations?.[0]?.title || "Untitled",
+        description: a.translations?.[0]?.description || "",
+        coverImage: a.cover?.url || null,
+      }))
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 6);
-
-
   } catch (e: any) {
-    if (process.env.NODE_ENV !== 'production') console.error("Spotlight Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Spotlight Fetch Failed:", e.message);
   }
 
   // 2. Fetch Recent Zines + their related artifacts
@@ -58,51 +67,65 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       with: {
         artifact: {
           with: {
-            translations: true
-          }
+            cover: true,
+            translations: {
+              where: eq(schema.artifactsI18n.locale, locale),
+            },
+          },
         },
-        translations: true,
-        author: true
-      }
+        translations: {
+          where: eq(schema.zinesI18n.locale, locale),
+        },
+        author: true,
+      },
     });
 
     recentZines = rawZines.map((z: any) => ({
       ...z,
       content: z.translations?.[0]?.content || "",
       author: z.author?.name || "Anonymous",
-      artifact: z.artifact ? {
-        ...z.artifact,
-        title: z.artifact.translations?.[0]?.title || "Untitled",
-        description: z.artifact.translations?.[0]?.description || ""
-      } : null
+      artifact: z.artifact
+        ? {
+            ...z.artifact,
+            title: z.artifact.translations?.[0]?.title || "Untitled",
+            description: z.artifact.translations?.[0]?.description || "",
+            coverImage: z.artifact.cover?.url || null,
+          }
+        : null,
     }));
-
   } catch (e: any) {
-    if (process.env.NODE_ENV !== 'production') console.error("Zines Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Zines Fetch Failed:", e.message);
   }
 
   // 3. Featured Artifact (The one in "The Pit")
   let featuredArtifact: any = null;
   try {
     const rawFeatured = await db.query.artifacts.findFirst({
-      where: eq(schema.artifacts.status, 'the_pit'),
-      orderBy: [desc(schema.artifacts.createdAt)],
+      where: eq(schema.artifacts.status, "the_pit"),
+      orderBy: sql`RANDOM()`,
       with: {
-        translations: true,
-        resources: true
-      }
+        cover: true,
+        translations: {
+          where: eq(schema.artifactsI18n.locale, locale),
+        },
+        resources: true,
+      },
     });
 
     if (rawFeatured) {
       let videoUrl = null;
-      const primaryVideo = rawFeatured.resources?.find((r: any) => r.type === 'video' || r.platform === 'youtube');
+      const primaryVideo = rawFeatured.resources?.find(
+        (r: any) =>
+          r.type === "video" || r.type === "mv" || r.platform === "youtube",
+      );
       if (primaryVideo) {
-        if (primaryVideo.value.includes('youtube.com/watch?v=')) {
-          const vId = primaryVideo.value.split('v=')[1]?.split('&')[0];
-          videoUrl = `https://www.youtube.com/embed/${vId}`;
-        } else if (primaryVideo.value.includes('youtu.be/')) {
-          const vId = primaryVideo.value.split('youtu.be/')[1]?.split('?')[0];
-          videoUrl = `https://www.youtube.com/embed/${vId}`;
+        if (primaryVideo.value.includes("youtube.com/watch?v=")) {
+          const vId = primaryVideo.value.split("v=")[1]?.split("&")[0];
+          videoUrl = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=1`;
+        } else if (primaryVideo.value.includes("youtu.be/")) {
+          const vId = primaryVideo.value.split("youtu.be/")[1]?.split("?")[0];
+          videoUrl = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=1`;
         } else {
           videoUrl = primaryVideo.value;
         }
@@ -112,12 +135,13 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
         ...rawFeatured,
         title: rawFeatured.translations?.[0]?.title || "Untitled",
         description: rawFeatured.translations?.[0]?.description || "",
-        videoUrl: videoUrl
+        coverImage: rawFeatured.cover?.url || null,
+        videoUrl: videoUrl,
       };
     }
-
   } catch (e: any) {
-    if (process.env.NODE_ENV !== 'production') console.error("Featured Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Featured Fetch Failed:", e.message);
   }
 
   // 4. Fetch Entities (Lifeforms)
@@ -127,21 +151,56 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
       where: isNull(schema.entities.deletedAt),
       limit: 10,
       with: {
-        translations: true
-      }
+        avatar: true,
+        translations: {
+          where: eq(schema.entitiesI18n.locale, locale),
+        },
+      },
     });
 
     entities = rawEntities.map((e: any) => ({
-      id: e.id,
+      ...e,
       name: e.translations?.[0]?.name || "Anonymous Entity",
-      type: e.circuit === 'major' ? "Major_Circuit" : "Underground_Echo",
+      type: e.circuit === "major" ? "Major_Circuit" : "Underground_Echo",
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
-      avatar: e.avatarUrl || null,
-      highlights: [] // We could fetch credits here if needed
+      avatar: e.avatar?.url || null,
+      highlights: [], // We could fetch credits here if needed
     }));
-
   } catch (e: any) {
-    if (process.env.NODE_ENV !== 'production') console.error("Entities Fetch Failed:", e.message);
+    if (process.env.NODE_ENV !== "production")
+      console.error("Entities Fetch Failed:", e.message);
+  }
+
+  // 5. Ambient World Data (Live Weather + DB Record Count)
+  let weatherTemp = "8°C";
+  try {
+    // Exact coordinates for Shimokitazawa, Setagaya-ku, Tokyo
+    const weatherRes = await fetch(
+      "https://api.open-meteo.com/v1/forecast?latitude=35.6611&longitude=139.6666&current_weather=true",
+      { next: { revalidate: 1800 } },
+    );
+    if (weatherRes.ok) {
+      const weatherData = await weatherRes.json();
+      if (weatherData?.current_weather?.temperature) {
+        weatherTemp = `${Math.round(weatherData.current_weather.temperature)}°C`;
+      }
+    }
+  } catch (e) {
+    if (process.env.NODE_ENV !== "production")
+      console.error("Weather Sync Failed");
+  }
+
+  let totalResonance = "1.2K";
+  try {
+    const countRes = await db.execute(
+      sql`SELECT (SELECT COUNT(*) FROM artifacts) + (SELECT COUNT(*) FROM entities) + (SELECT COUNT(*) FROM zines) as total`,
+    );
+    const total = Number(countRes[0]?.total || 0);
+    totalResonance =
+      total < 1000 ? String(total) : `${(total / 1000).toFixed(1)}K`;
+  } catch (e) {
+    if (process.env.NODE_ENV !== "production")
+      console.error("Resonance Count Failed");
   }
 
   return (
@@ -152,6 +211,8 @@ export default async function AppPage({ params }: { params: Promise<{ locale: Lo
         featuredArtifact={featuredArtifact}
         entities={entities}
         dict={dict}
+        weatherTemp={weatherTemp}
+        totalResonance={totalResonance}
       />
     </MainLayout>
   );

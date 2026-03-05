@@ -6,12 +6,13 @@ import {
     AudioWidget,
     CyberpunkShell,
     NavigationLink,
+    cn
 } from '@shimokitan/ui';
 
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
-export function MainLayout({ children }: { children: React.ReactNode }) {
+export function MainLayout({ children, noScroll = false }: { children: React.ReactNode, noScroll?: boolean }) {
     const pathname = usePathname();
 
     const isHomeActive = pathname === "/";
@@ -52,7 +53,10 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                     </nav>
 
                     {/* Children / Page Content */}
-                    <main className="flex-1 overflow-y-auto hide-scroll z-30">
+                    <main className={cn(
+                        "flex-1 z-30 min-h-0",
+                        noScroll ? "overflow-hidden h-full" : "overflow-y-auto hide-scroll"
+                    )}>
                         {children}
                     </main>
                 </div>

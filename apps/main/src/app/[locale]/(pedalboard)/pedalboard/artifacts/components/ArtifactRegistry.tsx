@@ -21,8 +21,8 @@ export default function ArtifactRegistry({ data, isTrash = false }: { data: any[
                 { key: 'category', label: 'CATEGORY', render: (val) => <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded-sm text-zinc-400">{val}</span> },
                 {
                     key: 'status', label: 'STATUS', render: (val) => (
-                        <span className={`text-[10px] font-black uppercase ${val === 'back_alley' ? 'text-emerald-500' : val === 'the_pit' ? 'text-amber-500' : 'text-zinc-600'}`}>
-                            {val === 'back_alley' ? 'PUBLISHED' : val === 'the_pit' ? 'DRAFT' : val}
+                        <span className={`text-[10px] font-black uppercase ${val === 'back_alley' ? 'text-emerald-500' : val === 'the_pit' ? 'text-rose-600' : 'text-zinc-600'}`}>
+                            {val === 'back_alley' ? 'LIVE' : val === 'the_pit' ? 'FEATURED (THE PIT)' : val}
                         </span>
                     )
                 },

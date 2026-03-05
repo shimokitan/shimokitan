@@ -65,6 +65,7 @@ export {
 } from "./components/ui/sheet";
 
 // --- Composite Components ---
+export { MediaUploader } from "./components/MediaUploader";
 export { AudioWidget } from "./components/AudioWidget";
 export { Badge, badgeVariants } from "./components/Badge";
 export { BentoCard } from "./components/BentoCard";

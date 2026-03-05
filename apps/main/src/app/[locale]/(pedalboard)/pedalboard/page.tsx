@@ -39,8 +39,6 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
         name: userProfile?.name || user?.name || 'GHOST_SIGNAL',
         status: userProfile?.status || '',
         bio: userProfile?.bio || 'A digital resident of Shimokitazawa.',
-        avatarUrl: userProfile?.avatarUrl || user?.image,
-        headerUrl: userProfile?.headerUrl || '',
         handle: user?.email?.split('@')[0] || 'unknown'
     };
 
@@ -97,22 +95,14 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
             {/* Profile Header Block */}
             <section className="relative">
                 <div className="h-48 md:h-64 bg-zinc-900 border border-zinc-800 relative overflow-hidden">
-                    {profileData.headerUrl ? (
-                        <img src={getOptimizedImageUrl(profileData.headerUrl, { width: 1600, height: 400, fit: 'cover' })!} alt="Header" className="w-full h-full object-cover" />
-                    ) : (
-                        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:20px_20px]" />
-                    )}
+                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:20px_20px]" />
                 </div>
 
                 <div className="px-6 md:px-10 -mt-16 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="flex flex-col md:flex-row md:items-end gap-6">
                         <div className="w-32 h-32 md:w-40 md:h-40 bg-black border-4 border-[#050505] relative shadow-2xl">
                             <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-zinc-600 overflow-hidden">
-                                {profileData.avatarUrl ? (
-                                    <img src={getOptimizedImageUrl(profileData.avatarUrl, { width: 320, height: 320, fit: 'cover' })!} alt={profileData.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <Icon icon="lucide:user" width={64} />
-                                )}
+                                <Icon icon="lucide:user" width={64} />
                             </div>
                             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-rose-600 flex items-center justify-center text-white border-2 border-black">
                                 <Icon icon="lucide:check-circle-2" width={16} />

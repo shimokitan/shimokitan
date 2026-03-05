@@ -13,6 +13,12 @@
         "ws": "^8.19.0",
         "zod": "^4.3.6"
     },
+    "scripts": {
+        "db:wipe": "bun src/wipe-and-seed.ts",
+        "db:seed": "bun src/seed-founder.ts",
+        "db:push": "bunx drizzle-kit push",
+        "db:studio": "bunx drizzle-kit studio"
+    },
     "devDependencies": {
         "@types/ws": "^8.18.1",
         "drizzle-kit": "^0.30.4",

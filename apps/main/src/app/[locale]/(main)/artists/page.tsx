@@ -14,7 +14,7 @@ export default async function ArtistsBrowsePage(props: { params: Promise<{ local
             id: e.id,
             name: translation?.name || "Anonymous Artist",
             type: e.type,
-            avatarUrl: e.avatarUrl,
+            avatarUrl: e.avatar?.url,
             isVerified: e.isVerified,
             artifactCount: e.credits?.length || 0
         };

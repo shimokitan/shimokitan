@@ -40,7 +40,18 @@ export async function getAllArtifacts() {
   return await db.query.artifacts.findMany({
     orderBy: [desc(schema.artifacts.score)],
     with: {
-      translations: true
+      translations: true,
+      cover: true,
+      poster: true,
+      credits: {
+        with: {
+          entity: {
+            with: {
+              translations: true
+            }
+          }
+        }
+      }
     }
   });
 }
@@ -56,13 +67,16 @@ export async function getArtifactById(id: string) {
         with: {
           entity: {
             with: {
-              translations: true
+              translations: true,
+              avatar: true
             }
           }
         }
       },
       translations: true,
       resources: true,
+      cover: true,
+      poster: true,
       zines: {
         with: {
           translations: true,
@@ -97,11 +111,14 @@ export async function getAllEntities() {
   return await db.query.entities.findMany({
     with: {
       translations: true,
+      avatar: true,
+      header: true,
       credits: {
         with: {
           artifact: {
             with: {
-              translations: true
+              translations: true,
+              cover: true
             }
           }
         }
@@ -118,12 +135,15 @@ export async function getEntityById(id: string) {
     where: eq(schema.entities.id, id),
     with: {
       translations: true,
+      avatar: true,
+      header: true,
       credits: {
         with: {
           artifact: {
             with: {
               translations: true,
-              resources: true
+              resources: true,
+              cover: true
             }
           }
         }

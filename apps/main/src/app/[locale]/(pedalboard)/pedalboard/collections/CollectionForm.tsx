@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createFullCollection, updateFullCollection } from '../actions';
 import { Icon } from '@iconify/react';
+import { MediaUploader } from '@shimokitan/ui';
+import { uploadMediaAction } from '../media-actions';
 
 export default function CollectionForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
@@ -23,6 +25,7 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
         })
     );
 
+    const [coverId, setCoverId] = useState<string | null>(initialData?.coverId || null);
     const [coverImage, setCoverImage] = useState(initialData?.coverImage || '');
     const [isMajor, setIsMajor] = useState(initialData?.isMajor || false);
     const [resonance, setResonance] = useState(initialData?.resonance || 0);
@@ -35,6 +38,7 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
         setIsSubmitting(true);
         try {
             const payload = {
+                coverId,
                 coverImage,
                 isMajor,
                 resonance,
@@ -100,13 +104,18 @@ export default function CollectionForm({ initialData }: { initialData?: any }) {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-[10px] font-mono uppercase text-zinc-400">Cover URL</label>
-                    <input
-                        value={coverImage}
-                        onChange={(e) => setCoverImage(e.target.value)}
-                        className="w-full bg-black border border-zinc-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-colors"
-                        placeholder="https://..."
-                    />
+                    <label className="text-[10px] font-mono uppercase text-zinc-400">Cover_Asset</label>
+                    <div className="w-full flex h-auto">
+                        <MediaUploader
+                            value={coverImage}
+                            contextType="artifact_cover"
+                            onChange={(mediaId, url) => {
+                                setCoverId(mediaId);
+                                setCoverImage(url);
+                            }}
+                            uploadAction={uploadMediaAction}
+                        />
+                    </div>
                 </div>
                 <div className="space-y-1">
                     <label className="text-[10px] font-mono uppercase text-zinc-400">Heat_Index</label>

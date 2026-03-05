@@ -35,7 +35,7 @@ const resourceSchema = z.object({
 const creditSchema = z.object({
     entityId: z.string().min(1),
     role: z.string().min(1),
-    displayRole: z.string().optional(),
+    displayRole: z.string().optional().nullable(),
     contributorClass: z.enum(CONTRIBUTOR_CLASSES).default('staff'),
     isPrimary: z.boolean().default(false),
     position: z.number().default(0),
@@ -54,34 +54,36 @@ const unitMemberSchema = z.object({
 
 export const entitySchema = z.object({
     type: z.enum(ENTITY_TYPES),
-    avatarUrl: z.string().url().optional().or(z.literal('')),
     circuit: z.enum(CIRCUITS).default('underground'),
-    isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
+    avatarId: z.string().optional().nullable(),
+    headerId: z.string().optional().nullable(),
     socialLinks: z.any().optional(), // JSON
     translations: z.array(translationSchema).optional(),
     members: z.array(unitMemberSchema).optional(),
 });
 
 export const artifactSchema = z.object({
+    id: z.string().optional(),
     category: z.enum(ARTIFACT_CATEGORIES),
-    coverImage: z.string().url().optional().or(z.literal('')),
+
     status: z.enum(ARTIFACT_STATUSES).default('back_alley'),
     score: z.number().optional(),
     specs: z.any().optional(), // JSON
-    isMajor: z.boolean().default(false),
     isVerified: z.boolean().default(false),
     verificationId: z.string().optional(), // Link to pending proof
+    coverId: z.string().optional().nullable(),
+    posterId: z.string().optional().nullable(),
     translations: z.array(translationSchema).optional(),
+
     resources: z.array(resourceSchema).optional(),
     credits: z.array(creditSchema).optional(),
     tags: z.array(tagRefSchema).optional(),
 });
 
 export const collectionSchema = z.object({
-    coverImage: z.string().url().optional().or(z.literal('')),
-    isMajor: z.boolean().default(false),
     resonance: z.number().optional(),
+    coverId: z.string().optional().nullable(),
     translations: z.array(translationSchema).optional(),
 });
 

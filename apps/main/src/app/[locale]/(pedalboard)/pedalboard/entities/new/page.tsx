@@ -17,14 +17,14 @@ export default async function NewEntityPage() {
 
     const allEntities = db ? await db.query.entities.findMany({
         where: isNull(schema.entities.deletedAt),
-        with: { translations: true }
+        with: { translations: true, avatar: true }
     }) : [];
 
     const entitySelectData = allEntities.map(e => ({
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
         type: e.type,
-        avatarUrl: e.avatarUrl
+        avatarUrl: e.avatar?.url
     }));
 
     return (

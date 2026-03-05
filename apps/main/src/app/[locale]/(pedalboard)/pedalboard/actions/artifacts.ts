@@ -16,26 +16,34 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const artifactId = `ART_${nanoid(10)}`;
+    const artifactId = validated.id || nanoid();
     const slug = slugify(validated.translations?.[0]?.title || artifactId);
 
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
-        coverImage = await uploadImageFromUrl(coverImage, artifactId, 'artifact');
-    }
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.artifacts).values({
             id: artifactId,
             category: validated.category,
             slug,
-            coverImage: coverImage || null,
             status: validated.status,
             score: validated.score,
             specs: validated.specs,
-            isMajor: validated.isMajor,
             isVerified: validated.isVerified,
+            coverId: validated.coverId || null,
         });
+
+        // Bridge Table Sync
+        const mediaLinks = [];
+        if (validated.coverId) mediaLinks.push({ artifactId, mediaId: validated.coverId, role: 'cover', isPrimary: true });
+        if (validated.posterId) mediaLinks.push({ artifactId, mediaId: validated.posterId, role: 'poster', isPrimary: false });
+
+        if (mediaLinks.length) {
+            await tx.insert(schema.artifactMedia).values(mediaLinks);
+            for (const link of mediaLinks) {
+                await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, link.mediaId));
+            }
+        }
+
 
         if (validated.verificationId) {
             await tx.update(schema.verificationRegistry)
@@ -61,7 +69,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
         if (validated.resources?.length) {
             await tx.insert(schema.artifactResources).values(
                 validated.resources.map((r) => ({
-                    id: `RES_${nanoid(10)}`,
+                    id: nanoid(),
                     artifactId,
                     type: r.type,
                     platform: r.platform,
@@ -98,7 +106,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                 });
 
                 if (!tag) {
-                    const newTagId = `TAG_${nanoid(10)}`;
+                    const newTagId = nanoid();
                     await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
                     await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
                     tag = { id: newTagId } as any;
@@ -109,7 +117,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
         }
     });
 
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+    revalidatePath('/', 'layout');
     return { id: artifactId };
 }
 
@@ -119,24 +127,32 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
-        coverImage = await uploadImageFromUrl(coverImage, id, 'artifact');
-    }
-
     await db.transaction(async (tx) => {
         await tx.update(schema.artifacts)
             .set({
                 category: validated.category,
-                coverImage: coverImage || null,
                 status: validated.status,
                 score: validated.score,
                 specs: validated.specs,
-                isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
+                coverId: validated.coverId || null,
                 updatedAt: new Date(),
             })
             .where(eq(schema.artifacts.id, id));
+
+        // Bridge Table Sync (Delete and Re-insert for active roles)
+        await tx.delete(schema.artifactMedia).where(eq(schema.artifactMedia.artifactId, id));
+        const mediaLinks = [];
+        if (validated.coverId) mediaLinks.push({ artifactId: id, mediaId: validated.coverId, role: 'cover', isPrimary: true });
+        if (validated.posterId) mediaLinks.push({ artifactId: id, mediaId: validated.posterId, role: 'poster', isPrimary: false });
+
+        if (mediaLinks.length) {
+            await tx.insert(schema.artifactMedia).values(mediaLinks);
+            for (const link of mediaLinks) {
+                await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, link.mediaId));
+            }
+        }
+
 
         await tx.delete(schema.artifactsI18n).where(eq(schema.artifactsI18n.artifactId, id));
         if (validated.translations?.length) {
@@ -154,7 +170,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         if (validated.resources?.length) {
             await tx.insert(schema.artifactResources).values(
                 validated.resources.map((r) => ({
-                    id: `RES_${nanoid(10)}`,
+                    id: nanoid(),
                     artifactId: id,
                     type: r.type,
                     platform: r.platform,
@@ -193,7 +209,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 });
 
                 if (!tag) {
-                    const newTagId = `TAG_${nanoid(10)}`;
+                    const newTagId = nanoid();
                     await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
                     await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
                     tag = { id: newTagId } as any;
@@ -204,7 +220,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         }
     });
 
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+    revalidatePath('/', 'layout');
     return { success: true };
 }
 
@@ -217,7 +233,7 @@ export async function deleteArtifact(id: string) {
         .set({ deletedAt: new Date() })
         .where(eq(schema.artifacts.id, id));
 
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+    revalidatePath('/', 'layout');
     return { success: true };
 }
 
@@ -225,12 +241,12 @@ export async function restoreArtifact(id: string) {
     await requireFounder();
     const db = getDb();
     if (db) await db.update(schema.artifacts).set({ deletedAt: null }).where(eq(schema.artifacts.id, id));
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+    revalidatePath('/', 'layout');
 }
 
 export async function purgeArtifact(id: string) {
     await requireFounder();
     const db = getDb();
     if (db) await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));
-    revalidatePath('/[locale]/pedalboard/artifacts', 'page');
+    revalidatePath('/', 'layout');
 }

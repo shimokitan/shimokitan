@@ -27,8 +27,6 @@ export default async function ProfileEditPage() {
         name: userProfile.name || '',
         status: userProfile.status || '',
         bio: userProfile.bio || '',
-        avatarUrl: userProfile.avatarUrl || '',
-        headerUrl: userProfile.headerUrl || ''
     };
 
     return (

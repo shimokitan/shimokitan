@@ -28,7 +28,7 @@ export default function ArtifactZinesPage() {
             <div className="flex flex-col gap-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20">
 
                 {/* Back Link */}
-                <Link href={`/artifacts/${id}`} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-rose-600 transition-colors group">
+                <Link href={`/artifacts/${id}`} className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-zinc-600 hover:text-rose-600 transition-colors group">
                     <Icon icon="lucide:arrow-left" width={14} height={14} className="group-hover:-translate-x-1 transition-transform" />
                     Back to Artifact
                 </Link>
@@ -41,19 +41,19 @@ export default function ArtifactZinesPage() {
                                 {artifact.title} // <span className="text-rose-600">ECHOES</span>
                             </h1>
                         </div>
-                        <p className="max-w-2xl font-mono text-zinc-500 text-[10px] uppercase tracking-widest leading-relaxed">
-                            Complete historical record of resident resonance for Fragment_{artifact.id.split('_')[1]}.
+                        <p className="max-w-2xl font-mono text-zinc-500 text-[11px] uppercase tracking-widest leading-relaxed">
+                            Complete historical record of resident resonance for Fragment_{artifact.id}.
                         </p>
                     </div>
 
                     <div className="flex items-center gap-8 font-mono">
                         <div className="flex flex-col items-end">
-                            <span className="text-[9px] text-zinc-600">TOTAL_SHARDS</span>
+                            <span className="text-[11px] text-zinc-600">TOTAL_SHARDS</span>
                             <span className="text-xl font-black text-zinc-200">{artifactZines.length}</span>
                         </div>
                         <div className="w-px h-10 bg-zinc-900" />
                         <div className="flex flex-col items-end">
-                            <span className="text-[9px] text-zinc-600">AVG_RESONANCE</span>
+                            <span className="text-[11px] text-zinc-600">AVG_RESONANCE</span>
                             <span className="text-xl font-black text-rose-500">
                                 {artifactZines.length > 0
                                     ? Math.round(artifactZines.reduce((acc, z) => acc + z.resonanceRating, 0) / artifactZines.length)
@@ -82,10 +82,10 @@ export default function ArtifactZinesPage() {
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-black uppercase text-zinc-100">{zine.authorName}</span>
-                                                <span className="text-[10px] font-mono text-zinc-600 italic">{zine.authorHandle}</span>
+                                                <span className="text-[11px] font-mono text-zinc-600 italic">{zine.authorHandle}</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2 text-zinc-700 font-mono text-[10px]">
+                                        <div className="flex items-center gap-2 text-zinc-700 font-mono text-[11px]">
                                             <Icon icon="lucide:calendar" width={12} height={12} />
                                             {new Date(zine.createdAt).toLocaleDateString()}
                                         </div>
@@ -103,7 +103,7 @@ export default function ArtifactZinesPage() {
                                             <Icon icon="lucide:flame" width={16} height={16} className="text-rose-600 group-hover/res:animate-pulse" />
                                             <span className="text-xs font-black italic uppercase text-zinc-400 group-hover/res:text-rose-500">{zine.resonanceRating} RESONANCE</span>
                                         </button>
-                                        <button className="text-[10px] font-black uppercase text-zinc-600 hover:text-white transition-colors">
+                                        <button className="text-xs font-black uppercase text-zinc-600 hover:text-white transition-colors">
                                             [ SIGNAL_BOOST ]
                                         </button>
                                     </div>
@@ -114,7 +114,7 @@ export default function ArtifactZinesPage() {
                         <div className="py-32 text-center">
                             <Icon icon="lucide:ghost" width={48} height={48} className="text-zinc-900 mx-auto mb-6" />
                             <p className="text-xl font-black text-zinc-800 uppercase italic">Silence in the Sector.</p>
-                            <p className="text-[10px] font-mono text-zinc-700 uppercase mt-2">No entities have recorded memories of this artifact yet.</p>
+                            <p className="text-[11px] font-mono text-zinc-700 uppercase mt-2">No entities have recorded memories of this artifact yet.</p>
                         </div>
                     )}
                 </div>

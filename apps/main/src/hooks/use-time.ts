@@ -7,6 +7,7 @@ export function useTime(options: { showSeconds?: boolean } = {}) {
         const updateTime = () => {
             const now = new Date();
             setTime(now.toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Tokyo',
                 hour12: false,
                 hour: '2-digit',
                 minute: '2-digit',

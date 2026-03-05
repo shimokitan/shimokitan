@@ -10,15 +10,20 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
     // Map DB artifacts to the format expected by the browser component
     const formattedArtifacts = artifacts.map((a: any) => {
         const translation = a.translations?.find((t: any) => t.locale === locale) || a.translations?.[0];
+        const primaryCredit = a.credits?.find((c: any) => c.isPrimary && (c.contributorClass === 'author' || c.contributorClass === 'collaborator')) || a.credits?.[0];
+        const artistName = primaryCredit?.entity?.translations?.find((t: any) => t.locale === locale)?.name ||
+            primaryCredit?.entity?.translations?.[0]?.name;
+
         return {
             id: a.id,
             title: translation?.title || "Untitled",
-            category: a.category,
-            coverImage: a.coverImage,
+            category: a.category || "UNKNOWN",
+            coverImage: a.cover?.url || null,
             status: a.status,
-            score: a.score,
-            isMajor: a.isMajor,
-            isVerified: a.isVerified
+            score: a.score || 0,
+            isMajor: (a.score || 0) > 85, // Simple heuristic for now
+            isVerified: a.isVerified ?? false,
+            artist: artistName || "ANONYMOUS"
         };
     });
 

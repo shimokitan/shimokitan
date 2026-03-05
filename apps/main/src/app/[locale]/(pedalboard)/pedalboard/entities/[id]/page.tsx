@@ -14,20 +14,21 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
         where: eq(schema.entities.id, params.id),
         with: {
             translations: true,
-            members: true
+            members: true,
+            avatar: true
         }
     }) : null;
 
     const allEntities = db ? await db.query.entities.findMany({
         where: (e, { isNull }) => isNull(e.deletedAt),
-        with: { translations: true }
+        with: { translations: true, avatar: true }
     }) : [];
 
     const entitySelectData = allEntities.map(e => ({
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
         type: e.type,
-        avatarUrl: e.avatarUrl
+        avatarUrl: e.avatar?.url
     }));
 
     if (!entity) {

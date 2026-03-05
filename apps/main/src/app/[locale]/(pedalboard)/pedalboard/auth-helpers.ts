@@ -86,7 +86,6 @@ export async function ensureUserSync() {
             const updateObj: any = {};
             if (existingById.email !== userEmail) updateObj.email = userEmail;
             if (!existingById.name && userName) updateObj.name = userName;
-            if (!existingById.avatarUrl && userImage) updateObj.avatarUrl = userImage;
 
             if (Object.keys(updateObj).length > 0) {
                 updateObj.updatedAt = new Date();
@@ -108,7 +107,6 @@ export async function ensureUserSync() {
                 .set({
                     id: userId,
                     name: existingByEmail.name || userName,
-                    avatarUrl: existingByEmail.avatarUrl || userImage,
                     updatedAt: new Date()
                 })
                 .where(eq(schema.users.email, userEmail));
@@ -121,7 +119,6 @@ export async function ensureUserSync() {
             id: userId,
             email: userEmail,
             name: userName,
-            avatarUrl: userImage,
             role: 'resident' as const,
         };
         await db.insert(schema.users).values(newUser);

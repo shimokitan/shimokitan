@@ -1,0 +1,164 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+import { Icon } from "@iconify/react";
+
+interface MediaUploaderProps {
+    value?: string | null;  // URL to display
+    blurhash?: string | null;
+    onChange?: (mediaId: string, url: string, blurhash: string | null) => void;
+    uploadAction?: (formData: FormData) => Promise<{ mediaId: string, url: string, blurhash: string | null }>;
+    contextType?: "entity_avatar" | "artifact_cover" | "artifact_asset" | "general";
+    onFileSelect?: (file: File, objectUrl: string) => void;
+
+    onUrlSelect?: (url: string) => void;
+}
+
+export function MediaUploader({ value, onChange, uploadAction, contextType = "general", onFileSelect, onUrlSelect }: MediaUploaderProps) {
+    const [uploading, setUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [preview, setPreview] = useState<string | null>(value || null);
+    const [urlInput, setUrlInput] = useState("");
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (value !== undefined) {
+            setPreview(value || null);
+        }
+    }, [value]);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Optimistic preview
+        const objectUrl = URL.createObjectURL(file);
+        setPreview(objectUrl);
+
+        if (onFileSelect) {
+            onFileSelect(file, objectUrl);
+            return;
+        }
+
+        if (!uploadAction || !onChange) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("context", contextType);
+
+        setUploading(true);
+        setProgress(30); // Simulated progress
+
+        try {
+            const result = await uploadAction(formData);
+            setProgress(100);
+            onChange(result.mediaId, result.url, result.blurhash);
+            setPreview(result.url); // Set the real R2 URL
+        } catch (error) {
+            console.error("Upload failed", error);
+            setPreview(value || null); // Revert
+        } finally {
+            setUploading(false);
+            setProgress(0);
+        }
+    };
+
+    const handleUrlUpload = async () => {
+        if (!urlInput) return;
+        setPreview(urlInput); // Optimistic naive preview
+
+        if (onUrlSelect) {
+            onUrlSelect(urlInput);
+            setUrlInput("");
+            return;
+        }
+
+        if (!uploadAction || !onChange) return;
+
+        const formData = new FormData();
+        formData.append("url", urlInput);
+        formData.append("context", contextType);
+
+        setUploading(true);
+        setProgress(30);
+
+        try {
+            const result = await uploadAction(formData);
+            setProgress(100);
+            onChange(result.mediaId, result.url, result.blurhash);
+            setPreview(result.url);
+            setUrlInput("");
+        } catch (error) {
+            console.error("Upload failed", error);
+            setPreview(value || null);
+            alert("Failed to download image from URL. It might be protected or invalid.");
+        } finally {
+            setUploading(false);
+            setProgress(0);
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-3">
+            <div
+                className="group relative w-24 h-24 md:w-32 md:h-32 bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden flex flex-col items-center justify-center cursor-pointer hover:border-violet-600 transition-colors shrink-0"
+                onClick={() => fileInputRef.current?.click()}
+            >
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                />
+                {preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={preview} alt="Preview" className={`w-full h-full object-cover transition-opacity ${uploading ? 'opacity-50' : 'opacity-100'}`} />
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-zinc-600 group-hover:text-violet-500 transition-colors p-4 text-center">
+                        <Icon icon="lucide:upload-cloud" width={24} />
+                        <span className="text-[10px] font-mono mt-2 tracking-widest uppercase">UPLOAD_AVATAR</span>
+                    </div>
+                )}
+
+                {uploading && (
+                    <div className="absolute inset-x-0 bottom-0 h-1 bg-zinc-900 z-10">
+                        <div
+                            className="h-full bg-violet-600 transition-all duration-300 relative overflow-hidden"
+                            style={{ width: `${progress}%` }}
+                        >
+                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                        </div>
+                    </div>
+                )}
+
+                {uploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
+                        <span className="text-[10px] sm:text-xs font-mono font-black text-violet-400 uppercase tracking-widest animate-pulse">
+                            [ PROCESSING ]
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            <div className="flex gap-2 w-full max-w-sm">
+                <input
+                    type="url"
+                    placeholder="Or paste image URL..."
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleUrlUpload())}
+                    className="flex-1 bg-black border border-zinc-800 p-2 text-xs text-white focus:border-violet-600 outline-none transition-colors"
+                />
+                <button
+                    type="button"
+                    onClick={handleUrlUpload}
+                    disabled={!urlInput || uploading}
+                    className="bg-zinc-900 text-white border border-zinc-800 px-3 text-[10px] font-black uppercase hover:bg-violet-600 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Fetch
+                </button>
+            </div>
+        </div>
+    );
+}

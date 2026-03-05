@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { MediaUploader } from '@shimokitan/ui';
+import { uploadMediaAction } from '../../media-actions';
 
 interface Translation {
     locale: 'en' | 'id' | 'jp';
@@ -15,9 +17,22 @@ interface BasicInfoSectionProps {
     setActiveTab: (tab: 'en' | 'id' | 'jp') => void;
     translations: Translation[];
     updateTrans: (locale: string, field: 'title' | 'description', value: string) => void;
+    coverId: string | null;
+    setCoverId: (id: string | null) => void;
     coverUrl: string;
     setCoverUrl: (url: string) => void;
+    onCoverFileSelect?: (file: File, objectUrl: string) => void;
+    onCoverUrlSelect?: (url: string) => void;
+
+    posterId: string | null;
+    setPosterId: (id: string | null) => void;
+    posterUrl: string;
+    setPosterUrl: (url: string) => void;
+    onPosterFileSelect?: (file: File, objectUrl: string) => void;
+    onPosterUrlSelect?: (url: string) => void;
+
     category: string;
+
     setCategory: (val: string) => void;
     userRole?: string;
     status: string;
@@ -36,9 +51,20 @@ export default function BasicInfoSection({
     setActiveTab,
     translations,
     updateTrans,
+    coverId,
+    setCoverId,
     coverUrl,
     setCoverUrl,
+    onCoverFileSelect,
+    onCoverUrlSelect,
+    posterId,
+    setPosterId,
+    posterUrl,
+    setPosterUrl,
+    onPosterFileSelect,
+    onPosterUrlSelect,
     category,
+
     setCategory,
     userRole,
     status,
@@ -98,32 +124,32 @@ export default function BasicInfoSection({
                     ))}
                 </div>
 
-                <div className="lg:col-span-4 space-y-4">
-                    <div className="aspect-[3/4] bg-zinc-950 border border-zinc-900 rounded relative overflow-hidden group">
-                        {coverUrl ? (
-                            <img src={coverUrl} alt="Preview" className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-800">
-                                <Icon icon="lucide:image" width={32} />
-                                <span className="text-[8px] uppercase mt-2 font-mono">No_Image_Asset</span>
-                            </div>
-                        )}
-                        {isVerified && (
-                            <div className="absolute top-2 right-2 bg-zinc-100 text-black p-1 rounded-sm shadow-lg">
-                                <Icon icon="lucide:shield-check" width={14} />
-                            </div>
-                        )}
+                <div className="lg:col-span-4 space-y-8">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase text-zinc-500">Artifact_Cover (Editorial)</label>
+                        <div className="w-full aspect-square md:aspect-video flex">
+                            <MediaUploader
+                                value={coverUrl}
+                                contextType="artifact_asset"
+                                onFileSelect={onCoverFileSelect}
+                                onUrlSelect={onCoverUrlSelect}
+                            />
+                        </div>
                     </div>
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-mono uppercase text-zinc-500">Asset_URL (Cover)</label>
-                        <input
-                            value={coverUrl}
-                            onChange={(e) => setCoverUrl(e.target.value)}
-                            className="w-full bg-black border border-zinc-800 p-2 text-[10px] text-zinc-300 focus:border-zinc-600 outline-none transition-colors font-mono"
-                            placeholder="https://..."
-                        />
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-mono uppercase text-zinc-500">Poster_Cover (Official KV)</label>
+                        <div className="w-full aspect-[2/3] flex">
+                            <MediaUploader
+                                value={posterUrl}
+                                contextType="artifact_asset"
+                                onFileSelect={onPosterFileSelect}
+                                onUrlSelect={onPosterUrlSelect}
+                            />
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -146,9 +172,9 @@ export default function BasicInfoSection({
                     <label className="text-[10px] font-mono uppercase text-zinc-500">Registry_Status</label>
                     <div className="flex gap-1 bg-black border border-zinc-800 p-1 rounded-sm h-[46px]">
                         {[
-                            { id: 'the_pit', label: 'DRAFT', color: 'bg-zinc-800' },
+                            { id: 'the_pit', label: 'IN THE PIT (FEATURED)', color: 'bg-rose-600' },
                             { id: 'back_alley', label: 'LIVE', color: 'bg-emerald-600' },
-                            { id: 'archived', label: 'VOID', color: 'bg-rose-900' }
+                            { id: 'archived', label: 'VOID', color: 'bg-zinc-800' }
                         ].map(s => (
                             <button
                                 key={s.id}

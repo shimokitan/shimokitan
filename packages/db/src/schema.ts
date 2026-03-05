@@ -3,6 +3,46 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
 
+// ------------------------------------------------------------------
+// 1.5. Media Registry
+// ------------------------------------------------------------------
+export const media = pgTable("media", {
+    id: text("id").primaryKey(), // e.g. MED_xxxx
+    type: text("type", { enum: ['image', 'video', 'audio', 'document'] }).notNull(),
+    url: text("url").notNull(),     // The public R2 URL
+    r2Key: text("r2_key").notNull().unique(), // The internal object key for easy deletion
+
+    // Aesthetic & Technical Metadata
+    blurhash: text("blurhash"),     // The blurry placeholder string
+    width: integer("width"),
+    height: integer("height"),
+    sizeBytes: integer("size_bytes"),
+    mimeType: text("mime_type").notNull(),
+
+    // Lifecycle Management
+    uploaderId: text("uploader_id").notNull(), // will reference users.id below, but users is defined later. We can just keep it as text for now, or use a string to refer to it. Wait, due to circular deps/ordering, I'll just use text(). references(() => users.id)
+    isOrphan: boolean("is_orphan").default(true), // True until linked to an Entity/Artifact
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// ------------------------------------------------------------------
+// 1.8. Tags (Genres, Moods, etc)
+// ------------------------------------------------------------------
+export const tags = pgTable("tags", {
+    id: text("id").primaryKey(),
+    category: text("category", { enum: ['genre', 'mood', 'style', 'theme', 'other'] }).default('genre'),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+});
+
+export const tagsI18n = pgTable("tags_i18n", {
+    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    name: text("name").notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.tagId, table.locale] }),
+    nameIdx: index("idx_tags_i18n_name").on(table.name),
+}));
 
 // ------------------------------------------------------------------
 // 2. Entities (Creators, Agencies, Studios)
@@ -13,11 +53,10 @@ export const entities = pgTable("entities", {
     slug: text("slug").notNull().unique(),
     uid: text("uid").unique(), // e.g. UID_SIG_001
     circuit: text("circuit", { enum: ['major', 'underground', 'archived'] }).default('underground'),
-    avatarUrl: text("avatar_url"),
-    headerUrl: text("header_url"),
     socialLinks: jsonb("social_links").default([]),
-    isMajor: boolean("is_major").default(false), // Legacy, kept for compatibility
     isVerified: boolean("is_verified").default(false), // Public verification badge
+    avatarId: text("avatar_id").references(() => media.id, { onDelete: 'set null' }),
+    headerId: text("header_id").references(() => media.id, { onDelete: 'set null' }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -31,8 +70,6 @@ export const users = pgTable("users", {
     email: text("email").notNull().unique(),
     name: text("name"),
     bio: text("bio"),
-    avatarUrl: text("avatar_url"),
-    headerUrl: text("header_url"),
     status: text("status"),
     role: text("role", { enum: ['founder', 'architect', 'resident', 'ghost'] }).default('resident').notNull(),
     resonanceMultiplier: integer("resonance_multiplier").default(100), // Dilution factor for Zines
@@ -70,18 +107,26 @@ export const artifacts = pgTable("artifacts", {
     id: text("id").primaryKey(),
     category: text("category", { enum: ['anime', 'music'] }).notNull(),
     slug: text("slug").notNull().unique(),
-    coverImage: text("cover_image"),
     status: text("status", { enum: ['the_pit', 'back_alley', 'archived'] }).default('back_alley'),
     score: integer("score").default(0),
     specs: jsonb("specs").default({}),
-    isMajor: boolean("is_major").default(false),
     isVerified: boolean("is_verified").default(false), // Public verification badge
+    coverId: text("cover_id").references(() => media.id, { onDelete: 'set null' }),
+    posterId: text("poster_id").references(() => media.id, { onDelete: 'set null' }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
 }, (table) => ({
     categoryIdx: index("idx_artifacts_category").on(table.category),
     statusIdx: index("idx_artifacts_status").on(table.status),
+}));
+
+export const artifactTags = pgTable("artifact_tags", {
+    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
+    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
+}, (table) => ({
+    pk: primaryKey({ columns: [table.artifactId, table.tagId] }),
 }));
 
 export const artifactsI18n = pgTable("artifacts_i18n", {
@@ -100,9 +145,8 @@ export const artifactsI18n = pgTable("artifacts_i18n", {
 export const collections = pgTable("collections", {
     id: text("id").primaryKey(),
     slug: text("slug").notNull().unique(), // Added slug
-    coverImage: text("cover_image"),
-    isMajor: boolean("is_major").default(false), // Added
     resonance: integer("resonance").default(0), // Added
+    coverId: text("cover_id").references(() => media.id, { onDelete: 'set null' }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -119,8 +163,8 @@ export const collectionsI18n = pgTable("collections_i18n", {
 }));
 
 export const collectionArtifacts = pgTable("collection_artifacts", {
-    collectionId: text("collection_id").references(() => collections.id, { onDelete: 'cascade' }),
-    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }),
+    collectionId: text("collection_id").references(() => collections.id, { onDelete: 'cascade' }).notNull(),
+    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
     position: integer("position").notNull(),
     curatorNote: text("curator_note"), // Keep this simple for now, or move to i18n if needed
 }, (table) => ({
@@ -163,10 +207,35 @@ export const artifactResources = pgTable("artifact_resources", {
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+// --- Artifact Media Junction (Enterprise Bridge) ---
+export const artifactMedia = pgTable("artifact_media", {
+    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
+    mediaId: text("media_id").references(() => media.id, { onDelete: 'cascade' }).notNull(),
+    role: text("role").notNull(), // cover, poster, background, logo, gallery
+    position: integer("position").default(0).notNull(),
+    isPrimary: boolean("is_primary").default(false).notNull(),
+    metadata: jsonb("metadata").default({}), // Focal points, CSS coordinates
+}, (table) => ({
+    pk: primaryKey({ columns: [table.artifactId, table.mediaId, table.role] }),
+    artifactRoleIdx: index("idx_artifact_media_role").on(table.artifactId, table.role),
+}));
+
+export const artifactMediaRelations = relations(artifactMedia, ({ one }) => ({
+    artifact: one(artifacts, {
+        fields: [artifactMedia.artifactId],
+        references: [artifacts.id],
+    }),
+    media: one(media, {
+        fields: [artifactMedia.mediaId],
+        references: [media.id],
+    }),
+}));
+
 // ------------------------------------------------------------------
 // 6. Zines
 // ------------------------------------------------------------------
 export const zines = pgTable("zines", {
+
     id: text("id").primaryKey(),
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }),
     authorId: text("author_id").references(() => users.id).notNull(),
@@ -215,7 +284,7 @@ export const verificationRegistry = pgTable("verification_registry", {
 // ------------------------------------------------------------------
 
 // Artifacts
-export const artifactsRelations = relations(artifacts, ({ many }) => ({
+export const artifactsRelations = relations(artifacts, ({ one, many }) => ({
     translations: many(artifactsI18n),
     credits: many(artifactCredits),
     resources: many(artifactResources),
@@ -225,6 +294,14 @@ export const artifactsRelations = relations(artifacts, ({ many }) => ({
         relationName: "artifact_verifications"
     }),
     tags: many(artifactTags),
+    cover: one(media, {
+        fields: [artifacts.coverId],
+        references: [media.id],
+    }),
+    poster: one(media, {
+        fields: [artifacts.posterId],
+        references: [media.id],
+    }),
 }));
 
 export const artifactsI18nRelations = relations(artifactsI18n, ({ one }) => ({
@@ -235,7 +312,7 @@ export const artifactsI18nRelations = relations(artifactsI18n, ({ one }) => ({
 }));
 
 // Entities
-export const entitiesRelations = relations(entities, ({ many }) => ({
+export const entitiesRelations = relations(entities, ({ one, many }) => ({
     translations: many(entitiesI18n),
     credits: many(artifactCredits),
     verifications: many(verificationRegistry, {
@@ -244,6 +321,21 @@ export const entitiesRelations = relations(entities, ({ many }) => ({
     managers: many(entityManagers),
     members: many(unitMembers, { relationName: "unit_members" }),
     units: many(unitMembers, { relationName: "member_units" }),
+    avatar: one(media, {
+        fields: [entities.avatarId],
+        references: [media.id],
+    }),
+    header: one(media, {
+        fields: [entities.headerId],
+        references: [media.id],
+    }),
+}));
+
+export const mediaRelations = relations(media, ({ one }) => ({
+    uploader: one(users, {
+        fields: [media.uploaderId],
+        references: [users.id],
+    }),
 }));
 
 export const unitMembersRelations = relations(unitMembers, ({ one }) => ({
@@ -282,9 +374,13 @@ export const entityManagersRelations = relations(entityManagers, ({ one }) => ({
 }));
 
 // Collections
-export const collectionsRelations = relations(collections, ({ many }) => ({
+export const collectionsRelations = relations(collections, ({ one, many }) => ({
     translations: many(collectionsI18n),
     artifacts: many(collectionArtifacts),
+    cover: one(media, {
+        fields: [collections.coverId],
+        references: [media.id],
+    }),
 }));
 
 export const collectionsI18nRelations = relations(collectionsI18n, ({ one }) => ({
@@ -349,40 +445,18 @@ export const verificationRegistryRelations = relations(verificationRegistry, ({ 
     artifact: one(artifacts, {
         fields: [verificationRegistry.targetId],
         references: [artifacts.id],
+        relationName: "artifact_verifications"
     }),
     entity: one(entities, {
         fields: [verificationRegistry.targetId],
         references: [entities.id],
+        relationName: "entity_verifications"
     }),
 }));
 
 // ------------------------------------------------------------------
-// 8. Tags (Genres, Moods, etc)
-// ------------------------------------------------------------------
-export const tags = pgTable("tags", {
-    id: text("id").primaryKey(),
-    category: text("category", { enum: ['genre', 'mood', 'style', 'theme', 'other'] }).default('genre'),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
-});
-
-export const tagsI18n = pgTable("tags_i18n", {
-    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
-    name: text("name").notNull(),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.tagId, table.locale] }),
-    nameIdx: index("idx_tags_i18n_name").on(table.name),
-}));
-
-export const artifactTags = pgTable("artifact_tags", {
-    artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
-    tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.artifactId, table.tagId] }),
-}));
-
 // 9. Relations for Tags
+// ------------------------------------------------------------------
 export const tagsRelations = relations(tags, ({ many }) => ({
     translations: many(tagsI18n),
     artifacts: many(artifactTags),

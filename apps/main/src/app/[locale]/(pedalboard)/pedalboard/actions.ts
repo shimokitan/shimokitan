@@ -35,7 +35,7 @@ export async function requestArchitectAccess() {
     }
 
     await db.insert(schema.verificationRegistry).values({
-        id: `VR_${nanoid(10)}`,
+        id: nanoid(),
         targetId: user.id,
         targetType: 'role_upgrade',
         status: 'pending',
@@ -61,7 +61,7 @@ export async function approveRoleUpgrade(verificationId: string) {
     }
 
     await db.transaction(async (tx) => {
-        const entityId = `ENT_${nanoid(10)}`;
+        const entityId = nanoid();
 
         await tx.update(schema.verificationRegistry)
             .set({
@@ -87,7 +87,6 @@ export async function approveRoleUpgrade(verificationId: string) {
             id: entityId,
             type: 'individual',
             slug: slugify(creator?.name || `architect-${nanoid(4)}`),
-            avatarUrl: creator?.avatarUrl,
         });
 
         if (creator?.name) {
@@ -120,14 +119,7 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const entityId = `ENT_${nanoid(10)}`;
-
-    // --- Always R2 for Avatar ---
-    let avatarUrl = validated.avatarUrl;
-    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
-        // Strict Mirror-or-Bust: Error bubbles up to UI
-        avatarUrl = await uploadImageFromUrl(avatarUrl, entityId, 'profile');
-    }
+    const entityId = nanoid();
 
     const slug = slugify(validated.translations?.[0]?.name || entityId);
 
@@ -136,12 +128,19 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
             id: entityId,
             type: validated.type,
             slug,
-            avatarUrl: avatarUrl || null,
             circuit: validated.circuit,
-            isMajor: validated.isMajor,
             isVerified: validated.isVerified,
-            socialLinks: validated.socialLinks,
+            socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
+            avatarId: validated.avatarId || null,
+            headerId: validated.headerId || null,
         });
+
+        if (validated.avatarId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.avatarId));
+        }
+        if (validated.headerId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.headerId));
+        }
 
         if (validated.translations?.length) {
             await tx.insert(schema.entitiesI18n).values(
@@ -201,7 +200,6 @@ export async function searchEntities(query: string, type?: string) {
         name: e.translations.find(t => t.locale === 'en')?.name || e.translations[0]?.name || 'Unknown_Entity',
         type: e.type,
         slug: e.slug,
-        avatarUrl: e.avatarUrl,
         circuit: e.circuit
     }));
 }
@@ -211,7 +209,7 @@ export async function quickCreateEntity(name: string, type: string) {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const entityId = `ENT_${nanoid(10)}`;
+    const entityId = nanoid();
     const slug = slugify(name || entityId);
 
     await db.transaction(async (tx) => {
@@ -239,25 +237,25 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    // --- Always R2 for Avatar ---
-    let avatarUrl = validated.avatarUrl;
-    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
-        // Strict Mirror-or-Bust: Error bubbles up to UI
-        avatarUrl = await uploadImageFromUrl(avatarUrl, id, 'profile');
-    }
-
     await db.transaction(async (tx) => {
         await tx.update(schema.entities)
             .set({
                 type: validated.type,
-                avatarUrl: avatarUrl || null,
                 circuit: validated.circuit,
-                isMajor: validated.isMajor,
                 isVerified: validated.isVerified,
-                socialLinks: validated.socialLinks,
+                socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
+                avatarId: validated.avatarId || null,
+                headerId: validated.headerId || null,
                 updatedAt: new Date(),
             })
             .where(eq(schema.entities.id, id));
+
+        if (validated.avatarId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.avatarId));
+        }
+        if (validated.headerId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.headerId));
+        }
 
         await tx.delete(schema.entitiesI18n).where(eq(schema.entitiesI18n.entityId, id));
 
@@ -299,14 +297,7 @@ export async function createFullCollection(data: z.infer<typeof collectionSchema
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const collectionId = `COL_${nanoid(10)}`;
-
-    // --- Always R2 for Cover ---
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
-        // Strict Mirror-or-Bust: Error bubbles up to UI
-        coverImage = await uploadImageFromUrl(coverImage, collectionId, 'collection');
-    }
+    const collectionId = nanoid();
 
     const slug = slugify(validated.translations?.[0]?.title || collectionId);
 
@@ -314,10 +305,13 @@ export async function createFullCollection(data: z.infer<typeof collectionSchema
         await tx.insert(schema.collections).values({
             id: collectionId,
             slug,
-            coverImage: coverImage || null,
-            isMajor: validated.isMajor,
             resonance: validated.resonance,
+            coverId: validated.coverId || null,
         });
+
+        if (validated.coverId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.coverId));
+        }
 
         if (validated.translations?.length) {
             await tx.insert(schema.collectionsI18n).values(
@@ -341,22 +335,18 @@ export async function updateFullCollection(id: string, data: z.infer<typeof coll
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    // --- Always R2 for Cover ---
-    let coverImage = validated.coverImage;
-    if (coverImage && (coverImage.startsWith('http') && !coverImage.includes('cdn.shimokitan.live'))) {
-        // Strict Mirror-or-Bust: Error bubbles up to UI
-        coverImage = await uploadImageFromUrl(coverImage, id, 'collection');
-    }
-
     await db.transaction(async (tx) => {
         await tx.update(schema.collections)
             .set({
-                coverImage: coverImage || null,
-                isMajor: validated.isMajor,
                 resonance: validated.resonance,
+                coverId: validated.coverId || null,
                 updatedAt: new Date(),
             })
             .where(eq(schema.collections.id, id));
+
+        if (validated.coverId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.coverId));
+        }
 
         await tx.delete(schema.collectionsI18n).where(eq(schema.collectionsI18n.collectionId, id));
         if (validated.translations?.length) {
@@ -383,7 +373,7 @@ export async function createFullZine(data: z.infer<typeof zineSchema>) {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const zineId = `ZIN_${nanoid(10)}`;
+    const zineId = nanoid();
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.zines).values({
@@ -448,7 +438,7 @@ export async function createFullTag(data: z.infer<typeof tagSchema>) {
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const tagId = `TAG_${nanoid(10)}`;
+    const tagId = nanoid();
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.tags).values({
@@ -509,7 +499,7 @@ export async function createVerification(data: z.infer<typeof verificationSchema
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const verificationId = `VR_${nanoid(10)}`;
+    const verificationId = nanoid();
 
     await db.insert(schema.verificationRegistry).values({
         id: verificationId,
@@ -644,7 +634,7 @@ export async function createIndieVerificationAction(formData: FormData) {
     const db = getDb();
     if (!db) throw new Error('SYSTEM_ERROR: DB_STATION_OFFLINE');
 
-    const verificationId = `VER_${nanoid(10)}`;
+    const verificationId = nanoid();
     const extension = file.name.split('.').pop() || 'pdf';
 
     // Upload Proof to R2
@@ -689,29 +679,16 @@ export async function uploadToR2Action(formData: FormData) {
     return { publicUrl, key };
 }
 
-export async function updateUserProfile(data: { name: string; status: string; bio: string; avatarUrl?: string; headerUrl?: string }) {
+export async function updateUserProfile(data: { name: string; status: string; bio: string }) {
     const user = await requireUser();
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
-
-    let avatarUrl = data.avatarUrl;
-    let headerUrl = data.headerUrl;
-
-    // Strict mirroring for manual profile updates
-    if (avatarUrl && (avatarUrl.startsWith('http') && !avatarUrl.includes('cdn.shimokitan.live'))) {
-        avatarUrl = await uploadImageFromUrl(avatarUrl, user.id, 'profile');
-    }
-    if (headerUrl && (headerUrl.startsWith('http') && !headerUrl.includes('cdn.shimokitan.live'))) {
-        headerUrl = await uploadImageFromUrl(headerUrl, user.id, 'profile');
-    }
 
     await db.update(schema.users)
         .set({
             name: data.name,
             status: data.status,
             bio: data.bio,
-            avatarUrl: avatarUrl || null,
-            headerUrl: headerUrl || null,
             updatedAt: new Date()
         })
         .where(eq(schema.users.id, user.id));
@@ -719,72 +696,4 @@ export async function updateUserProfile(data: { name: string; status: string; bi
     revalidatePath('/[locale]/pedalboard', 'page');
     revalidatePath('/[locale]/pedalboard/profile/edit', 'page');
     return { success: true };
-}
-
-/**
- * --- MIRRORING MAINTENANCE (Founder Only) ---
- * Phase 3: Global Audit & Migration
- * Scans for external hotlinks and mirrors them to R2.
- */
-export async function mirrorMaintenanceAction() {
-    await requireFounder();
-    const db = getDb();
-    if (!db) throw new Error('DB_Terminal_Offline');
-
-    const results = {
-        entities: 0,
-        artifacts: 0,
-        collections: 0,
-        errors: [] as string[]
-    };
-
-    try {
-        // 1. Entities
-        const entitiesList = await db.query.entities.findMany();
-        for (const entity of entitiesList) {
-            if (entity.avatarUrl && (entity.avatarUrl.startsWith('http') && !entity.avatarUrl.includes('cdn.shimokitan.live'))) {
-                try {
-                    const newUrl = await uploadImageFromUrl(entity.avatarUrl, entity.id, 'profile');
-                    await db.update(schema.entities).set({ avatarUrl: newUrl }).where(eq(schema.entities.id, entity.id));
-                    results.entities++;
-                } catch (e: any) {
-                    results.errors.push(`Entity_Mirror_Fail [${entity.id}]: ${e.message}`);
-                }
-            }
-        }
-
-        // 2. Artifacts
-        const artifactsList = await db.query.artifacts.findMany();
-        for (const artifact of artifactsList) {
-            if (artifact.coverImage && (artifact.coverImage.startsWith('http') && !artifact.coverImage.includes('cdn.shimokitan.live'))) {
-                try {
-                    const newUrl = await uploadImageFromUrl(artifact.coverImage, artifact.id, 'artifact');
-                    await db.update(schema.artifacts).set({ coverImage: newUrl }).where(eq(schema.artifacts.id, artifact.id));
-                    results.artifacts++;
-                } catch (e: any) {
-                    results.errors.push(`Artifact_Mirror_Fail [${artifact.id}]: ${e.message}`);
-                }
-            }
-        }
-
-        // 3. Collections
-        const collectionsList = await db.query.collections.findMany();
-        for (const col of collectionsList) {
-            if (col.coverImage && (col.coverImage.startsWith('http') && !col.coverImage.includes('cdn.shimokitan.live'))) {
-                try {
-                    const newUrl = await uploadImageFromUrl(col.coverImage, col.id, 'collection');
-                    await db.update(schema.collections).set({ coverImage: newUrl }).where(eq(schema.collections.id, col.id));
-                    results.collections++;
-                } catch (e: any) {
-                    results.errors.push(`Collection_Mirror_Fail [${col.id}]: ${e.message}`);
-                }
-            }
-        }
-    } catch (critical: any) {
-        if (process.env.NODE_ENV !== 'production') console.error('[MAINTENANCE_CRITICAL]:', critical);
-        throw new Error(`MAINTENANCE_ABORTED: ${critical.message}`);
-    }
-
-    revalidatePath('/[locale]/pedalboard', 'layout');
-    return { success: true, results };
 }

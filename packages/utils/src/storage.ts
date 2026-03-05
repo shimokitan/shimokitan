@@ -14,6 +14,7 @@ interface PathOptions {
     mediaType: MediaType;
     context: StorageContext;
     identifier: string; // NanoID
+    role?: string;      // Optional role for deeper grouping
     filename: string;   // NanoID + Extension
 }
 
@@ -28,13 +29,18 @@ interface PathOptions {
  *   mediaType: 'images', 
  *   context: 'artifacts', 
  *   identifier: 'shard_8z2k', 
+ *   role: 'cover',
  *   filename: 'b1x9k2.webp' 
  * })
- * // Returns: "images/artifacts/shard_8z2k/b1x9k2.webp"
+ * // Returns: "images/artifacts/shard_8z2k/cover/b1x9k2.webp"
  */
-export const generateStoragePath = ({ mediaType, context, identifier, filename }: PathOptions): string => {
-    return `${mediaType}/${context}/${identifier}/${filename}`;
+export const generateStoragePath = ({ mediaType, context, identifier, role, filename }: PathOptions): string => {
+    const parts = [mediaType, context, identifier];
+    if (role) parts.push(role);
+    parts.push(filename);
+    return parts.join('/');
 };
+
 
 /**
  * Common path generators for specific use cases
