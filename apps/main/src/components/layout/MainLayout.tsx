@@ -11,9 +11,16 @@ import {
 
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { useStationStore } from '../../lib/store/station-store';
 
 export function MainLayout({ children, noScroll = false }: { children: React.ReactNode, noScroll?: boolean }) {
     const pathname = usePathname();
+    const { isInitialized, isMinimized } = useStationStore();
+
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isHomeActive = pathname === "/";
     const isArtifactsActive = pathname?.startsWith("/artifacts");
@@ -54,14 +61,14 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
 
                     {/* Children / Page Content */}
                     <main className={cn(
-                        "flex-1 z-30 min-h-0",
-                        noScroll ? "overflow-hidden h-full" : "overflow-y-auto hide-scroll"
+                        "flex-1 z-30 min-h-0 custom-scroll",
+                        noScroll ? "overflow-hidden h-full" : "overflow-y-auto"
                     )}>
                         {children}
                     </main>
                 </div>
 
-                <AudioWidget />
+                {mounted && isInitialized && isMinimized && <AudioWidget />}
 
                 <Footer />
             </div>

@@ -99,7 +99,7 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                     <img
                                         src={artifact.coverImage || '/placeholder.png'}
                                         alt={artifact.title}
-                                        className="w-full h-full object-cover grayscale group-hover/item:grayscale-0 group-hover/item:scale-105 transition-all duration-700 opacity-70 group-hover/item:opacity-100"
+                                        className="w-full h-full object-cover md:grayscale md:group-hover/item:grayscale-0 group-hover/item:scale-105 transition-all duration-700 md:opacity-70 group-hover/item:opacity-100"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
 

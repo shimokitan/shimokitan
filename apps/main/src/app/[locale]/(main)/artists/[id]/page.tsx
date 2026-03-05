@@ -58,7 +58,7 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
                                 <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-zinc-500" />
 
                                 {entity.avatar?.url ? (
-                                    <img src={entity.avatar.url} className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" alt={name} />
+                                    <img src={entity.avatar.url} className="w-full h-full object-cover md:grayscale md:brightness-75 md:group-hover:grayscale-0 md:group-hover:brightness-100 transition-all duration-700" alt={name} />
                                 ) : (
                                     <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-800">
                                         <Icon icon="lucide:user-round" width={64} />
@@ -158,7 +158,7 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
                                         <div className="w-2 h-6 bg-zinc-700" /> Featured_Signal
                                     </div>
                                     <Link href={`/artifacts/${sortedCredits[0].artifact.id}`} className="block group relative bg-zinc-950 border border-zinc-800 overflow-hidden shadow-2xl">
-                                        <div className="aspect-16/9 grayscale group-hover:grayscale-0 contrast-125 transition-all duration-700">
+                                        <div className="aspect-16/9 md:grayscale md:group-hover:grayscale-0 contrast-125 transition-all duration-700">
                                             {sortedCredits[0].artifact.cover?.url ? (
                                                 <img src={sortedCredits[0].artifact.cover.url} className="w-full h-full object-cover opacity-60 group-hover:opacity-100" />
                                             ) : (
@@ -203,7 +203,7 @@ export default async function ArtistPage(props: { params: Promise<{ locale: stri
                                         className="group flex flex-col p-8 hover:bg-white/[0.03] transition-colors relative"
                                     >
                                         <div className="flex gap-8 items-start">
-                                            <div className="w-40 h-24 bg-zinc-900 flex-shrink-0 border-2 border-zinc-800 overflow-hidden group-hover:border-white transition-all grayscale group-hover:grayscale-0 shadow-2xl">
+                                            <div className="w-40 h-24 bg-zinc-900 flex-shrink-0 border-2 border-zinc-800 overflow-hidden group-hover:border-white transition-all md:grayscale md:group-hover:grayscale-0 shadow-2xl">
                                                 {credit.artifact.cover?.url ? (
                                                     <img src={credit.artifact.cover.url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                                 ) : (

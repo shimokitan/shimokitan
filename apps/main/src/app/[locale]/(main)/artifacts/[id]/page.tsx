@@ -153,7 +153,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                 <div className="flex items-center gap-2">
                                     <Icon icon="lucide:message-square-quote" width={16} className="text-rose-500" />
                                     <h3 className="text-sm font-mono text-white font-black uppercase tracking-[0.3em]">Echo_Flux</h3>
-                                    <Badge variant="outline" className="ml-2 text-[10px] bg-rose-500/10 text-rose-500 border-rose-500/20">{artifact.zines?.length || 0}</Badge>
+                                    <Badge variant="clean" className="ml-2 text-[10px] bg-rose-500/10 text-rose-500 border-rose-500/20">{artifact.zines?.length || 0}</Badge>
                                 </div>
                                 <Link
                                     href={`/artifacts/${id}/zines/post`}
@@ -240,7 +240,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         <div className="absolute top-0 left-0 w-1 h-full bg-violet-600 opacity-50 group-hover:opacity-100 transition-opacity" />
                                         <div className="w-10 h-10 shrink-0 relative p-0.5 border border-zinc-700 rounded-full bg-zinc-950 group-hover:border-violet-400 transition-all duration-500">
                                             {primaryEntity?.avatar?.url ? (
-                                                <img src={primaryEntity.avatar.url} className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all" />
+                                                <img src={primaryEntity.avatar.url} className="w-full h-full object-cover rounded-full md:grayscale md:group-hover:grayscale-0 transition-all" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-zinc-900">
                                                     <Icon icon="lucide:user" width={16} />
@@ -264,7 +264,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 href={`/artists/${credit.entityId}`}
                                                 className="flex items-center gap-3 p-2.5 bg-zinc-900/30 border border-zinc-800/80 rounded-lg hover:border-violet-500/30 transition-all group/item ml-4"
                                             >
-                                                <div className="w-7 h-7 shrink-0 bg-zinc-950 border border-zinc-800 rounded grayscale group-hover/item:grayscale-0 transition-all flex items-center justify-center">
+                                                <div className="w-7 h-7 shrink-0 bg-zinc-950 border border-zinc-800 rounded md:grayscale md:group-hover/item:grayscale-0 transition-all flex items-center justify-center">
                                                     {credit.entity.avatar?.url ? (
                                                         <img src={credit.entity.avatar.url} className="w-full h-full object-cover rounded-sm" />
                                                     ) : (

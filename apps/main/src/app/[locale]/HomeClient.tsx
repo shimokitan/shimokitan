@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import { BentoCard, Badge } from "@shimokitan/ui";
+import { BentoCard, Badge, cn } from "@shimokitan/ui";
 import { useTime } from "../../hooks/use-time";
 import Link from "../../components/Link";
 import { Dictionary } from "@shimokitan/utils";
+import { useStationStore } from "../../lib/store/station-store";
 
 type Artifact = {
   id: string;
@@ -46,6 +47,7 @@ export default function HomeClient({
 }) {
   const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
   const [activeEntity, setActiveEntity] = useState<number>(0);
+  const station = useStationStore();
 
   const [randomFreq, setRandomFreq] = useState<string>("000");
   const time = useTime();
@@ -56,56 +58,19 @@ export default function HomeClient({
 
   const heroArtifact = spotlightArtifacts[0];
 
+  /** Derived state: docked audio player is visible when initialized and not minimized */
+  const isDockedActive = station.isInitialized && !station.isMinimized;
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 md:grid-rows-7 gap-3 h-auto md:h-full">
       {/* 1. Hero / Asymmetrical Editorial Dossier */}
       <div className="col-span-2 md:col-span-3 md:row-span-3 relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl flex flex-col md:flex-row">
-        {/* Left Side: Visual Archive */}
-        <div className="w-full md:w-2/3 relative h-64 md:h-auto overflow-hidden border-r border-zinc-900 bg-zinc-900">
-          {heroArtifact?.coverImage ? (
-            <img
-              src={heroArtifact.coverImage}
-              alt="Magazine Cover"
-              className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 opacity-50 group-hover:opacity-70"
-            />
-          ) : (
-            <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-800">
-              <Icon icon="lucide:image-off" width={48} className="opacity-50" />
-              <span className="text-[11px] font-mono mt-2 tracking-widest">
-                NO_VISUAL_DATA
-              </span>
-            </div>
-          )}
-          {/* Flat Legibility Overlays (No Gradients) */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-zinc-950/80 backdrop-blur-sm p-6 flex flex-col justify-end">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-1 h-3 bg-violet-600" />
-              <span className="text-[10px] font-mono text-zinc-500 tracking-[0.3em] uppercase">
-                Visual_Resource // {heroArtifact?.id || "VOID"}
-              </span>
-            </div>
-            <h3 className="text-xl md:text-2xl font-black italic text-white uppercase tracking-tighter truncate">
-              {heroArtifact?.title || "Untitled Transmission"}
-            </h3>
-          </div>
-
-          {/* Technical HUD Overlays */}
-          <div className="absolute top-4 left-4 flex flex-col gap-1 border-l border-violet-500/50 pl-2">
-            <span className="text-[9px] font-mono text-violet-500 leading-none">
-              REG_TYPE // PRIMARY
-            </span>
-            <span className="text-[9px] font-mono text-zinc-600 leading-none">
-              SECTOR // 03
-            </span>
-          </div>
-        </div>
-
-        {/* Right Side: District Navigation */}
-        <div className="flex-1 bg-zinc-950 p-6 md:p-8 flex flex-col justify-between relative">
+        {/* Context Side: District Navigation / Intro */}
+        <div className="flex-1 bg-zinc-950 p-6 md:p-8 flex flex-col justify-between relative min-h-[260px] md:min-h-0 order-1">
           <div className="absolute top-0 right-0 w-12 h-12 border-t border-r border-zinc-800" />
 
           <div>
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-4 md:mb-6">
               <span className="w-8 h-px bg-zinc-800" />
               <span className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest">
                 {dict.home.district}
@@ -122,22 +87,173 @@ export default function HomeClient({
           </div>
 
           <div className="mt-8 md:mt-0">
-            <p className="text-zinc-500 text-[11px] font-mono leading-relaxed uppercase tracking-wider mb-6 line-clamp-4">
-              {dict.home.description}
-            </p>
+            <div className="flex flex-col gap-4">
+              <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-none italic select-none">
+                SHIMOKITAN
+                <br />
+                <span className="text-violet-500">RESISTANCE</span>
+              </h1>
+              <p className="max-w-md text-xs md:text-base text-zinc-500 leading-relaxed font-medium">
+                A decentralized broadcast network operating in the gaps of reality.
+                Broadcasting from the heart of Shimokitazawa.
+                Capture shards, follow artists, and preserve the resonance.
+              </p>
+            </div>
+          </div>
+        </div>
 
-            <Link
-              href={`/artifacts/${heroArtifact?.id}`}
-              className="inline-flex items-center justify-between w-full bg-zinc-900 border border-zinc-800 text-white p-4 hover:bg-violet-600 hover:border-violet-500 transition-all group"
-            >
-              <span className="text-xs font-black tracking-[0.2em]">
-                {dict.home.initialize}
-              </span>
-              <Icon
-                icon="lucide:arrow-right"
-                className="group-hover:translate-x-1 transition-transform"
-              />
-            </Link>
+        {/* Signal Side: Broadcast Station / Static Audio Center */}
+        <div className="w-full md:w-2/5 relative h-auto md:h-full min-h-[420px] md:min-h-0 overflow-hidden border-t md:border-t-0 md:border-l border-zinc-900 bg-zinc-950/70 flex flex-col order-2">
+          {/* Header: Functional Status Bar */}
+          <div className="h-10 border-b border-zinc-800/50 flex items-center justify-between px-4 md:px-6 bg-zinc-950/40">
+            <div className="flex items-center gap-2 text-zinc-500">
+              <Icon icon="lucide:disc" width={14} className={isDockedActive ? "animate-spin" : ""} />
+              <span className="text-[10px] font-mono tracking-[0.2em] uppercase">Artifact.Audio /// LIVE_CENTER</span>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Minimize Button - Desktop Only */}
+              {station.isInitialized && !station.isMinimized && (
+                <button
+                  onClick={() => station.setMinimized(true)}
+                  className="hidden md:flex items-center justify-center p-1.5 hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-white"
+                  title="Minimize to Floating Widget"
+                >
+                  <Icon icon="lucide:minus" width={14} />
+                </button>
+              )}
+              <div className="px-2 py-0.5 rounded bg-violet-900/40 text-violet-200 border border-violet-700/40 text-[9px] font-mono uppercase">LIVE RESONANCE</div>
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full transition-all",
+                isDockedActive ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-zinc-800"
+              )} />
+            </div>
+          </div>
+
+          {/* Visual Center: The Vinyl Disc & Tonearm */}
+          <div className="flex-1 flex flex-col items-center justify-center relative p-6 md:p-8">
+            <div className="relative group/vinyl">
+              {/* Spinning Disc */}
+              <div className={cn(
+                "w-40 h-40 md:w-52 md:h-52 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-950 overflow-hidden relative shadow-[0_32px_64px_-16px_rgba(0,0,0,1)] transition-all duration-700",
+                isDockedActive ? "animate-[spin_4s_linear_infinite]" : "scale-95 opacity-60 grayscale-[0.3]"
+              )}>
+                {/* Grooves */}
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="absolute rounded-full border border-zinc-900" style={{ inset: `${(i + 1) * 2}rem` }} />
+                ))}
+
+                {/* Album Art Label */}
+                <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10 shadow-lg">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png"
+                    className={cn(
+                      "w-full h-full object-cover transition-opacity duration-700",
+                      !isDockedActive && "opacity-40"
+                    )}
+                    alt="current signal"
+                  />
+                  <div className="absolute inset-0 bg-black/10" />
+                </div>
+                <div className="absolute w-2.5 h-2.5 bg-zinc-400 rounded-full border border-zinc-950 z-20" />
+              </div>
+
+              {/* Enhanced Tonearm */}
+              <div
+                className={cn(
+                  "absolute -right-4 top-0 w-24 h-32 origin-top transition-transform duration-1000 ease-[cubic-bezier(0.45,0.05,0.55,0.95)] z-20 pointer-events-none",
+                  isDockedActive ? "rotate-[20deg]" : "rotate-[-12deg]"
+                )}
+                style={{ transformOrigin: '80% 15%' }}
+              >
+                {/* Pivot */}
+                <div className="absolute top-0 right-2 w-14 h-14 bg-zinc-900 rounded-full shadow-[4px_4px_0px_rgba(0,0,0,0.5)] flex items-center justify-center border border-zinc-800">
+                  <div className="w-10 h-10 bg-zinc-800 rounded-full border border-zinc-700 flex items-center justify-center">
+                    <div className="w-8 h-8 bg-zinc-700 rounded-full border border-zinc-900 flex items-center justify-center shadow-inner">
+                      <div className="w-2 h-2 bg-zinc-500 rounded-full" />
+                    </div>
+                  </div>
+                  <div className="absolute -top-7 right-0 w-7 h-12 bg-zinc-700 rounded-sm border-x border-b border-zinc-800 shadow-[2px_2px_0_rgba(0,0,0,0.4)] transform rotate-[-15deg]" />
+                </div>
+                {/* Arm */}
+                <div className="absolute right-[30px] top-6 w-[8px] h-28 bg-zinc-400 rounded-full origin-top rotate-[5deg] overflow-hidden border-x border-zinc-500">
+                  <div className="absolute inset-y-0 left-0 w-[1px] bg-white/40" />
+                  <div className="absolute inset-y-0 right-0 w-[2px] bg-black/20" />
+                </div>
+                {/* Headshell & Stylus */}
+                <div className="absolute bottom-[-18px] left-[14px] w-8 h-12 flex flex-col items-center transform rotate-[20deg]">
+                  <div className="w-6 h-10 bg-zinc-900 rounded-t-sm rounded-br-2xl border-l-2 border-zinc-800 relative shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-white/10" />
+                    <div className="absolute top-1 -right-4 w-5 h-1.5 bg-zinc-800 rounded-full rotate-[-30deg] border-b border-black/40" />
+                  </div>
+                  <div className="w-3 h-4 bg-rose-600 rounded-b-sm mt-[-2px] ml-2 z-30 border-x border-b border-rose-800 shadow-[2px_2px_0px_rgba(0,0,0,0.5)] flex items-center justify-center">
+                    <div className="w-full h-[1px] bg-white/20" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Track Info */}
+            <div className="mt-6 md:mt-8 flex flex-col items-center">
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="zinc">LOSSLESS</Badge>
+                <span className="text-[9px] font-mono text-zinc-600 uppercase">1411_KBPS</span>
+              </div>
+              <h3 className={cn(
+                "text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none transition-colors",
+                isDockedActive ? "text-white" : "text-zinc-700"
+              )}>
+                {isDockedActive ? "Starboy" : "---"}
+              </h3>
+              <p className={cn(
+                "text-[10px] font-mono font-bold uppercase tracking-widest mt-2",
+                isDockedActive ? "text-violet-500" : "text-zinc-800"
+              )}>
+                {isDockedActive ? "The Weeknd, Daft Punk" : "Enter_Frequency"}
+              </p>
+            </div>
+          </div>
+
+          {/* Controls Console */}
+          <div className="p-4 md:p-6 bg-zinc-900/30 border-t border-zinc-900 space-y-4">
+            <div className="w-full flex items-center gap-3 text-[10px] text-zinc-500 font-mono font-black italic">
+              <span className="w-8">1:24</span>
+              <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                <div className={cn("h-full bg-violet-600 transition-all duration-300", isDockedActive ? "w-[35%]" : "w-0")} />
+              </div>
+              <span className="w-8">3:50</span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <button className="text-zinc-600 hover:text-white transition-colors">
+                  <Icon icon="lucide:skip-back" width={18} />
+                </button>
+                <button
+                  onClick={() => {
+                    station.toggle();
+                    if (station.isMinimized) station.setMinimized(false);
+                  }}
+                  className={cn(
+                    "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
+                    station.isInitialized
+                      ? "bg-white text-black shadow-lg"
+                      : "bg-zinc-800 text-zinc-600 border border-zinc-700"
+                  )}
+                >
+                  <Icon icon={station.isInitialized ? "lucide:pause" : "lucide:play"} width={20} className={!station.isInitialized ? "ml-0.5" : ""} />
+                </button>
+                <button className="text-zinc-600 hover:text-white transition-colors">
+                  <Icon icon="lucide:skip-forward" width={18} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 w-28 md:w-32">
+                <Icon icon="lucide:volume-2" width={14} className="text-zinc-600" />
+                <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-zinc-500 w-[80%]" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -292,7 +408,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* 4. Featured Artifacts Grid */}
+      {/* 4. Featured Archives Grid */}
       <BentoCard
         className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4"
         title="Featured Archives"
@@ -391,6 +507,7 @@ export default function HomeClient({
                   <img
                     src={entity.avatar}
                     className="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 transition-all duration-500"
+                    alt={entity.name}
                   />
                 ) : (
                   <Icon icon="lucide:user" width={24} />
@@ -440,54 +557,102 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* 8. Video */}
+      {/* 7. Video */}
       <BentoCard
-        className="col-span-2 md:col-span-2 md:row-span-4 md:col-start-4 md:row-start-4 overflow-hidden p-0 bg-black"
+        className="col-span-2 md:col-span-2 md:row-span-4 md:col-start-4 md:row-start-4 overflow-hidden p-0 bg-black min-h-[280px] md:min-h-0"
         minimal
       >
-        {featuredArtifact?.videoUrl ? (
-          <iframe
-            src={featuredArtifact.videoUrl}
-            className="w-full h-full border-0 pointer-events-auto"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800 bg-zinc-950">
-            <Icon icon="lucide:video-off" width={48} className="opacity-50" />
-            <span className="text-[12px] font-mono mt-2 tracking-widest">
-              NO_VIDEO_SIGNAL
-            </span>
-          </div>
-        )}
+        <div className="w-full h-full aspect-video md:aspect-auto">
+          {featuredArtifact?.videoUrl ? (
+            <iframe
+              src={featuredArtifact.videoUrl}
+              className="w-full h-full border-0 pointer-events-auto"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800 bg-zinc-950">
+              <Icon icon="lucide:video-off" width={48} className="opacity-50" />
+              <span className="text-[12px] font-mono mt-2 tracking-widest">
+                NO_VIDEO_SIGNAL
+              </span>
+            </div>
+          )}
+        </div>
       </BentoCard>
 
-      {/* 9. Editorial */}
+      {/* 8. Narrative Collapse / Zine Feed */}
       <BentoCard
         className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0"
+        title="Narrative Collapse"
+        icon="lucide:notebook-pen"
         minimal
       >
-        <div className="flex h-full w-full">
-          <div className="w-1/2 relative hidden md:block bg-zinc-900">
-            {heroArtifact?.coverImage && (
-              <img
-                src={heroArtifact.coverImage}
-                className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:opacity-60 transition-opacity"
-              />
-            )}
-            {/* Shard Overlay - Sharp Split */}
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-zinc-950" />
+        <div className="flex flex-col h-full bg-zinc-950/20 backdrop-blur-sm p-4 md:p-6">
+          <div className="flex items-center justify-between mb-4 border-b border-zinc-900 pb-2">
+            <div className="flex items-center gap-2">
+              <Icon icon="lucide:activity" className="text-violet-500 animate-pulse" width={14} />
+              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest font-black">
+                Live_Feed // Resonance_Events
+              </span>
+            </div>
+            <div className="text-[10px] font-mono text-zinc-600 uppercase flex items-center gap-2">
+              <span className="w-1 h-3 bg-zinc-800" />
+              Pulse_Registry
+            </div>
           </div>
-          <div className="flex-1 p-6 flex flex-col justify-center bg-zinc-950/50 backdrop-blur-sm">
-            <Badge variant="gold" className="mb-2">
-              {dict.home.editorial_sigil}
-            </Badge>
-            <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-2">
-              {dict.home.featured_title}
-            </h3>
-            <p className="text-zinc-500 text-xs italic leading-relaxed line-clamp-2">
-              {dict.home.featured_description}
-            </p>
+
+          <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
+            {recentZines.length > 0 ? (
+              recentZines.slice(0, 3).map((zine) => (
+                <div
+                  key={zine.id}
+                  className="flex gap-4 p-3 border border-zinc-900 bg-zinc-950/50 rounded-lg group hover:border-violet-500/50 transition-all hover:bg-zinc-900/50"
+                >
+                  {/* Linked Artifact Thumbnail */}
+                  <div className="shrink-0 w-12 h-12 rounded overflow-hidden border border-zinc-800 bg-zinc-900 shadow-inner group-hover:border-violet-500/30 transition-colors">
+                    <Link href={`/artifacts/${zine.artifact.id}`} className="block w-full h-full">
+                      {zine.artifact.coverImage ? (
+                        <img
+                          src={zine.artifact.coverImage}
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-110"
+                          alt={zine.artifact.title}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                          <Icon icon="lucide:disc" width={20} />
+                        </div>
+                      )}
+                    </Link>
+                  </div>
+                  {/* Zine Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-[10px] font-mono text-violet-500 font-black uppercase tracking-widest truncate">
+                          @{zine.author}
+                        </span>
+                        <span className="text-[9px] font-mono text-zinc-600 truncate opacity-60">
+                          // {zine.artifact.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[9px] font-mono text-rose-500/70 shrink-0">
+                        <Icon icon="lucide:zap" width={8} />
+                        <span>{zine.resonance || 0}</span>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-2 italic opacity-85 group-hover:opacity-100 transition-opacity">
+                      &quot;{zine.content}&quot;
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-zinc-800 border border-dashed border-zinc-900 rounded-xl py-8">
+                <Icon icon="lucide:inbox" width={32} className="opacity-20 mb-2" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.5em] opacity-40">No_Active_Pulse</span>
+              </div>
+            )}
           </div>
         </div>
       </BentoCard>

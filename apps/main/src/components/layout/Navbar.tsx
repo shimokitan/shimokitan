@@ -9,7 +9,12 @@ import { locales, Locale, getLocalePath, getDictionary } from '@shimokitan/utils
 import { useLocale } from '../../hooks/use-i18n';
 import { usePathname } from 'next/navigation';
 import {
-    cn
+    cn,
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
 } from '@shimokitan/ui';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-neon/client';
@@ -31,6 +36,11 @@ export function Navbar() {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
     const router = useRouter();
+
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleLogout = async () => {
         await authClient.signOut();
@@ -75,7 +85,7 @@ export function Navbar() {
 
             <div className="flex items-center gap-4">
                 {/* Language Switcher */}
-                <div className="flex gap-2 mr-2 border-r border-zinc-800 pr-4 h-6 items-center">
+                <div className="hidden sm:flex gap-2 mr-2 border-r border-zinc-800 pr-4 h-6 items-center">
                     {locales.map((l) => (
                         <a
                             key={l}
@@ -92,22 +102,24 @@ export function Navbar() {
                     ))}
                 </div>
 
-                <Link href="/about" className="text-zinc-500 hover:text-white transition-colors">
-                    <Icon icon="lucide:info" width={18} height={18} />
-                </Link>
+                <div className="hidden sm:flex items-center gap-4">
+                    <Link href="/about" className="text-zinc-500 hover:text-white transition-colors">
+                        <Icon icon="lucide:info" width={18} height={18} />
+                    </Link>
 
-                <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-sm px-3 py-1.5 flex items-center gap-2 w-32 sm:w-48 md:w-64 backdrop-blur-md group focus-within:border-violet-500/50 transition-colors">
-                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500 group-focus-within:text-violet-400" />
-                    <input
-                        type="text"
-                        placeholder={dict.search_placeholder}
-                        className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
-                    />
+                    <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-sm px-3 py-1.5 flex items-center gap-2 w-32 sm:w-48 backdrop-blur-md group focus-within:border-violet-500/50 transition-colors">
+                        <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500 group-focus-within:text-violet-400" />
+                        <input
+                            type="text"
+                            placeholder={dict.search_placeholder}
+                            className="bg-transparent border-none outline-none text-xs w-full placeholder-zinc-500 text-zinc-300 font-mono"
+                        />
+                    </div>
+
+                    <div className="h-4 w-px bg-zinc-800 mx-2" />
                 </div>
 
-                <div className="h-4 w-px bg-zinc-800 mx-2 hidden sm:block" />
-
-                {!isPending && (
+                {mounted && !isPending && (
                     <>
                         {user ? (
                             <div className="flex items-center gap-4 animate-in fade-in duration-300">
@@ -127,7 +139,7 @@ export function Navbar() {
 
                                     <button
                                         onClick={handleLogout}
-                                        className="p-1 px-2 text-zinc-600 hover:text-rose-500 transition-colors border border-transparent hover:border-zinc-800 rounded-sm"
+                                        className="hidden sm:block p-1 px-2 text-zinc-600 hover:text-rose-500 transition-colors border border-transparent hover:border-zinc-800 rounded-sm"
                                         title="Disconnect"
                                     >
                                         <Icon icon="lucide:power" width={14} />
@@ -137,7 +149,7 @@ export function Navbar() {
                         ) : (
                             <Link
                                 href="/auth/signin"
-                                className="flex items-center gap-2 px-4 py-1.5 bg-violet-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-violet-500 transition-all shadow-lg shadow-violet-900/20"
+                                className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-violet-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-violet-500 transition-all shadow-lg shadow-violet-900/20"
                             >
                                 <Icon icon="lucide:power" width={14} />
                                 {dict.initialize_session}
@@ -145,8 +157,127 @@ export function Navbar() {
                         )}
                     </>
                 )}
+
+                {/* Mobile Menu Toggle */}
+                <div className="flex md:hidden">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <button className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900/50 rounded border border-zinc-800">
+                                <Icon icon="lucide:menu" width={20} />
+                            </button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="bg-zinc-950/95 border-zinc-800 w-[85vw] backdrop-blur-xl p-0 overflow-hidden">
+                            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
+                            <SheetHeader className="p-6 border-b border-zinc-900 bg-zinc-950/50">
+                                <SheetTitle className="text-left">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-3 h-3 bg-violet-600 rounded-sm rotate-45 pulse-glow" />
+                                        <div className="flex flex-col leading-none">
+                                            <span className="font-black tracking-tighter text-lg italic uppercase text-white">SHIMOKITAN</span>
+                                            <span className="text-zinc-500 text-[10px] font-mono tracking-[0.3em] font-bold">MOBILE_ACCESS</span>
+                                        </div>
+                                    </div>
+                                </SheetTitle>
+                            </SheetHeader>
+
+                            <div className="flex flex-col h-full">
+                                <nav className="p-4 grid gap-2">
+                                    <MobileNavLink icon="lucide:radio" label="The District" href="/" active={pathname === "/"} />
+                                    <MobileNavLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={pathname?.startsWith("/artifacts")} />
+                                    <MobileNavLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
+                                    <MobileNavLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={pathname?.startsWith("/zines")} />
+                                    <MobileNavLink icon="lucide:command" label="Pedalboard" href="/pedalboard" active={pathname?.startsWith("/pedalboard")} />
+                                </nav>
+
+                                <div className="mt-auto p-6 border-t border-zinc-900 bg-zinc-950/80 space-y-6">
+                                    <div className="grid gap-2">
+                                        <MobileNavLink icon="lucide:mail" label="Contact Protocol" href="/contact" active={pathname === "/contact"} />
+                                    </div>
+
+                                    {/* Socials / Technical Readouts */}
+                                    <div className="flex flex-col gap-5">
+                                        <div className="flex items-center justify-between pb-2 border-b border-zinc-900">
+                                            <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">External Uplinks</span>
+                                            <div className="flex items-center gap-4">
+                                                <a href="https://x.com/shimokitan_off" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
+                                                    <Icon icon="simple-icons:x" width={16} />
+                                                </a>
+                                                <a href="https://www.instagram.com/shimokitan.live/" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
+                                                    <Icon icon="simple-icons:instagram" width={16} />
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center text-[10px] font-mono">
+                                                <span className="text-zinc-500 uppercase">System Time</span>
+                                                <span className="text-zinc-300 font-bold tracking-tight">{time} JST</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-[10px] font-mono">
+                                                <span className="text-zinc-500 uppercase">District Region</span>
+                                                <span className="text-emerald-500 font-bold tracking-tight">TyO-Dist_012</span>
+                                            </div>
+                                        </div>
+
+                                        {mounted && (
+                                            <>
+                                                {user ? (
+                                                    <div className="flex items-center justify-between p-3 bg-zinc-900/50 border border-zinc-900 rounded-lg">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded border border-zinc-800 overflow-hidden bg-zinc-900">
+                                                                {user.image ? <img src={user.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-700"><Icon icon="lucide:user" width={16} /></div>}
+                                                            </div>
+                                                            <span className="text-white text-[11px] font-black uppercase italic">{user.name}</span>
+                                                        </div>
+                                                        <button onClick={handleLogout} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded border border-rose-500/20 transition-all">
+                                                            <Icon icon="lucide:power" width={16} />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <Link href="/auth/signin" className="w-full flex items-center justify-center gap-2 py-3 bg-violet-600 text-white text-xs font-black uppercase tracking-widest rounded hover:bg-violet-500 transition-all shadow-lg shadow-violet-900/20">
+                                                        <Icon icon="lucide:power" width={16} />
+                                                        INITIALIZE_SESSION
+                                                    </Link>
+                                                )}
+                                            </>
+                                        )}
+
+                                        <div className="text-center pt-2">
+                                            <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-[0.4em] font-bold">
+                                                © 2026 SHIMOKITAN // ALL_RIGHTS_RESERVED
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </div>
         </header>
+    );
+}
 
+function MobileNavLink({ icon, label, href, active }: { icon: string, label: string, href: string, active: boolean }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "flex items-center gap-4 px-4 py-3.5 rounded-lg border transition-all duration-300 group",
+                active
+                    ? "bg-violet-600/10 border-violet-500/50 text-white shadow-[0_0_15px_rgba(139,92,246,0.1)]"
+                    : "bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-700"
+            )}
+        >
+            <div className={cn(
+                "w-1.5 h-6 rounded-full transition-all duration-300",
+                active ? "bg-violet-600" : "bg-transparent group-hover:bg-zinc-700"
+            )} />
+            <Icon icon={icon} width={20} className={cn(active ? "text-violet-400" : "")} />
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] font-mono">{label}</span>
+            {active && (
+                <div className="ml-auto w-1 h-1 bg-violet-500 animate-ping rounded-full" />
+            )}
+        </Link>
     );
 }

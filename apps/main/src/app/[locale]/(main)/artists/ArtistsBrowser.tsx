@@ -89,7 +89,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                                     <img
                                         src={entity.avatarUrl}
                                         alt={entity.name}
-                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                                        className="w-full h-full object-cover md:grayscale md:group-hover:grayscale-0 transition-all duration-700"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-700">
@@ -106,7 +106,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                                 <h3 className="text-lg font-black italic tracking-tighter uppercase text-white truncate group-hover:text-violet-400 transition-colors">
                                     {entity.name}
                                 </h3>
-                                <div className="flex items-center gap-2 mt-2 opacity-40 group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center gap-2 mt-2 md:opacity-40 md:group-hover:opacity-100 transition-opacity">
                                     <div className="flex items-center gap-1">
                                         <Icon icon="lucide:layers" width={10} className="text-zinc-500" />
                                         <span className="text-[9px] font-mono text-zinc-500">{entity.artifactCount} SHARDS</span>
@@ -118,7 +118,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                         </div>
 
                         {/* Static Deco HUD */}
-                        <div className="absolute top-0 right-0 p-1 border-b border-l border-zinc-900 opacity-20 group-hover:opacity-100 group-hover:border-violet-500/20 transition-all">
+                        <div className="absolute top-0 right-0 p-1 border-b border-l border-zinc-900 md:opacity-20 md:group-hover:opacity-100 md:group-hover:border-violet-500/20 transition-all">
                             <div className="w-2 h-2 bg-zinc-800 group-hover:bg-violet-600" />
                         </div>
                     </Link>
