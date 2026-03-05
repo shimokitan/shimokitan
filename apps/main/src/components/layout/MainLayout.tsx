@@ -65,12 +65,17 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                         noScroll ? "overflow-hidden h-full" : "overflow-y-auto"
                     )}>
                         {children}
+                        <div className="md:hidden shrink-0">
+                            <Footer />
+                        </div>
                     </main>
                 </div>
 
                 {mounted && isInitialized && isMinimized && <AudioWidget />}
 
-                <Footer />
+                <div className="hidden md:block">
+                    <Footer />
+                </div>
             </div>
         </CyberpunkShell>
     );

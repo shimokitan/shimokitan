@@ -342,7 +342,7 @@ export default function HomeClient({
 
       {/* 4. District / Dynamic Time */}
       <BentoCard
-        className="col-span-1 md:col-span-1 md:row-span-3 p-0 overflow-hidden relative"
+        className="col-span-2 md:col-span-1 md:row-span-3 p-0 overflow-hidden relative"
         minimal
       >
         {/* Background Grid Pattern */}
@@ -445,7 +445,7 @@ export default function HomeClient({
       {featuredArtifact && (
         <Link
           href={`/artifacts/${featuredArtifact.id}`}
-          className="col-span-1 md:col-span-1 md:row-span-2 md:col-start-1 md:row-start-4"
+          className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-1 md:row-start-4"
         >
           <BentoCard
             className="h-full"
