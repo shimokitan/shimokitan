@@ -104,27 +104,31 @@
                 "content": "Shimokitan dimulai sebagai arsip pribadi - tempat untuk mengatalogkan anime, musik, dan gim yang berkesan. Visi jangka panjang kami adalah mengembangkannya menjadi indeks budaya hidup di mana siapa pun dapat berkontribusi, tanpa kehilangan jiwa kurasi yang membedakannya dari sekadar daftar atau pelacak biasa."
             },
             "section2": {
+                "title": "Fase 0: Pendahuluan",
+                "content": "Inilah posisi kami saat ini. Gerbang Distrik saat ini masih tertutup. Kami sedang aktif mengkurasi ruang ini untuk mengumpulkan beberapa artefak pertama kami sebelum platform dibuka untuk publik.",
+                "l1": "Peluncuran awal halaman segera-hadir (coming-soon).",
+                "l2": "Mengumpulkan dan mendokumentasikan kumpulan artefak budaya pertama."
+            },
+            "section3": {
                 "title": "Fase 1: Fondasi",
-                "content": "Inilah posisi kami saat ini. Arsip inti telah berjalan, dengan artefak, entitas, dan koleksi yang dikurasi secara manual. Semua konten dikelola secara internal. Fokus kami adalah menyempurnakan aspek fundamental - struktur data, kualitas editorial, dan pengalaman menyeluruh dalam menjelajahi arsip.",
+                "content": "Saat gerbang dibuka, arsip inti akan berjalan, dengan artefak, entitas, dan koleksi yang dikurasi secara manual. Semua konten dikelola secara internal. Fokus utama kami adalah struktur data, kualitas editorial, dan pengalaman menyeluruh dalam menjelajahi arsip.",
                 "l1": "Basis data artefak inti dengan metadata, sumber daya, dan kredit.",
                 "l2": "Profil entitas untuk kreator, studio, dan label.",
                 "l3": "Koleksi terkurasi berdasarkan tema dan suasana hati.",
-                "l4": "Sematan YouTube untuk trailer resmi dan video musik.",
-                "l5": "Tautan ke platform streaming dan pembelian resmi."
-            },
-            "section3": {
-                "title": "Fase 2: Komunitas",
-                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine - refleksi tertulis yang terkait dengan artefak tertentu.",
-                "l1": "Registrasi pengguna dan profil pribadi.",
-                "l2": "Penulisan Zine - respons personal terhadap artefak, bukan ulasan.",
-                "l3": "Rak pribadi untuk menyusun koleksi artefak Anda sendiri.",
-                "l4": "Sistem resonansi - cara untuk memunculkan kontribusi yang bermakna."
+                "l4": "Sematan media resmi dan tautan ke platform streaming."
             },
             "section4": {
+                "title": "Fase 2: Komunitas",
+                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine.",
+                "l1": "Registrasi pengguna dan profil pribadi.",
+                "l2": "Penulisan Zine - respons personal terhadap artefak.",
+                "l3": "Rak pribadi untuk menyusun koleksi artefak Anda sendiri."
+            },
+            "section5": {
                 "title": "Model Pendapatan",
                 "content": "Shimokitan saat ini beroperasi tanpa monetisasi. Jika pendapatan menjadi diperlukan, opsi potensial mencakup kemitraan afiliasi dengan layanan streaming, fitur premium, dukungan sukarela, atau cendera mata. Setiap keputusan monetisasi akan dibuat dengan transparansi dan kesadaran komunitas."
             },
-            "section5": {
+            "section6": {
                 "title": "Apa yang Tidak Akan Kami Lakukan",
                 "content": "Beberapa hal sengaja berada di luar cakupan Shimokitan:",
                 "l1": "Kami tidak akan mengarsipkan artis tanpa persetujuan mereka. Kami mengutamakan kualitas persetujuan di atas kuantitas konten.",
@@ -433,30 +437,15 @@
     "changelog": {
         "title": "Catatan Perubahan",
         "description": "Log pembaruan dan perubahan penting pada platform Shimokitan.",
-        "v2_0_26": {
-            "title": "v2.0.26 -- Februari 2026",
-            "subtitle": "Kepatuhan Hukum dan Fondasi",
-            "l1": "Penulisan ulang lengkap seluruh halaman hukum (Kebijakan Privasi, Ketentuan Layanan, dll).",
-            "l2": "Penambahan halaman Pengungkapan Afiliasi.",
-            "l3": "Peningkatan keamanan autentikasi pedalboard.",
-            "l4": "Fitur salin-sebagai-markdown pada halaman hukum dan tentang.",
-            "l5": "Penyempurnaan halaman segera-hadir untuk menghapus pengumpulan data."
+        "march_2026": {
+            "title": "8 Maret 2026",
+            "subtitle": "Fondasi & Kepatuhan",
+            "l1": "Penguatan halaman tentang kami dan halaman hukum."
         },
-        "v2_0_0": {
-            "title": "v2.0.0 -- Januari 2026",
-            "subtitle": "Reaktivasi Inti",
-            "l1": "Penulisan ulang platform menggunakan Next.js App Router.",
-            "l2": "Integrasi Drizzle ORM dengan Neon PostgreSQL.",
-            "l3": "Pembangunan konsol pedalboard untuk pengelolaan artefak, entitas, dan koleksi.",
-            "l4": "Implementasi sistem desain UI baru dengan CyberpunkShell dan penemaan distrik.",
-            "l5": "Penambahan pipeline aset R2 untuk pemrosesan gambar."
-        },
-        "v1_5_0": {
-            "title": "v1.5.0 -- Desember 2025",
+        "feb_2026": {
+            "title": "15 Februari 2026",
             "subtitle": "Sinyal Awal",
-            "l1": "Peluncuran beta sistem pengiriman artefak.",
-            "l2": "Fungsionalitas pencarian dasar.",
-            "l3": "Iterasi pertama konsep distrik dan navigasi."
+            "l1": "Peluncuran awal halaman segera-hadir (coming-soon)."
         }
     },
     "navbar": {

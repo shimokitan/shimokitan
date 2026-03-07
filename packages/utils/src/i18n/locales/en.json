@@ -104,27 +104,31 @@
                 "content": "Shimokitan started as a personal archive -- a place to catalog the anime, music, and games that matter. The long-term vision is to grow it into a living cultural index that anyone can contribute to, without losing the curatorial soul that makes it different from a list or a tracker."
             },
             "section2": {
+                "title": "Phase 0: Prelude",
+                "content": "This is where we are now. The District gates are currently closed. We are actively curating the space to gather our first few artifacts before the platform opens to the public.",
+                "l1": "Initial launch of the coming-soon page.",
+                "l2": "Gathering and documenting the first set of cultural artifacts."
+            },
+            "section3": {
                 "title": "Phase 1: Foundation",
-                "content": "This is where we are now. The core archive is live, with hand-curated artifacts, entities, and collections. All content is managed internally. The focus is on getting the fundamentals right -- data structure, editorial quality, and the overall experience of browsing the archive.",
+                "content": "When the gates open, the core archive will go live, featuring hand-curated artifacts, entities, and collections. All content will be managed internally. The primary focus is data structure, editorial quality, and the browsing experience.",
                 "l1": "Core artifact database with metadata, resources, and credits.",
                 "l2": "Entity profiles for creators, studios, and labels.",
                 "l3": "Curated collections organized by theme and mood.",
-                "l4": "YouTube embeds for official trailers and music videos.",
-                "l5": "Links to official streaming and purchase platforms."
-            },
-            "section3": {
-                "title": "Phase 2: Community",
-                "content": "The next step is opening the platform to community participation. This means user accounts, personal archives, and the ability to write and publish zines -- written reflections tied to specific artifacts.",
-                "l1": "User registration and personal profiles.",
-                "l2": "Zine authoring -- personal responses to artifacts, not reviews.",
-                "l3": "Personal shelves for organizing your own artifact collection.",
-                "l4": "Resonance system -- a way to surface meaningful contributions."
+                "l4": "Official media embeds and links to streaming platforms."
             },
             "section4": {
+                "title": "Phase 2: Community",
+                "content": "The next step is opening the platform to community participation. This means user accounts, personal archives, and the ability to write and publish zines.",
+                "l1": "User registration and personal profiles.",
+                "l2": "Zine authoring -- personal responses to artifacts.",
+                "l3": "Personal shelves for organizing your own artifact collection."
+            },
+            "section5": {
                 "title": "Revenue Model",
                 "content": "Shimokitan currently operates without monetization. If revenue becomes necessary, potential options include affiliate partnerships with streaming services, premium features, voluntary support, or merchandise. Any monetization decisions will be made with transparency and community awareness."
             },
-            "section5": {
+            "section6": {
                 "title": "What We Will Not Do",
                 "content": "Some things are intentionally out of scope for Shimokitan:",
                 "l1": "We will not archive artists without their consent. We prioritize the quality of consent over the quantity of content.",
@@ -433,30 +437,15 @@
     "changelog": {
         "title": "Changelog",
         "description": "A log of notable updates and changes to the Shimokitan platform.",
-        "v2_0_26": {
-            "title": "v2.0.26 -- February 2026",
-            "subtitle": "Legal Compliance and Foundation",
-            "l1": "Complete rewrite of all legal pages (Privacy Policy, Terms of Service, Cookie Policy, Copyright Policy, Community Guidelines).",
-            "l2": "Added Affiliate Disclosure page.",
-            "l3": "Strengthened pedalboard authentication security.",
-            "l4": "Added copy-as-markdown functionality to legal and about pages.",
-            "l5": "Refined coming-soon page to remove data collection."
+        "march_2026": {
+            "title": "March 8, 2026",
+            "subtitle": "Foundation & Compliance",
+            "l1": "Strengthening about pages and legal pages."
         },
-        "v2_0_0": {
-            "title": "v2.0.0 -- January 2026",
-            "subtitle": "Core Reactivation",
-            "l1": "Complete rewrite of the platform on Next.js App Router.",
-            "l2": "Integrated Drizzle ORM with Neon PostgreSQL.",
-            "l3": "Built the pedalboard console for artifact, entity, and collection management.",
-            "l4": "Implemented the new UI design system with CyberpunkShell and district theming.",
-            "l5": "Added R2 asset pipeline for image processing and storage."
-        },
-        "v1_5_0": {
-            "title": "v1.5.0 -- December 2025",
+        "feb_2026": {
+            "title": "February 15, 2026",
             "subtitle": "Initial Signal",
-            "l1": "Beta launch of the artifact submission system.",
-            "l2": "Basic search functionality.",
-            "l3": "First iteration of the district concept and navigation."
+            "l1": "Initial launch of the coming-soon page."
         }
     },
     "navbar": {

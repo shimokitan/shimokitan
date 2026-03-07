@@ -10,32 +10,16 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
             <h1>{c.title}</h1>
             <p>{c.description}</p>
 
-            <h2>{c.v2_0_26.title}</h2>
-            <p><strong>{c.v2_0_26.subtitle}</strong></p>
+            <h2>{c.march_2026.title}</h2>
+            <p><strong>{c.march_2026.subtitle}</strong></p>
             <ul>
-                <li>{c.v2_0_26.l1}</li>
-                <li>{c.v2_0_26.l2}</li>
-                <li>{c.v2_0_26.l3}</li>
-                <li>{c.v2_0_26.l4}</li>
-                <li>{c.v2_0_26.l5}</li>
+                <li>{c.march_2026.l1}</li>
             </ul>
 
-            <h2>{c.v2_0_0.title}</h2>
-            <p><strong>{c.v2_0_0.subtitle}</strong></p>
+            <h2>{c.feb_2026.title}</h2>
+            <p><strong>{c.feb_2026.subtitle}</strong></p>
             <ul>
-                <li>{c.v2_0_0.l1}</li>
-                <li>{c.v2_0_0.l2}</li>
-                <li>{c.v2_0_0.l3}</li>
-                <li>{c.v2_0_0.l4}</li>
-                <li>{c.v2_0_0.l5}</li>
-            </ul>
-
-            <h2>{c.v1_5_0.title}</h2>
-            <p><strong>{c.v1_5_0.subtitle}</strong></p>
-            <ul>
-                <li>{c.v1_5_0.l1}</li>
-                <li>{c.v1_5_0.l2}</li>
-                <li>{c.v1_5_0.l3}</li>
+                <li>{c.feb_2026.l1}</li>
             </ul>
         </>
     );

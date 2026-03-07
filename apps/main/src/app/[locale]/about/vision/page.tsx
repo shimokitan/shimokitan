@@ -25,9 +25,9 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
                     <ul>
                         <li>{v.section2.l1}</li>
                         <li>{v.section2.l2}</li>
-                        <li>{v.section2.l3}</li>
-                        <li>{v.section2.l4}</li>
-                        <li>{v.section2.l5}</li>
+                        {"l3" in v.section2 && <li>{(v.section2 as any).l3}</li>}
+                        {"l4" in v.section2 && <li>{(v.section2 as any).l4}</li>}
+                        {"l5" in v.section2 && <li>{(v.section2 as any).l5}</li>}
                     </ul>
                 </div>
 
@@ -38,31 +38,38 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
                         <li>{v.section3.l1}</li>
                         <li>{v.section3.l2}</li>
                         <li>{v.section3.l3}</li>
-                        <li>{v.section3.l4}</li>
+                        {"l4" in v.section3 && <li>{(v.section3 as any).l4}</li>}
+                        {"l5" in v.section3 && <li>{(v.section3 as any).l5}</li>}
                     </ul>
                 </div>
 
                 <div>
                     <h2>{v.section4.title}</h2>
-                    {"content" in v.section4 && (
-                        <p>{v.section4.content}</p>
-                    )}
+                    <p>{v.section4.content}</p>
+                    <ul>
+                        <li>{v.section4.l1}</li>
+                        <li>{v.section4.l2}</li>
+                        <li>{v.section4.l3}</li>
+                        {"l4" in v.section4 && <li>{(v.section4 as any).l4}</li>}
+                        {"l5" in v.section4 && <li>{(v.section4 as any).l5}</li>}
+                    </ul>
                 </div>
 
                 <div>
                     <h2>{v.section5.title}</h2>
-                    {"content" in v.section5 && (
-                        <p>{v.section5.content}</p>
-                    )}
-                    {"l1" in v.section5 && (
-                        <ul>
-                            <li>{v.section5.l1}</li>
-                            {"l2" in v.section5 && <li>{v.section5.l2}</li>}
-                            {"l3" in v.section5 && <li>{v.section5.l3}</li>}
-                            {"l4" in v.section5 && <li>{v.section5.l4}</li>}
-                            {"l5" in (v.section5 as any) && <li>{(v.section5 as any).l5}</li>}
-                        </ul>
-                    )}
+                    <p>{v.section5.content}</p>
+                </div>
+
+                <div>
+                    <h2>{v.section6.title}</h2>
+                    <p>{v.section6.content}</p>
+                    <ul>
+                        <li>{v.section6.l1}</li>
+                        {"l2" in v.section6 && <li>{(v.section6 as any).l2}</li>}
+                        {"l3" in v.section6 && <li>{(v.section6 as any).l3}</li>}
+                        {"l4" in v.section6 && <li>{(v.section6 as any).l4}</li>}
+                        {"l5" in v.section6 && <li>{(v.section6 as any).l5}</li>}
+                    </ul>
                 </div>
             </section>
         </>
