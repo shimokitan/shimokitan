@@ -165,6 +165,8 @@ export default async function AppPage({
       ...e,
       name: e.translations?.[0]?.name || "Anonymous Entity",
       type: e.circuit === "major" ? "Major_Circuit" : "Underground_Echo",
+      _rawType: e.type,
+      slug: e.slug,
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
       avatar: e.avatar?.url || null,
       highlights: [], // We could fetch credits here if needed
@@ -198,7 +200,7 @@ export default async function AppPage({
     const countRes = await db.execute(
       sql`SELECT (SELECT COUNT(*) FROM artifacts) + (SELECT COUNT(*) FROM entities) + (SELECT COUNT(*) FROM zines) as total`,
     );
-    const total = Number(countRes[0]?.total || 0);
+    const total = Number((countRes as any)[0]?.total || 0);
     totalResonance =
       total < 1000 ? String(total) : `${(total / 1000).toFixed(1)}K`;
   } catch (e) {

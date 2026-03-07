@@ -5,7 +5,7 @@ import { ComingSoon } from "../../../components/ComingSoon";
 import { MaintenanceLayout } from "../../../components/layout/MaintenanceLayout";
 import { getDictionary, Locale } from "@shimokitan/utils";
 
-export default function MaintenancePage() {
+export default function ComingSoonPage() {
     const params = useParams();
     const locale = (params?.locale as Locale) || 'en';
     const dict = getDictionary(locale);

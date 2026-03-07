@@ -133,22 +133,24 @@ export function CopyMarkdownWrapper({ children }: CopyMarkdownWrapperProps) {
     }, []);
 
     return (
-        <div className="relative">
-            <button
-                onClick={handleCopy}
-                className="absolute -top-8 right-0 flex items-center gap-2 py-1 border-b border-zinc-800 hover:border-violet-500 text-zinc-400 hover:text-white text-[10px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer group/copy"
-                title="Copy page content as Markdown"
-            >
-                <Icon
-                    icon={copied ? 'lucide:check' : 'lucide:file-code'}
-                    width={12}
-                    height={12}
-                    className={copied ? 'text-emerald-400' : 'text-zinc-500 group-hover/copy:text-violet-400 transition-colors'}
-                />
-                <span className={copied ? "text-emerald-400" : "group-hover/copy:text-violet-400"}>
-                    {copied ? 'COPIED' : 'COPY'}
-                </span>
-            </button>
+        <div className="flex flex-col">
+            <div className="flex justify-end mb-8 relative z-10">
+                <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-2 py-1 border-b border-zinc-800 hover:border-violet-500 text-zinc-400 hover:text-white text-[10px] font-mono uppercase tracking-[0.2em] transition-all cursor-pointer group/copy"
+                    title="Copy page content as Markdown"
+                >
+                    <Icon
+                        icon={copied ? 'lucide:check' : 'lucide:file-code'}
+                        width={12}
+                        height={12}
+                        className={copied ? 'text-emerald-400' : 'text-zinc-500 group-hover/copy:text-violet-400 transition-colors'}
+                    />
+                    <span className={copied ? "text-emerald-400" : "group-hover/copy:text-violet-400"}>
+                        {copied ? 'COPIED' : 'COPY'}
+                    </span>
+                </button>
+            </div>
             <div ref={contentRef}>
                 {children}
             </div>

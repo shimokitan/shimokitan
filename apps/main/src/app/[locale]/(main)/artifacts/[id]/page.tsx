@@ -4,6 +4,7 @@ import { BentoCard, Badge, cn } from '@shimokitan/ui';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getArtifactById } from '@shimokitan/db';
 import Link from '@/components/Link';
+import { getEntityUrl } from '@shimokitan/utils';
 import { notFound } from 'next/navigation';
 
 export default async function ArtifactPage(props: { params: Promise<{ locale: string, id: string }> }) {
@@ -234,7 +235,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                 <div className="flex flex-col gap-2">
                                     {/* Primary Artist */}
                                     <Link
-                                        href={`/artists/${primaryEntity?.id || '#'}`}
+                                        href={primaryEntity ? getEntityUrl(primaryEntity) : '#'}
                                         className="bg-zinc-900/80 border border-zinc-800 p-3 rounded-xl flex items-center gap-4 hover:border-violet-500/50 hover:bg-zinc-900 transition-all group relative overflow-hidden"
                                     >
                                         <div className="absolute top-0 left-0 w-1 h-full bg-violet-600 opacity-50 group-hover:opacity-100 transition-opacity" />
@@ -261,7 +262,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         return (
                                             <Link
                                                 key={`crew-${i}`}
-                                                href={`/artists/${credit.entityId}`}
+                                                href={getEntityUrl(credit.entity)}
                                                 className="flex items-center gap-3 p-2.5 bg-zinc-900/30 border border-zinc-800/80 rounded-lg hover:border-violet-500/30 transition-all group/item ml-4"
                                             >
                                                 <div className="w-7 h-7 shrink-0 bg-zinc-950 border border-zinc-800 rounded md:grayscale md:group-hover/item:grayscale-0 transition-all flex items-center justify-center">

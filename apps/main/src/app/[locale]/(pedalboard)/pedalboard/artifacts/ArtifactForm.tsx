@@ -64,7 +64,7 @@ export default function ArtifactForm({
     const searchParams = useSearchParams();
     const anilistId = searchParams.get('anilist_id');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'ja'>('en');
 
     // --- Keyboard Shortcuts ---
     React.useEffect(() => {
@@ -81,10 +81,10 @@ export default function ArtifactForm({
 
     // --- State Management ---
     const [translations, setTranslations] = useState(
-        ['en', 'id', 'jp'].map(lang => {
+        ['en', 'id', 'ja'].map(lang => {
             const trans = initialData?.translations?.find((t: any) => t.locale === lang);
             return {
-                locale: lang as 'en' | 'id' | 'jp',
+                locale: lang as 'en' | 'id' | 'ja',
                 title: trans?.title || '',
                 description: trans?.description || ''
             };
@@ -189,7 +189,7 @@ export default function ArtifactForm({
         // Sync Titles
         setTranslations(prev => prev.map(t => {
             if (t.locale === 'en') return { ...t, title: data.title.english || data.title.romaji };
-            if (t.locale === 'jp') return { ...t, title: data.title.native };
+            if (t.locale === 'ja') return { ...t, title: data.title.native };
             return t;
         }));
 

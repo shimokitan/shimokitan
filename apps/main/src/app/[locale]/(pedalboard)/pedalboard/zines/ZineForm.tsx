@@ -8,14 +8,14 @@ import { useRouter } from 'next/navigation';
 export default function ZineForm({ artifacts, initialData }: { artifacts: any[], initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'ja'>('en');
 
     // Multi-Language State
     const [translations, setTranslations] = useState(
-        ['en', 'id', 'jp'].map(lang => {
+        ['en', 'id', 'ja'].map(lang => {
             const trans = initialData?.translations?.find((t: any) => t.locale === lang);
             return {
-                locale: lang as 'en' | 'id' | 'jp',
+                locale: lang as 'en' | 'id' | 'ja',
                 content: trans?.content || ''
             };
         })

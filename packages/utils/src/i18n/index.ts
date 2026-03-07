@@ -1,16 +1,16 @@
 
 import en from './locales/en.json';
 import id from './locales/id.json';
-import jp from './locales/jp.json';
+import ja from './locales/ja.json';
 
-export const locales = ['en', 'id', 'jp'] as const;
+export const locales = ['en', 'id', 'ja'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'en';
 
 const dictionaries = {
     en,
     id,
-    jp,
+    ja,
 } as const;
 
 export const getDictionary = (locale: Locale) => {

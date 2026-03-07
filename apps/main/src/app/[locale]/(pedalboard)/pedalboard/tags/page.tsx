@@ -31,7 +31,7 @@ export default async function TagsPage() {
         ...t,
         name_en: t.translations.find(tr => tr.locale === 'en')?.name || '-',
         name_id: t.translations.find(tr => tr.locale === 'id')?.name || '-',
-        name_jp: t.translations.find(tr => tr.locale === 'jp')?.name || '-',
+        name_ja: t.translations.find(tr => tr.locale === 'ja')?.name || '-',
     }));
 
     return (

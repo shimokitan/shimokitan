@@ -15,7 +15,7 @@
     },
     "home": {
         "title": "SHIMOKITAN // DIGITAL DISTRICT",
-        "description": "The digital back-alleys of Japanese culture. Archive anime, music, and games as lived memories—not data points.",
+        "description": "The digital back-alleys of Japanese culture. Archive anime, music, and games as lived memories-not data points.",
         "tagline": "An archive of lived culture, not data points.",
         "nav_archive": "Enter Archive",
         "nav_entities": "Entities",
@@ -403,6 +403,29 @@
         "community": {
             "title": "Community Guidelines",
             "description": "Shimokitan does not currently offer user accounts or community features.\n\nWhen we introduce these features in the future, we'll establish clear guidelines for respectful participation, content standards, and prohibited conduct. Until then, if you have feedback or concerns, please contact us via our [Contact Page](/contact)."
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "s1": {
+                "title": "General",
+                "q1": "What is Shimokitan?",
+                "a1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them -- not as data points or rankings, but as lived experiences worth remembering."
+            },
+            "s2": {
+                "title": "Using the Platform",
+                "q1": "Do you host illegal or pirated content?",
+                "a1": "No. Shimokitan operates as an archival index. We do not host copyrighted media files. All metadata we catalog is sourced from publicly available information. For media playback, we embed content exclusively from platforms whose terms of service permit external embedding, such as YouTube."
+            },
+            "s3": {
+                "title": "Accounts & Community",
+                "q1": "Can I create an account?",
+                "a1": "Not currently. Shimokitan does not offer user accounts or community features at this time, but we plan to introduce them in the future."
+            },
+            "s4": {
+                "title": "Contact",
+                "q1": "How can I contact the team?",
+                "a1": "You can reach out through our [Contact Page](/contact) or email us at legal@shimokitan.live for legal questions."
+            }
         }
     },
     "changelog": {
@@ -449,6 +472,7 @@
         "contact_us": "CONTACT US",
         "guidelines": "Guidelines",
         "copyright": "Copyright",
-        "affiliates": "Affiliates"
+        "affiliates": "Affiliates",
+        "faq": "FAQ"
     }
 }

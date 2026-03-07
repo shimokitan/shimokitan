@@ -14,13 +14,13 @@ Inspired by the back-alleys of **Shimokitazawa**, our UI rejects the sterile, "p
 
 * **Structured Friction:** The "mess" is in the atmosphere, not the navigation. We maintain a **readable and clean** core, layered with textures that feel unfiltered and alive.
 * **The Aesthetic:** A sophisticated blend of **Gothic-Street** and **Tribal-Gangster**. Think charcoal asphalt, concrete textures, nicotine-stained paper, and the sharp lines of traditional Japanese ink.
-* **Atmospheric Grit:** We embrace the "unpleasant but cool"—smoke-drifts, the "smoky smell" of an underground live house, and high-grain filters that provide a raw, sensory experience.
+* **Atmospheric Grit:** We embrace the "unpleasant but cool"-smoke-drifts, the "smoky smell" of an underground live house, and high-grain filters that provide a raw, sensory experience.
 
 ---
 
 ## 🎨 The UGC Engine (The Indie Spotlight)
 
-Shimokitan is a stage for the underground. We don't just host data; we host **You**. The platform is built around the "Honorable Mention"—a curated spotlight for original **indie creators**.
+Shimokitan is a stage for the underground. We don't just host data; we host **You**. The platform is built around the "Honorable Mention"-a curated spotlight for original **indie creators**.
 
 * **Crate Digging:** Users don't just "post"; they contribute to the collective "District Album." This is a sanctuary for original music, digital art, and stylized MV covers from creators who define their own sound.
 * **The Promotion Loop:** We provide "Immersive Ads" for our indie artists. Your work is showcased in a stylized UI featuring a spinning **Black Disk**, with direct links to your personal profiles (SoundCloud, Pixiv, etc.).
@@ -30,9 +30,9 @@ Shimokitan is a stage for the underground. We don't just host data; we host **Yo
 
 ## 📓 The "Shimokitan Album" (The Archive of Memory)
 
-We’ve replaced the "Professional Database" with a curated **Memory Book**. While anime is our anchor, Shimokitan is broader—it is a repository for the friction of living, the music that scores it, the **games** we inhabit, and the **whispers (ASMR)** that haunt our quietest hours.
+We’ve replaced the "Professional Database" with a curated **Memory Book**. While anime is our anchor, Shimokitan is broader-it is a repository for the friction of living, the music that scores it, the **games** we inhabit, and the **whispers (ASMR)** that haunt our quietest hours.
 
-*   **The Seasonal Pit:** Our collection follows the rhythm of the street. While a show is actively airing, it is in **"The Pit"**—a high-energy, high-reward state. 
+*   **The Seasonal Pit:** Our collection follows the rhythm of the street. While a show is actively airing, it is in **"The Pit"**-a high-energy, high-reward state. 
 *   **The Shift to Back-Alley:** The moment an anime status becomes **"Completed"** or **"Not Airing,"** it moves to **"The Back-Alley"** (The Archive). The window for seasonal rewards slams shut precisely at this transition.
 *   **The Attendance Proof:** Users who "save" a show to their personal **Completed Album** while it is still in **The Pit** are granted the **"Original Pressing"** status. This unlocks exclusive seasonal **Ink**, unique Trophies, and the **"Survivor"** title for that specific tour.
 *   **Late Arrivals:** If you save a show after it has moved to The Back-Alley, you can still archive the memory, but you cannot earn the seasonal Ink or Original Pressing titles. You have the memory, but you don't have the proof of being there "in the pit."
@@ -51,7 +51,7 @@ Shimokitan isn't just about metadata; it's about the shards of the culture that 
 *   **Perzines (`/perzines`):** Personal, private reflections. These are accessible strictly via your **User Dashboard**, not on public content pages. While private, they still require at least one artifact attachment to anchor the memory.
 *   **The Non-Editorial Rule:** To preserve the friction of the moment, submissions are **strictly permanent**. Once a Zine is committed to the District, it cannot be edited. 
 *   **Static Noise:** We value the specific grit of the mundane. If an echo feels like a performance, "misery-mining," or lacks genuine resonance, it is treated as **Static Noise**. Such entries will not be "warmed" by the community, will not contribute to the Heat Index, and are excluded from the District's recommendation algorithms.
-*   **Vocal Snippets:** Supports **voice notes**—letting the tribe hear the actual grain of the reaction.
+*   **Vocal Snippets:** Supports **voice notes**-letting the tribe hear the actual grain of the reaction.
 
 ---
 
@@ -59,12 +59,12 @@ Shimokitan isn't just about metadata; it's about the shards of the culture that 
 
 We don't measure success through algorithmic popularity; we measure it through **Narrative Density**.
 
-*   **Content Heat:** The "popularity" of an artifact is determined by the **Narrative Density**—the weighted volume of Public Zines attached to it. Every Zine is a heavyweight vote for the content's permanence.
+*   **Content Heat:** The "popularity" of an artifact is determined by the **Narrative Density**-the weighted volume of Public Zines attached to it. Every Zine is a heavyweight vote for the content's permanence.
 *   **The Echo Resonance (Street Stickers):** We have abolished the "Like." Individual Zines track **Views and Street Stickers**. Stickers are community-applied labels that categorize the *type* of resonance:
-    *   `[TRUTH]` — Raw, unpolished, and honest.
-    *   `[GOLD]` — Warmth, nostalgia, and comfort.
-    *   `[DISTORTION]` — Chaotic, angry, or high-energy.
-    *   `[CLEAN]` — Simple, functional appreciation.
+    *   `[TRUTH]` - Raw, unpolished, and honest.
+    *   `[GOLD]` - Warmth, nostalgia, and comfort.
+    *   `[DISTORTION]` - Chaotic, angry, or high-energy.
+    *   `[CLEAN]` - Simple, functional appreciation.
 *   **Resonance Quality:** While volume builds the foundation, quality weights the impact. A Zine that earns only `[CLEAN]` stickers contributes less to the District's "Heat" than one that earns `[TRUTH]`. This prevents emotional mining and encourages the unique over the clichéd.
 
 ---
@@ -74,9 +74,9 @@ We don't measure success through algorithmic popularity; we measure it through *
 Action earns **"Street Credit."** Credit earns **"Ink."**
 
 *   **Quests:** Action-based milestones. These track your physical movement through the District (e.g., completing certain series in a specific cycle).
-    *   *Example Vision:* **The Winter Soldier Quest** — A vision for survived engagement with 3 anime during the winter cycle.
+    *   *Example Vision:* **The Winter Soldier Quest** - A vision for survived engagement with 3 anime during the winter cycle.
 *   **Soundchecks:** Quiz-based atmospheric challenges. These test your vibe-alignment and knowledge to unlock "Street Credit" and exclusive UI perks.
-*   **The Dashboard (The Pedalboard):** Your main interface is a **Bento-style layout** designed with the modular traits of a physical guitar pedalboard in mind. Passing quests unlocks new "Pedals" (UI filters) that change how your profile looks—adding static, glow, or analog distortion.
+*   **The Dashboard (The Pedalboard):** Your main interface is a **Bento-style layout** designed with the modular traits of a physical guitar pedalboard in mind. Passing quests unlocks new "Pedals" (UI filters) that change how your profile looks-adding static, glow, or analog distortion.
 *   **Tribal Tattoos:** Permanent visual badges that "ink" your profile, signaling your expertise in specific sub-genres like *Urban Mystery* or *Gutter-Punk*.
 
 ---
@@ -85,10 +85,10 @@ Action earns **"Street Credit."** Credit earns **"Ink."**
 
 Our "Cultural Index" begins with four pillars that define the Shimokitan spirit:
 
-1. **K-On!** — *The Analog Nostalgia.*
-2. **Bocchi the Rock!** — *The Indie Heart.*
-3. **Akiba Maid War** — *The Gutter-Punk Edge.*
-4. **Steins;Gate** — *The Urban Gothic Mystery.*
+1. **K-On!** - *The Analog Nostalgia.*
+2. **Bocchi the Rock!** - *The Indie Heart.*
+3. **Akiba Maid War** - *The Gutter-Punk Edge.*
+4. **Steins;Gate** - *The Urban Gothic Mystery.*
 
 ---
 
@@ -104,7 +104,7 @@ The evolution of the "Supply Depot." We have moved beyond simple VTuber assets i
 ### 🏮 Kabukicho District (`kabukicho.shimokitan.live`)
 A legal, high-end sanctuary for adult-rated artistry. We recognize that doujinshi and adult masterpieces are an inseparable part of the culture we archive.
 * **Legality & Audit:** Strictly legal, audited content only. We provide a unified home and gallery for creators who are often scattered across decentralized platforms.
-* **Effort-Weighted Content:** We prioritize weight and effort. This is a space for full dubbing, professional translations, and high-effort indie games—works where the artistry outweighs the rating.
+* **Effort-Weighted Content:** We prioritize weight and effort. This is a space for full dubbing, professional translations, and high-effort indie games-works where the artistry outweighs the rating.
 * **Safe-ish Ecosystem:** By isolating adult content to this specialized district, the main `shimokitan.live` remains a safe-ish sanctuary for all ages.
 
 ---

@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === 'jp' ? "SHIMOKITAN // 近日公開" : locale === 'id' ? "SHIMOKITAN // SEGERA HADIR" : "SHIMOKITAN // COMING SOON",
-    description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories — not data points.",
+    title: locale === 'ja' ? "SHIMOKITAN // 近日公開" : locale === 'id' ? "SHIMOKITAN // SEGERA HADIR" : "SHIMOKITAN // COMING SOON",
+    description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories - not data points.",
   };
 }
 

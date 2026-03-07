@@ -12,6 +12,7 @@ export default async function ArtistsBrowsePage(props: { params: Promise<{ local
         const translation = e.translations?.find((t: any) => t.locale === locale) || e.translations?.[0];
         return {
             id: e.id,
+            slug: e.slug,
             name: translation?.name || "Anonymous Artist",
             type: e.type,
             avatarUrl: e.avatar?.url,

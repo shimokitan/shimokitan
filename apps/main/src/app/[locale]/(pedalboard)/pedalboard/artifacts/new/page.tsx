@@ -15,19 +15,19 @@ export default async function NewArtifactPage() {
     const db = getDb();
     if (!db) return <div>DB OFF</div>;
 
-    // Fetch Entities for credits selector
-    const rawEntities = await db.query.entities.findMany({
+    const rawEntities = db ? await db.query.entities.findMany({
         where: isNull(schema.entities.deletedAt),
         with: {
+            avatar: true,
             translations: true
         }
-    });
+    }) : [];
 
     const entities = rawEntities.map(e => ({
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
         type: e.type,
-        avatarUrl: e.avatarUrl
+        avatarUrl: e.avatar?.url || null
     }));
 
     return (

@@ -9,13 +9,13 @@ export default function TagForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [translations, setTranslations] = useState<{ locale: 'en' | 'id' | 'jp', name: string }[]>(
+    const [translations, setTranslations] = useState<{ locale: 'en' | 'id' | 'ja', name: string }[]>(
         initialData?.translations
             ? initialData.translations.map((t: any) => ({ locale: t.locale, name: t.name }))
             : [
                 { locale: 'en', name: '' },
                 { locale: 'id', name: '' },
-                { locale: 'jp', name: '' }
+                { locale: 'ja', name: '' }
             ]
     );
 

@@ -387,7 +387,7 @@ These headers help you understand pricing, limits, and request diagnostics.
 
 | Header                   | Purpose                                                   |
 | ------------------------ | --------------------------------------------------------- |
-| `x-pricing-tier`         | `free` or `pro` — the plan used for this request          |
+| `x-pricing-tier`         | `free` or `pro` - the plan used for this request          |
 | `x-timestamp`            | Server timestamp when request was received                |
 | `x-unavatar-cost`        | Token cost of the request (avatar routes only)            |
 | `x-proxy-tier`           | Proxy tier used: `origin`, `datacenter`, or `residential` |

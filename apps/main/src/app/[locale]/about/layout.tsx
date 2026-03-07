@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { AboutSidebar } from '@/components/layout/AboutSidebar';
+import { MobileNavRibbon } from '@/components/layout/MobileNavRibbon';
 import { CopyMarkdownWrapper } from '@/components/CopyMarkdownWrapper';
 import { CyberpunkShell } from '@shimokitan/ui';
 
@@ -12,7 +13,7 @@ export default async function AboutLayout({ children, params }: { children: Reac
 
     return (
         <CyberpunkShell>
-            <div className="bg-black text-zinc-300 flex flex-col font-sans selection:bg-violet-500/30 selection:text-violet-200 min-h-screen">
+            <div className="bg-black text-zinc-300 flex flex-col font-sans selection:bg-violet-500/30 selection:text-violet-200 h-screen overflow-hidden">
                 {/* Dynamic Background Mesh */}
                 <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
                     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-900/5 rounded-full blur-[120px]" />
@@ -21,14 +22,23 @@ export default async function AboutLayout({ children, params }: { children: Reac
 
                 <Navbar />
 
-                <div className="relative z-10 flex-1 flex flex-col lg:flex-row w-full max-w-7xl mx-auto px-6 py-12 gap-12 lg:gap-24">
+                <div className="relative z-10 flex-1 flex flex-col lg:flex-row w-full max-w-7xl mx-auto px-6 py-6 lg:py-12 gap-8 lg:gap-24 overflow-hidden">
+                    {/* Mobile Ribbon Navigation */}
+                    <MobileNavRibbon
+                        links={[
+                            { href: '/about', label: dict.about.sidebar_links.about },
+                            { href: '/about/vision', label: dict.about.sidebar_links.vision },
+                            { href: '/about/changelog', label: dict.about.sidebar_links.changelog },
+                        ]}
+                    />
+
                     {/* Sticky Sidebar */}
                     <aside className="hidden lg:block sticky top-24 self-start">
                         <AboutSidebar dict={dict.about.sidebar_links} />
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-1 w-full max-w-3xl">
+                    <main className="flex-1 w-full max-w-3xl overflow-y-auto custom-scroll pr-4">
                         <article className="prose prose-invert prose-zinc max-w-none 
                             prose-headings:font-black prose-headings:tracking-tighter prose-headings:uppercase prose-headings:italic prose-headings:text-white
                             

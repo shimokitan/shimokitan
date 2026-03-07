@@ -152,3 +152,28 @@ export async function getEntityById(id: string) {
   });
 }
 
+export async function getEntityBySlug(slug: string) {
+  const db = getDb();
+  if (!db) return null;
+
+  return await db.query.entities.findFirst({
+    where: eq(schema.entities.slug, slug),
+    with: {
+      translations: true,
+      avatar: true,
+      header: true,
+      credits: {
+        with: {
+          artifact: {
+            with: {
+              translations: true,
+              resources: true,
+              cover: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+

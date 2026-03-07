@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import { BentoCard, Badge, cn } from "@shimokitan/ui";
 import { useTime } from "../../hooks/use-time";
 import Link from "../../components/Link";
-import { Dictionary } from "@shimokitan/utils";
+import { Dictionary, getEntityUrl } from "@shimokitan/utils";
 import { useStationStore } from "../../lib/store/station-store";
 
 type Artifact = {
@@ -497,7 +497,7 @@ export default function HomeClient({
           {entities.slice(0, 2).map((entity) => (
             <Link
               key={entity.id}
-              href={`/artists/${entity.id}`}
+              href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}
               className="flex items-center gap-4 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group shadow-sm"
             >
               <div className="w-12 md:w-14 h-12 md:h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover:border-violet-500/50 transition-colors">
@@ -555,7 +555,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* 7. Featured Archives — Bento Layout */}
+      {/* 7. Featured Archives - Bento Layout */}
       <BentoCard
         className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4"
         title="Featured Archives"
@@ -567,7 +567,7 @@ export default function HomeClient({
             const otherArtifacts = spotlightArtifacts.filter((a) => a.id !== animeArtifact?.id).slice(0, 2);
             return (
               <>
-                {/* Primary — tall vertical slot (always anime) */}
+                {/* Primary - tall vertical slot (always anime) */}
                 {animeArtifact && (
                   <Link
                     href={`/artifacts/${animeArtifact.id}`}
@@ -595,7 +595,7 @@ export default function HomeClient({
                   </Link>
                 )}
 
-                {/* Secondary — two horizontal slots stacked */}
+                {/* Secondary - two horizontal slots stacked */}
                 {otherArtifacts.map((artifact) => (
                   <Link
                     key={artifact.id}

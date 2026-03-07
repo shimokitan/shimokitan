@@ -1,29 +1,9 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { getEntityById } from '@shimokitan/db';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
-/**
- * Artist profile page acting as a "Protocol Terminal" dossier.
- * Features an asymmetric dashboard for desktop and centered link stack for mobile.
- */
-export default async function ArtistPage(props: { params: Promise<{ locale: string, id: string }> }) {
-    const { locale, id } = await props.params;
-
-    let entity: any = null;
-
-    try {
-        entity = await getEntityById(id);
-    } catch (error) {
-        console.error(`SCANNER_ERROR: Failed to retrieve data for entity ${id}.`);
-    }
-
-    if (!entity) {
-        notFound();
-    }
-
+export function EntityProfileTerminal({ entity, locale }: { entity: any, locale: string }) {
     const translations = entity.translations || [];
     const translation = translations.find((t: any) => t.locale === locale) || translations[0];
     const name = translation?.name || "Anonymous Artist";

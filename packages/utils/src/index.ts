@@ -6,6 +6,7 @@ export * from './nanoid';
 export * from './storage';
 export * from './media';
 export * from './i18n';
+export * from './routing';
 
 export function slugify(text: string) {
     return text

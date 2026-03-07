@@ -50,7 +50,7 @@ export default async function PostZinePage(props: { params: Promise<{ locale: st
                     <div className="flex flex-col gap-1">
                         <span className="text-[11px] font-mono text-zinc-600 uppercase">Targeting Artifact //</span>
                         <h2 className="text-xl font-black uppercase italic text-zinc-100">{title}</h2>
-                        <Badge variant="outline" className="w-fit">{artifact.category.toUpperCase()}</Badge>
+                        <Badge variant="zinc" className="w-fit">{artifact.category.toUpperCase()}</Badge>
                     </div>
                 </div>
 

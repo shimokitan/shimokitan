@@ -18,7 +18,7 @@ export function ComingSoon({ dict }: { dict?: Dictionary }) {
             cookies: "Cookies"
         },
         home: {
-            description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories — not data points. Inspired by the back-alleys of Shimokitazawa, this is where your taste becomes a curated archive of experience."
+            description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories - not data points. Inspired by the back-alleys of Shimokitazawa, this is where your taste becomes a curated archive of experience."
         }
     } as any;
 
@@ -85,12 +85,6 @@ export function ComingSoon({ dict }: { dict?: Dictionary }) {
                     </div>
                 </div>
 
-                {/* Legal links */}
-                <div className="mt-8 flex gap-5 text-[10px] font-mono uppercase tracking-widest text-zinc-600">
-                    <Link href="/privacy" className="hover:text-zinc-400 transition-colors">{d.common.privacy}</Link>
-                    <Link href="/terms" className="hover:text-zinc-400 transition-colors">{d.common.terms}</Link>
-                    <Link href="/cookies" className="hover:text-zinc-400 transition-colors">{d.common.cookies}</Link>
-                </div>
             </div>
         </div>
     );

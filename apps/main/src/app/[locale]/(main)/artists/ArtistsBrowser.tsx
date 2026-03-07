@@ -5,8 +5,11 @@ import { Icon } from '@iconify/react';
 import { BentoCard, Badge, cn } from '@shimokitan/ui';
 import Link from 'next/link';
 
+import { getEntityUrl } from '@shimokitan/utils';
+
 type Entity = {
     id: string;
+    slug: string;
     name: string;
     type: string;
     avatarUrl: string | null;
@@ -80,7 +83,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                 {filteredEntities.map((entity) => (
                     <Link
                         key={entity.id}
-                        href={`/artists/${entity.id}`}
+                        href={getEntityUrl(entity)}
                         className="group relative bg-zinc-950 border border-zinc-900 hover:border-violet-500/40 p-4 transition-all duration-500"
                     >
                         <div className="flex items-center gap-4">

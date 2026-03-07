@@ -20,6 +20,7 @@ export function LegalSidebar({ locale, labels }: { locale: string; labels: Recor
         { href: `/copyright`, label: labels.copyright },
         { href: `/cookies`, label: labels.cookies },
         { href: `/affiliate-disclosure`, label: labels.affiliate },
+        { href: `/faq`, label: labels.faq },
     ];
 
     return (

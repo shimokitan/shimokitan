@@ -32,10 +32,10 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
         notFound();
     }
 
-    // Fetch Entities for the credits selector
     const rawEntities = db ? await db.query.entities.findMany({
         where: isNull(schema.entities.deletedAt),
         with: {
+            avatar: true,
             translations: true
         }
     }) : [];
@@ -44,7 +44,7 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
         id: e.id,
         name: e.translations?.[0]?.name || "Untitled",
         type: e.type,
-        avatarUrl: e.avatarUrl
+        avatarUrl: e.avatar?.url || null
     }));
 
     return (

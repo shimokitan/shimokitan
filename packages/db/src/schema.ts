@@ -37,7 +37,7 @@ export const tags = pgTable("tags", {
 
 export const tagsI18n = pgTable("tags_i18n", {
     tagId: text("tag_id").references(() => tags.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'ja'] }).notNull(),
     name: text("name").notNull(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.tagId, table.locale] }),
@@ -91,7 +91,7 @@ export const entityManagers = pgTable("entity_managers", {
 
 export const entitiesI18n = pgTable("entities_i18n", {
     entityId: text("entity_id").references(() => entities.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'ja'] }).notNull(),
     name: text("name").notNull(),
     status: text("status"),
     bio: text("bio"),
@@ -131,7 +131,7 @@ export const artifactTags = pgTable("artifact_tags", {
 
 export const artifactsI18n = pgTable("artifacts_i18n", {
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'ja'] }).notNull(),
     title: text("title").notNull(),
     description: text("description"),
 }, (table) => ({
@@ -154,7 +154,7 @@ export const collections = pgTable("collections", {
 
 export const collectionsI18n = pgTable("collections_i18n", {
     collectionId: text("collection_id").references(() => collections.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'ja'] }).notNull(),
     title: text("title").notNull(),
     thesis: text("thesis"),
 }, (table) => ({
@@ -247,7 +247,7 @@ export const zines = pgTable("zines", {
 
 export const zinesI18n = pgTable("zines_i18n", {
     zineId: text("zine_id").references(() => zines.id, { onDelete: 'cascade' }).notNull(),
-    locale: text("locale", { enum: ['en', 'id', 'jp'] }).notNull(),
+    locale: text("locale", { enum: ['en', 'id', 'ja'] }).notNull(),
     content: text("content").notNull(),
 }, (table) => ({
     pk: primaryKey({ columns: [table.zineId, table.locale] }),

@@ -15,7 +15,7 @@
     },
     "home": {
         "title": "SHIMOKITAN // DISTRIK DIGITAL",
-        "description": "SHIMOKITAN adalah sebuah distrik bagi para peminat budaya Jepang yang mendokumentasikan anime, gim, dan musik mereka sebagai pengalaman nyata — bukan sekadar data. Terinspirasi dari gang-gang sempit di Shimokitazawa, di sinilah selera Anda menjadi arsip pengalaman yang terkurasi.",
+        "description": "SHIMOKITAN adalah sebuah distrik bagi para peminat budaya Jepang yang mendokumentasikan anime, gim, dan musik mereka sebagai pengalaman nyata - bukan sekadar data. Terinspirasi dari gang-gang sempit di Shimokitazawa, di sinilah selera Anda menjadi arsip pengalaman yang terkurasi.",
         "tagline": "Arsip budaya yang hidup, bukan sekadar data.",
         "nav_archive": "Masuk Arsip",
         "nav_entities": "Entitas",
@@ -68,13 +68,13 @@
             "changelog": "Catatan Perubahan"
         },
         "q1": "Tempat Apa Ini?",
-        "a1_1": "Shimokitan adalah arsip terkurasi untuk budaya kreatif Jepang. Kami mengindeks, menyusun, dan merayakan anime, musik, gim, beserta para kreator di baliknya — bukan sebagai poin data atau peringkat, melainkan sebagai pengalaman hidup yang layak diingat.",
-        "a1_2": "Bayangkan ini sebagai koleksi piringan hitam pribadi untuk segala hal yang Anda cintai dalam media Jepang. Setiap entri adalah sebuah artefak — potongan budaya yang didokumentasikan dengan penuh perhatian.",
+        "a1_1": "Shimokitan adalah arsip terkurasi untuk budaya kreatif Jepang. Kami mengindeks, menyusun, dan merayakan anime, musik, gim, beserta para kreator di baliknya - bukan sebagai poin data atau peringkat, melainkan sebagai pengalaman hidup yang layak diingat.",
+        "a1_2": "Bayangkan ini sebagai koleksi piringan hitam pribadi untuk segala hal yang Anda cintai dalam media Jepang. Setiap entri adalah sebuah artefak - potongan budaya yang didokumentasikan dengan penuh perhatian.",
         "q2": "Mengapa Shimokitan Ada",
-        "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja — skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
-        "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda — ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
+        "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja - skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
+        "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda - ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
         "q3": "Cara Kerja",
-        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi yang tersedia secara publik — kami tidak mengakses atau memproses data dari sumber privat atau berbayar. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang ketentuan layanannya mengizinkan penyematan eksternal, seperti YouTube. Setiap artefak di sistem kami tertaut kembali ke kreator asli dan saluran distribusi resmi mereka.",
+        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi yang tersedia secara publik - kami tidak mengakses atau memproses data dari sumber privat atau berbayar. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang ketentuan layanannya mengizinkan penyematan eksternal, seperti YouTube. Setiap artefak di sistem kami tertaut kembali ke kreator asli dan saluran distribusi resmi mereka.",
         "a3_2": "Halaman artefak yang menampilkan indikator verifikasi telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan sematan resmi.",
         "artifacts_label": "Artefak",
         "artifacts_desc": "Entri utama. Seri anime, album, film, gim, novel visual. Masing-masing memiliki metadata, sampul, media sematan, dan konteks editorial.",
@@ -86,7 +86,7 @@
         "zines_desc": "Refleksi tertulis yang melekat pada artefak. Bukan ulasan, melainkan respons personal terhadap sebuah karya.",
         "q4": "Siapa yang Menjalankan Ini",
         "a4_1": "Shimokitan dioperasikan secara independen dari Indonesia. Tidak ada perusahaan, investor, atau dewan direksi. Situs ini ada karena orang-orang yang membangunnya benar-benar mencintai budaya ini dan menginginkan 'rumah' yang lebih baik di dunia maya.",
-        "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa — sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, bukan melalui algoritma.",
+        "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa - sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, bukan melalui algoritma.",
         "q5": "Terbuka untuk Dunia",
         "a5_1": "Shimokitan dibangun untuk siapa saja yang memiliki apresiasi mendalam terhadap karya kreatif Jepang, di mana pun mereka berada. Platform ini bebas untuk dijelajahi dan dibaca.",
         "a5_2": "Semua yang Anda lihat di platform ini dikurasi secara manual. Tidak ada umpan (feed) algoritma, halaman yang dibuat otomatis, atau konten kiriman pengguna untuk saat ini.",
@@ -100,11 +100,11 @@
             "title": "Visi dan Rencana",
             "section1": {
                 "title": "Ke Mana Kami Melangkah",
-                "content": "Shimokitan dimulai sebagai arsip pribadi — tempat untuk mengatalogkan anime, musik, dan gim yang berkesan. Visi jangka panjang kami adalah mengembangkannya menjadi indeks budaya hidup di mana siapa pun dapat berkontribusi, tanpa kehilangan jiwa kurasi yang membedakannya dari sekadar daftar atau pelacak biasa."
+                "content": "Shimokitan dimulai sebagai arsip pribadi - tempat untuk mengatalogkan anime, musik, dan gim yang berkesan. Visi jangka panjang kami adalah mengembangkannya menjadi indeks budaya hidup di mana siapa pun dapat berkontribusi, tanpa kehilangan jiwa kurasi yang membedakannya dari sekadar daftar atau pelacak biasa."
             },
             "section2": {
                 "title": "Fase 1: Fondasi",
-                "content": "Inilah posisi kami saat ini. Arsip inti telah berjalan, dengan artefak, entitas, dan koleksi yang dikurasi secara manual. Semua konten dikelola secara internal. Fokus kami adalah menyempurnakan aspek fundamental — struktur data, kualitas editorial, dan pengalaman menyeluruh dalam menjelajahi arsip.",
+                "content": "Inilah posisi kami saat ini. Arsip inti telah berjalan, dengan artefak, entitas, dan koleksi yang dikurasi secara manual. Semua konten dikelola secara internal. Fokus kami adalah menyempurnakan aspek fundamental - struktur data, kualitas editorial, dan pengalaman menyeluruh dalam menjelajahi arsip.",
                 "l1": "Basis data artefak inti dengan metadata, sumber daya, dan kredit.",
                 "l2": "Profil entitas untuk kreator, studio, dan label.",
                 "l3": "Koleksi terkurasi berdasarkan tema dan suasana hati.",
@@ -113,11 +113,11 @@
             },
             "section3": {
                 "title": "Fase 2: Komunitas",
-                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine — refleksi tertulis yang terkait dengan artefak tertentu.",
+                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine - refleksi tertulis yang terkait dengan artefak tertentu.",
                 "l1": "Registrasi pengguna dan profil pribadi.",
-                "l2": "Penulisan Zine — respons personal terhadap artefak, bukan ulasan.",
+                "l2": "Penulisan Zine - respons personal terhadap artefak, bukan ulasan.",
                 "l3": "Rak pribadi untuk menyusun koleksi artefak Anda sendiri.",
-                "l4": "Sistem resonansi — cara untuk memunculkan kontribusi yang bermakna."
+                "l4": "Sistem resonansi - cara untuk memunculkan kontribusi yang bermakna."
             },
             "section4": {
                 "title": "Model Pendapatan",
@@ -148,7 +148,7 @@
             "s2": {
                 "title": "2. Data yang Kami Kumpulkan",
                 "p1": "Kami berkomitmen untuk mengumpulkan sesedikit mungkin data pribadi. Shimokitan **tidak** menawarkan akun pengguna, pendaftaran, atau fitur masuk (sign-in). Kami tidak melacak, memprofil, atau melakukan sidik jari (fingerprint) pada pengunjung.",
-                "p2": "Satu-satunya data pribadi yang kami proses adalah melalui **Formulir Kontak**. Saat Anda mengirimkan formulir, kami menerima nama, alamat email, dan pesan Anda. Informasi ini dikirim melalui penyedia layanan email kami (Resend) dan dikirim ke kotak surat kami di Hostinger. Email juga dapat diteruskan ke Gmail untuk kemudahan operasional. Data formulir kontak **tidak disimpan** dalam basis data atau CRM — data tersebut hanya ada sebagai email standar dan akan dihapus setelah pertanyaan Anda selesai ditangani. Kami memproses data ini berdasarkan persetujuan Anda, yang diberikan saat Anda secara sukarela mengirimkan formulir."
+                "p2": "Satu-satunya data pribadi yang kami proses adalah melalui **Formulir Kontak**. Saat Anda mengirimkan formulir, kami menerima nama, alamat email, dan pesan Anda. Informasi ini dikirim melalui penyedia layanan email kami (Resend) dan dikirim ke kotak surat kami di Hostinger. Email juga dapat diteruskan ke Gmail untuk kemudahan operasional. Data formulir kontak **tidak disimpan** dalam basis data atau CRM - data tersebut hanya ada sebagai email standar dan akan dihapus setelah pertanyaan Anda selesai ditangani. Kami memproses data ini berdasarkan persetujuan Anda, yang diberikan saat Anda secara sukarela mengirimkan formulir."
             },
             "s2_5": {
                 "title": "2.5 Komunikasi Artis dan Pemegang Hak Cipta",
@@ -169,10 +169,10 @@
             "s4": {
                 "title": "4. Layanan Pihak Ketiga",
                 "p1": "Kami menggunakan layanan berikut yang mungkin memproses data sehubungan dengan kunjungan Anda:",
-                "l1": "**Cloudflare** (AS) — Hosting, CDN, dan perlindungan DDoS.",
-                "l2": "**Resend** (AS) — Pengiriman email formulir kontak.",
-                "l3": "**Google** (AS) — Pemutaran video (YouTube) dan penerusan email (Gmail).",
-                "l4": "**Hostinger** (Internasional) — Hosting email.",
+                "l1": "**Cloudflare** (AS) - Hosting, CDN, dan perlindungan DDoS.",
+                "l2": "**Resend** (AS) - Pengiriman email formulir kontak.",
+                "l3": "**Google** (AS) - Pemutaran video (YouTube) dan penerusan email (Gmail).",
+                "l4": "**Hostinger** (Internasional) - Hosting email.",
                 "p2": "Basis data kami disediakan oleh **Neon** (AS); tidak ada data pribadi pengunjung yang disimpan di sana. Kami berencana mengintegrasikan program afiliasi (Crunchyroll, Apple Music) yang akan menggunakan parameter pelacakan."
             },
             "s5": {
@@ -226,7 +226,7 @@
             },
             "s4": {
                 "title": "4. Kekayaan Intelektual",
-                "p1": "Semua konten asli — termasuk namun tidak terbatas pada teks editorial, desain UI/UX, grafis, logo, dan kerangka konsep \"Distrik\" — adalah milik Shimokitan dan dilindungi oleh hukum hak cipta dan kekayaan intelektual yang berlaku.",
+                "p1": "Semua konten asli - termasuk namun tidak terbatas pada teks editorial, desain UI/UX, grafis, logo, dan kerangka konsep \"Distrik\" - adalah milik Shimokitan dan dilindungi oleh hukum hak cipta dan kekayaan intelektual yang berlaku.",
                 "p2": "Konten pihak ketiga (termasuk judul anime, musik, sematan video, dan citra artis) tetap menjadi milik pemiliknya masing-masing. Shimokitan tidak mengklaim kepemilikan atas konten pihak ketiga yang diindeks atau disematkan dalam Layanan."
             },
             "s5": {
@@ -283,11 +283,11 @@
             },
             "s3": {
                 "title": "3. Cookie Esensial",
-                "content": "**Cookie Cloudflare** (misal: __cf_bm) — Diperlukan untuk keamanan, deteksi bot, dan perlindungan DDoS. Cookie ini sangat diperlukan untuk operasi situs yang aman. Anda tidak dapat menyisih (opt-out) dari cookie ini tanpa meninggalkan situs."
+                "content": "**Cookie Cloudflare** (misal: __cf_bm) - Diperlukan untuk keamanan, deteksi bot, dan perlindungan DDoS. Cookie ini sangat diperlukan untuk operasi situs yang aman. Anda tidak dapat menyisih (opt-out) dari cookie ini tanpa meninggalkan situs."
             },
             "s4": {
                 "title": "4. Cookie Pihak Ketiga",
-                "p1": "**Cookie YouTube/Google** — Saat menonton video sematan, Google mungkin menempatkan cookie di perangkat Anda (seperti VISITOR_INFO1_LIVE, YSC, dan lainnya). Cookie ini diatur oleh Kebijakan Privasi Google. Kami tidak mengontrol data yang dikumpulkan oleh cookie ini.",
+                "p1": "**Cookie YouTube/Google** - Saat menonton video sematan, Google mungkin menempatkan cookie di perangkat Anda (seperti VISITOR_INFO1_LIVE, YSC, dan lainnya). Cookie ini diatur oleh Kebijakan Privasi Google. Kami tidak mengontrol data yang dikumpulkan oleh cookie ini.",
                 "p2": "Jika integrasi pihak ketiga tambahan diperkenalkan di masa mendatang, kebijakan ini akan diperbarui sebagaimana mestinya."
             },
             "s5": {
@@ -310,7 +310,7 @@
             "title": "Kebijakan Hak Cipta dan Konten",
             "s1": {
                 "title": "1. Pendekatan Kami terhadap Konten",
-                "content": "Shimokitan adalah indeks arsip terkurasi, bukan platform hosting konten. Kami mendokumentasikan dan mengatalogkan budaya kreatif Jepang — anime, musik, gim, dan media terkait — melalui komentar editorial, metadata terstruktur, dan sematan pihak ketiga. Semua metadata yang kami indeks bersumber secara eksklusif dari informasi yang tersedia secara publik."
+                "content": "Shimokitan adalah indeks arsip terkurasi, bukan platform hosting konten. Kami mendokumentasikan dan mengatalogkan budaya kreatif Jepang - anime, musik, gim, dan media terkait - melalui komentar editorial, metadata terstruktur, dan sematan pihak ketiga. Semua metadata yang kami indeks bersumber secara eksklusif dari informasi yang tersedia secara publik."
             },
             "s2": {
                 "title": "2. Kebijakan Tanpa-Hosting",
@@ -403,6 +403,29 @@
         "community": {
             "title": "Panduan Komunitas",
             "description": "Shimokitan saat ini belum menawarkan akun pengguna atau fitur komunitas.\n\nPanduan akan disusun saat fitur tersebut diluncurkan. Untuk saat ini, silakan hubungi kami melalui [Halaman Kontak](/contact)."
+        },
+        "faq": {
+            "title": "Pertanyaan Umum (FAQ)",
+            "s1": {
+                "title": "Umum",
+                "q1": "Apa itu Shimokitan?",
+                "a1": "Shimokitan adalah arsip terkurasi untuk budaya kreatif Jepang. Kami mengindeks, menyusun, dan merayakan anime, musik, gim, beserta para kreator di baliknya."
+            },
+            "s2": {
+                "title": "Penggunaan Platform",
+                "q1": "Apakah Anda menyimpan konten ilegal atau bajakan?",
+                "a1": "Tidak. Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi publik."
+            },
+            "s3": {
+                "title": "Akun & Komunitas",
+                "q1": "Dapatkah saya membuat akun?",
+                "a1": "Belum. Shimokitan belum menawarkan akun pengguna atau fitur komunitas saat ini, tetapi kami berencana untuk memperkenalkannya di masa mendatang."
+            },
+            "s4": {
+                "title": "Kontak",
+                "q1": "Bagaimana cara menghubungi tim?",
+                "a1": "Anda dapat menghubungi kami melalui [Halaman Kontak](/contact) atau mengirim email ke legal@shimokitan.live untuk pertanyaan hukum."
+            }
         }
     },
     "changelog": {
@@ -449,6 +472,7 @@
         "contact_us": "HUBUNGI KAMI",
         "guidelines": "Panduan",
         "copyright": "Hak Cipta",
-        "affiliates": "Afiliasi"
+        "affiliates": "Afiliasi",
+        "faq": "FAQ"
     }
 }

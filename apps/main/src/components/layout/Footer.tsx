@@ -29,6 +29,8 @@ export function Footer({ minimal = false }: FooterProps) {
                         <Link href="/copyright" className="px-2 py-2 md:py-1 hover:text-zinc-300 transition-colors uppercase">{dict.copyright}</Link>
                         <div className="hidden md:block w-1 h-1 bg-zinc-800 rounded-full" />
                         <Link href="/affiliate-disclosure" className="px-2 py-2 md:py-1 hover:text-zinc-300 transition-colors uppercase">{dict.affiliates}</Link>
+                        <div className="hidden md:block w-1 h-1 bg-zinc-800 rounded-full" />
+                        <Link href="/faq" className="px-2 py-2 md:py-1 hover:text-zinc-300 transition-colors uppercase">{dict.faq || 'FAQ'}</Link>
                     </>
                 )}
                 <div className="hidden md:block w-1 h-1 bg-zinc-800 rounded-full" />

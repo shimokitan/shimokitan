@@ -13,17 +13,31 @@ function getLocale(request: NextRequest): string {
     const acceptLanguage = request.headers.get('accept-language');
     if (acceptLanguage) {
         if (acceptLanguage.includes('id')) return 'id';
-        if (acceptLanguage.includes('ja') || acceptLanguage.includes('jp')) return 'jp';
+        if (acceptLanguage.includes('ja') || acceptLanguage.includes('jp')) return 'ja';
     }
 
     return defaultLocale;
 }
 
+const ALLOWED_SUBPATHS = [
+    '/coming-soon',
+    '/about',
+    '/vision',
+    '/roadmap',
+    '/privacy',
+    '/terms',
+    '/cookies',
+    '/copyright',
+    '/affiliate-disclosure',
+    '/community-guidelines',
+    '/faq'
+];
+
 /**
- * Next.js 16 "Proxy" (formerly Middleware).
+ * Next.js Middleware.
  * This function handles routing, locales, and authentication checks.
  */
-export default function proxy(request: NextRequest) {
+export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // 1. Handle Locale Prefixing
@@ -49,8 +63,22 @@ export default function proxy(request: NextRequest) {
     const segments = pathname.split('/');
     const locale = segments[1];
     const subPathname = '/' + segments.slice(2).join('/');
+    const cleanSubPathname = subPathname.replace(/\/$/, '') || '/';
 
-    // 2. Authentication Check
+    // 1.5 Gatekeeper (Coming Soon Mode)
+    const isComingSoon = cleanSubPathname === '/coming-soon';
+    const isAllowed = ALLOWED_SUBPATHS.some(path => cleanSubPathname.startsWith(path));
+
+    if (!isComingSoon && !isAllowed) {
+        return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
+    }
+
+    // 1.6 Vision/Roadmap Aliases
+    if (cleanSubPathname === '/roadmap' || cleanSubPathname === '/vision') {
+        return NextResponse.redirect(new URL(`/${locale}/about/vision`, request.url));
+    }
+
+    // 2. Authentication Check (for pedalboard)
     if (subPathname.startsWith('/pedalboard')) {
         const sessionToken = AUTH_COOKIE_NAMES.find(name => request.cookies.get(name)?.value);
 

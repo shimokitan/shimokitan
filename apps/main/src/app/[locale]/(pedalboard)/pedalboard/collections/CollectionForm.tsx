@@ -11,14 +11,14 @@ import { uploadMediaAction } from '../media-actions';
 export default function CollectionForm({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'jp'>('en');
+    const [activeTab, setActiveTab] = useState<'en' | 'id' | 'ja'>('en');
 
     // Multi-Language State
     const [translations, setTranslations] = useState(
-        ['en', 'id', 'jp'].map(lang => {
+        ['en', 'id', 'ja'].map(lang => {
             const trans = initialData?.translations?.find((t: any) => t.locale === lang);
             return {
-                locale: lang as 'en' | 'id' | 'jp',
+                locale: lang as 'en' | 'id' | 'ja',
                 title: trans?.title || '',
                 description: trans?.thesis || '' // mapped to description in form, thesis in DB
             };

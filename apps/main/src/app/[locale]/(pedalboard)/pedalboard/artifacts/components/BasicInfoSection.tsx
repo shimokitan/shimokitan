@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react';
@@ -7,14 +6,14 @@ import { MediaUploader } from '@shimokitan/ui';
 import { uploadMediaAction } from '../../media-actions';
 
 interface Translation {
-    locale: 'en' | 'id' | 'jp';
+    locale: 'en' | 'id' | 'ja';
     title: string;
     description: string;
 }
 
 interface BasicInfoSectionProps {
     activeTab: string;
-    setActiveTab: (tab: 'en' | 'id' | 'jp') => void;
+    setActiveTab: (tab: 'en' | 'id' | 'ja') => void;
     translations: Translation[];
     updateTrans: (locale: string, field: 'title' | 'description', value: string) => void;
     coverId: string | null;
@@ -162,10 +161,6 @@ export default function BasicInfoSection({
                     >
                         <option value="music">MUSIC_TRACK</option>
                         {userRole === 'founder' && <option value="anime">ANIME_FEATURE</option>}
-                        {/* Phase 1: Focused Launch (Anime & Music Only) */}
-                        {/* <option value="manga">MANGA_PUBLICATION</option>
-                        <option value="software">SOFTWARE_SUITE</option>
-                        <option value="merch">PHYSICAL_GOODS</option> */}
                     </select>
                 </div>
                 <div className="space-y-1">
