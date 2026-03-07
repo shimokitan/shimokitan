@@ -7,7 +7,7 @@
 
 **What Makes It Different**
 - Artists own everything — full toggles over their pages, credits, licenses, and can revoke anytime
-- The UI stays neutral so *the artist's aesthetic shines*, not the platform's
+- The platform acts as the deep shadow so the artist's work shines bright: a sleek, dark-mode terminal environment that frames vibrant media and guarantees a consistently professional layout.
 - Zines (personal reflections, not reviews) are the cultural weight that drives homepage ranking via a secret recipe logic
 
 **How It Sustains Itself**

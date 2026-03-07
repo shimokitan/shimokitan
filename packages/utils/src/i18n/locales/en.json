@@ -74,8 +74,8 @@
         "a2_1": "The internet has an abundance of databases and trackers for anime, music, and games. Most of them treat culture as spreadsheets -- scores, stats, completion percentages. We wanted something different.",
         "a2_2": "Shimokitan is built on the idea that your taste tells a story. The anime that kept you up at night, the album you played on repeat during a specific season, the game that changed how you see things -- these are memories, not metrics. We archive them with that weight.",
         "q3": "How It Works",
-        "a3_1": "Shimokitan operates as an archival index. We do not host copyrighted media files. All metadata we catalog is sourced from publicly available information -- we do not access, extract, or process data from private, paywalled, or restricted sources. For media playback, we embed content exclusively from platforms whose terms of service permit external embedding, such as YouTube. Every artifact in our system links back to the original creators and their official distribution channels.",
-        "a3_2": "Artifact pages that display a verified indicator have received explicit permission from the rights holder. Pages without this indicator are index entries only, using publicly available metadata and authorized embeds.",
+        "a3_1": "Shimokitan operates as an archival index. We do not host playable copyrighted media. Visual assets such as thumbnails and cover images are hosted on our infrastructure for referential and archival purposes, with attribution linked to their original sources. All metadata we catalog is sourced from publicly available information. For media playback, we embed content exclusively from platforms that permit external embedding.",
+        "a3_2": "Artifact pages that display a verified indicator have received explicit permission from the rights holder. Pages without this indicator are index entries only, using publicly available metadata and contextual visual references.",
         "artifacts_label": "Artifacts",
         "artifacts_desc": "The core entries. Anime series, albums, films, games, visual novels. Each has metadata, a cover, embedded media, and editorial context.",
         "entities_label": "Entities",
@@ -87,6 +87,7 @@
         "q4": "Who Runs This",
         "a4_1": "Shimokitan is independently operated from Indonesia. There is no company, no investors, no board. It exists because the people building it genuinely love this culture and wanted a better home for it online.",
         "a4_2": "The platform is named after Shimokitazawa -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, not by algorithm.",
+        "a4_3": "The platform is built by a solo developer using AI coding assistants. While the code is assisted, the culture we archive is strictly human -- we do not index AI-generated media.",
         "q5": "Open to the World",
         "a5_1": "Shimokitan is built for anyone who shares a deep appreciation for Japanese creative work, regardless of where they are. The platform is free to browse, free to read, and free to explore.",
         "a5_2": "Everything you see on the platform is hand-curated. There are no algorithmic feeds, no auto-generated pages, and no user-submitted content at this time.",
@@ -129,7 +130,8 @@
                 "l1": "We will not host or knowingly link to pirated, unauthorized, or illegally distributed media. The archive is an index to official sources, not a download site.",
                 "l2": "We will not implement algorithmic feeds. Discovery should be intentional, not dopamine-driven.",
                 "l3": "We will not sell user data or implement intrusive advertising.",
-                "l4": "We will not chase scale at the expense of quality. Growth should follow curation, not the other way around."
+                "l4": "We will not chase scale at the expense of quality. Growth should follow curation, not the other way around.",
+                "l5": "We will not index or accept AI-generated media. Shimokitan is strictly an archive for human effort, human creators, and human culture."
             }
         }
     },
@@ -313,17 +315,17 @@
                 "content": "Shimokitan is a curated archival index, not a content hosting platform. We document and catalog Japanese creative culture -- anime, music, games, and related media -- through editorial commentary, structured metadata, and third-party embeds. All metadata we index is sourced exclusively from publicly available information."
             },
             "s2": {
-                "title": "2. No-Host Policy",
-                "p1": "Shimokitan does **not** host, upload, or distribute copyrighted media files without explicit permission from the rights holder.",
-                "p2": "Where explicit permission has not been obtained, we rely exclusively on **embedding and hotlinking** from platforms whose terms of service permit external embedding. Content is displayed directly from its original source without downloading, modifying, or storing it locally."
+                "title": "2. No-Host Policy for Playable Media",
+                "p1": "Shimokitan does **not** host, upload, or distribute playable copyrighted media (such as audio, video, or games) without explicit permission from the rights holder.",
+                "p2": "For playable media, we rely exclusively on **embedding** from platforms whose terms of service permit external embedding. This content is displayed directly from its original source without downloading or storing it locally."
             },
             "s3": {
                 "title": "3. Visual Media and Referential Use",
-                "content": "Thumbnails, cover images, and other visual references displayed on the Service are embedded or hotlinked from their respective platforms and remain the property of their original creators and rights holders."
+                "content": "Thumbnails, cover images, avatars, and other visual assets displayed on the Service are compressed and hosted on our infrastructure purely for contextual, referential, and archival purposes. We make no claim of ownership over these assets and link directly to their original sources. If you are a rights holder and wish to have your work removed, please see Section 8 below."
             },
             "s4": {
                 "title": "4. Visual Media Attribution",
-                "content": "All thumbnail images and cover art displayed on Shimokitan include source attribution where available. Each artifact page links directly to official distribution channels. Artifact pages that display a **verified indicator** have received explicit permission from the rights holder. Pages without this indicator are index entries using publicly available metadata and authorized embeds only."
+                "content": "All thumbnail images and cover art displayed on Shimokitan include source attribution where available. Each artifact page links directly to official distribution channels. Artifact pages that display a **verified indicator** have received explicit permission from the rights holder. Pages without this indicator are index entries using publicly available metadata and contextual visual references."
             },
             "s5": {
                 "title": "5. Original Content",
@@ -334,7 +336,7 @@
                 "content": "Shimokitan's approach is designed to respect rights holders:",
                 "l1": "We embed content from platforms that authorize external embedding (per their Terms of Service)",
                 "l2": "We provide attribution and link directly to official distribution channels",
-                "l3": "We do not reproduce, host, or redistribute copyrighted media files",
+                "l3": "We do not host or redistribute playable copyrighted media files",
                 "l4": "We respond promptly to rights holder concerns",
                 "p2": "If you are a rights holder and have questions about how we reference your work, please contact us at **legal@shimokitan.live**."
             },
@@ -414,7 +416,7 @@
             "s2": {
                 "title": "Using the Platform",
                 "q1": "Do you host illegal or pirated content?",
-                "a1": "No. Shimokitan operates as an archival index. We do not host copyrighted media files. All metadata we catalog is sourced from publicly available information. For media playback, we embed content exclusively from platforms whose terms of service permit external embedding, such as YouTube."
+                "a1": "No. Shimokitan operates as an archival index. We do not host playable copyrighted media. Visual assets such as thumbnails and cover images are hosted for referential and archival purposes, with attribution to their original sources. All metadata we catalog is sourced from publicly available information. For media playback, we embed content exclusively from platforms that permit external embedding."
             },
             "s3": {
                 "title": "Accounts & Community",

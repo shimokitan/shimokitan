@@ -15,7 +15,7 @@
     },
     "home": {
         "title": "SHIMOKITAN // DISTRIK DIGITAL",
-        "description": "SHIMOKITAN adalah sebuah distrik bagi para peminat budaya Jepang yang mendokumentasikan anime, gim, dan musik mereka sebagai pengalaman nyata - bukan sekadar data. Terinspirasi dari gang-gang sempit di Shimokitazawa, di sinilah selera Anda menjadi arsip pengalaman yang terkurasi.",
+        "description": "Gang-gang digital budaya Jepang. Arsipkan anime, musik, dan gim sebagai kenangan hidup - bukan poin data.",
         "tagline": "Arsip budaya yang hidup, bukan sekadar data.",
         "nav_archive": "Masuk Arsip",
         "nav_entities": "Entitas",
@@ -33,10 +33,10 @@
         "in_the_pit": "In The Pit",
         "district_entities": "Entitas Distrik",
         "playlist": "Daftar Putar",
-        "view_shard": "LIHAT_SHARD"
+        "view_shard": "VIEW_SHARD"
     },
     "contact": {
-        "title": "BANGUN KONEKSI",
+        "title": "BUKA KONEKSI",
         "description": "Memiliki pertanyaan, masukan, atau sekadar ingin menyapa? Buka kanal transmisi dan hubungi tim Shimokitan.",
         "transmission_sent": "Transmisi Terkirim",
         "transmission_sent_description": "Pesan Anda telah berhasil dienkripsi dan dikirim ke server aman kami.",
@@ -74,8 +74,8 @@
         "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja - skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
         "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda - ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
         "q3": "Cara Kerja",
-        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi yang tersedia secara publik - kami tidak mengakses atau memproses data dari sumber privat atau berbayar. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang ketentuan layanannya mengizinkan penyematan eksternal, seperti YouTube. Setiap artefak di sistem kami tertaut kembali ke kreator asli dan saluran distribusi resmi mereka.",
-        "a3_2": "Halaman artefak yang menampilkan indikator verifikasi telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan sematan resmi.",
+        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan media berhak cipta yang dapat diputar. Aset visual seperti gambar mini dan sampul di-hosting pada infrastruktur kami untuk tujuan referensial dan pengarsipan, dengan atribusi yang tertaut ke sumber aslinya. Semua metadata yang kami katalogkan bersumber dari informasi publik. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang mengizinkan penyematan eksternal.",
+        "a3_2": "Halaman artefak yang menampilkan indikator verifikasi telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan referensi visual kontekstual.",
         "artifacts_label": "Artefak",
         "artifacts_desc": "Entri utama. Seri anime, album, film, gim, novel visual. Masing-masing memiliki metadata, sampul, media sematan, dan konteks editorial.",
         "entities_label": "Entitas",
@@ -87,6 +87,7 @@
         "q4": "Siapa yang Menjalankan Ini",
         "a4_1": "Shimokitan dioperasikan secara independen dari Indonesia. Tidak ada perusahaan, investor, atau dewan direksi. Situs ini ada karena orang-orang yang membangunnya benar-benar mencintai budaya ini dan menginginkan 'rumah' yang lebih baik di dunia maya.",
         "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa - sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, bukan melalui algoritma.",
+        "a4_3": "Platform ini dibangun oleh pengembang solo menggunakan asisten pengkodean AI. Meskipun kodenya dibantu, budaya yang kami arsipkan sepenuhnya adalah hasil karya manusia -- kami tidak mengindeks media yang dihasilkan oleh AI.",
         "q5": "Terbuka untuk Dunia",
         "a5_1": "Shimokitan dibangun untuk siapa saja yang memiliki apresiasi mendalam terhadap karya kreatif Jepang, di mana pun mereka berada. Platform ini bebas untuk dijelajahi dan dibaca.",
         "a5_2": "Semua yang Anda lihat di platform ini dikurasi secara manual. Tidak ada umpan (feed) algoritma, halaman yang dibuat otomatis, atau konten kiriman pengguna untuk saat ini.",
@@ -127,9 +128,10 @@
                 "title": "Apa yang Tidak Akan Kami Lakukan",
                 "content": "Beberapa hal sengaja berada di luar cakupan Shimokitan:",
                 "l1": "Kami tidak akan menyimpan atau dengan sengaja menautkan ke media bajakan, tidak sah, atau didistribusikan secara ilegal. Arsip ini adalah indeks ke sumber resmi, bukan situs unduhan.",
-                "l2": "Kami tidak akan menerapkan umpan (feed) algoritma. Penemuan karya haruslah bersifat intensional, bukan didorong oleh dopamin.",
+                "l2": "Kami tidak akan menerapkan umpan (feed) algoritma. Penemuan karya haruslah dilakukan secara sadar dan sengaja, bukan didorong oleh dopamin.",
                 "l3": "Kami tidak akan menjual data pengguna atau menerapkan iklan yang mengganggu.",
-                "l4": "Kami tidak akan mengejar skala dengan mengorbankan kualitas. Pertumbuhan harus mengikuti kurasi, bukan sebaliknya."
+                "l4": "Kami tidak akan mengejar skala dengan mengorbankan kualitas. Pertumbuhan harus mengikuti kurasi, bukan sebaliknya.",
+                "l5": "Kami tidak akan mengindeks atau menerima media yang dihasilkan oleh AI. Shimokitan secara ketat merupakan arsip untuk upaya manusia, kreator manusia, dan budaya manusia."
             }
         }
     },
@@ -313,17 +315,17 @@
                 "content": "Shimokitan adalah indeks arsip terkurasi, bukan platform hosting konten. Kami mendokumentasikan dan mengatalogkan budaya kreatif Jepang - anime, musik, gim, dan media terkait - melalui komentar editorial, metadata terstruktur, dan sematan pihak ketiga. Semua metadata yang kami indeks bersumber secara eksklusif dari informasi yang tersedia secara publik."
             },
             "s2": {
-                "title": "2. Kebijakan Tanpa-Hosting",
-                "p1": "Kami **tidak** menyimpan atau mendistribusikan file media berhak cipta tanpa izin.",
-                "p2": "Kami mengandalkan fitur **penyematan (embedding)** dari platform resmi."
+                "title": "2. Kebijakan Tanpa-Hosting untuk Media yang Dapat Diputar",
+                "p1": "Shimokitan **tidak** menghosting, mengunggah, atau mendistribusikan media berhak cipta yang dapat diputar (seperti audio, video, atau game) tanpa izin eksplisit dari pemegang hak cipta.",
+                "p2": "Untuk media yang dapat diputar, kami sepenuhnya mengandalkan fitur **penyematan (embedding)** dari platform yang ketentuan layanannya mengizinkan penyematan eksternal. Konten semacam itu ditampilkan langsung dari sumber aslinya tanpa mengunduh, memodifikasi, atau menyimpannya secara lokal."
             },
             "s3": {
-                "title": "3. Media Visual",
-                "content": "Gambar mini (thumbnail), gambar sampul, dan referensi visual lainnya yang ditampilkan di Layanan disematkan atau di-hotlink dari platform masing-masing dan tetap menjadi milik kreator asli dan pemegang hak ciptanya."
+                "title": "3. Media Visual dan Penggunaan Referensial",
+                "content": "Gambar mini (thumbnail), gambar sampul, avatar, dan aset visual lainnya yang ditampilkan pada Layanan ini dikompresi dan dihosting pada infrastruktur kami murni untuk tujuan kontekstual, referensial, dan pengarsipan, sesuai dengan praktik pengarsipan dan referensi yang umum. Kami tidak mengklaim kepemilikan atas aset-aset ini dan menautkannya langsung ke sumber aslinya. Jika Anda adalah pemegang hak cipta dan ingin karya Anda dihapus, silakan lihat Bagian 8 di bawah ini."
             },
             "s4": {
                 "title": "4. Atribusi",
-                "content": "Semua gambar mini dan sampul yang ditampilkan di Shimokitan menyertakan atribusi sumber jika tersedia. Setiap halaman artefak menautkan langsung ke saluran distribusi resmi. Halaman artefak yang menampilkan **indikator verifikasi** telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan sematan resmi."
+                "content": "Semua gambar mini dan sampul yang ditampilkan di Shimokitan menyertakan atribusi sumber jika tersedia. Setiap halaman artefak menautkan langsung ke saluran distribusi resmi. Halaman artefak yang menampilkan **indikator verifikasi** telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan referensi visual kontekstual."
             },
             "s5": {
                 "title": "5. Konten Asli",
@@ -334,7 +336,7 @@
                 "content": "Pendekatan Shimokitan dirancang untuk menghormati pemegang hak:",
                 "l1": "Kami menyematkan konten dari platform yang mengizinkan penyematan eksternal (sesuai Ketentuan Layanan mereka)",
                 "l2": "Kami menyertakan atribusi dan tautan langsung ke saluran distribusi resmi",
-                "l3": "Kami tidak mereproduksi, menyimpan, atau mendistribusikan ulang file media berhak cipta",
+                "l3": "Kami tidak menyimpan atau mendistribusikan ulang media berhak cipta yang dapat diputar",
                 "l4": "Kami merespons dengan cepat kekhawatiran pemegang hak cipta",
                 "p2": "Jika Anda adalah pemegang hak cipta dan memiliki pertanyaan tentang bagaimana kami mereferensikan karya Anda, silakan hubungi kami di **legal@shimokitan.live**."
             },
@@ -354,7 +356,7 @@
                 "p2": "Kirim ke: legal@shimokitan.live"
             },
             "s9": {
-                "title": "9. Notifikasi Balasan",
+                "title": "9. Pemberitahuan Sanggahan",
                 "content": "Jika Anda yakin bahwa materi telah dihapus atau dibatasi karena kekeliruan, Anda dapat mengirimkan notifikasi balasan ke legal@shimokitan.live. Notifikasi balasan Anda harus mencakup: (1) identifikasi materi yang telah dihapus dan lokasinya sebelum penghapusan; (2) pernyataan, di bawah sumpah, bahwa Anda memiliki keyakinan dengan itikad baik bahwa materi tersebut dihapus atau dibatasi akibat kesalahan atau salah identifikasi; (3) nama, alamat, dan informasi kontak Anda; (4) pernyataan menyetujui yurisdiksi pengadilan di tempat tinggal Anda (atau Republik Indonesia jika Anda bertempat tinggal di luar Indonesia); dan (5) tanda tangan fisik atau elektronik Anda."
             },
             "s10": {
@@ -414,7 +416,7 @@
             "s2": {
                 "title": "Penggunaan Platform",
                 "q1": "Apakah Anda menyimpan konten ilegal atau bajakan?",
-                "a1": "Tidak. Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan file media berhak cipta. Semua metadata yang kami katalogkan bersumber dari informasi publik."
+                "a1": "Tidak. Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan media berhak cipta yang dapat diputar. Aset visual seperti gambar mini dan sampul di-hosting pada infrastruktur kami untuk tujuan referensial dan pengarsipan, dengan atribusi yang tertaut ke sumber aslinya. Semua metadata yang kami katalogkan bersumber dari informasi publik. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang mengizinkan penyematan eksternal."
             },
             "s3": {
                 "title": "Akun & Komunitas",
@@ -446,7 +448,7 @@
             "l1": "Penulisan ulang platform menggunakan Next.js App Router.",
             "l2": "Integrasi Drizzle ORM dengan Neon PostgreSQL.",
             "l3": "Pembangunan konsol pedalboard untuk pengelolaan artefak, entitas, dan koleksi.",
-            "l4": "Implementasi sistem desain UI baru dengan CyberpunkShell.",
+            "l4": "Implementasi sistem desain UI baru dengan CyberpunkShell dan penemaan distrik.",
             "l5": "Penambahan pipeline aset R2 untuk pemrosesan gambar."
         },
         "v1_5_0": {
@@ -466,7 +468,7 @@
         "identity_panel": "Identitas // Panel",
         "initialize_session": "Inisialisasi Sesi",
         "register_resident": "Daftar Residen",
-        "guest_protocol": "Protokol_Tamu_Aktif"
+        "guest_protocol": "Guest_Protocol_Active"
     },
     "footer": {
         "contact_us": "HUBUNGI KAMI",

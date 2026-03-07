@@ -29,6 +29,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <h2>{dict.about.q4}</h2>
             <p>{dict.about.a4_1}</p>
             <p>{dict.about.a4_2}</p>
+            <p className="italic opacity-80">{(dict.about as any).a4_3}</p>
 
             <h2>{dict.about.q5}</h2>
             <p>{dict.about.a5_1}</p>

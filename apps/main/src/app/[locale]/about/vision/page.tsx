@@ -60,6 +60,7 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
                             {"l2" in v.section5 && <li>{v.section5.l2}</li>}
                             {"l3" in v.section5 && <li>{v.section5.l3}</li>}
                             {"l4" in v.section5 && <li>{v.section5.l4}</li>}
+                            {"l5" in (v.section5 as any) && <li>{(v.section5 as any).l5}</li>}
                         </ul>
                     )}
                 </div>
