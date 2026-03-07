@@ -74,8 +74,8 @@
         "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja - skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
         "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda - ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
         "q3": "Cara Kerja",
-        "a3_1": "Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan media berhak cipta yang dapat diputar. Aset visual seperti gambar mini dan sampul di-hosting pada infrastruktur kami untuk tujuan referensial dan pengarsipan, dengan atribusi yang tertaut ke sumber aslinya. Semua metadata yang kami katalogkan bersumber dari informasi publik. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang mengizinkan penyematan eksternal.",
-        "a3_2": "Halaman artefak yang menampilkan indikator verifikasi telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan referensi visual kontekstual.",
+        "a3_1": "Shimokitan adalah arsip terkurasi yang dibangun atas dasar persetujuan. Kami tidak mengarsipkan artis rekaman atau kreator spesifik tanpa izin eksplisit dari mereka. Kami mengundang mereka untuk menetap di Distrik, dan jika disetujui, mereka memilih bagaimana karya mereka disajikan: melalui sematan pihak ketiga atau di-hosting langsung di pemutar khusus kami.",
+        "a3_2": "Karena kami beroperasi secara ketat dengan prinsip persetujuan-utamakan untuk artis, setiap kreator yang Anda lihat di sini telah setuju untuk berada di sini. Untuk entri yang lebih luas seperti anime atau gim, kami mengindeks metadata publik dan menyimpan aset visual (seperti sampul) murni untuk tujuan referensi dan pengarsipan.",
         "artifacts_label": "Artefak",
         "artifacts_desc": "Entri utama. Seri anime, album, film, gim, novel visual. Masing-masing memiliki metadata, sampul, media sematan, dan konteks editorial.",
         "entities_label": "Entitas",
@@ -127,7 +127,7 @@
             "section5": {
                 "title": "Apa yang Tidak Akan Kami Lakukan",
                 "content": "Beberapa hal sengaja berada di luar cakupan Shimokitan:",
-                "l1": "Kami tidak akan menyimpan atau dengan sengaja menautkan ke media bajakan, tidak sah, atau didistribusikan secara ilegal. Arsip ini adalah indeks ke sumber resmi, bukan situs unduhan.",
+                "l1": "Kami tidak akan mengarsipkan artis tanpa persetujuan mereka. Kami mengutamakan kualitas persetujuan di atas kuantitas konten.",
                 "l2": "Kami tidak akan menerapkan umpan (feed) algoritma. Penemuan karya haruslah dilakukan secara sadar dan sengaja, bukan didorong oleh dopamin.",
                 "l3": "Kami tidak akan menjual data pengguna atau menerapkan iklan yang mengganggu.",
                 "l4": "Kami tidak akan mengejar skala dengan mengorbankan kualitas. Pertumbuhan harus mengikuti kurasi, bukan sebaliknya.",
@@ -312,20 +312,20 @@
             "title": "Kebijakan Hak Cipta dan Konten",
             "s1": {
                 "title": "1. Pendekatan Kami terhadap Konten",
-                "content": "Shimokitan adalah indeks arsip terkurasi, bukan platform hosting konten. Kami mendokumentasikan dan mengatalogkan budaya kreatif Jepang - anime, musik, gim, dan media terkait - melalui komentar editorial, metadata terstruktur, dan sematan pihak ketiga. Semua metadata yang kami indeks bersumber secara eksklusif dari informasi yang tersedia secara publik."
+                "content": "Shimokitan beroperasi dengan kebijakan persetujuan-utamakan (consent-first) yang ketat untuk artis rekaman dan kreator. Kami tidak mengatalogkan artis tanpa izin eksplisit mereka. Untuk entri umum seperti anime dan gim, kami bertindak sebagai indeks arsip terkurasi menggunakan metadata publik."
             },
             "s2": {
-                "title": "2. Kebijakan Tanpa-Hosting untuk Media yang Dapat Diputar",
-                "p1": "Shimokitan **tidak** menghosting, mengunggah, atau mendistribusikan media berhak cipta yang dapat diputar (seperti audio, video, atau game) tanpa izin eksplisit dari pemegang hak cipta.",
-                "p2": "Untuk media yang dapat diputar, kami sepenuhnya mengandalkan fitur **penyematan (embedding)** dari platform yang ketentuan layanannya mengizinkan penyematan eksternal. Konten semacam itu ditampilkan langsung dari sumber aslinya tanpa mengunduh, memodifikasi, atau menyimpannya secara lokal."
+                "title": "2. Hosting Berbasis Persetujuan",
+                "p1": "Ketika seorang artis setuju untuk diarsipkan, mereka dapat memilih bagaimana media mereka disajikan: melalui sematan pihak ketiga (seperti YouTube) atau di-hosting langsung di infrastruktur kami. Semua media yang dapat diputar yang kami hosting dilakukan dengan izin tertulis dan eksplisit dari pemegang hak cipta.",
+                "p2": "Kami tidak menghosting, mengunggah, atau mendistribusikan media berhak cipta tanpa izin eksplisit ini. Jika artis memilih hanya untuk disematkan (embed), kami mematuhi ketentuan platform tersebut sepenuhnya."
             },
             "s3": {
                 "title": "3. Media Visual dan Penggunaan Referensial",
-                "content": "Gambar mini (thumbnail), gambar sampul, avatar, dan aset visual lainnya yang ditampilkan pada Layanan ini dikompresi dan dihosting pada infrastruktur kami murni untuk tujuan kontekstual, referensial, dan pengarsipan, sesuai dengan praktik pengarsipan dan referensi yang umum. Kami tidak mengklaim kepemilikan atas aset-aset ini dan menautkannya langsung ke sumber aslinya. Jika Anda adalah pemegang hak cipta dan ingin karya Anda dihapus, silakan lihat Bagian 8 di bawah ini."
+                "content": "Untuk entri arsip yang lebih luas (anime, gim), gambar mini dan sampul di-hosting pada infrastruktur kami murni untuk tujuan kontekstual, referensial, dan pengarsipan. Kami tidak mengklaim kepemilikan atas aset ini. Bagi artis yang memberi kami izin, hosting gambar profil/avatar mereka adalah syarat wajib untuk menetap di Distrik."
             },
             "s4": {
                 "title": "4. Atribusi",
-                "content": "Semua gambar mini dan sampul yang ditampilkan di Shimokitan menyertakan atribusi sumber jika tersedia. Setiap halaman artefak menautkan langsung ke saluran distribusi resmi. Halaman artefak yang menampilkan **indikator verifikasi** telah menerima izin eksplisit dari pemegang hak cipta. Halaman tanpa indikator ini hanyalah entri indeks yang menggunakan metadata publik dan referensi visual kontekstual."
+                "content": "Semua aset visual yang ditampilkan menyertakan atribusi sumber jika tersedia. Karena setiap profil artis menandakan persetujuan bersama yang kokoh, lencana verifikasi atau indikator semacamnya tidak diwajibkan lagi di platform ini."
             },
             "s5": {
                 "title": "5. Konten Asli",
@@ -416,7 +416,7 @@
             "s2": {
                 "title": "Penggunaan Platform",
                 "q1": "Apakah Anda menyimpan konten ilegal atau bajakan?",
-                "a1": "Tidak. Shimokitan beroperasi sebagai indeks arsip. Kami tidak menyimpan media berhak cipta yang dapat diputar. Aset visual seperti gambar mini dan sampul di-hosting pada infrastruktur kami untuk tujuan referensial dan pengarsipan, dengan atribusi yang tertaut ke sumber aslinya. Semua metadata yang kami katalogkan bersumber dari informasi publik. Untuk pemutaran media, kami hanya menyematkan (embed) konten dari platform yang mengizinkan penyematan eksternal."
+                "a1": "Tidak. Shimokitan beroperasi dengan kebijakan persetujuan-utamakan (consent-first) untuk artis. Kami tidak menyimpan media berhak cipta yang dapat diputar tanpa izin eksplisit dari pemegang hak. Aset visual untuk entri yang lebih luas (anime, gim) di-hosting murni untuk tujuan referensi dan pengarsipan. Selain itu, kami sepenuhnya bergantung pada penyematan (embedding) eksternal dari sumber daya resmi."
             },
             "s3": {
                 "title": "Akun & Komunitas",
