@@ -62,6 +62,8 @@
     },
     "about": {
         "title": "Tentang Shimokitan",
+        "last_updated": "Terakhir Diperbarui",
+        "last_updated_date": "9 Maret 2026",
         "sidebar_links": {
             "about": "Tentang Shimokitan",
             "vision": "Visi dan Rencana",
@@ -86,11 +88,11 @@
         "zines_desc": "Refleksi tertulis yang melekat pada artefak. Bukan ulasan, melainkan respons personal terhadap sebuah karya.",
         "q4": "Siapa yang Menjalankan Ini",
         "a4_1": "Shimokitan dioperasikan secara independen dari Indonesia. Tidak ada perusahaan, investor, atau dewan direksi. Situs ini ada karena orang-orang yang membangunnya benar-benar mencintai budaya ini dan menginginkan 'rumah' yang lebih baik di dunia maya.",
-        "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa - sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, bukan melalui algoritma.",
+        "a4_2": "Platform ini dinamai berdasarkan Shimokitazawa - sebuah lingkungan di Tokyo yang dikenal dengan toko rekaman independen, toko barang bekas, dan teater kecil. Jenis tempat di mana Anda menemukan sesuatu dengan berkeliling, yang dipandu oleh resonansi manusia alih-alih algoritma prediktif.",
         "a4_3": "Platform ini dibangun oleh pengembang solo menggunakan asisten pengkodean AI. Meskipun kodenya dibantu, budaya yang kami arsipkan sepenuhnya adalah hasil karya manusia -- kami tidak mengindeks media yang dihasilkan oleh AI.",
         "q5": "Terbuka untuk Dunia",
         "a5_1": "Shimokitan dibangun untuk siapa saja yang memiliki apresiasi mendalam terhadap karya kreatif Jepang, di mana pun mereka berada. Platform ini bebas untuk dijelajahi dan dibaca.",
-        "a5_2": "Semua yang Anda lihat di platform ini dikurasi secara manual. Tidak ada umpan (feed) algoritma, halaman yang dibuat otomatis, atau konten kiriman pengguna untuk saat ini.",
+        "a5_2": "Semua yang Anda lihat di platform ini dikurasi secara manual. Tidak ada umpan (feed) yang didorong oleh metrik interaksi, halaman yang dibuat otomatis, atau konten kiriman pengguna untuk saat ini. Penemuan di sini bersifat deterministik, bukan sebuah kotak hitam.",
         "q6": "Hubungi Kami",
         "a6_1": "Jika Anda memiliki pertanyaan, saran, atau sekadar ingin menyapa, silakan hubungi kami melalui halaman kontak. Anda juga bisa menemukan kami di X dan Instagram.",
         "legal_notice_title": "Pemberitahuan Hukum",
@@ -118,11 +120,11 @@
                 "l4": "Sematan media resmi dan tautan ke platform streaming."
             },
             "section4": {
-                "title": "Fase 2: Komunitas",
-                "content": "Langkah selanjutnya adalah membuka platform untuk partisipasi komunitas. Ini berarti akun pengguna, arsip pribadi, dan kemampuan untuk menulis serta menerbitkan zine.",
-                "l1": "Registrasi pengguna dan profil pribadi.",
-                "l2": "Penulisan Zine - respons personal terhadap artefak.",
-                "l3": "Rak pribadi untuk menyusun koleksi artefak Anda sendiri."
+                "title": "Fase 2: Komunitas & Resonansi",
+                "content": "Pembukaan gerbang Distrik memperkenalkan Mesin Resonansi. Saat kami membuka platform untuk partisipasi komunitas, kami menolak menggunakan umpan interaksi atau algoritma yang mengutamakan influencer. Sebaliknya, visibilitas ditentukan secara kolektif oleh kedalaman manusia yang terverifikasi.",
+                "l1": "Zine Berbobot — Pengguna menyumbangkan Zine sebagai ganti \"suka\" (likes). Zine membawa \"Panas\" (Heat) berdasarkan reputasi penulisnya, untuk mempertahankan arsip dari bot dan manipulasi berbayar.",
+                "l2": "Penemuan Deterministik — Visibilitas sebuah artefak adalah jumlah \"Panas\" dari semua Zine yang terpasang padanya. Kontribusi manusia berintegritas tinggi akan membawa artefak tersebut ke permukaan.",
+                "l3": "Rak Pribadi & Profil — Alat untuk mengatur koleksi artefak Anda sendiri dan membangun reputasi kurasi Anda."
             },
             "section5": {
                 "title": "Model Pendapatan",
@@ -132,7 +134,7 @@
                 "title": "Apa yang Tidak Akan Kami Lakukan",
                 "content": "Beberapa hal sengaja berada di luar cakupan Shimokitan:",
                 "l1": "Kami tidak akan mengarsipkan artis tanpa persetujuan mereka. Kami mengutamakan kualitas persetujuan di atas kuantitas konten.",
-                "l2": "Kami tidak akan menerapkan umpan (feed) algoritma. Penemuan karya haruslah dilakukan secara sadar dan sengaja, bukan didorong oleh dopamin.",
+                "l2": "Kami tidak akan menerapkan umpan konten yang didorong oleh interaksi. Kami mengoperasikan Kebijakan Nol Prediksi — kami tidak akan pernah 'menebak' apa yang ingin Anda lihat berdasarkan waktu menonton atau kedalaman gulir. Penemuan karya haruslah dilakukan secara sadar dan sengaja, bukan didorong oleh dopamin.",
                 "l3": "Kami tidak akan menjual data pengguna atau menerapkan iklan yang mengganggu.",
                 "l4": "Kami tidak akan mengejar skala dengan mengorbankan kualitas. Pertumbuhan harus mengikuti kurasi, bukan sebaliknya.",
                 "l5": "Kami tidak akan mengindeks atau menerima media yang dihasilkan oleh AI. Shimokitan secara ketat merupakan arsip untuk upaya manusia, kreator manusia, dan budaya manusia."
@@ -141,7 +143,7 @@
     },
     "legal": {
         "last_updated": "Terakhir Diperbarui",
-        "last_updated_date": "8 Maret 2026",
+        "last_updated_date": "9 Maret 2026",
         "sidebar_title": "Dokumen Hukum",
         "help_title": "Butuh Bantuan?",
         "help_text": "Jika Anda memiliki pertanyaan tentang kebijakan kami, silakan hubungi tim hukum kami.",

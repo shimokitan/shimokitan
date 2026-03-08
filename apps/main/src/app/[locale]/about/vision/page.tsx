@@ -8,6 +8,7 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
     return (
         <>
             <h1>{v.title}</h1>
+            <p className="opacity-80">{dict.about.last_updated}: {dict.about.last_updated_date}</p>
 
             <div className="p-4 mb-8 rounded-lg bg-violet-900/10 border border-violet-500/20 text-violet-300 text-sm font-mono leading-relaxed">
                 <p className="m-0">{dict.about.vision_disclaimer}</p>

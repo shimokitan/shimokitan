@@ -7,6 +7,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     return (
         <>
             <h1>{dict.about.title}</h1>
+            <p className="opacity-80">{dict.about.last_updated}: {dict.about.last_updated_date}</p>
 
             <h2>{dict.about.q1}</h2>
             <p>{dict.about.a1_1}</p>

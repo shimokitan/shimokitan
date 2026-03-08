@@ -62,6 +62,8 @@
     },
     "about": {
         "title": "About Shimokitan",
+        "last_updated": "Last Updated",
+        "last_updated_date": "March 9, 2026",
         "sidebar_links": {
             "about": "About Shimokitan",
             "vision": "Vision and Roadmap",
@@ -86,11 +88,11 @@
         "zines_desc": "Written reflections attached to artifacts. Not reviews, but personal responses to the work.",
         "q4": "Who Runs This",
         "a4_1": "Shimokitan is independently operated from Indonesia. There is no company, no investors, no board. It exists because the people building it genuinely love this culture and wanted a better home for it online.",
-        "a4_2": "The platform is named after Shimokitazawa -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, not by algorithm.",
+        "a4_2": "The platform is named after Shimokitazawa -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, guided by human resonance rather than predictive algorithms.",
         "a4_3": "The platform is built by a solo developer using AI coding assistants. While the code is assisted, the culture we archive is strictly human -- we do not index AI-generated media.",
         "q5": "Open to the World",
         "a5_1": "Shimokitan is built for anyone who shares a deep appreciation for Japanese creative work, regardless of where they are. The platform is free to browse, free to read, and free to explore.",
-        "a5_2": "Everything you see on the platform is hand-curated. There are no algorithmic feeds, no auto-generated pages, and no user-submitted content at this time.",
+        "a5_2": "Everything you see on the platform is hand-curated. There are no engagement-driven feeds, no auto-generated pages, and no user-submitted content at this time. Discovery here is deterministic, never a black box.",
         "q6": "Get in Touch",
         "a6_1": "If you have questions, suggestions, or just want to say hello, reach out through our contact page. You can also find us on X and Instagram.",
         "legal_notice_title": "Legal Notice",
@@ -118,11 +120,11 @@
                 "l4": "Official media embeds and links to streaming platforms."
             },
             "section4": {
-                "title": "Phase 2: Community",
-                "content": "The next step is opening the platform to community participation. This means user accounts, personal archives, and the ability to write and publish zines.",
-                "l1": "User registration and personal profiles.",
-                "l2": "Zine authoring -- personal responses to artifacts.",
-                "l3": "Personal shelves for organizing your own artifact collection."
+                "title": "Phase 2: Community & Resonance",
+                "content": "The opening of the District gates introduces the Resonance Engine. When we open the platform to community participation, we refuse to use engagement feeds or algorithms that prioritize the influencer. Instead, visibility is determined by collective, verified human depth.",
+                "l1": "Weighted Zines — Users contribute Zines instead of \"likes.\" Zines carry \"Heat\" based on the author's earned reputation, defending the archive against bots and paid manipulation.",
+                "l2": "Deterministic Discovery — An artifact's visibility is the sum of the \"Heat\" from all its attached Zines. High-integrity human contributions move an artifact into the light.",
+                "l3": "Personal Shelves & Profiles — Tools for organizing your own artifact collection and building your curatorial reputation."
             },
             "section5": {
                 "title": "Revenue Model",
@@ -132,7 +134,7 @@
                 "title": "What We Will Not Do",
                 "content": "Some things are intentionally out of scope for Shimokitan:",
                 "l1": "We will not archive artists without their consent. We prioritize the quality of consent over the quantity of content.",
-                "l2": "We will not implement algorithmic feeds. Discovery should be intentional, not dopamine-driven.",
+                "l2": "We will not implement engagement-driven feeds. We operate a Zero-Prediction Policy—we will never 'guess' what you want to see based on watch time or scroll depth. Discovery should be intentional, not dopamine-driven.",
                 "l3": "We will not sell user data or implement intrusive advertising.",
                 "l4": "We will not chase scale at the expense of quality. Growth should follow curation, not the other way around.",
                 "l5": "We will not index or accept AI-generated media. Shimokitan is strictly an archive for human effort, human creators, and human culture."
@@ -141,7 +143,7 @@
     },
     "legal": {
         "last_updated": "Last Updated",
-        "last_updated_date": "March 8, 2026",
+        "last_updated_date": "March 9, 2026",
         "sidebar_title": "Legal Documents",
         "help_title": "Need Help?",
         "help_text": "If you have questions about our policies, please contact our legal team.",

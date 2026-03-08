@@ -19,5 +19,3 @@
 Slow, genuine, community-first — commenting, praising effort, joining Discords, being present as a *fan* first. The ask comes naturally: *"I believe this work is precious, can I archive it?"*
 
 The one-liner that came out of it: **"A curated, human-only archive that transforms your creative effort into a permanent cultural legacy while providing professional tools to grow without compromise."**
-
-Genuinely compelling vision. The Linktree pain point alone is a real problem worth solving.
