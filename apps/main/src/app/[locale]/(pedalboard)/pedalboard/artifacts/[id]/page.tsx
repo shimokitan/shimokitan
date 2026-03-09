@@ -58,17 +58,30 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
 
     return (
         <div className="max-w-4xl mx-auto py-12">
-            <header className="mb-12">
-                <div className="flex items-center gap-2 mb-2">
-                    <Link href="/pedalboard/artifacts" className="text-zinc-500 hover:text-white transition-colors">
-                        <Icon icon="lucide:arrow-left" width={16} />
-                    </Link>
-                    <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Registry_Management // Audit</span>
+            <header className="mb-12 flex items-start justify-between">
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Link href="/pedalboard/artifacts" className="text-zinc-500 hover:text-white transition-colors">
+                            <Icon icon="lucide:arrow-left" width={16} />
+                        </Link>
+                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Registry_Management // Audit</span>
+                    </div>
+                    <h1 className="text-3xl font-black uppercase tracking-tighter text-white mb-2">
+                        Modify_Artifact <span className="text-rose-600">// {params.id}</span>
+                    </h1>
+                    <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">Update existing registry entry with verified metadata.</p>
                 </div>
-                <h1 className="text-3xl font-black uppercase tracking-tighter text-white mb-2">
-                    Modify_Artifact <span className="text-rose-600">// {params.id}</span>
-                </h1>
-                <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">Update existing registry entry with verified metadata.</p>
+
+                <div className="flex gap-2">
+                    <Link href={`/pedalboard/artifacts/${params.id}/zines`} className="bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
+                        <Icon icon="lucide:message-square" width={14} />
+                        Zines_Registry
+                    </Link>
+                    <Link href={`/artifacts/${params.id}`} target="_blank" className="bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
+                        <Icon icon="lucide:external-link" width={14} />
+                        Live_View
+                    </Link>
+                </div>
             </header>
 
             <Suspense fallback={<div className="text-white font-mono text-xs animate-pulse p-12 text-center uppercase tracking-widest bg-zinc-950/20 border border-zinc-900">Configuring_Interface...</div>}>

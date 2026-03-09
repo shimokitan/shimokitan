@@ -142,7 +142,7 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                         <div className="flex items-center gap-1">
                                             <Icon icon="lucide:zap" width={8} height={8} className="text-rose-500" />
                                             <span className="text-xs font-black text-rose-500 italic">
-                                                +{artifact.resonance}
+                                                {artifact.resonance || 0}
                                             </span>
                                         </div>
                                     </div>

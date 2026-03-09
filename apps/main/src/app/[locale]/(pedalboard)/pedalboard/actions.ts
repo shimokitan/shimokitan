@@ -419,19 +419,20 @@ export async function updateFullCollection(id: string, data: z.infer<typeof coll
 // --- ZINES (Architect+) ---
 
 export async function createFullZine(data: z.infer<typeof zineSchema>) {
-    await requireArchitect();
+    const user = await requireArchitect();
     const validated = zineSchema.parse(data);
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const zineId = nanoid();
+    const initialResonance = (user as any).resonanceMultiplier || 0;
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.zines).values({
             id: zineId,
             artifactId: validated.artifactId,
             authorId: validated.authorId,
-            resonance: validated.resonance,
+            resonance: initialResonance,
         });
 
         if (validated.translations?.length) {
@@ -443,9 +444,19 @@ export async function createFullZine(data: z.infer<typeof zineSchema>) {
                 }))
             );
         }
+
+        // Update technical artifact resonance - collective weight
+        if (initialResonance > 0) {
+            await tx.update(schema.artifacts)
+                .set({ resonance: sql`${schema.artifacts.resonance} + ${initialResonance}` })
+                .where(eq(schema.artifacts.id, validated.artifactId));
+        }
     });
 
     revalidatePath('/[locale]/pedalboard/zines', 'page');
+    revalidatePath(`/[locale]/artifacts/${validated.artifactId}`, 'page');
+    revalidatePath(`/[locale]/artifacts`, 'page');
+    revalidatePath(`/[locale]`, 'layout');
     return { id: zineId };
 }
 

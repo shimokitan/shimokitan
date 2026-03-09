@@ -283,22 +283,32 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
 
                             <div className="flex flex-col gap-4">
                                 {artifact.zines?.length ? artifact.zines.map((zine: any) => (
-                                    <div key={zine.id} className="p-4 bg-zinc-900/30 border border-zinc-800/50 rounded-xl relative overflow-hidden group/zine">
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-rose-600/50" />
-                                        <p className="text-sm text-zinc-300 italic leading-relaxed">
+                                    <div key={zine.id} className="p-6 bg-zinc-950/40 border border-zinc-900 rounded-2xl relative overflow-hidden group/zine transition-colors hover:border-zinc-800">
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-rose-600/30" />
+                                        <p className="text-sm md:text-base text-amber-50/80 font-serif italic leading-relaxed">
                                             &ldquo;{zine.translations?.find((t: any) => t.locale === locale)?.content || zine.translations?.[0]?.content}&rdquo;
                                         </p>
-                                        <div className="flex justify-between items-center mt-4 text-[10px] font-mono font-black uppercase tracking-widest text-zinc-500">
-                                            <span className="flex items-center gap-2">
-                                                <Icon icon="lucide:user" width={10} />
-                                                {zine.author?.name}
+                                        <div className="flex justify-between items-center mt-6 text-[10px] font-mono font-black uppercase tracking-widest text-zinc-600">
+                                            <span className="flex items-center gap-2 group-hover/zine:text-zinc-400 transition-colors">
+                                                <div className="w-5 h-5 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                                                    <Icon icon="lucide:user" width={10} />
+                                                </div>
+                                                {zine.author?.name || 'Resident'}
                                             </span>
-                                            <span className="text-rose-500 border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 rounded">+{zine.resonance || 0}</span>
+                                            <div className="flex items-center gap-4">
+                                                <span className="text-[9px] text-zinc-800 italic">LOG_{new Date(zine.createdAt).toLocaleDateString()}</span>
+                                                {zine.resonance > 0 && (
+                                                    <div className="flex items-center gap-2 text-rose-600 italic">
+                                                        <Icon icon="lucide:radio" width={10} />
+                                                        <span>Resonance // {zine.resonance}</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )) : (
-                                    <div className="p-8 border border-dashed border-zinc-800 rounded-xl flex items-center justify-center text-[10px] font-mono text-zinc-600 uppercase tracking-widest italic">
-                                        NO_ECHOES_DETECTED
+                                    <div className="p-12 border border-dashed border-zinc-900 rounded-2xl flex items-center justify-center text-[10px] font-mono text-zinc-700 uppercase tracking-widest italic bg-zinc-950/20">
+                                        NO_ECHOES_DETECTED // VACUUM_STATE
                                     </div>
                                 )}
                             </div>
@@ -319,7 +329,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                             <span className="text-[10px] font-mono text-rose-400 font-black uppercase tracking-[0.3em]">Resonance</span>
                                         </div>
                                         <div className="text-4xl lg:text-5xl font-black italic text-white tracking-tighter leading-none">
-                                            <span className="text-zinc-700 text-3xl group-hover:text-rose-600 transition-colors">+</span>{(artifact.resonance || 0)}
+                                            {artifact.resonance || 0}
                                         </div>
                                     </div>
                                     <div className="flex-1 h-12 bg-black border border-zinc-800 rounded-lg flex items-end p-1 overflow-hidden relative">

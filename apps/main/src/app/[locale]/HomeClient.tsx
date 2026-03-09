@@ -706,10 +706,12 @@ export default function HomeClient({
                           // {zine.artifact.title}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-[9px] font-mono text-rose-500/70 shrink-0">
-                        <Icon icon="lucide:zap" width={8} />
-                        <span>{zine.resonance || 0}</span>
-                      </div>
+                      {(zine.resonance || 0) > 0 && (
+                        <div className="flex items-center gap-1 text-[9px] font-mono text-rose-500/70 shrink-0">
+                          <Icon icon="lucide:zap" width={8} />
+                          <span>{zine.resonance}</span>
+                        </div>
+                      )}
                     </div>
                     <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-2 italic opacity-85 group-hover:opacity-100 transition-opacity">
                       &quot;{zine.content}&quot;

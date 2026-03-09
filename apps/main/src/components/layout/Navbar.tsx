@@ -185,7 +185,6 @@ export function Navbar() {
                                     <MobileNavLink icon="lucide:radio" label="The District" href="/" active={pathname === "/"} />
                                     <MobileNavLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={pathname?.startsWith("/artifacts")} />
                                     <MobileNavLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
-                                    <MobileNavLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={pathname?.startsWith("/zines")} />
                                     <MobileNavLink icon="lucide:command" label="Pedalboard" href="/pedalboard" active={pathname?.startsWith("/pedalboard")} />
                                 </nav>
 

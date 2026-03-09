@@ -5,7 +5,7 @@ import Link from '@/components/Link';
 import { Badge } from '@shimokitan/ui';
 import { getArtifactById } from '@shimokitan/db';
 import { notFound } from 'next/navigation';
-import PostZineClientForm from './PostZineClientForm';
+import ZineCreateForm from '@/components/zines/ZineCreateForm';
 
 export default async function PostZinePage(props: { params: Promise<{ locale: string; id: string }> }) {
     const { locale, id } = await props.params;
@@ -55,7 +55,7 @@ export default async function PostZinePage(props: { params: Promise<{ locale: st
                 </div>
 
                 {/* Client Form */}
-                <PostZineClientForm artifactId={artifact.id} />
+                <ZineCreateForm artifactId={artifact.id} />
 
                 {/* Footer Decor */}
                 <div className="mt-32 opacity-[0.05] pointer-events-none select-none overflow-hidden">

@@ -94,7 +94,7 @@ export async function ensureUserSync() {
                     .where(eq(schema.users.id, userId));
             }
 
-            return { ...session.user, email: userEmail, role: existingById.role };
+            return { ...session.user, email: userEmail, role: existingById.role, resonanceMultiplier: existingById.resonanceMultiplier };
         }
 
         // 2. If not found by ID, try to find by Email
@@ -111,7 +111,7 @@ export async function ensureUserSync() {
                 })
                 .where(eq(schema.users.email, userEmail));
 
-            return { ...session.user, email: userEmail, role: existingByEmail.role };
+            return { ...session.user, email: userEmail, role: existingByEmail.role, resonanceMultiplier: existingByEmail.resonanceMultiplier };
         }
 
         // 3. Create new user
@@ -123,14 +123,14 @@ export async function ensureUserSync() {
         };
         await db.insert(schema.users).values(newUser);
 
-        return { ...session.user, email: userEmail, role: 'resident' };
+        return { ...session.user, email: userEmail, role: 'resident', resonanceMultiplier: 100 };
 
     } catch (error: any) {
         if (error.code === '23505') {
             const racingUser = await db.query.users.findFirst({
                 where: (u, { or, eq }) => or(eq(u.id, userId), eq(u.email, userEmail))
             });
-            if (racingUser) return { ...session.user, email: userEmail, role: racingUser.role };
+            if (racingUser) return { ...session.user, email: userEmail, role: racingUser.role, resonanceMultiplier: racingUser.resonanceMultiplier };
         }
         if (process.env.NODE_ENV !== 'production') console.error('User_Sync_Critical_Failure:', error);
         throw new Error('Identity_Establishment_Failed');
