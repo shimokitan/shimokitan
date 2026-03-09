@@ -85,14 +85,41 @@ export default function ResourcesSection({
                             onChange={(e) => updateResource(i, 'platform', e.target.value)}
                             className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-400 w-32 outline-none"
                         >
-                            <option value="youtube">YouTube</option>
-                            <option value="spotify">Spotify</option>
-                            <option value="soundcloud">SoundCloud</option>
-                            <option value="apple_music">Apple Music</option>
-                            <option value="bilibili">Bilibili</option>
-                            <option value="twitter">X_Twitter</option>
-                            <option value="instagram">Instagram</option>
-                            <option value="tiktok">TikTok</option>
+                            {/* Filter platforms based on type */}
+                            {res.type === 'mv' && (
+                                <>
+                                    <option value="youtube">YouTube</option>
+                                    <option value="bilibili">Bilibili</option>
+                                    <option value="niconico">NicoNico</option>
+                                </>
+                            )}
+                            {res.type === 'stream' && (
+                                <>
+                                    <option value="spotify">Spotify</option>
+                                    <option value="soundcloud">SoundCloud</option>
+                                    <option value="apple_music">Apple Music</option>
+                                </>
+                            )}
+                            {res.type === 'social' && (
+                                <>
+                                    <option value="twitter">X_Twitter</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                </>
+                            )}
+                            {(res.type === 'other' || res.type === 'gallery' || res.type === 'store') && (
+                                <>
+                                    <option value="youtube">YouTube</option>
+                                    <option value="spotify">Spotify</option>
+                                    <option value="soundcloud">SoundCloud</option>
+                                    <option value="apple_music">Apple Music</option>
+                                    <option value="bilibili">Bilibili</option>
+                                    <option value="niconico">NicoNico</option>
+                                    <option value="twitter">X_Twitter</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="tiktok">TikTok</option>
+                                </>
+                            )}
                             <option value="r2">R2_STORAGE</option>
                             <option value="other">OTHER</option>
                         </select>

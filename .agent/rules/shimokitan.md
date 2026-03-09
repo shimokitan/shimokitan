@@ -10,3 +10,4 @@ trigger: always_on
 * **Tone:** Balance "Vibey" (shimokitan lore) with "Professional" (robust/standard).
 * **Maintenance:** Audit existing packages before adding new ones
 * **Auth:** Neon Auth
+* **Project Type:** Enterprise-grade, Scaling Ready

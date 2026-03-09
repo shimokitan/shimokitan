@@ -1,40 +1,44 @@
-
 "use client"
+ 
+ import React from 'react';
+ import { Icon } from '@iconify/react';
+ import EntitySearchPicker from './EntitySearchPicker';
+ import { CREDIT_ROLES } from '@/lib/validations/pedalboard';
+ 
+ interface Entity {
+     id: string;
+     name: string;
+     type: string;
+ }
+ 
+ interface Credit {
+     entityId: string;
+     role: string;
+     displayRole?: string;
+     contributorClass: 'author' | 'collaborator' | 'staff';
+     isPrimary: boolean;
+     position: number;
+ }
+ 
+ interface CreditsSectionProps {
+     locale: 'en' | 'id' | 'ja';
+     entities: Entity[];
+     credits: Credit[];
+     updateCredit: (idx: number, field: keyof Credit, value: any) => void;
+     addCredit: () => void;
+     removeCredit: (idx: number) => void;
+ }
+ 
+ export default function CreditsSection({
+     locale,
+     entities,
+     credits,
+     updateCredit,
+     addCredit,
+     removeCredit
+ }: CreditsSectionProps) {
+     const uiLocale = locale === 'id' ? 'en' : locale;
 
-import React from 'react';
-import { Icon } from '@iconify/react';
-import EntitySearchPicker from './EntitySearchPicker';
-
-interface Entity {
-    id: string;
-    name: string;
-    type: string;
-}
-
-interface Credit {
-    entityId: string;
-    role: string;
-    displayRole?: string;
-    contributorClass: 'author' | 'collaborator' | 'staff';
-    isPrimary: boolean;
-    position: number;
-}
-
-interface CreditsSectionProps {
-    entities: Entity[];
-    credits: Credit[];
-    updateCredit: (idx: number, field: keyof Credit, value: any) => void;
-    addCredit: () => void;
-    removeCredit: (idx: number) => void;
-}
-
-export default function CreditsSection({
-    entities,
-    credits,
-    updateCredit,
-    addCredit,
-    removeCredit
-}: CreditsSectionProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-900 pb-2 mb-4">
@@ -80,16 +84,22 @@ export default function CreditsSection({
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
-                            <input
+                            <select
                                 value={credit.role}
                                 onChange={(e) => updateCredit(i, 'role', e.target.value)}
-                                placeholder="Functional Role (e.g. Lead Vocals)"
-                                className="bg-black border border-zinc-900 p-2 text-[10px] font-mono text-zinc-400 outline-none focus:border-violet-500/50"
-                            />
+                                className="bg-black border border-zinc-900 p-2 text-[10px] font-mono uppercase text-violet-400 outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled>Select Department...</option>
+                                {CREDIT_ROLES.map((r) => (
+                                    <option key={r.slug} value={r.slug} className="bg-zinc-950">
+                                        {r.labels[uiLocale as 'en' | 'ja'] || r.labels.en}
+                                    </option>
+                                ))}
+                            </select>
                             <input
                                 value={credit.displayRole || ''}
                                 onChange={(e) => updateCredit(i, 'displayRole', e.target.value)}
-                                placeholder="Display Role (e.g. Center)"
+                                placeholder={uiLocale === 'ja' ? '表示ラベル (例: メインボーカル)' : "Display Label (e.g. Lead Vocals)"}
                                 className="bg-black border border-zinc-900 p-2 text-[10px] font-mono text-zinc-400 outline-none focus:border-violet-500/50"
                             />
                         </div>

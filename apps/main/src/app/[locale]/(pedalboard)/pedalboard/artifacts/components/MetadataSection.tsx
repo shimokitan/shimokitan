@@ -18,6 +18,7 @@ interface Tag {
 
 interface MetadataSectionProps {
     category: string;
+    hostingStatus?: string;
     specs: Spec[];
     updateSpec: (idx: number, field: keyof Spec, value: string) => void;
     upsertSpec: (key: string, value: string) => void;
@@ -31,6 +32,7 @@ interface MetadataSectionProps {
 
 export default function MetadataSection({
     category,
+    hostingStatus,
     specs,
     updateSpec,
     upsertSpec,
@@ -43,14 +45,16 @@ export default function MetadataSection({
 }: MetadataSectionProps) {
     return (
         <div className="space-y-8">
-            <CategoryPresets
-                category={category}
-                specs={specs}
-                updateSpec={updateSpec}
-                upsertSpec={upsertSpec}
-                addSpec={addSpec}
-                removeSpec={removeSpec}
-            />
+            {!(category === 'music' && hostingStatus === 'unhosted') && (
+                <CategoryPresets
+                    category={category}
+                    specs={specs}
+                    updateSpec={updateSpec}
+                    upsertSpec={upsertSpec}
+                    addSpec={addSpec}
+                    removeSpec={removeSpec}
+                />
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Specs / Attributes */}
@@ -67,30 +71,43 @@ export default function MetadataSection({
                     </div>
 
                     <div className="space-y-2">
-                        {specs.map((spec, i) => (
-                            <div key={i} className="flex gap-2 items-center">
-                                <input
-                                    value={spec.key}
-                                    onChange={(e) => updateSpec(i, 'key', e.target.value)}
-                                    placeholder="Key..."
-                                    className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-500 w-28 text-right outline-none focus:border-zinc-700"
-                                />
-                                <div className="text-zinc-800">:</div>
-                                <input
-                                    value={spec.value}
-                                    onChange={(e) => updateSpec(i, 'value', e.target.value)}
-                                    placeholder="Value..."
-                                    className="bg-black border border-zinc-800 p-2 text-xs text-zinc-300 flex-1 outline-none focus:border-zinc-700"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => removeSpec(i)}
-                                    className="text-zinc-700 hover:text-rose-500 transition-colors"
-                                >
-                                    <Icon icon="lucide:x" width={10} />
-                                </button>
-                            </div>
-                        ))}
+                        {specs.map((spec, i) => {
+                            // System-managed specs that should stay in the presets grid, not the list
+                            const systemKeys: Record<string, string[]> = {
+                                music: ['duration', 'bpm', 'isrc', 'format'],
+                                anime: ['episodes', 'year', 'anilist_id'],
+                                manga: ['episodes', 'year', 'anilist_id'],
+                                software: ['version', 'license', 'engine']
+                            };
+
+                            const isSystemSpec = systemKeys[category]?.includes(spec.key);
+                            if (isSystemSpec) return null;
+
+                            return (
+                                <div key={i} className="flex gap-2 items-center animate-in fade-in slide-in-from-left-2">
+                                    <input
+                                        value={spec.key}
+                                        onChange={(e) => updateSpec(i, 'key', e.target.value)}
+                                        placeholder="Key..."
+                                        className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-500 w-28 text-right outline-none focus:border-zinc-700"
+                                    />
+                                    <div className="text-zinc-800">:</div>
+                                    <input
+                                        value={spec.value}
+                                        onChange={(e) => updateSpec(i, 'value', e.target.value)}
+                                        placeholder="Value..."
+                                        className="bg-black border border-zinc-800 p-2 text-xs text-zinc-300 flex-1 outline-none focus:border-zinc-700"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSpec(i)}
+                                        className="text-zinc-700 hover:text-rose-500 transition-colors"
+                                    >
+                                        <Icon icon="lucide:x" width={10} />
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 

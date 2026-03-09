@@ -15,6 +15,27 @@ export const HOSTING_STATUSES = ['unhosted', 'pending_rights', 'rights_granted',
 export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other', 'identity'] as const;
 export const VERIFICATION_TARGET_TYPES = ['artifact', 'entity', 'role_upgrade'] as const;
 export const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'] as const;
+ 
+ /**
+  * Managed Credit Roles (Departments)
+  * Centralized registry for consistent data and i18n.
+  */
+ export const CREDIT_ROLES = [
+     { slug: 'vocal', labels: { en: 'Vocals', ja: 'ボーカル' } },
+     { slug: 'illust', labels: { en: 'Art / Illustration', ja: 'イラスト' } },
+     { slug: 'video', labels: { en: 'Video / Animation', ja: '映像' } },
+     { slug: 'lyrics', labels: { en: 'Lyrics', ja: '作詞' } },
+     { slug: 'compose', labels: { en: 'Composition', ja: '作曲' } },
+     { slug: 'arrange', labels: { en: 'Arrangement', ja: '編曲' } },
+     { slug: 'mix', labels: { en: 'Mixing / Mastering', ja: 'ミキシング' } },
+     { slug: 'storyboard', labels: { en: 'Storyboard', ja: '絵コンテ' } },
+     { slug: 'direction', labels: { en: 'Direction', ja: '演出 / 監督' } },
+     { slug: 'label', labels: { en: 'Record Label', ja: 'レーベル' } },
+     { slug: 'studio', labels: { en: 'Production Studio', ja: '制作スタジオ' } },
+     { slug: 'other', labels: { en: 'Other / Custom', ja: 'その他' } },
+ ] as const;
+ 
+ export type CreditRoleSlug = (typeof CREDIT_ROLES)[number]['slug'];
 
 
 // --- Shared Helpers ---
@@ -30,7 +51,7 @@ const translationSchema = z.object({
     thesis: z.string().optional(),
 }).passthrough();
 
-export const RESOURCE_PLATFORMS = ['youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'twitter', 'instagram', 'tiktok', 'r2', 'other'] as const;
+export const RESOURCE_PLATFORMS = ['youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'niconico', 'twitter', 'instagram', 'tiktok', 'r2', 'other'] as const;
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 
 const resourceSchema = z.object({

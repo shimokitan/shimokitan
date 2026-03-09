@@ -41,7 +41,7 @@ export async function getAllArtifacts() {
     orderBy: [desc(schema.artifacts.score)],
     with: {
       translations: true,
-      cover: true,
+      thumbnail: true,
       poster: true,
       credits: {
         with: {
@@ -75,7 +75,7 @@ export async function getArtifactById(id: string) {
       },
       translations: true,
       resources: true,
-      cover: true,
+      thumbnail: true,
       poster: true,
       zines: {
         with: {
@@ -112,13 +112,13 @@ export async function getAllEntities() {
     with: {
       translations: true,
       avatar: true,
-      header: true,
+      thumbnail: true,
       credits: {
         with: {
           artifact: {
             with: {
               translations: true,
-              cover: true
+              thumbnail: true
             }
           }
         }
@@ -136,14 +136,14 @@ export async function getEntityById(id: string) {
     with: {
       translations: true,
       avatar: true,
-      header: true,
+      thumbnail: true,
       credits: {
         with: {
           artifact: {
             with: {
               translations: true,
               resources: true,
-              cover: true
+              thumbnail: true
             }
           }
         }
@@ -161,14 +161,14 @@ export async function getEntityBySlug(slug: string) {
     with: {
       translations: true,
       avatar: true,
-      header: true,
+      thumbnail: true,
       credits: {
         with: {
           artifact: {
             with: {
               translations: true,
               resources: true,
-              cover: true
+              thumbnail: true
             }
           }
         }

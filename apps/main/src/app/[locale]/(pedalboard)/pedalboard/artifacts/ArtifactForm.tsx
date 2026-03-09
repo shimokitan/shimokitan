@@ -51,13 +51,15 @@ export default function ArtifactForm({
     initialData,
     onComplete,
     userRole,
-    verificationId
+    verificationId,
+    initialArchival
 }: {
     entities: Entity[],
     initialData?: any,
     onComplete?: () => void,
     userRole?: string,
-    verificationId?: string
+    verificationId?: string,
+    initialArchival?: boolean
 }) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -236,23 +238,44 @@ export default function ArtifactForm({
         const newResources = [...resources];
         if (field === 'isPrimary' && value === true) newResources.forEach(r => r.isPrimary = false);
 
-        // Auto-detect platform from URL if it's a URL field
-        let detectedPlatform = newResources[idx].platform;
+        // Auto-detect platform and type from URL if it's a URL field
         if (field === 'url' && value) {
             const v = value.toLowerCase();
-            if (v.includes('youtube.com/') || v.includes('youtu.be/')) detectedPlatform = 'youtube';
-            else if (v.includes('spotify.com/')) detectedPlatform = 'spotify';
-            else if (v.includes('soundcloud.com/')) detectedPlatform = 'soundcloud';
-            else if (v.includes('apple.com/')) detectedPlatform = 'apple_music';
-            else if (v.includes('bilibili.com/')) detectedPlatform = 'bilibili';
-            else if (v.includes('twitter.com/') || v.includes('x.com/')) detectedPlatform = 'twitter';
+            if (v.includes('youtube.com/') || v.includes('youtu.be/')) {
+                newResources[idx].platform = 'youtube';
+                newResources[idx].type = 'mv';
+            } else if (v.includes('spotify.com/')) {
+                newResources[idx].platform = 'spotify';
+                newResources[idx].type = 'stream';
+            } else if (v.includes('soundcloud.com/')) {
+                newResources[idx].platform = 'soundcloud';
+                newResources[idx].type = 'stream';
+            } else if (v.includes('apple.com/')) {
+                newResources[idx].platform = 'apple_music';
+                newResources[idx].type = 'stream';
+            } else if (v.includes('bilibili.com/')) {
+                newResources[idx].platform = 'bilibili';
+                newResources[idx].type = 'mv';
+            } else if (v.includes('nicovideo.jp/')) {
+                newResources[idx].platform = 'niconico';
+                newResources[idx].type = 'mv';
+            } else if (v.includes('twitter.com/') || v.includes('x.com/')) {
+                newResources[idx].platform = 'twitter';
+                newResources[idx].type = 'social';
+            } else if (v.includes('instagram.com/')) {
+                newResources[idx].platform = 'instagram';
+                newResources[idx].type = 'social';
+            } else if (v.includes('tiktok.com/')) {
+                newResources[idx].platform = 'tiktok';
+                newResources[idx].type = 'social';
+            }
         }
 
-        newResources[idx] = { ...newResources[idx], [field]: value, platform: detectedPlatform };
+        newResources[idx] = { ...newResources[idx], [field]: value };
 
         // Auto-thumbnail extraction for specific platforms (YouTube priority)
         if (field === 'url' && value) {
-            const isYT = detectedPlatform === 'youtube';
+            const isYT = newResources[idx].platform === 'youtube';
             const isAL = value.includes('s4.anilist.co');
 
             // We update the thumbnail if it's empty OR if it's currently showing a previous auto-generated one
@@ -533,6 +556,7 @@ export default function ArtifactForm({
                 />
 
                 <CreditsSection
+                    locale={activeTab}
                     entities={entities}
                     credits={credits}
                     updateCredit={updateCredit}

@@ -116,14 +116,15 @@ export async function uploadMediaAction(formData: FormData) {
 
         // If artifactId and role provided, create the connection immediately
         if (artifactId && role) {
+            const roleType = role as "cover" | "poster" | "background" | "logo" | "gallery";
             await tx.insert(schema.artifactMedia).values({
                 artifactId,
                 mediaId,
-                role,
-                isPrimary: role === 'cover', // Default cover is primary
+                role: roleType,
+                isPrimary: roleType === 'cover', // Default cover is primary
             }).onConflictDoUpdate({
                 target: [schema.artifactMedia.artifactId, schema.artifactMedia.mediaId, schema.artifactMedia.role],
-                set: { isPrimary: role === 'cover' }
+                set: { isPrimary: roleType === 'cover' }
             });
         }
     });

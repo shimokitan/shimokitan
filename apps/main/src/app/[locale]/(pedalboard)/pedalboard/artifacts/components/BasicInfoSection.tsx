@@ -155,6 +155,39 @@ export default function BasicInfoSection({
                                     <option value="archived">VOID_SPACE</option>
                                 </select>
                             </div>
+
+                            {category === 'music' && (
+                                <div className="space-y-1 animate-in fade-in slide-in-from-top-1">
+                                    <label className="text-[10px] font-mono uppercase text-zinc-500 text-violet-400">Hosting_Status</label>
+                                    <select
+                                        value={hostingStatus}
+                                        onChange={(e) => setHostingStatus(e.target.value)}
+                                        className="w-full bg-black border border-zinc-900 p-3 text-xs text-white focus:border-violet-600 outline-none rounded-lg"
+                                    >
+                                        <option value="unhosted">UNHOSTED (EXTERNAL)</option>
+                                        <option value="hosted">HOSTED (INTERNAL)</option>
+                                    </select>
+                                </div>
+                            )}
+
+                            {category === 'anime' && (
+                                <div className="space-y-1 animate-in fade-in slide-in-from-top-1">
+                                    <label className="text-[10px] font-mono uppercase text-zinc-500 text-amber-500">Visual_Context</label>
+                                    <select
+                                        value={animeType ?? ''}
+                                        onChange={(e) => setAnimeType(e.target.value || null)}
+                                        className="w-full bg-black border border-zinc-900 p-3 text-xs text-white focus:border-amber-600 outline-none rounded-lg"
+                                    >
+                                        <option value="">UNCATEGORIZED</option>
+                                        <option value="pv">PROMOTIONAL_VIDEO</option>
+                                        <option value="mv">MUSIC_VIDEO</option>
+                                        <option value="trailer">TRAILER</option>
+                                        <option value="op">OPENING</option>
+                                        <option value="ed">ENDING</option>
+                                        <option value="special">SPECIAL_STMT</option>
+                                    </select>
+                                </div>
+                            )}
                         </div>
                     </div>
 

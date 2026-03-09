@@ -6,8 +6,9 @@ import { createFullEntity, updateFullEntity } from '../actions';
 import { useRouter } from 'next/navigation';
 import EntitySearchPicker from '../artifacts/components/EntitySearchPicker';
 import { MediaUploader } from '@shimokitan/ui';
-import { uploadMediaAction } from '../media-actions';
-import { toast } from 'sonner';
+ import { uploadMediaAction } from '../media-actions';
+ import { CREDIT_ROLES } from '@/lib/validations/pedalboard';
+ import { toast } from 'sonner';
 
 type SocialLink = {
     platform: string;
@@ -383,15 +384,21 @@ export default function EntityForm({
                                             entities={entities}
                                         />
                                     </div>
-                                    <div className="flex-1 space-y-1">
-                                        <label className="text-[9px] font-mono text-zinc-600 uppercase">Unit_Role</label>
-                                        <input
-                                            value={member.memberRole || ''}
-                                            onChange={(e) => updateMember(i, 'memberRole', e.target.value)}
-                                            placeholder="Vocalist, Illustrator, etc."
-                                            className="w-full bg-zinc-950 border border-zinc-800 p-2.5 text-xs text-white rounded-md font-mono focus:border-violet-600 outline-none"
-                                        />
-                                    </div>
+                                     <div className="flex-1 space-y-1">
+                                         <label className="text-[9px] font-mono text-zinc-600 uppercase italic">Unit_Role ({activeTab})</label>
+                                         <select
+                                             value={member.memberRole || ''}
+                                             onChange={(e) => updateMember(i, 'memberRole', e.target.value)}
+                                             className="w-full bg-zinc-950 border border-zinc-800 p-2 text-[10px] text-white rounded-md font-mono uppercase focus:border-violet-600 outline-none appearance-none cursor-pointer"
+                                         >
+                                             <option value="" disabled>Select Department...</option>
+                                             {CREDIT_ROLES.map((r) => (
+                                                 <option key={r.slug} value={r.slug} className="bg-zinc-950">
+                                                     {r.labels[activeTab as 'en' | 'ja'] || r.labels.en}
+                                                 </option>
+                                             ))}
+                                         </select>
+                                     </div>
                                     <button type="button" onClick={() => removeMember(i)} className="text-zinc-700 hover:text-rose-500 transition-colors pt-4">
                                         <Icon icon="lucide:trash-2" width={18} />
                                     </button>

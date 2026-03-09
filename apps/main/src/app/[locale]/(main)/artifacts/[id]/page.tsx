@@ -86,7 +86,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             <BentoCard className="w-full aspect-video p-0 bg-black overflow-hidden relative border-zinc-900 shadow-2xl group" minimal>
                                 {/* Ambient Signal Aura */}
                                 <div className="absolute inset-0 opacity-20 filter blur-3xl saturate-200 pointer-events-none scale-110">
-                                    <img src={(artifact as any).cover?.url || undefined} className="w-full h-full object-cover" />
+                                    <img src={(artifact as any).thumbnail?.url || undefined} className="w-full h-full object-cover" />
                                 </div>
 
                                 {primaryResource?.platform === 'youtube' ? (
@@ -98,7 +98,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <img src={(artifact as any).cover?.url || undefined} className="w-full h-full object-cover opacity-60 mix-blend-screen" />
+                                        <img src={(artifact as any).thumbnail?.url || undefined} className="w-full h-full object-cover opacity-60 mix-blend-screen" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
                                     </div>
                                 )}
