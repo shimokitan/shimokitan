@@ -332,8 +332,7 @@ export const artifactMedia = pgTable("artifact_media", {
 export const artifactCredits = pgTable("artifact_credits", {
     id: text("id").primaryKey(),
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: "cascade" }).notNull(),
-    entityId: text("entity_id").references(() => entities.id, { onDelete: "cascade" }), // Nullable for Manual References
-    manualName: text("manual_name"), // The "Encrypted Resident" text-only credit
+    entityId: text("entity_id").references(() => entities.id, { onDelete: "cascade" }).notNull(),
     role: text("role").notNull(),        // "Vocal", "Compose", "Arrange", "Illust", "MV Dir"
     displayRole: text("display_role"),          // localised override for display
     contributorClass: contributorClassEnum("contributor_class").default("staff").notNull(),

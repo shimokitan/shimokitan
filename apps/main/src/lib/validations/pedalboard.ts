@@ -65,22 +65,13 @@ const resourceSchema = z.object({
 
 
 export const creditSchema = z.object({
-    entityId: z.string().optional().nullable(),
-    manualName: z.string().optional().nullable(),
+    entityId: z.string().min(1, "Resident selection is required"),
     role: z.string().min(1),
     displayRole: z.string().optional().nullable(),
     contributorClass: z.enum(CONTRIBUTOR_CLASSES).default('staff'),
     isPrimary: z.boolean().default(false),
     isOriginalArtist: z.boolean().default(false),
     position: z.number().default(0),
-}).superRefine((data, ctx) => {
-    if (!data.entityId && !data.manualName) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Credit must have either a Resident or an Encrypted Name.",
-            path: ['manualName']
-        });
-    }
 });
 
 const tagRefSchema = z.object({

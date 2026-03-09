@@ -28,7 +28,6 @@ type Entity = {
 
 type Credit = {
     entityId: string;
-    manualName?: string;
     role: string;
     displayRole?: string;
     contributorClass: 'author' | 'collaborator' | 'staff';
@@ -96,24 +95,26 @@ export default function ArtifactForm({
         initialData?.credits
             ? initialData.credits.map((c: any) => ({
                 entityId: c.entityId || '',
-                manualName: c.manualName || '',
-                role: c.role,
-                displayRole: c.displayRole,
-                contributorClass: c.contributorClass,
-                isPrimary: c.isPrimary,
-                isOriginalArtist: c.isOriginalArtist || false,
-                position: c.position,
+                role: c.role || '',
+                displayRole: c.displayRole || '',
+                contributorClass: c.contributorClass || 'staff',
+                isPrimary: !!c.isPrimary,
+                isOriginalArtist: !!c.isOriginalArtist,
+                position: c.position || 0,
             }))
             : []
     );
     const [specs, setSpecs] = useState<Spec[]>(
         initialData?.specs
-            ? Object.entries(initialData.specs).map(([key, value]) => ({ key, value: value as string }))
+            ? Object.entries(initialData.specs).map(([key, value]) => ({ key, value: String(value) }))
             : []
     );
     const [tags, setTags] = useState<{ id?: string, name: string }[]>(
         initialData?.tags
-            ? initialData.tags.map((t: any) => ({ id: (t.tag as any).id, name: (t.tag as any).translations?.[0]?.name || 'Unknown' }))
+            ? initialData.tags.map((t: any) => ({ 
+                id: (t.tag as any)?.id, 
+                name: (t.tag as any)?.translations?.[0]?.name || (t.tag as any)?.name || 'Unknown' 
+            }))
             : []
     );
 
@@ -289,7 +290,6 @@ export default function ArtifactForm({
 
     const addCredit = () => setCredits([...credits, {
         entityId: '',
-        manualName: '',
         role: '',
         contributorClass: 'staff',
         isPrimary: false,
@@ -366,7 +366,12 @@ export default function ArtifactForm({
             }
 
 
-            const cleanCredits = credits.filter(c => c.entityId.trim() !== '' || c.manualName?.trim() !== '');
+            const cleanCredits = credits.filter(c => c.entityId.trim() !== '');
+            
+            console.log('[DEBUG] Form Credits Total:', credits.length);
+            console.log('[DEBUG] Form Credits Non-Empty:', cleanCredits.length);
+            console.log('[DEBUG] Credits Payload:', cleanCredits);
+
             const cleanSpecs = specs.reduce((acc, curr) => {
                 if (curr.key.trim()) acc[curr.key] = curr.value;
                 return acc;

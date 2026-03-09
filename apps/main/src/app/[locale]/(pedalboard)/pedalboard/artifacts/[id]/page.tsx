@@ -6,6 +6,8 @@ import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function EditArtifactPage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
     const db = getDb();
@@ -71,6 +73,7 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
 
             <Suspense fallback={<div className="text-white font-mono text-xs animate-pulse p-12 text-center uppercase tracking-widest bg-zinc-950/20 border border-zinc-900">Configuring_Interface...</div>}>
                 <ArtifactForm
+                    key={`${artifact.id}-${artifact.updatedAt?.getTime() || 'new'}`}
                     entities={entities}
                     initialData={artifact}
                 />

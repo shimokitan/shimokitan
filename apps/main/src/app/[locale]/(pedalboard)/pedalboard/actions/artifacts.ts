@@ -107,8 +107,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                 validated.credits.map((c) => ({
                     id: nanoid(),
                     artifactId,
-                    entityId: c.entityId || null,
-                    manualName: c.manualName || null,
+                    entityId: c.entityId,
                     role: c.role,
                     displayRole: c.displayRole,
                     contributorClass: c.contributorClass,
@@ -143,13 +142,19 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
         }
     });
 
+    revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
     revalidatePath('/', 'layout');
     return { id: artifactId };
 }
 
 export async function updateFullArtifact(id: string, data: z.infer<typeof artifactSchema>) {
     await requireArchitect();
+    console.log('[DEBUG] Update Request for ID:', id);
+    console.log('[DEBUG] Raw Data Credits:', data.credits?.length);
+    
     const validated = artifactSchema.parse(data);
+    console.log('[DEBUG] Validated Credits:', JSON.stringify(validated.credits, null, 2));
+    
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
@@ -163,15 +168,18 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 sourceArtifactId: validated.sourceArtifactId,
                 animeType: validated.animeType,
                 hostingStatus: validated.hostingStatus,
+                thumbnailId: validated.thumbnailId,
+                posterId: validated.posterId,
                 status: validated.status,
-                score,
-                // resonance and isVerified are preserved by omitting them from the set call
-                specs: validated.specs || {},
-                thumbnailId: validated.thumbnailId || null,
-                posterId: validated.posterId || null,
+                specs: validated.specs,
                 updatedAt: new Date(),
             })
             .where(eq(schema.artifacts.id, id));
+
+        // Check for manual credits metadata updates
+        if (validated.nature === 'original' || validated.nature === 'compilation') {
+            await tx.delete(schema.externalOriginals).where(eq(schema.externalOriginals.artifactId, id));
+        }
 
         // Bridge Table Sync (Delete and Re-insert for active roles)
         await tx.delete(schema.artifactMedia).where(eq(schema.artifactMedia.artifactId, id));
@@ -187,18 +195,20 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         }
 
 
+        // Re-sync Translations
         await tx.delete(schema.artifactsI18n).where(eq(schema.artifactsI18n.artifactId, id));
         if (validated.translations?.length) {
             await tx.insert(schema.artifactsI18n).values(
                 validated.translations.map((t) => ({
                     artifactId: id,
                     locale: t.locale,
-                    title: t.title || '',
+                    title: t.title!,
                     description: t.description,
                 }))
             );
         }
 
+        // Re-sync Resources
         await tx.delete(schema.artifactResources).where(eq(schema.artifactResources.artifactId, id));
         if (validated.resources?.length) {
             await tx.insert(schema.artifactResources).values(
@@ -206,21 +216,21 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                     id: nanoid(),
                     artifactId: id,
                     platform: r.platform as any,
-                    role: r.role as any,
                     value: r.url,
+                    role: r.role as any,
                     isPrimary: r.isPrimary,
                 }))
             );
         }
 
+        // Re-sync Credits
         await tx.delete(schema.artifactCredits).where(eq(schema.artifactCredits.artifactId, id));
         if (validated.credits?.length) {
             await tx.insert(schema.artifactCredits).values(
                 validated.credits.map((c) => ({
                     id: nanoid(),
                     artifactId: id,
-                    entityId: c.entityId || null,
-                    manualName: c.manualName || null,
+                    entityId: c.entityId,
                     role: c.role,
                     displayRole: c.displayRole,
                     contributorClass: c.contributorClass,
@@ -231,33 +241,46 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
             );
         }
 
+        // Re-sync Tags
         await tx.delete(schema.artifactTags).where(eq(schema.artifactTags.artifactId, id));
         if (validated.tags?.length) {
-            for (const tagObj of validated.tags) {
-                const tagName = tagObj.name;
-                let tag = await tx.query.tags.findFirst({
-                    where: (tags, { exists, and, eq }) => exists(
-                        tx.select().from(schema.tagsI18n).where(and(
-                            eq(schema.tagsI18n.tagId, tags.id),
-                            eq(schema.tagsI18n.name, tagName)
-                        ))
-                    )
-                });
+            for (const t of validated.tags) {
+                let tagId = (t as any).id;
 
-                if (!tag) {
-                    const newTagId = nanoid();
-                    await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
-                    await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
-                    tag = { id: newTagId } as any;
+                if (!tagId) {
+                    const tagResult = await tx.query.tags.findFirst({
+                        where: (tags, { exists, and, eq }) => exists(
+                            tx.select().from(schema.tagsI18n).where(and(
+                                eq(schema.tagsI18n.tagId, tags.id),
+                                eq(schema.tagsI18n.name, t.name)
+                            ))
+                        )
+                    });
+                    
+                    if (tagResult) {
+                        tagId = tagResult.id;
+                    } else {
+                        // Create new tag if not found
+                        const newTagId = nanoid();
+                        await tx.insert(schema.tags).values({ id: newTagId, category: 'other' });
+                        await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: t.name });
+                        tagId = newTagId;
+                    }
                 }
 
-                await tx.insert(schema.artifactTags).values({ artifactId: id, tagId: tag!.id });
+                if (tagId) {
+                    await tx.insert(schema.artifactTags).values({ artifactId: id, tagId });
+                }
             }
         }
     });
 
+    console.log('[DEBUG] Update Successful for ID:', id);
+
+    revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
+    revalidatePath(`/[locale]/pedalboard/artifacts/${id}`, 'layout');
     revalidatePath('/', 'layout');
-    return { success: true };
+    return { success: true, id };
 }
 
 export async function deleteArtifact(id: string) {
@@ -269,6 +292,7 @@ export async function deleteArtifact(id: string) {
         .set({ deletedAt: new Date() })
         .where(eq(schema.artifacts.id, id));
 
+    revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
     revalidatePath('/', 'layout');
     return { success: true };
 }
@@ -277,6 +301,7 @@ export async function restoreArtifact(id: string) {
     await requireFounder();
     const db = getDb();
     if (db) await db.update(schema.artifacts).set({ deletedAt: null }).where(eq(schema.artifacts.id, id));
+    revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
     revalidatePath('/', 'layout');
 }
 
@@ -284,6 +309,7 @@ export async function purgeArtifact(id: string) {
     await requireFounder();
     const db = getDb();
     if (db) await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));
+    revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
     revalidatePath('/', 'layout');
 }
 

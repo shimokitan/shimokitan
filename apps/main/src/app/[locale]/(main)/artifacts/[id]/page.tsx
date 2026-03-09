@@ -33,8 +33,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
         artifact.credits?.find((c: any) => c.isPrimary) ||
         artifact.credits?.[0];
     const primaryEntity = primaryCredit?.entity;
-    const primaryArtistName = primaryCredit?.manualName ||
-        primaryEntity?.translations?.find((t: any) => t.locale === locale)?.name ||
+    const primaryArtistName = primaryEntity?.translations?.find((t: any) => t.locale === locale)?.name ||
         primaryEntity?.translations?.[0]?.name ||
         "ANONYMOUS_SOURCE";
 
@@ -198,7 +197,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal && (
                                         <div className="flex flex-col gap-2">
                                             {originalArtistCredits.map((credit: any, i: number) => {
-                                                const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANONYMOUS_ORIGIN";
+                                                const name = credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANONYMOUS_ORIGIN";
                                                 return (
                                                     <div key={i} className="text-sm font-black italic uppercase text-zinc-400">
                                                         {name}
@@ -398,7 +397,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                         {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal && (
                                                             <div className="flex flex-col gap-2">
                                                                 {originalArtistCredits.map((credit: any, i: number) => {
-                                                                    const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANON";
+                                                                    const name = credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANON";
                                                                     const url = credit.entity ? getEntityUrl(credit.entity) : "#";
                                                                     
                                                                     return (
@@ -448,8 +447,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 </div>
                                                 <div className="flex flex-col gap-2">
                                                     {groupCredits.sort((a: any, b: any) => (a.isPrimary ? -1 : 1)).map((credit: any, i: number) => {
-                                                        const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "Anon";
-                                                        const isGhost = !credit.entityId;
+                                                        const name = credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "Anon";
                                                         const isEncrypted = credit.entity?.isEncrypted;
                                                         const isPrimary = credit.isPrimary;
                                                         const isOriginal = credit.isOriginalArtist;
@@ -478,7 +476,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                                     {credit.entity?.avatar?.url ? (
                                                                         <img src={credit.entity.avatar.url} className="w-full h-full object-cover rounded-sm grayscale group-hover/item:grayscale-0" />
                                                                     ) : (
-                                                                        <Icon icon={isGhost ? "lucide:ghost" : (isEncrypted ? "lucide:lock" : "lucide:user")} width={14} className="text-zinc-700" />
+                                                                        <Icon icon={isEncrypted ? "lucide:lock" : "lucide:user"} width={14} className="text-zinc-700" />
                                                                     )}
                                                                 </div>
 
@@ -493,8 +491,8 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                                         {isOriginal && (
                                                                             <span className="text-[7px] font-mono text-rose-500 border border-rose-500/20 px-1 rounded-sm uppercase tracking-tighter">SOURCE_AUTHORITY</span>
                                                                         )}
-                                                                        {(isGhost || isEncrypted) && (
-                                                                            <Icon icon={isGhost ? "lucide:ghost" : "lucide:lock"} width={8} className="text-rose-500/50" />
+                                                                        {isEncrypted && (
+                                                                            <Icon icon="lucide:lock" width={8} className="text-rose-500/50" />
                                                                         )}
                                                                     </div>
                                                                     <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest mt-1 truncate">
