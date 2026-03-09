@@ -13,6 +13,7 @@
  
  interface Credit {
      entityId: string;
+     manualName?: string;
      role: string;
      displayRole?: string;
      contributorClass: 'author' | 'collaborator' | 'staff';
@@ -56,15 +57,48 @@
                 {credits.map((credit, i) => (
                     <div key={i} className="flex flex-col gap-2 bg-zinc-950 p-4 border border-zinc-900 rounded-sm">
                         <div className="flex gap-2 items-center">
-                            <EntitySearchPicker
-                                label=""
-                                type="individual"
-                                value={credit.entityId}
-                                onSelect={(entity) => updateCredit(i, 'entityId', entity?.id || '')}
-                                placeholder="Search residency..."
-                                entities={entities}
-                            />
-                            <div className="flex items-center gap-1">
+                            <div className="flex-1">
+                                {credit.entityId || !credit.manualName ? (
+                                    <EntitySearchPicker
+                                        label=""
+                                        type="individual"
+                                        value={credit.entityId}
+                                        onSelect={(entity) => {
+                                            updateCredit(i, 'entityId', entity?.id || '');
+                                            if (entity) updateCredit(i, 'manualName', '');
+                                        }}
+                                        placeholder="Search residency..."
+                                        entities={entities}
+                                    />
+                                ) : (
+                                    <div className="space-y-1">
+                                        <input
+                                            value={credit.manualName || ''}
+                                            onChange={(e) => updateCredit(i, 'manualName', e.target.value)}
+                                            placeholder="Label Reference (e.g. Ayase)"
+                                            className="w-full bg-black border border-rose-900/50 p-3 text-xs text-rose-100 focus:border-rose-600 outline-none rounded-sm font-mono placeholder:text-rose-900/50"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-1 self-start pt-1">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (credit.entityId) {
+                                            updateCredit(i, 'entityId', '');
+                                            updateCredit(i, 'manualName', 'Ghost_Entity');
+                                        } else {
+                                            updateCredit(i, 'manualName', '');
+                                            updateCredit(i, 'entityId', '');
+                                        }
+                                    }}
+                                    className={`p-2 border transition-all ${!credit.entityId && credit.manualName ? 'bg-rose-950 border-rose-900 text-rose-500' : 'bg-black border-zinc-900 text-zinc-700 hover:text-rose-400'}`}
+                                    title={credit.entityId ? "Switch to Manual Reference" : "Switch to Resident Search"}
+                                >
+                                    <Icon icon={credit.entityId ? "lucide:ghost" : "lucide:user-search"} width={14} />
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() => updateCredit(i, 'isPrimary', !credit.isPrimary)}

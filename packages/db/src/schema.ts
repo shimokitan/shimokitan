@@ -59,7 +59,7 @@ export const resourcePlatformEnum = pgEnum("resource_platform", [
 export const contributorClassEnum = pgEnum("contributor_class", ["author", "collaborator", "staff"]);
 export const verificationTargetEnum = pgEnum("verification_target", ["artifact", "entity", "role_upgrade"]);
 export const verificationStatusEnum = pgEnum("verification_status", ["pending", "approved", "rejected"]);
-export const artifactMediaRoleEnum = pgEnum("artifact_media_role", ["cover", "poster", "background", "logo", "gallery"]);
+export const artifactMediaRoleEnum = pgEnum("artifact_media_role", ["cover", "poster", "background", "logo", "gallery", "thumbnail"]);
 
 // ==================================================================
 // 1.5. MEDIA REGISTRY
@@ -329,8 +329,10 @@ export const artifactMedia = pgTable("artifact_media", {
 // ==================================================================
 
 export const artifactCredits = pgTable("artifact_credits", {
+    id: text("id").primaryKey(),
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: "cascade" }).notNull(),
-    entityId: text("entity_id").references(() => entities.id, { onDelete: "cascade" }).notNull(),
+    entityId: text("entity_id").references(() => entities.id, { onDelete: "cascade" }), // Nullable for Manual References
+    manualName: text("manual_name"), // The "Encrypted Resident" text-only credit
     role: text("role").notNull(),        // "Vocal", "Compose", "Arrange", "Illust", "MV Dir"
     displayRole: text("display_role"),          // localised override for display
     contributorClass: contributorClassEnum("contributor_class").default("staff").notNull(),
@@ -339,7 +341,7 @@ export const artifactCredits = pgTable("artifact_credits", {
     // For original artist credit on covers — even if they're not in the registry
     isOriginalArtist: boolean("is_original_artist").default(false).notNull(),
 }, (t) => ({
-    pk: primaryKey({ columns: [t.artifactId, t.entityId, t.role] }),
+    artifactIdx: index("idx_artifact_credits_artifact").on(t.artifactId),
     primaryIdx: index("idx_artifact_credits_primary").on(t.artifactId, t.isPrimary),
     entityIdx: index("idx_artifact_credits_entity").on(t.entityId),
 }));

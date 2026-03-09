@@ -12,8 +12,15 @@ function getLocale(request: NextRequest): string {
 
     const acceptLanguage = request.headers.get('accept-language');
     if (acceptLanguage) {
-        if (acceptLanguage.includes('id')) return 'id';
-        if (acceptLanguage.includes('ja') || acceptLanguage.includes('jp')) return 'ja';
+        // Parse "en-US,en;q=0.9,id;q=0.8,ja;q=0.7" -> ["en", "id", "ja"]
+        const preferredLocales = acceptLanguage
+            .split(',')
+            .map(lang => lang.split(';')[0].split('-')[0].trim())
+            .filter(Boolean);
+
+        // Find the first one we support
+        const match = preferredLocales.find(lang => (locales as any).includes(lang));
+        if (match) return match;
     }
 
     return defaultLocale;

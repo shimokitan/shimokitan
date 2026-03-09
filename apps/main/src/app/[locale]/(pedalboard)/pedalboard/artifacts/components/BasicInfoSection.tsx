@@ -10,13 +10,14 @@ interface Translation {
     locale: 'en' | 'id' | 'ja';
     title: string;
     description: string;
+    sourceCredit?: string;
 }
 
 interface BasicInfoSectionProps {
-    activeTab: string;
+    activeTab: 'en' | 'id' | 'ja';
     setActiveTab: (tab: 'en' | 'id' | 'ja') => void;
     translations: Translation[];
-    updateTrans: (locale: string, field: 'title' | 'description', value: string) => void;
+    updateTrans: (locale: string, field: 'title' | 'description' | 'sourceCredit', value: string) => void;
     thumbnailId: string | null;
     setThumbnailId: (id: string | null) => void;
     thumbnailUrl: string;
@@ -48,13 +49,6 @@ interface BasicInfoSectionProps {
     userRole?: string;
     status: string;
     setStatus: (val: string) => void;
-    score: number;
-    setScore: (val: number) => void;
-    resonance: number;
-    setResonance: (val: number) => void;
-    isVerified: boolean;
-    setIsVerified: (val: boolean) => void;
-
     lockFlags?: boolean;
 }
 
@@ -92,12 +86,6 @@ export default function BasicInfoSection({
     userRole,
     status,
     setStatus,
-    score,
-    setScore,
-    resonance,
-    setResonance,
-    isVerified,
-    setIsVerified,
 
     lockFlags = false
 }: BasicInfoSectionProps) {
@@ -110,7 +98,7 @@ export default function BasicInfoSection({
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">01 // REGISTRY_&_VISUALS</span>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Column 1: System Meta */}
                     <div className="space-y-4 bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-4 italic">System_Meta</h3>
@@ -191,53 +179,7 @@ export default function BasicInfoSection({
                         </div>
                     </div>
 
-                    {/* Column 2: Integrity Metrics */}
-                    <div className="space-y-4 bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-4 italic">Integrity_Metrics</h3>
-                        <div className="space-y-6">
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center text-[10px] font-mono uppercase text-zinc-500">
-                                    <span>Sync_Quality</span>
-                                    <span className="text-rose-500">{score}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={score}
-                                    onChange={(e) => setScore(parseInt(e.target.value))}
-                                    className="w-full h-1.5 bg-zinc-900 appearance-none rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-rose-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(225,29,72,0.5)]"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center text-[10px] font-mono uppercase text-zinc-500">
-                                    <span>Lore_Resonance</span>
-                                    <span className="text-emerald-500">{resonance} RP</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1000"
-                                    step="10"
-                                    value={resonance}
-                                    onChange={(e) => setResonance(parseInt(e.target.value))}
-                                    className="w-full h-1.5 bg-zinc-900 appearance-none rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                                />
-                            </div>
-                            <div className="pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => !lockFlags && setIsVerified(!isVerified)}
-                                    className={`w-full h-12 flex items-center justify-center gap-3 border transition-all rounded-xl ${isVerified ? 'bg-rose-600 border-rose-500 text-black shadow-[0_0_20px_rgba(225,29,72,0.2)]' : 'bg-black border-zinc-800 text-zinc-500 hover:border-rose-900'}`}
-                                >
-                                    <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={16} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Protocol_Verify</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Column 3-4: Visual Branding */}
+                    {/* Column 2-3: Visual Branding */}
                     <div className="lg:col-span-2 bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl space-y-4">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500 italic mb-4">Visual_Branding</h3>
                         <div className="grid grid-cols-12 gap-6 h-full min-h-[160px]">
@@ -328,6 +270,21 @@ export default function BasicInfoSection({
                         onSelect={(art) => setSourceArtifactId(art?.id || null)}
                         placeholder="Link this entry to its original source record..."
                     />
+
+                    {/* Manual Citation for External Sources (Yorushika etc.) */}
+                    <div className="mt-4 pt-4 border-t border-rose-900/10">
+                        <label className="text-[10px] uppercase font-black text-rose-800 tracking-widest mb-2 block">EXTERNAL_SOURCE_CITATION</label>
+                        <input
+                            type="text"
+                            value={translations.find(t => t.locale === activeTab)?.sourceCredit || ''}
+                            onChange={(e) => updateTrans(activeTab, 'sourceCredit', e.target.value)}
+                            placeholder='Manual reference e.g. "Original by Yorushika"'
+                            className="w-full bg-black border border-rose-950 p-3 text-xs text-rose-100 placeholder:text-rose-900/40 focus:border-rose-600 outline-none transition-all rounded-sm font-mono"
+                        />
+                        <p className="mt-2 text-[9px] text-rose-900/40 leading-relaxed italic">
+                            Used when the origin is outside the Shimokitan Registry (Major Labels, Non-consenting entities).
+                        </p>
+                    </div>
                 </div>
             )}
         </div>

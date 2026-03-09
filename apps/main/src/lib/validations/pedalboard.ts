@@ -46,6 +46,7 @@ const translationSchema = z.object({
     title: z.string().optional(),
     status: z.string().optional().nullable(),
     description: z.string().optional(),
+    sourceCredit: z.string().optional().nullable(),
     bio: z.string().optional(),
     content: z.string().optional(),
     thesis: z.string().optional(),
@@ -65,12 +66,21 @@ const resourceSchema = z.object({
 
 
 const creditSchema = z.object({
-    entityId: z.string().min(1),
+    entityId: z.string().optional().nullable(),
+    manualName: z.string().optional().nullable(),
     role: z.string().min(1),
     displayRole: z.string().optional().nullable(),
     contributorClass: z.enum(CONTRIBUTOR_CLASSES).default('staff'),
     isPrimary: z.boolean().default(false),
     position: z.number().default(0),
+}).superRefine((data, ctx) => {
+    if (!data.entityId && !data.manualName) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Credit must have either a Resident or an Encrypted Name.",
+            path: ['manualName']
+        });
+    }
 });
 
 const tagRefSchema = z.object({
@@ -105,10 +115,7 @@ export const artifactSchema = z.object({
     hostingStatus: z.enum(HOSTING_STATUSES).default('unhosted'),
 
     status: z.enum(ARTIFACT_STATUSES).default('back_alley'),
-    score: z.number().optional().default(0),
-    resonance: z.number().optional().default(0),
     specs: z.any().optional(), // JSON
-    isVerified: z.boolean().default(false),
     verificationId: z.string().optional(), // Link to pending proof
     thumbnailId: z.string().optional().nullable(),
     posterId: z.string().optional().nullable(),

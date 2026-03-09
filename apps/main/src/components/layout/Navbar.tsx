@@ -194,6 +194,27 @@ export function Navbar() {
                                         <MobileNavLink icon="lucide:mail" label="Contact Protocol" href="/contact" active={pathname === "/contact"} />
                                     </div>
 
+                                    {/* Language Switcher */}
+                                    <div className="space-y-3">
+                                        <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest block">Language Protocols</span>
+                                        <div className="flex gap-2">
+                                            {locales.map((l) => (
+                                                <a
+                                                    key={l}
+                                                    href={redirectedPathname(l)}
+                                                    className={cn(
+                                                        "flex-1 text-center py-2 rounded border transition-all uppercase font-black tracking-[0.2em] text-[10px]",
+                                                        currentLocale === l
+                                                            ? "bg-violet-600/10 border-violet-500/50 text-white shadow-[0_0_10px_rgba(139,92,246,0.1)]"
+                                                            : "bg-zinc-900/40 border-zinc-900 text-zinc-600 hover:text-zinc-300 hover:border-zinc-800"
+                                                    )}
+                                                >
+                                                    {l}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     {/* Socials / Technical Readouts */}
                                     <div className="flex flex-col gap-5">
                                         <div className="flex items-center justify-between pb-2 border-b border-zinc-900">

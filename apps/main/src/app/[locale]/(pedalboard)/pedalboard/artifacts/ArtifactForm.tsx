@@ -34,6 +34,7 @@ type Resource = {
 
 type Credit = {
     entityId: string;
+    manualName?: string;
     role: string;
     displayRole?: string;
     contributorClass: 'author' | 'collaborator' | 'staff';
@@ -86,7 +87,8 @@ export default function ArtifactForm({
             return {
                 locale: lang as 'en' | 'id' | 'ja',
                 title: trans?.title || '',
-                description: trans?.description || ''
+                description: trans?.description || '',
+                sourceCredit: trans?.sourceCredit || ''
             };
         })
     );
@@ -99,7 +101,8 @@ export default function ArtifactForm({
     const [credits, setCredits] = useState<Credit[]>(
         initialData?.credits
             ? initialData.credits.map((c: any) => ({
-                entityId: c.entityId,
+                entityId: c.entityId || '',
+                manualName: c.manualName || '',
                 role: c.role,
                 displayRole: c.displayRole,
                 contributorClass: c.contributorClass,
@@ -138,10 +141,6 @@ export default function ArtifactForm({
     const [hostingStatus, setHostingStatus] = useState(initialData?.hostingStatus || 'unhosted');
 
     const [status, setStatus] = useState(initialData?.status || 'the_pit');
-    const [score, setScore] = useState(initialData?.score || 0);
-    const [resonance, setResonance] = useState(initialData?.resonance || 0);
-
-    const [isVerified, setIsVerified] = useState(initialData?.isVerified ?? (!!verificationId));
 
     const handleExternalThumbnail = async (url: string) => {
         if (!url) return;
@@ -191,7 +190,7 @@ export default function ArtifactForm({
 
 
     // --- Handlers ---
-    const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
+    const updateTrans = (locale: string, field: 'title' | 'description' | 'sourceCredit', value: string) => {
         setTranslations(translations.map(t => t.locale === locale ? { ...t, [field]: value } : t));
     };
 
@@ -295,6 +294,7 @@ export default function ArtifactForm({
 
     const addCredit = () => setCredits([...credits, {
         entityId: '',
+        manualName: '',
         role: '',
         contributorClass: 'staff',
         isPrimary: false,
@@ -379,7 +379,7 @@ export default function ArtifactForm({
 
 
             const cleanResources = resources.filter(r => r.url.trim() !== '');
-            const cleanCredits = credits.filter(c => c.entityId.trim() !== '');
+            const cleanCredits = credits.filter(c => c.entityId.trim() !== '' || c.manualName?.trim() !== '');
             const cleanSpecs = specs.reduce((acc, curr) => {
                 if (curr.key.trim()) acc[curr.key] = curr.value;
                 return acc;
@@ -396,9 +396,6 @@ export default function ArtifactForm({
                 thumbnailId: finalThumbnailId,
                 posterId: finalPosterId,
                 status,
-                score,
-                resonance,
-                isVerified,
 
 
                 resources: cleanResources,
@@ -447,6 +444,7 @@ export default function ArtifactForm({
             return [...filtered, {
                 role,
                 entityId,
+                manualName: '',
                 contributorClass: 'staff',
                 isPrimary: false,
                 position: prev.length
@@ -494,12 +492,6 @@ export default function ArtifactForm({
                     userRole={userRole}
                     status={status}
                     setStatus={setStatus}
-                    score={score}
-                    setScore={setScore}
-                    resonance={resonance}
-                    setResonance={setResonance}
-                    isVerified={isVerified}
-                    setIsVerified={setIsVerified}
                     lockFlags={!!verificationId}
                 />
 

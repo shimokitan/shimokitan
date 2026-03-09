@@ -8,10 +8,10 @@
     ],
     "scripts": {
         "sync-env": "bun -e \"import fs from 'node:fs'; fs.copyFileSync('.env.local', 'apps/main/.env.local')\"",
-        "build": "bun run sync-env && bun x turbo build",
-        "dev": "bun run sync-env && bun x turbo dev",
-        "lint": "bun run sync-env && bun x turbo lint",
-        "type-check": "bun run sync-env && bun x turbo type-check",
+        "build": "bun run sync-env && bun x turbo build --filter=main",
+        "dev": "bun run sync-env && bun x turbo dev --filter=main",
+        "lint": "bun run sync-env && bun x turbo lint --filter=main",
+        "type-check": "bun run sync-env && bun x turbo type-check --filter=main",
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {

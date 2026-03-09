@@ -116,7 +116,7 @@ export async function uploadMediaAction(formData: FormData) {
 
         // If artifactId and role provided, create the connection immediately
         if (artifactId && role) {
-            const roleType = role as "cover" | "poster" | "background" | "logo" | "gallery";
+            const roleType = role as "cover" | "poster" | "background" | "logo" | "gallery" | "thumbnail";
             await tx.insert(schema.artifactMedia).values({
                 artifactId,
                 mediaId,
