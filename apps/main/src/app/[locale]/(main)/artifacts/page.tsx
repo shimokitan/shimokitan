@@ -20,8 +20,8 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
             category: a.category || "UNKNOWN",
             coverImage: a.cover?.url || null,
             status: a.status,
-            score: a.score || 0,
-            isMajor: (a.score || 0) > 85, // Simple heuristic for now
+            resonance: a.resonance || 0,
+            isMajor: (a.resonance || 0) > 10, // Featured based on Resonance Threshold
             isVerified: a.isVerified ?? false,
             artist: artistName || "ANONYMOUS"
         };

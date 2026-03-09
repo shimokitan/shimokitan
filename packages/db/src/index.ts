@@ -38,7 +38,7 @@ export async function getAllArtifacts() {
   const db = getDb();
   if (!db) return [];
   return await db.query.artifacts.findMany({
-    orderBy: [desc(schema.artifacts.score)],
+    orderBy: [desc(schema.artifacts.resonance)],
     with: {
       translations: true,
       thumbnail: true,

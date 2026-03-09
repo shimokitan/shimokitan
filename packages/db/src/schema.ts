@@ -219,8 +219,7 @@ export const artifacts = pgTable("artifacts", {
     status: artifactStatusEnum("status").default("back_alley"),
     hostingStatus: hostingStatusEnum("hosting_status").default("unhosted"),
 
-    // Curated score / ranking signal
-    score: integer("score").default(0),
+
     resonance: integer("resonance").default(0),
 
     // Optional creative/technical signatures.

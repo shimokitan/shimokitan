@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS artifacts (
     description TEXT,
     cover_image TEXT,
     status TEXT DEFAULT 'back_alley' CHECK (status IN ('the_pit', 'back_alley', 'archived')),
-    score INTEGER DEFAULT 0 CHECK (score >= 0),
+    resonance INTEGER DEFAULT 0 CHECK (resonance >= 0),
     specs JSONB DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()

@@ -319,13 +319,13 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                             <span className="text-[10px] font-mono text-rose-400 font-black uppercase tracking-[0.3em]">Resonance</span>
                                         </div>
                                         <div className="text-4xl lg:text-5xl font-black italic text-white tracking-tighter leading-none">
-                                            <span className="text-zinc-700 text-3xl group-hover:text-rose-600 transition-colors">+</span>{(artifact.score || 0)}
+                                            <span className="text-zinc-700 text-3xl group-hover:text-rose-600 transition-colors">+</span>{(artifact.resonance || 0)}
                                         </div>
                                     </div>
                                     <div className="flex-1 h-12 bg-black border border-zinc-800 rounded-lg flex items-end p-1 overflow-hidden relative">
                                         <div
                                             className="w-full bg-gradient-to-t from-rose-900 to-rose-500 shadow-[0_0_12px_rgba(225,29,72,0.5)] relative z-10 animate-pulse"
-                                            style={{ height: `${Math.min(100, (artifact.score || 0) * 1.33)}%` }}
+                                            style={{ height: `${Math.min(100, (artifact.resonance || 0) * 1.33)}%` }}
                                         />
                                         <div className="absolute inset-0 cyber-grid opacity-10" />
                                     </div>

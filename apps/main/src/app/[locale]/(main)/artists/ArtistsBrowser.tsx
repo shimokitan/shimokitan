@@ -92,7 +92,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                                     <img
                                         src={entity.avatarUrl}
                                         alt={entity.name}
-                                        className="w-full h-full object-cover md:grayscale md:group-hover:grayscale-0 transition-all duration-700"
+                                        className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-700"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-700">

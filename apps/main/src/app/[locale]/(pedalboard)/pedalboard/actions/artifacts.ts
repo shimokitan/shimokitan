@@ -9,22 +9,7 @@ import { artifactSchema } from '@/lib/validations/pedalboard';
 import { z } from 'zod';
 import { uploadImageFromUrl } from '@/lib/r2';
 import { requireArchitect, requireFounder, requireUser } from '../auth-helpers';
-function calculateSyncQuality(data: any) {
-    let points = 0;
-    // Visuals (20pts)
-    if (data.thumbnailId) points += 10;
-    if (data.posterId) points += 10;
-    // Localization (30pts)
-    const locs = data.translations?.length || 0;
-    points += Math.min(locs * 10, 30);
-    // Credits (20pts)
-    if (data.credits?.length > 0) points += 20;
-    // Resources (15pts)
-    if (data.resources?.length > 0) points += 15;
-    // Tags (15pts)
-    if (data.tags?.length > 0) points += 15;
-    return points;
-}
+
 
 export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     await requireArchitect();
@@ -35,7 +20,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     const artifactId = validated.id || nanoid();
     const slug = slugify(validated.translations?.[0]?.title || artifactId);
 
-    const score = calculateSyncQuality(validated);
+
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.artifacts).values({
@@ -47,7 +32,6 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
             hostingStatus: validated.hostingStatus,
             slug,
             status: validated.status,
-            score,
             resonance: 0, // Initial resonance is always 0 until Zines are written
             specs: validated.specs || {},
             isVerified: false, // Verification is a separate administrative event
@@ -158,7 +142,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
     const db = getDb();
     if (!db) throw new Error('DB_Terminal_Offline');
 
-    const score = calculateSyncQuality(validated);
+
 
     await db.transaction(async (tx) => {
         await tx.update(schema.artifacts)

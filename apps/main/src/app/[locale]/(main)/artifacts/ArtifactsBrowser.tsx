@@ -11,7 +11,7 @@ type Artifact = {
     category: string;
     coverImage: string | null;
     status: string | null;
-    score: number | null;
+    resonance: number | null;
     isMajor: boolean;
     isVerified: boolean;
     artist?: string;
@@ -142,7 +142,7 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                         <div className="flex items-center gap-1">
                                             <Icon icon="lucide:zap" width={8} height={8} className="text-rose-500" />
                                             <span className="text-xs font-black text-rose-500 italic">
-                                                +{artifact.score}
+                                                +{artifact.resonance}
                                             </span>
                                         </div>
                                     </div>

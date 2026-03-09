@@ -14,7 +14,7 @@ type Artifact = {
   category: string;
   thumbnailImage: string | null;
   description: string | null;
-  score: number | null;
+  resonance: number | null;
   status: string | null;
   specs: any;
   videoUrl?: string | null;

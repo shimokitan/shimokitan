@@ -118,7 +118,6 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
         <ArtifactForm
             entities={entities}
             userRole={userRole}
-            initialArchival={protocol === 'archival'}
             verificationId={verificationId || undefined}
         />
     );

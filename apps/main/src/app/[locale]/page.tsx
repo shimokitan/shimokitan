@@ -50,7 +50,7 @@ export default async function AppPage({
         description: a.translations?.[0]?.description || "",
         thumbnailImage: a.thumbnail?.url || null,
       }))
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .sort((a, b) => (b.resonance || 0) - (a.resonance || 0))
       .slice(0, 6);
   } catch (e: any) {
     if (process.env.NODE_ENV !== "production")
@@ -200,12 +200,12 @@ export default async function AppPage({
       console.error("Weather Sync Failed");
   }
 
-  let totalResonance = "1.2K";
+  let totalResonance = "0";
   try {
-    const countRes = await db.execute(
-      sql`SELECT (SELECT COUNT(*) FROM artifacts) + (SELECT COUNT(*) FROM entities) + (SELECT COUNT(*) FROM zines) as total`,
+    const resSum = await db.execute(
+      sql`SELECT (SELECT COALESCE(SUM(resonance), 0) FROM artifacts) + (SELECT COALESCE(SUM(resonance), 0) FROM zines) as total`,
     );
-    const total = Number((countRes as any)[0]?.total || 0);
+    const total = Number((resSum as any)[0]?.total || 0);
     totalResonance =
       total < 1000 ? String(total) : `${(total / 1000).toFixed(1)}K`;
   } catch (e) {
