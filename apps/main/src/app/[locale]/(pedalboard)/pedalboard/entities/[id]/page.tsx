@@ -15,7 +15,17 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
         with: {
             translations: true,
             members: true,
-            avatar: true
+            avatar: true,
+            thumbnail: true,
+            tags: {
+                with: {
+                    tag: {
+                        with: {
+                            translations: true
+                        }
+                    }
+                }
+            }
         }
     }) : null;
 
@@ -51,14 +61,12 @@ export default async function EditEntityPage(props: { params: Promise<{ id: stri
                 </div>
             </header>
 
-            <div className="max-w-4xl">
-                <section className="bg-zinc-950/50 border border-zinc-900 p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                        <Icon icon="lucide:fingerprint" width={160} />
-                    </div>
-                    <EntityForm initialData={entity} entities={entitySelectData} />
-                </section>
-            </div>
+            <section className="relative">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <Icon icon="lucide:fingerprint" width={160} />
+                </div>
+                <EntityForm initialData={entity} entities={entitySelectData} />
+            </section>
         </div>
     );
 }

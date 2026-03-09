@@ -128,18 +128,18 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
             id: entityId,
             type: validated.type,
             slug,
-            circuit: validated.circuit,
+            uid: validated.uid,
             isVerified: validated.isVerified,
             socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
             avatarId: validated.avatarId || null,
-            headerId: validated.headerId || null,
+            thumbnailId: validated.thumbnailId || null,
         });
 
         if (validated.avatarId) {
             await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.avatarId));
         }
-        if (validated.headerId) {
-            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.headerId));
+        if (validated.thumbnailId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.thumbnailId));
         }
 
         if (validated.translations?.length) {
@@ -147,7 +147,8 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
                 validated.translations.map((t) => ({
                     entityId,
                     locale: t.locale,
-                    name: t.name || '', // Ensure not null validation passes if schema allowed optional
+                    name: t.name || '',
+                    status: t.status,
                     bio: t.bio,
                 }))
             );
@@ -161,6 +162,29 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
                     memberRole: m.memberRole,
                 }))
             );
+        }
+
+        if (validated.tags?.length) {
+            for (const tagObj of validated.tags) {
+                const tagName = tagObj.name;
+                let tag = await tx.query.tags.findFirst({
+                    where: (tags, { exists, and, eq }) => exists(
+                        tx.select().from(schema.tagsI18n).where(and(
+                            eq(schema.tagsI18n.tagId, tags.id),
+                            eq(schema.tagsI18n.name, tagName)
+                        ))
+                    )
+                });
+
+                if (!tag) {
+                    const newTagId = nanoid();
+                    await tx.insert(schema.tags).values({ id: newTagId, category: 'identity' });
+                    await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
+                    tag = { id: newTagId } as any;
+                }
+
+                await tx.insert(schema.entityTags).values({ entityId, tagId: tag!.id });
+            }
         }
     });
 
@@ -200,7 +224,6 @@ export async function searchEntities(query: string, type?: string) {
         name: e.translations.find(t => t.locale === 'en')?.name || e.translations[0]?.name || 'Unknown_Entity',
         type: e.type,
         slug: e.slug,
-        circuit: e.circuit
     }));
 }
 
@@ -241,11 +264,11 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
         await tx.update(schema.entities)
             .set({
                 type: validated.type,
-                circuit: validated.circuit,
+                uid: validated.uid,
                 isVerified: validated.isVerified,
                 socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
                 avatarId: validated.avatarId || null,
-                headerId: validated.headerId || null,
+                thumbnailId: validated.thumbnailId || null,
                 updatedAt: new Date(),
             })
             .where(eq(schema.entities.id, id));
@@ -253,8 +276,8 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
         if (validated.avatarId) {
             await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.avatarId));
         }
-        if (validated.headerId) {
-            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.headerId));
+        if (validated.thumbnailId) {
+            await tx.update(schema.media).set({ isOrphan: false }).where(eq(schema.media.id, validated.thumbnailId));
         }
 
         await tx.delete(schema.entitiesI18n).where(eq(schema.entitiesI18n.entityId, id));
@@ -265,6 +288,7 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
                     entityId: id,
                     locale: t.locale,
                     name: t.name || '',
+                    status: t.status,
                     bio: t.bio,
                 }))
             );
@@ -280,6 +304,31 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
                     memberRole: m.memberRole,
                 }))
             );
+        }
+
+        // --- Sync Entity Tags ---
+        await tx.delete(schema.entityTags).where(eq(schema.entityTags.entityId, id));
+        if (validated.tags?.length) {
+            for (const tagObj of validated.tags) {
+                const tagName = tagObj.name;
+                let tag = await tx.query.tags.findFirst({
+                    where: (tags, { exists, and, eq }) => exists(
+                        tx.select().from(schema.tagsI18n).where(and(
+                            eq(schema.tagsI18n.tagId, tags.id),
+                            eq(schema.tagsI18n.name, tagName)
+                        ))
+                    )
+                });
+
+                if (!tag) {
+                    const newTagId = nanoid();
+                    await tx.insert(schema.tags).values({ id: newTagId, category: 'identity' });
+                    await tx.insert(schema.tagsI18n).values({ tagId: newTagId, locale: 'en', name: tagName });
+                    tag = { id: newTagId } as any;
+                }
+
+                await tx.insert(schema.entityTags).values({ entityId: id, tagId: tag!.id });
+            }
         }
     });
 

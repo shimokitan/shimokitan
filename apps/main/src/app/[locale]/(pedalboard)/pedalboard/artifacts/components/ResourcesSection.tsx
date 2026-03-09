@@ -4,10 +4,13 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
+import { RESOURCE_ROLES } from '@/lib/validations/pedalboard';
+
 interface Resource {
     type: string;
     platform: string;
     url: string;
+    role: 'stream' | 'embed_video' | 'hosted_audio' | 'download' | 'social' | 'reference';
     isPrimary: boolean;
 }
 
@@ -65,41 +68,33 @@ export default function ResourcesSection({
                         </select>
 
                         <select
+                            value={res.role}
+                            onChange={(e) => updateResource(i, 'role', e.target.value)}
+                            className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-400 w-28 outline-none"
+                        >
+                            <option value="stream">STREAM</option>
+                            <option value="embed_video">EMBED_VIDEO</option>
+                            <option value="hosted_audio">HOSTED_AUDIO</option>
+                            <option value="download">DOWNLOAD</option>
+                            <option value="social">SOCIAL</option>
+                            <option value="reference">REFERENCE</option>
+                        </select>
+
+                        <select
                             value={res.platform}
                             onChange={(e) => updateResource(i, 'platform', e.target.value)}
                             className="bg-black border border-zinc-800 p-2 text-[10px] font-mono uppercase text-zinc-400 w-32 outline-none"
                         >
-                            {res.type === 'mv' && (
-                                <>
-                                    <option value="youtube">YouTube</option>
-                                    <option value="bilibili">Bilibili</option>
-                                    <option value="niconico">Niconico</option>
-                                </>
-                            )}
-                            {res.type === 'stream' && (
-                                <>
-                                    <option value="spotify">Spotify</option>
-                                    <option value="soundcloud">SoundCloud</option>
-                                    <option value="apple_music">Apple Music</option>
-                                </>
-                            )}
-                            {res.type === 'social' && (
-                                <>
-                                    <option value="twitter">X_Twitter</option>
-                                    <option value="instagram">Instagram</option>
-                                    <option value="threads">Threads</option>
-                                </>
-                            )}
-                            {res.type === 'store' && (
-                                <>
-                                    <option value="booth">Booth</option>
-                                    <option value="bandcamp">Bandcamp</option>
-                                    <option value="steam">Steam</option>
-                                </>
-                            )}
-                            {!['mv', 'stream', 'social', 'store'].includes(res.type) && (
-                                <option value="other">General</option>
-                            )}
+                            <option value="youtube">YouTube</option>
+                            <option value="spotify">Spotify</option>
+                            <option value="soundcloud">SoundCloud</option>
+                            <option value="apple_music">Apple Music</option>
+                            <option value="bilibili">Bilibili</option>
+                            <option value="twitter">X_Twitter</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="r2">R2_STORAGE</option>
+                            <option value="other">OTHER</option>
                         </select>
 
                         <input

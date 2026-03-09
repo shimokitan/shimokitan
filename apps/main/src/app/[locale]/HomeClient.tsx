@@ -12,7 +12,7 @@ type Artifact = {
   id: string;
   title: string;
   category: string;
-  coverImage: string | null;
+  thumbnailImage: string | null;
   description: string | null;
   score: number | null;
   status: string | null;
@@ -295,7 +295,7 @@ export default function HomeClient({
 
       {/* 3. Featured Card Stack */}
       <BentoCard
-        className="col-span-2 md:col-span-1 md:row-span-3 overflow-hidden md:overflow-visible min-h-[340px] md:min-h-0"
+        className="col-span-2 md:col-span-1 md:row-span-3 p-0 overflow-hidden md:overflow-visible min-h-[340px] md:min-h-0"
         title={dict.home.recent_shards}
         icon="lucide:star"
       >
@@ -314,9 +314,9 @@ export default function HomeClient({
                 }}
               >
                 <div className="bg-white p-2 md:p-2.5 rounded-lg shadow-2xl border-2 border-zinc-800 w-32 sm:w-40 md:w-48 text-black">
-                  {item.coverImage ? (
+                  {item.thumbnailImage ? (
                     <img
-                      src={item.coverImage}
+                      src={item.thumbnailImage}
                       alt={item.title}
                       className="w-full h-28 sm:h-32 md:h-40 object-cover rounded"
                     />
@@ -456,9 +456,9 @@ export default function HomeClient({
           >
             <div className="flex flex-col h-full">
               <div className="relative flex-1 rounded-lg overflow-hidden mb-2 bg-zinc-950">
-                {featuredArtifact.coverImage ? (
+                {featuredArtifact.thumbnailImage ? (
                   <img
-                    src={featuredArtifact.coverImage}
+                    src={featuredArtifact.thumbnailImage}
                     className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
                   />
                 ) : (
@@ -573,9 +573,9 @@ export default function HomeClient({
                     href={`/artifacts/${animeArtifact.id}`}
                     className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
                   >
-                    {animeArtifact.coverImage ? (
+                    {animeArtifact.thumbnailImage ? (
                       <img
-                        src={animeArtifact.coverImage}
+                        src={animeArtifact.thumbnailImage}
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         alt={animeArtifact.title}
                       />
@@ -602,9 +602,9 @@ export default function HomeClient({
                     href={`/artifacts/${artifact.id}`}
                     className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950"
                   >
-                    {artifact.coverImage ? (
+                    {artifact.thumbnailImage ? (
                       <img
-                        src={artifact.coverImage}
+                        src={artifact.thumbnailImage}
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         alt={artifact.title}
                       />
@@ -682,9 +682,9 @@ export default function HomeClient({
                   {/* Linked Artifact Thumbnail */}
                   <div className="shrink-0 w-12 h-12 rounded overflow-hidden border border-zinc-800 bg-zinc-900 shadow-inner group-hover:border-violet-500/30 transition-colors">
                     <Link href={`/artifacts/${zine.artifact.id}`} className="block w-full h-full">
-                      {zine.artifact.coverImage ? (
+                      {zine.artifact.thumbnailImage ? (
                         <img
-                          src={zine.artifact.coverImage}
+                          src={zine.artifact.thumbnailImage}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-110"
                           alt={zine.artifact.title}
                         />

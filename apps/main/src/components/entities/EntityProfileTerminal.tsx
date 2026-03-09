@@ -8,7 +8,7 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
     const translation = translations.find((t: any) => t.locale === locale) || translations[0];
     const name = translation?.name || "Anonymous Artist";
     const bio = translation?.bio || "";
-    const circuit = entity.circuit?.toUpperCase() || "UNDERGROUND";
+    const type = entity.type?.toUpperCase() || "INDIVIDUAL";
 
     const credits = entity.credits || [];
     const sortedCredits = [...credits].sort((a, b) => (b.artifact?.score || 0) - (a.artifact?.score || 0));
@@ -49,8 +49,8 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
 
                             <div className="space-y-2">
                                 <div className="flex justify-between items-end text-xs font-black text-zinc-400 uppercase tracking-widest">
-                                    <span>Resident_Class</span>
-                                    <span className="text-zinc-300 font-bold">{circuit}</span>
+                                    <span>Resident_Type</span>
+                                    <span className="text-zinc-300 font-bold">{type}</span>
                                 </div>
                                 <h1 className="text-5xl font-black italic tracking-tighther uppercase text-white leading-none">{name}</h1>
                                 <div className="text-sm text-zinc-400 font-mono font-bold tracking-tighter">UID_{entity.id.toUpperCase()}</div>
@@ -77,19 +77,19 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                                     <div className="absolute inset-y-0 left-0 bg-white/30 w-3/4" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div >
+                    </div >
 
                     {/* CENTER PANEL: UPLINK_TERMINAL */}
-                    <div className="lg:col-span-5 bg-black border-r border-zinc-900 min-h-screen">
+                    < div className="lg:col-span-5 bg-black border-r border-zinc-900 min-h-screen" >
                         {/* Terminal Header */}
-                        <div className="sticky top-0 z-20 bg-black/80 backdrop-blur-md px-6 py-6 border-b border-zinc-900 flex justify-between items-center">
+                        < div className="sticky top-0 z-20 bg-black/80 backdrop-blur-md px-6 py-6 border-b border-zinc-900 flex justify-between items-center" >
                             <div className="flex items-center gap-3">
                                 <div className="w-3 h-3 bg-emerald-500 animate-pulse" />
                                 <span className="text-sm font-black tracking-widest text-zinc-100 uppercase italic">Uplink: Terminal_01</span>
                             </div>
                             <span className="text-xs font-mono font-bold text-zinc-500 uppercase tracking-tighter">Lat: 35.66 // Long: 139.66</span>
-                        </div>
+                        </div >
 
                         <div className="p-6 space-y-6">
                             {Array.isArray(entity.socialLinks) && entity.socialLinks.length > 0 ? (
@@ -157,12 +157,12 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </div >
 
                     {/* RIGHT PANEL: RESONANCE_SHARDS */}
-                    <div className="lg:col-span-4 bg-black p-0 min-h-screen">
+                    < div className="lg:col-span-4 bg-black p-0 min-h-screen" >
                         {/* Shard Archive Header */}
-                        <div className="lg:sticky lg:top-0 z-20 bg-zinc-950/90 backdrop-blur-md px-6 py-6 border-b border-zinc-900">
+                        < div className="lg:sticky lg:top-0 z-20 bg-zinc-950/90 backdrop-blur-md px-6 py-6 border-b border-zinc-900" >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="w-6 h-6 border-2 border-zinc-600 flex items-center justify-center">
@@ -172,7 +172,7 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                                 </div>
                                 <span className="text-xs font-mono font-bold text-zinc-400 py-1.5 px-3 bg-zinc-900 border border-zinc-800">COUNT: {sortedCredits.length}</span>
                             </div>
-                        </div>
+                        </div >
 
                         <div className="divide-y divide-zinc-900">
                             {sortedCredits.length > 0 ? (
@@ -234,10 +234,10 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div >
 
-                </div>
-            </div>
-        </MainLayout>
+                </div >
+            </div >
+        </MainLayout >
     );
 }

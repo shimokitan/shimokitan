@@ -66,10 +66,11 @@ export default function middleware(request: NextRequest) {
     const cleanSubPathname = subPathname.replace(/\/$/, '') || '/';
 
     // 1.5 Gatekeeper (Coming Soon Mode)
+    const isDev = process.env.NODE_ENV === 'development';
     const isComingSoon = cleanSubPathname === '/coming-soon';
     const isAllowed = ALLOWED_SUBPATHS.some(path => cleanSubPathname.startsWith(path));
 
-    if (!isComingSoon && !isAllowed) {
+    if (!isDev && !isComingSoon && !isAllowed) {
         return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
     }
 

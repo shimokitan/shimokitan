@@ -28,6 +28,7 @@ type Resource = {
     type: string;
     platform: string;
     url: string;
+    role: 'stream' | 'embed_video' | 'hosted_audio' | 'download' | 'social' | 'reference';
     isPrimary: boolean;
 };
 
@@ -50,15 +51,13 @@ export default function ArtifactForm({
     initialData,
     onComplete,
     userRole,
-    verificationId,
-    initialMajor
+    verificationId
 }: {
     entities: Entity[],
     initialData?: any,
     onComplete?: () => void,
     userRole?: string,
-    verificationId?: string,
-    initialMajor?: boolean
+    verificationId?: string
 }) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -66,9 +65,8 @@ export default function ArtifactForm({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<'en' | 'id' | 'ja'>('en');
 
-    // --- Keyboard Shortcuts ---
     React.useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
+        const handleKeyDown = (e: React.KeyboardEvent | KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
                 const form = document.querySelector('form');
@@ -93,8 +91,8 @@ export default function ArtifactForm({
 
     const [resources, setResources] = useState<Resource[]>(
         initialData?.resources
-            ? initialData.resources.map((r: any) => ({ type: r.type, platform: r.platform, url: r.value, isPrimary: r.isPrimary }))
-            : [{ type: 'mv', platform: 'youtube', url: '', isPrimary: false }]
+            ? initialData.resources.map((r: any) => ({ type: r.type, platform: r.platform, url: r.value, role: r.role || 'stream', isPrimary: r.isPrimary }))
+            : [{ type: 'mv', platform: 'youtube', url: '', role: 'stream', isPrimary: false }]
     );
     const [credits, setCredits] = useState<Credit[]>(
         initialData?.credits
@@ -120,40 +118,54 @@ export default function ArtifactForm({
     );
 
     const [artifactId] = useState(initialData?.id || nanoid());
-    const [coverId, setCoverId] = useState<string | null>(initialData?.coverId || null);
-    const [coverUrl, setCoverUrl] = useState(initialData?.coverImage || '');
-    const [pendingCoverFile, setPendingCoverFile] = useState<File | null>(null);
-    const [pendingCoverUrl, setPendingCoverUrl] = useState<string | null>(null);
+    const [thumbnailId, setThumbnailId] = useState<string | null>(initialData?.thumbnailId || null);
+    const [thumbnailUrl, setThumbnailUrl] = useState(initialData?.thumbnail?.url || '');
+    const [pendingThumbnailFile, setPendingThumbnailFile] = useState<File | null>(null);
+    const [pendingThumbnailUrl, setPendingThumbnailUrl] = useState<string | null>(null);
 
     const [posterId, setPosterId] = useState<string | null>(initialData?.posterId || null);
-    const [posterUrl, setPosterUrl] = useState(initialData?.posterImage || '');
+    const [posterUrl, setPosterUrl] = useState(initialData?.poster?.url || '');
     const [pendingPosterFile, setPendingPosterFile] = useState<File | null>(null);
     const [pendingPosterUrl, setPendingPosterUrl] = useState<string | null>(null);
 
 
     const [category, setCategory] = useState(initialData?.category || (anilistId ? 'anime' : 'music'));
+    const [nature, setNature] = useState(initialData?.nature || 'original');
+    const [sourceArtifactId, setSourceArtifactId] = useState<string | null>(initialData?.sourceArtifactId || null);
+    const [animeType, setAnimeType] = useState(initialData?.animeType || null);
+    const [hostingStatus, setHostingStatus] = useState(initialData?.hostingStatus || 'unhosted');
+
     const [status, setStatus] = useState(initialData?.status || 'the_pit');
     const [score, setScore] = useState(initialData?.score || 0);
-    const [isMajor, setIsMajor] = useState(initialData?.isMajor ?? initialMajor ?? false);
+    const [resonance, setResonance] = useState(initialData?.resonance || 0);
+
     const [isVerified, setIsVerified] = useState(initialData?.isVerified ?? (!!verificationId));
 
-    const handleExternalCover = async (url: string) => {
+    const handleExternalThumbnail = async (url: string) => {
         if (!url) return;
-        setCoverUrl(url); // Optimistic UI
-        setPendingCoverUrl(url);
-        setPendingCoverFile(null);
+        setThumbnailUrl(url); // Optimistic UI
+        setPendingThumbnailUrl(url);
+        setPendingThumbnailFile(null);
     };
 
-    const handleCoverFileSelect = (file: File, objectUrl: string) => {
-        setCoverUrl(objectUrl);
-        setPendingCoverFile(file);
-        setPendingCoverUrl(null);
+    const handleThumbnailFileSelect = (file: File, objectUrl: string) => {
+        setThumbnailUrl(objectUrl);
+        setPendingThumbnailFile(file);
+        setPendingThumbnailUrl(null);
     };
 
-    const handleCoverUrlSelect = (url: string) => {
-        setCoverUrl(url);
-        setPendingCoverUrl(url);
-        setPendingCoverFile(null);
+    const handleThumbnailUrlSelect = (url: string) => {
+        let targetUrl = url;
+        // Support pasting YouTube video links directly into the image selector
+        if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+            const id = extractMediaId(url, 'youtube');
+            const thumb = getThumbnailUrl(id, 'youtube');
+            if (thumb) targetUrl = thumb;
+        }
+
+        setThumbnailUrl(targetUrl);
+        setPendingThumbnailUrl(targetUrl);
+        setPendingThumbnailFile(null);
     };
 
     const handleExternalPoster = async (url: string) => {
@@ -211,26 +223,50 @@ export default function ArtifactForm({
         // Sync Image (Legacy mapping into Cover, but now we also map to Poster)
         if (data.coverImage?.extraLarge) {
             handleExternalPoster(data.coverImage.extraLarge);
-            // If cover is empty, also use it as an optimistic cover
-            if (!coverUrl) handleExternalCover(data.coverImage.extraLarge);
+            if (!thumbnailUrl) handleExternalThumbnail(data.coverImage.extraLarge);
         }
 
 
         toast.success(`Synced metadata for: ${data.title.english || data.title.romaji}`);
     }, []);
 
-    const addResource = () => setResources([...resources, { type: 'mv', platform: 'youtube', url: '', isPrimary: false }]);
+    const addResource = () => setResources([...resources, { type: 'mv', platform: 'youtube', url: '', role: 'stream', isPrimary: false }]);
     const removeResource = (idx: number) => setResources(resources.filter((_, i) => i !== idx));
     const updateResource = (idx: number, field: keyof Resource, value: any) => {
         const newResources = [...resources];
         if (field === 'isPrimary' && value === true) newResources.forEach(r => r.isPrimary = false);
-        newResources[idx] = { ...newResources[idx], [field]: value };
 
-        if (field === 'url' && (!coverUrl || coverUrl.includes('img.youtube.com') || coverUrl.includes('s4.anilist.co'))) {
-            const id = extractMediaId(value, newResources[idx].platform);
-            const thumb = getThumbnailUrl(id, newResources[idx].platform);
-            if (thumb) handleExternalCover(thumb);
+        // Auto-detect platform from URL if it's a URL field
+        let detectedPlatform = newResources[idx].platform;
+        if (field === 'url' && value) {
+            const v = value.toLowerCase();
+            if (v.includes('youtube.com/') || v.includes('youtu.be/')) detectedPlatform = 'youtube';
+            else if (v.includes('spotify.com/')) detectedPlatform = 'spotify';
+            else if (v.includes('soundcloud.com/')) detectedPlatform = 'soundcloud';
+            else if (v.includes('apple.com/')) detectedPlatform = 'apple_music';
+            else if (v.includes('bilibili.com/')) detectedPlatform = 'bilibili';
+            else if (v.includes('twitter.com/') || v.includes('x.com/')) detectedPlatform = 'twitter';
         }
+
+        newResources[idx] = { ...newResources[idx], [field]: value, platform: detectedPlatform };
+
+        // Auto-thumbnail extraction for specific platforms (YouTube priority)
+        if (field === 'url' && value) {
+            const isYT = detectedPlatform === 'youtube';
+            const isAL = value.includes('s4.anilist.co');
+
+            // We update the thumbnail if it's empty OR if it's currently showing a previous auto-generated one
+            const isCurrentAuto = !thumbnailUrl ||
+                thumbnailUrl.includes('img.youtube.com') ||
+                thumbnailUrl.includes('s4.anilist.co');
+
+            if (isYT && isCurrentAuto) {
+                const id = extractMediaId(value, 'youtube');
+                const thumb = getThumbnailUrl(id, 'youtube');
+                if (thumb) handleExternalThumbnail(thumb);
+            }
+        }
+
         setResources(newResources);
     };
 
@@ -268,30 +304,29 @@ export default function ArtifactForm({
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            let finalCoverId = coverId;
-            let finalCoverUrl = coverUrl;
+            let finalThumbnailId = thumbnailId;
+            let finalThumbnailUrl = thumbnailUrl;
 
-            // Handle delayed image upload: COVER
-            if (pendingCoverFile) {
-                toast.info('Uploading local cover image...');
+            if (pendingThumbnailFile) {
+                toast.info('Uploading local thumbnail image...');
                 const formData = new FormData();
-                formData.append('file', pendingCoverFile);
+                formData.append('file', pendingThumbnailFile);
                 formData.append('context', 'artifact_asset');
                 formData.append('artifactId', artifactId);
-                formData.append('role', 'cover');
+                formData.append('role', 'thumbnail');
                 const res = await uploadMediaAction(formData);
-                finalCoverId = res.mediaId;
-                finalCoverUrl = res.url;
-            } else if (pendingCoverUrl) {
-                toast.info('Downloading external cover image...');
+                finalThumbnailId = res.mediaId;
+                finalThumbnailUrl = res.url;
+            } else if (pendingThumbnailUrl) {
+                toast.info('Downloading external thumbnail image...');
                 const formData = new FormData();
-                formData.append('url', pendingCoverUrl);
+                formData.append('url', pendingThumbnailUrl);
                 formData.append('context', 'artifact_asset');
                 formData.append('artifactId', artifactId);
-                formData.append('role', 'cover');
+                formData.append('role', 'thumbnail');
                 const res = await uploadMediaAction(formData);
-                finalCoverId = res.mediaId;
-                finalCoverUrl = res.url;
+                finalThumbnailId = res.mediaId;
+                finalThumbnailUrl = res.url;
             }
 
             // Handle delayed image upload: POSTER
@@ -331,13 +366,18 @@ export default function ArtifactForm({
             const payload = {
                 id: artifactId,
                 category,
-                coverId: finalCoverId,
+                nature,
+                sourceArtifactId,
+                animeType,
+                hostingStatus,
+                thumbnailId: finalThumbnailId,
                 posterId: finalPosterId,
                 status,
                 score,
-
-                isMajor,
+                resonance,
                 isVerified,
+
+
                 resources: cleanResources,
                 credits: cleanCredits,
                 specs: cleanSpecs,
@@ -392,135 +432,146 @@ export default function ArtifactForm({
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-12">
-            {/* Context Awareness Section */}
-            {category === 'anime' && !initialData?.id && (
-                <AnilistSync onSync={handleAnilistSync} initialIdentifier={anilistId} />
-            )}
+        <div className="relative pb-24">
+            <form onSubmit={handleSubmit} className="space-y-12">
+                {/* Context Awareness Section */}
+                {category === 'anime' && !initialData?.id && (
+                    <AnilistSync onSync={handleAnilistSync} initialIdentifier={anilistId} />
+                )}
 
-            <BasicInfoSection
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                translations={translations}
-                updateTrans={updateTrans}
-                coverId={coverId}
-                setCoverId={setCoverId}
-                coverUrl={coverUrl}
-                setCoverUrl={setCoverUrl}
-                onCoverFileSelect={handleCoverFileSelect}
-                onCoverUrlSelect={handleCoverUrlSelect}
-                posterId={posterId}
-                setPosterId={setPosterId}
-                posterUrl={posterUrl}
-                setPosterUrl={setPosterUrl}
-                onPosterFileSelect={handlePosterFileSelect}
-                onPosterUrlSelect={handlePosterUrlSelect}
-                category={category}
-                setCategory={setCategory}
-                userRole={userRole}
-                status={status}
-                setStatus={setStatus}
-                score={score}
-                setScore={setScore}
-                isVerified={isVerified}
-                setIsVerified={setIsVerified}
-                isMajor={isMajor}
-                setIsMajor={setIsMajor}
-                lockFlags={!!verificationId}
-            />
+                <BasicInfoSection
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    translations={translations}
+                    updateTrans={updateTrans}
+                    thumbnailId={thumbnailId}
+                    setThumbnailId={setThumbnailId}
+                    thumbnailUrl={thumbnailUrl}
+                    setThumbnailUrl={setThumbnailUrl}
+                    onThumbnailFileSelect={handleThumbnailFileSelect}
+                    onThumbnailUrlSelect={handleThumbnailUrlSelect}
+                    posterId={posterId}
+                    setPosterId={setPosterId}
+                    posterUrl={posterUrl}
+                    setPosterUrl={setPosterUrl}
+                    onPosterFileSelect={handlePosterFileSelect}
+                    onPosterUrlSelect={handlePosterUrlSelect}
+                    category={category}
+                    setCategory={setCategory}
+                    nature={nature}
+                    setNature={setNature}
+                    animeType={animeType}
+                    setAnimeType={setAnimeType}
+                    hostingStatus={hostingStatus}
+                    setHostingStatus={setHostingStatus}
+                    sourceArtifactId={sourceArtifactId}
+                    setSourceArtifactId={setSourceArtifactId}
+                    sourceArtifactTitle={initialData?.sourceArtifact?.translations?.find((t: any) => t.locale === 'en')?.title || initialData?.sourceArtifact?.translations?.[0]?.title}
+                    entities={entities}
+                    userRole={userRole}
+                    status={status}
+                    setStatus={setStatus}
+                    score={score}
+                    setScore={setScore}
+                    resonance={resonance}
+                    setResonance={setResonance}
+                    isVerified={isVerified}
+                    setIsVerified={setIsVerified}
+                    lockFlags={!!verificationId}
+                />
 
-            {(category === 'anime' || category === 'music') && (
-                <div className="space-y-4 bg-zinc-950/40 p-6 border border-zinc-900 rounded-sm">
-                    <div className="flex items-center gap-2 mb-4 border-b border-zinc-900 pb-2">
-                        <Icon icon="lucide:briefcase" className="text-violet-500" width={14} />
-                        <span className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">02 // Professional_Registry</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {category === 'anime' && (
-                            <EntitySearchPicker
-                                label="Production_Studio"
-                                type="organization"
-                                value={credits.find(c => c.role === 'studio')?.entityId}
-                                onSelect={(entity) => upsertCredit('studio', entity?.id || null)}
-                                placeholder="Search or register studio..."
-                                entities={entities}
-                            />
-                        )}
-                        {category === 'music' && (
-                            <EntitySearchPicker
-                                label="Record_Label"
-                                type="organization"
-                                value={credits.find(c => c.role === 'label')?.entityId}
-                                onSelect={(entity) => upsertCredit('label', entity?.id || null)}
-                                placeholder="Search or register label..."
-                                entities={entities}
-                            />
-                        )}
-                        {/* You can add more specific professional roles here */}
-                    </div>
-                </div>
-            )}
-
-            <ResourcesSection
-                resources={resources}
-                setResources={setResources}
-                updateResource={updateResource}
-                addResource={addResource}
-                removeResource={removeResource}
-            />
-
-            <MetadataSection
-                category={category}
-                specs={specs}
-                updateSpec={updateSpec}
-                upsertSpec={upsertSpec}
-                addSpec={addSpec}
-                removeSpec={removeSpec}
-                tags={tags}
-                updateTag={updateTag}
-                addTag={addTag}
-                removeTag={removeTag}
-            />
-
-            <CreditsSection
-                entities={entities}
-                credits={credits}
-                updateCredit={updateCredit}
-                addCredit={addCredit}
-                removeCredit={removeCredit}
-            />
-
-            <div className="pt-8 border-t border-zinc-900 sticky bottom-0 bg-black/80 backdrop-blur-md pb-4 z-10">
-                <div className="flex items-center justify-between mb-2 px-1">
-                    <div className="flex gap-4">
-                        <div className="flex items-center gap-1.5 text-[9px] font-mono text-zinc-500">
-                            <span className="bg-zinc-900 px-1 rounded text-zinc-400">CTRL</span>
-                            <span className="bg-zinc-900 px-1 rounded text-zinc-400">S</span>
-                            <span>COMMIT</span>
+                {(category === 'anime' || category === 'music') && (
+                    <div className="space-y-4 bg-zinc-950/40 p-6 border border-zinc-900 rounded-sm">
+                        <div className="flex items-center gap-2 mb-4 border-b border-zinc-900 pb-2">
+                            <Icon icon="lucide:briefcase" className="text-violet-500" width={14} />
+                            <span className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">02 // Professional_Registry</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[9px] font-mono text-zinc-500">
-                            <span className="bg-zinc-900 px-1 rounded text-zinc-400">ESC</span>
-                            <span>CANCEL</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {category === 'anime' && (
+                                <EntitySearchPicker
+                                    label="Production_Studio"
+                                    type="organization"
+                                    value={credits.find(c => c.role === 'studio')?.entityId}
+                                    onSelect={(entity) => upsertCredit('studio', entity?.id || null)}
+                                    placeholder="Search or register studio..."
+                                    entities={entities}
+                                />
+                            )}
+                            {category === 'music' && (
+                                <EntitySearchPicker
+                                    label="Record_Label"
+                                    type="organization"
+                                    value={credits.find(c => c.role === 'label')?.entityId}
+                                    onSelect={(entity) => upsertCredit('label', entity?.id || null)}
+                                    placeholder="Search or register label..."
+                                    entities={entities}
+                                />
+                            )}
                         </div>
                     </div>
+                )}
+
+                <ResourcesSection
+                    resources={resources}
+                    setResources={setResources}
+                    updateResource={updateResource}
+                    addResource={addResource}
+                    removeResource={removeResource}
+                />
+
+                <MetadataSection
+                    category={category}
+                    specs={specs}
+                    updateSpec={updateSpec}
+                    upsertSpec={upsertSpec}
+                    addSpec={addSpec}
+                    removeSpec={removeSpec}
+                    tags={tags}
+                    updateTag={updateTag}
+                    addTag={addTag}
+                    removeTag={removeTag}
+                />
+
+                <CreditsSection
+                    entities={entities}
+                    credits={credits}
+                    updateCredit={updateCredit}
+                    addCredit={addCredit}
+                    removeCredit={removeCredit}
+                />
+
+                <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-zinc-900 p-4 z-50 animate-in slide-in-from-bottom-full duration-500">
+                    <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
+                        <div className="hidden md:flex items-center gap-6 text-zinc-500">
+                            <div className="flex items-center gap-2">
+                                <kbd className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-mono">ESC</kbd>
+                                <span className="text-[10px] uppercase font-bold">Discard</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <kbd className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-800 rounded text-[10px] font-mono">^ S</kbd>
+                                <span className="text-[10px] uppercase font-bold">Commit_Registry</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                            <button
+                                type="button"
+                                onClick={() => router.push('/pedalboard/artifacts')}
+                                className="flex-1 md:flex-none px-8 py-3 bg-zinc-950 border border-zinc-800 text-zinc-400 font-black uppercase text-[10px] tracking-widest hover:bg-zinc-900 hover:text-white transition-all rounded-lg"
+                            >
+                                EXIT_REGISTRY
+                            </button>
+                            <button
+                                disabled={isSubmitting}
+                                type="submit"
+                                className="flex-1 md:flex-none px-12 py-3 bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition-all disabled:opacity-50 rounded-lg shadow-[0_0_30px_rgba(225,29,72,0.2)]"
+                            >
+                                {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_REGISTRY_CHANGES' : 'REGISTER_NEW_ARTIFACT'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div className="grid grid-cols-4 gap-3">
-                    <button
-                        type="button"
-                        onClick={() => router.push('/pedalboard/artifacts')}
-                        className="col-span-1 py-4 bg-zinc-950 border border-zinc-900 text-zinc-600 font-black uppercase text-xs tracking-[0.2em] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
-                    >
-                        <Icon icon="lucide:arrow-left" width={14} />
-                        EXIT
-                    </button>
-                    <button
-                        disabled={isSubmitting}
-                        className="col-span-3 py-4 bg-white text-black font-black uppercase text-xs tracking-[0.3em] hover:bg-rose-600 hover:text-white transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-                    >
-                        {isSubmitting ? 'PROCESSING_REQUEST...' : initialData?.id ? 'COMMIT_REGISTRY_CHANGES' : 'REGISTER_NEW_ARTIFACT'}
-                    </button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     );
 }

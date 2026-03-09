@@ -43,7 +43,7 @@ export default async function NewEntityPage() {
                 </div>
             </header>
 
-            <section className="bg-zinc-950/50 border border-zinc-900 p-8 relative overflow-hidden">
+            <section className="relative">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                     <Icon icon="lucide:fingerprint" width={160} />
                 </div>

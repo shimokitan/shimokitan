@@ -38,7 +38,7 @@ export default async function AboutLayout({ children, params }: { children: Reac
                     </aside>
 
                     {/* Main Content */}
-                    <main className="flex-1 w-full max-w-3xl overflow-y-auto custom-scroll pr-4">
+                    <main className="flex-1 w-full max-w-3xl min-h-0 overflow-y-auto custom-scroll pr-4">
                         <article className="prose prose-invert prose-zinc max-w-none 
                             prose-headings:font-black prose-headings:tracking-tighter prose-headings:uppercase prose-headings:italic prose-headings:text-white
                             

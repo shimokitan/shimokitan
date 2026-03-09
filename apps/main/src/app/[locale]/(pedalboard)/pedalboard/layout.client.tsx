@@ -14,12 +14,12 @@ export default function PedalboardLayoutClient({ children, user }: { children: R
     const router = useRouter();
 
     return (
-        <div className="min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-rose-600/50 flex flex-col">
+        <div className="h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-rose-600/50 flex flex-col overflow-hidden">
             {/* Main Navbar */}
             <Navbar />
 
             {/* Main Workspace */}
-            <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
+            <main className="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500 overflow-y-auto custom-scroll min-h-0">
                 {children}
             </main>
 

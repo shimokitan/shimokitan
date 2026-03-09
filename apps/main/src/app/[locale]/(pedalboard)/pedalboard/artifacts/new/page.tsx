@@ -1,8 +1,10 @@
 
 import React, { Suspense } from 'react';
 import { getDb, schema } from '@shimokitan/db';
-import NewArtifactTerminal from './NewArtifactTerminal';
+import ArtifactForm from '../ArtifactForm';
 import { isNull } from 'drizzle-orm';
+import { Icon } from '@iconify/react';
+import Link from '@/components/Link';
 import { ensureUserSync } from '../../auth-helpers';
 import { redirect } from 'next/navigation';
 
@@ -31,18 +33,36 @@ export default async function NewArtifactPage() {
     }));
 
     return (
-        <div className="max-w-4xl mx-auto py-12">
-            <header className="mb-12">
-                <h1 className="text-3xl font-black uppercase tracking-tighter text-white mb-2">Register_New_Artifact</h1>
-                <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">Initialization of a new entry in the artifact registry.</p>
+        <div className="space-y-6">
+            <header className="flex items-end justify-between border-b border-zinc-900 pb-4">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link href="/pedalboard/artifacts" className="text-zinc-500 hover:text-white transition-colors">
+                            <Icon icon="lucide:arrow-left" width={14} />
+                        </Link>
+                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Artifact_Registry / Initialize</span>
+                    </div>
+                    <h1 className="text-2xl font-black italic tracking-tighter uppercase text-white">
+                        Register <span className="text-rose-600">Artifact.</span>
+                    </h1>
+                </div>
             </header>
 
-            <Suspense fallback={<div className="text-white font-mono text-xs animate-pulse p-12 text-center uppercase tracking-widest bg-zinc-950/20 border border-zinc-900">Configuring_Interface...</div>}>
-                <NewArtifactTerminal
-                    entities={entities}
-                    userRole={user?.role}
-                />
-            </Suspense>
+            <section className="relative">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-zinc-500">
+                    <Icon icon="lucide:database" width={160} />
+                </div>
+                <Suspense fallback={
+                    <div className="text-white font-mono text-xs animate-pulse p-12 text-center uppercase tracking-widest bg-zinc-950/20 border border-zinc-900">
+                        Configuring_Interface...
+                    </div>
+                }>
+                    <ArtifactForm
+                        entities={entities as any}
+                        userRole={user?.role}
+                    />
+                </Suspense>
+            </section>
         </div>
     );
 }

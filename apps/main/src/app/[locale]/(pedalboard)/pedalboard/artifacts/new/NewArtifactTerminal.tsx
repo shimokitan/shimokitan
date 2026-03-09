@@ -7,7 +7,7 @@ import ArtifactForm from '../ArtifactForm';
 import { createIndieVerificationAction } from '../../actions';
 import { toast } from 'sonner';
 
-type Protocol = 'major' | 'indie' | null;
+type Protocol = 'archival' | 'resident' | null;
 
 export default function NewArtifactTerminal({ entities, userRole }: { entities: any[], userRole?: string }) {
     const [protocol, setProtocol] = useState<Protocol>(null);
@@ -15,7 +15,7 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
     const [verificationId, setVerificationId] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
-    // --- Indie Proofing Flow ---
+    // --- Resident Proofing Flow ---
     const handleProofSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsUploading(true);
@@ -26,7 +26,7 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
 
             if (result.verificationId) {
                 setVerificationId(result.verificationId);
-                toast.success('Permission Proof Uploaded. Terminal Unlocked.');
+                toast.success('Permission Proof Uploaded. Registry Unlocked.');
                 setStep('form');
             }
         } catch (e) {
@@ -40,26 +40,26 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
                 <button
-                    onClick={() => { setProtocol('major'); setStep('form'); }}
-                    className="group bg-zinc-950 border border-zinc-900 p-8 text-left hover:border-rose-600 transition-all"
+                    onClick={() => { setProtocol('archival'); setStep('form'); }}
+                    className="group bg-zinc-950 border border-zinc-900 p-8 text-left hover:border-zinc-500 transition-all"
                 >
-                    <Icon icon="lucide:verified" className="text-zinc-500 mb-4 group-hover:text-rose-500" width={32} />
-                    <h2 className="text-sm font-black text-white uppercase mb-2">Major_Signal</h2>
+                    <Icon icon="lucide:library" className="text-zinc-500 mb-4 group-hover:text-zinc-200" width={32} />
+                    <h2 className="text-sm font-black text-white uppercase mb-2">Archival_Registry</h2>
                     <p className="text-[10px] text-zinc-500 font-mono leading-relaxed">
-                        OFFICIAL PRODUCTIONS (MAPPA, SONY, ETC). NO PERMISSION PROOF REQUIRED FOR STATIC ASSETS.
-                        EMBED-FIRST DELIVERY.
+                        GENERAL CULTURAL ENTRIES (ANIME, FILMS, GAMES). INDEXED VIA PUBLIC METADATA.
+                        NO RESIDENCY PERMIT REQUIRED.
                     </p>
                 </button>
 
                 <button
-                    onClick={() => { setProtocol('indie'); setStep('proofing'); }}
+                    onClick={() => { setProtocol('resident'); setStep('proofing'); }}
                     className="group bg-zinc-950 border border-zinc-900 p-8 text-left hover:border-violet-600 transition-all"
                 >
-                    <Icon icon="lucide:radio" className="text-zinc-500 mb-4 group-hover:text-violet-500" width={32} />
-                    <h2 className="text-sm font-black text-white uppercase mb-2">Indie_Underground</h2>
+                    <Icon icon="lucide:user-check" className="text-zinc-500 mb-4 group-hover:text-violet-500" width={32} />
+                    <h2 className="text-sm font-black text-white uppercase mb-2">Resident_Grant</h2>
                     <p className="text-[10px] text-zinc-500 font-mono leading-relaxed">
-                        INDEPENDENT CREATIONS. REQUIRES MANDATORY ATTACHMENT OF HOSTING PERMIT (PDF/IMAGE).
-                        R2 MIRRORING AUTHORIZED UPON PROOF.
+                        RECORDING ARTISTS AND CREATORS. REQUIRES MANDATORY ATTACHMENT OF HOSTING PERMIT (PDF/IMAGE).
+                        CONSENT-FIRST ARCHIVING PROTOCOL ACTIVE.
                     </p>
                 </button>
             </div>
@@ -70,8 +70,8 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
         return (
             <div className="max-w-xl mx-auto space-y-8 bg-zinc-950 border border-zinc-900 p-12 mt-8">
                 <div className="space-y-2">
-                    <h2 className="text-sm font-black text-white uppercase tracking-widest">Protocol_01: Indie_Proofing</h2>
-                    <p className="text-[9px] text-zinc-500 font-mono uppercase">Upload your hosting permit or rights clearance document before proceeding.</p>
+                    <h2 className="text-sm font-black text-white uppercase tracking-widest">Protocol_01: Resident_Authorization</h2>
+                    <p className="text-[9px] text-zinc-500 font-mono uppercase">Upload your hosting permit or rights clearance document before establishing residency.</p>
                 </div>
 
                 <form onSubmit={handleProofSubmit} className="space-y-6">
@@ -118,7 +118,7 @@ export default function NewArtifactTerminal({ entities, userRole }: { entities: 
         <ArtifactForm
             entities={entities}
             userRole={userRole}
-            initialMajor={protocol === 'major'}
+            initialArchival={protocol === 'archival'}
             verificationId={verificationId || undefined}
         />
     );

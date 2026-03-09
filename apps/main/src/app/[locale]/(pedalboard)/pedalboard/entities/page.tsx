@@ -71,9 +71,9 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Total_Entities', value: allEntities.length, icon: 'lucide:users', color: 'text-white' },
-                    { label: 'Major_Circuits', value: allEntities.filter(e => e.circuit === 'major').length, icon: 'lucide:zap', color: 'text-violet-500' },
-                    { label: 'Underground', value: allEntities.filter(e => e.circuit === 'underground').length, icon: 'lucide:radio', color: 'text-emerald-500' },
-                    { label: 'Archived_Signals', value: allEntities.filter(e => e.circuit === 'archived').length, icon: 'lucide:archive', color: 'text-zinc-500' },
+                    { label: 'Individuals', value: allEntities.filter(e => e.type === 'individual').length, icon: 'lucide:user', color: 'text-violet-500' },
+                    { label: 'Organizations', value: allEntities.filter(e => e.type === 'organization' || e.type === 'agency').length, icon: 'lucide:building-2', color: 'text-emerald-500' },
+                    { label: 'Units_&_Circles', value: allEntities.filter(e => e.type === 'circle').length, icon: 'lucide:command', color: 'text-zinc-500' },
                 ].map((stat, i) => (
                     <div key={i} className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-sm flex items-center gap-4 group hover:border-zinc-800 transition-colors">
                         <div className={`p-2 bg-zinc-900/50 rounded-full ${stat.color} bg-opacity-10`}>

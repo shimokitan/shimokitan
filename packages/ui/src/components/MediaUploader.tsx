@@ -2,19 +2,20 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import { cn } from "../lib/utils";
 
 interface MediaUploaderProps {
     value?: string | null;  // URL to display
     blurhash?: string | null;
     onChange?: (mediaId: string, url: string, blurhash: string | null) => void;
     uploadAction?: (formData: FormData) => Promise<{ mediaId: string, url: string, blurhash: string | null }>;
-    contextType?: "entity_avatar" | "artifact_cover" | "artifact_asset" | "general";
+    contextType?: "entity_avatar" | "entity_header" | "entity_thumbnail" | "artifact_cover" | "artifact_poster" | "artifact_asset" | "general";
     onFileSelect?: (file: File, objectUrl: string) => void;
-
     onUrlSelect?: (url: string) => void;
+    className?: string;
 }
 
-export function MediaUploader({ value, onChange, uploadAction, contextType = "general", onFileSelect, onUrlSelect }: MediaUploaderProps) {
+export function MediaUploader({ value, onChange, uploadAction, contextType = "general", onFileSelect, onUrlSelect, className }: MediaUploaderProps) {
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [preview, setPreview] = useState<string | null>(value || null);
@@ -99,9 +100,12 @@ export function MediaUploader({ value, onChange, uploadAction, contextType = "ge
     };
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
             <div
-                className="group relative w-24 h-24 md:w-32 md:h-32 bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden flex flex-col items-center justify-center cursor-pointer hover:border-violet-600 transition-colors shrink-0"
+                className={cn(
+                    "group relative bg-zinc-950 border border-zinc-900 rounded-sm overflow-hidden flex flex-col items-center justify-center cursor-pointer hover:border-violet-600 transition-colors shrink-0",
+                    className || "w-24 h-24 md:w-32 md:h-32"
+                )}
                 onClick={() => fileInputRef.current?.click()}
             >
                 <input

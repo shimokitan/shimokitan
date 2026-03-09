@@ -8,7 +8,7 @@ import { slugify } from '@shimokitan/utils';
 import { artifactSchema } from '@/lib/validations/pedalboard';
 import { z } from 'zod';
 import { uploadImageFromUrl } from '@/lib/r2';
-import { requireArchitect, requireFounder } from '../auth-helpers';
+import { requireArchitect, requireFounder, requireUser } from '../auth-helpers';
 
 export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     await requireArchitect();
@@ -24,18 +24,24 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
         await tx.insert(schema.artifacts).values({
             id: artifactId,
             category: validated.category,
+            nature: validated.nature,
+            sourceArtifactId: validated.sourceArtifactId,
+            animeType: validated.animeType,
+            hostingStatus: validated.hostingStatus,
             slug,
             status: validated.status,
             score: validated.score,
+            resonance: validated.resonance,
             specs: validated.specs,
             isVerified: validated.isVerified,
-            coverId: validated.coverId || null,
+            thumbnailId: validated.thumbnailId || null,
+            posterId: validated.posterId || null,
         });
 
         // Bridge Table Sync
         const mediaLinks = [];
-        if (validated.coverId) mediaLinks.push({ artifactId, mediaId: validated.coverId, role: 'cover', isPrimary: true });
-        if (validated.posterId) mediaLinks.push({ artifactId, mediaId: validated.posterId, role: 'poster', isPrimary: false });
+        if (validated.thumbnailId) mediaLinks.push({ artifactId, mediaId: validated.thumbnailId, role: 'cover' as any, isPrimary: true });
+        if (validated.posterId) mediaLinks.push({ artifactId, mediaId: validated.posterId, role: 'poster' as any, isPrimary: false });
 
         if (mediaLinks.length) {
             await tx.insert(schema.artifactMedia).values(mediaLinks);
@@ -72,7 +78,8 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                     id: nanoid(),
                     artifactId,
                     type: r.type,
-                    platform: r.platform,
+                    platform: r.platform as any,
+                    role: r.role as any,
                     value: r.url,
                     isPrimary: r.isPrimary,
                 }))
@@ -131,11 +138,17 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         await tx.update(schema.artifacts)
             .set({
                 category: validated.category,
+                nature: validated.nature,
+                sourceArtifactId: validated.sourceArtifactId,
+                animeType: validated.animeType,
+                hostingStatus: validated.hostingStatus,
                 status: validated.status,
                 score: validated.score,
+                resonance: validated.resonance,
                 specs: validated.specs,
                 isVerified: validated.isVerified,
-                coverId: validated.coverId || null,
+                thumbnailId: validated.thumbnailId || null,
+                posterId: validated.posterId || null,
                 updatedAt: new Date(),
             })
             .where(eq(schema.artifacts.id, id));
@@ -143,8 +156,8 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         // Bridge Table Sync (Delete and Re-insert for active roles)
         await tx.delete(schema.artifactMedia).where(eq(schema.artifactMedia.artifactId, id));
         const mediaLinks = [];
-        if (validated.coverId) mediaLinks.push({ artifactId: id, mediaId: validated.coverId, role: 'cover', isPrimary: true });
-        if (validated.posterId) mediaLinks.push({ artifactId: id, mediaId: validated.posterId, role: 'poster', isPrimary: false });
+        if (validated.thumbnailId) mediaLinks.push({ artifactId: id, mediaId: validated.thumbnailId, role: 'cover' as any, isPrimary: true });
+        if (validated.posterId) mediaLinks.push({ artifactId: id, mediaId: validated.posterId, role: 'poster' as any, isPrimary: false });
 
         if (mediaLinks.length) {
             await tx.insert(schema.artifactMedia).values(mediaLinks);
@@ -173,7 +186,8 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                     id: nanoid(),
                     artifactId: id,
                     type: r.type,
-                    platform: r.platform,
+                    platform: r.platform as any,
+                    role: r.role as any,
                     value: r.url,
                     isPrimary: r.isPrimary,
                 }))
@@ -250,3 +264,36 @@ export async function purgeArtifact(id: string) {
     if (db) await db.delete(schema.artifacts).where(eq(schema.artifacts.id, id));
     revalidatePath('/', 'layout');
 }
+
+export async function searchArtifacts(query: string) {
+    await requireUser();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    const results = await db.query.artifacts.findMany({
+        where: (a, { and, ilike, exists, isNull }) => {
+            const conditions = [isNull(a.deletedAt)];
+            
+            conditions.push(exists(
+                db.select().from(schema.artifactsI18n)
+                    .where(and(
+                        eq(schema.artifactsI18n.artifactId, a.id),
+                        ilike(schema.artifactsI18n.title, `%${query}%`)
+                    ))
+            ));
+
+            return and(...conditions);
+        },
+        with: {
+            translations: true as any
+        },
+        limit: 10
+    });
+
+    return results.map(a => ({
+        id: a.id,
+        title: (a as any).translations?.find((t: any) => t.locale === 'en')?.title || (a as any).translations?.[0]?.title || 'Unknown_Artifact',
+        category: a.category,
+    }));
+}
+

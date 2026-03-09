@@ -8,10 +8,14 @@ export const CONTRIBUTOR_CLASSES = ['author', 'collaborator', 'staff'] as const;
 
 export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;
 export const ARTIFACT_STATUSES = ['the_pit', 'back_alley', 'archived'] as const;
-export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other'] as const;
+export const ARTIFACT_NATURES = ['original', 'cover', 'live', 'compilation'] as const;
+export const ANIME_TYPES = ['pv', 'mv', 'trailer', 'op', 'ed', 'special'] as const;
+export const HOSTING_STATUSES = ['unhosted', 'pending_rights', 'rights_granted', 'hosted', 'rights_revoked'] as const;
+
+export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other', 'identity'] as const;
 export const VERIFICATION_TARGET_TYPES = ['artifact', 'entity', 'role_upgrade'] as const;
 export const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'] as const;
-export const CIRCUITS = ['major', 'underground', 'archived'] as const;
+
 
 // --- Shared Helpers ---
 
@@ -19,18 +23,25 @@ const translationSchema = z.object({
     locale: z.enum(LOCALES),
     name: z.string().optional(),
     title: z.string().optional(),
+    status: z.string().optional().nullable(),
     description: z.string().optional(),
     bio: z.string().optional(),
     content: z.string().optional(),
     thesis: z.string().optional(),
 }).passthrough();
 
+export const RESOURCE_PLATFORMS = ['youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'twitter', 'instagram', 'tiktok', 'r2', 'other'] as const;
+export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
+
 const resourceSchema = z.object({
     type: z.string().min(1),
-    platform: z.string().min(1),
+    platform: z.enum(RESOURCE_PLATFORMS),
     url: z.string().url(),
+    role: z.enum(RESOURCE_ROLES).default('stream'),
     isPrimary: z.boolean().default(false),
 });
+
+
 
 const creditSchema = z.object({
     entityId: z.string().min(1),
@@ -54,25 +65,31 @@ const unitMemberSchema = z.object({
 
 export const entitySchema = z.object({
     type: z.enum(ENTITY_TYPES),
-    circuit: z.enum(CIRCUITS).default('underground'),
+    uid: z.string().optional().nullable(),
     isVerified: z.boolean().default(false),
     avatarId: z.string().optional().nullable(),
-    headerId: z.string().optional().nullable(),
+    thumbnailId: z.string().optional().nullable(),
     socialLinks: z.any().optional(), // JSON
     translations: z.array(translationSchema).optional(),
     members: z.array(unitMemberSchema).optional(),
+    tags: z.array(tagRefSchema).optional(),
 });
 
 export const artifactSchema = z.object({
     id: z.string().optional(),
     category: z.enum(ARTIFACT_CATEGORIES),
+    nature: z.enum(ARTIFACT_NATURES).default('original'),
+    sourceArtifactId: z.string().optional().nullable(),
+    animeType: z.enum(ANIME_TYPES).optional().nullable(),
+    hostingStatus: z.enum(HOSTING_STATUSES).default('unhosted'),
 
     status: z.enum(ARTIFACT_STATUSES).default('back_alley'),
-    score: z.number().optional(),
+    score: z.number().optional().default(0),
+    resonance: z.number().optional().default(0),
     specs: z.any().optional(), // JSON
     isVerified: z.boolean().default(false),
     verificationId: z.string().optional(), // Link to pending proof
-    coverId: z.string().optional().nullable(),
+    thumbnailId: z.string().optional().nullable(),
     posterId: z.string().optional().nullable(),
     translations: z.array(translationSchema).optional(),
 

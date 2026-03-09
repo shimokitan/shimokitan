@@ -90,7 +90,7 @@ export function MaintenanceLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
 
-                <main className="flex-1 relative z-10 overflow-y-auto hide-scroll w-full">
+                <main className="flex-1 relative z-10 min-h-0 overflow-y-auto hide-scroll w-full">
                     <div className="min-h-full flex flex-col items-center justify-center p-4">
                         {children}
                     </div>

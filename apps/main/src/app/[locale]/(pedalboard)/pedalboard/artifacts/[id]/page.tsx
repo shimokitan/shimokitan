@@ -16,6 +16,13 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
             credits: true,
             resources: true,
             translations: true,
+            thumbnail: true,
+            poster: true,
+            sourceArtifact: {
+                with: {
+                    translations: true
+                }
+            },
             tags: {
                 with: {
                     tag: {

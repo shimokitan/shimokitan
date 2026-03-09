@@ -35,7 +35,7 @@ export default async function AppPage({
       where: isNull(schema.artifacts.deletedAt),
       limit: 12, // Fetch more to allow in-memory sorting
       with: {
-        cover: true,
+        thumbnail: true,
         translations: {
           where: eq(schema.artifactsI18n.locale, locale),
         },
@@ -48,7 +48,7 @@ export default async function AppPage({
         ...a,
         title: a.translations?.[0]?.title || "Untitled",
         description: a.translations?.[0]?.description || "",
-        coverImage: a.cover?.url || null,
+        thumbnailImage: a.thumbnail?.url || null,
       }))
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .slice(0, 6);
@@ -67,7 +67,7 @@ export default async function AppPage({
       with: {
         artifact: {
           with: {
-            cover: true,
+            thumbnail: true,
             translations: {
               where: eq(schema.artifactsI18n.locale, locale),
             },
@@ -89,7 +89,7 @@ export default async function AppPage({
           ...z.artifact,
           title: z.artifact.translations?.[0]?.title || "Untitled",
           description: z.artifact.translations?.[0]?.description || "",
-          coverImage: z.artifact.cover?.url || null,
+          thumbnailImage: z.artifact.thumbnail?.url || null,
         }
         : null,
     }));
@@ -108,7 +108,7 @@ export default async function AppPage({
       ),
       orderBy: sql`RANDOM()`,
       with: {
-        cover: true,
+        thumbnail: true,
         translations: {
           where: eq(schema.artifactsI18n.locale, locale),
         },
@@ -138,7 +138,7 @@ export default async function AppPage({
         ...rawFeatured,
         title: rawFeatured.translations?.[0]?.title || "Untitled",
         description: rawFeatured.translations?.[0]?.description || "",
-        coverImage: rawFeatured.cover?.url || null,
+        thumbnailImage: rawFeatured.thumbnail?.url || null,
         videoUrl: videoUrl,
       };
     }
@@ -164,7 +164,7 @@ export default async function AppPage({
     entities = rawEntities.map((e: any) => ({
       ...e,
       name: e.translations?.[0]?.name || "Anonymous Entity",
-      type: e.circuit === "major" ? "Major_Circuit" : "Underground_Echo",
+      type: e.type?.toUpperCase() || "INDIVIDUAL",
       _rawType: e.type,
       slug: e.slug,
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
