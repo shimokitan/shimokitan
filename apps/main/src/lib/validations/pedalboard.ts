@@ -32,6 +32,7 @@ export const VERIFICATION_STATUSES = ['pending', 'approved', 'rejected'] as cons
      { slug: 'direction', labels: { en: 'Direction', ja: '演出 / 監督' } },
      { slug: 'label', labels: { en: 'Record Label', ja: 'レーベル' } },
      { slug: 'studio', labels: { en: 'Production Studio', ja: '制作スタジオ' } },
+     { slug: 'original', labels: { en: 'Original / Source', ja: '原作者 / 本家' } },
      { slug: 'other', labels: { en: 'Other / Custom', ja: 'その他' } },
  ] as const;
  
@@ -46,7 +47,6 @@ const translationSchema = z.object({
     title: z.string().optional(),
     status: z.string().optional().nullable(),
     description: z.string().optional(),
-    sourceCredit: z.string().optional().nullable(),
     bio: z.string().optional(),
     content: z.string().optional(),
     thesis: z.string().optional(),
@@ -56,7 +56,6 @@ export const RESOURCE_PLATFORMS = ['youtube', 'spotify', 'soundcloud', 'apple_mu
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 
 const resourceSchema = z.object({
-    type: z.string().min(1),
     platform: z.enum(RESOURCE_PLATFORMS),
     url: z.string().url(),
     role: z.enum(RESOURCE_ROLES).default('stream'),
@@ -65,13 +64,14 @@ const resourceSchema = z.object({
 
 
 
-const creditSchema = z.object({
+export const creditSchema = z.object({
     entityId: z.string().optional().nullable(),
     manualName: z.string().optional().nullable(),
     role: z.string().min(1),
     displayRole: z.string().optional().nullable(),
     contributorClass: z.enum(CONTRIBUTOR_CLASSES).default('staff'),
     isPrimary: z.boolean().default(false),
+    isOriginalArtist: z.boolean().default(false),
     position: z.number().default(0),
 }).superRefine((data, ctx) => {
     if (!data.entityId && !data.manualName) {
@@ -98,6 +98,7 @@ export const entitySchema = z.object({
     type: z.enum(ENTITY_TYPES),
     uid: z.string().optional().nullable(),
     isVerified: z.boolean().default(false),
+    isEncrypted: z.boolean().default(false),
     avatarId: z.string().optional().nullable(),
     thumbnailId: z.string().optional().nullable(),
     socialLinks: z.any().optional(), // JSON

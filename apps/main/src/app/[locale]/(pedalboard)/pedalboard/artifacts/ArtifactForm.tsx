@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
 import AnilistSync from './components/AnilistSync';
 import BasicInfoSection from './components/BasicInfoSection';
-import ResourcesSection from './components/ResourcesSection';
+import ResourcesSection, { Resource } from './components/ResourcesSection';
 import MetadataSection from './components/MetadataSection';
 import CreditsSection from './components/CreditsSection';
 import EntitySearchPicker from './components/EntitySearchPicker';
@@ -24,13 +24,7 @@ type Entity = {
     type: string;
 };
 
-type Resource = {
-    type: string;
-    platform: string;
-    url: string;
-    role: 'stream' | 'embed_video' | 'hosted_audio' | 'download' | 'social' | 'reference';
-    isPrimary: boolean;
-};
+// Resource is imported from components/ResourcesSection
 
 type Credit = {
     entityId: string;
@@ -39,6 +33,7 @@ type Credit = {
     displayRole?: string;
     contributorClass: 'author' | 'collaborator' | 'staff';
     isPrimary: boolean;
+    isOriginalArtist: boolean;
     position: number;
 };
 
@@ -87,15 +82,14 @@ export default function ArtifactForm({
             return {
                 locale: lang as 'en' | 'id' | 'ja',
                 title: trans?.title || '',
-                description: trans?.description || '',
-                sourceCredit: trans?.sourceCredit || ''
+                description: trans?.description || ''
             };
         })
     );
 
     const [resources, setResources] = useState<Resource[]>(
         initialData?.resources
-            ? initialData.resources.map((r: any) => ({ type: r.type, platform: r.platform, url: r.value, role: r.role || 'stream', isPrimary: r.isPrimary }))
+            ? initialData.resources.map((r: any) => ({ type: 'other', platform: r.platform, url: r.value, role: r.role || 'stream', isPrimary: r.isPrimary }))
             : [{ type: 'mv', platform: 'youtube', url: '', role: 'stream', isPrimary: false }]
     );
     const [credits, setCredits] = useState<Credit[]>(
@@ -107,6 +101,7 @@ export default function ArtifactForm({
                 displayRole: c.displayRole,
                 contributorClass: c.contributorClass,
                 isPrimary: c.isPrimary,
+                isOriginalArtist: c.isOriginalArtist || false,
                 position: c.position,
             }))
             : []
@@ -190,7 +185,7 @@ export default function ArtifactForm({
 
 
     // --- Handlers ---
-    const updateTrans = (locale: string, field: 'title' | 'description' | 'sourceCredit', value: string) => {
+    const updateTrans = (locale: string, field: 'title' | 'description', value: string) => {
         setTranslations(translations.map(t => t.locale === locale ? { ...t, [field]: value } : t));
     };
 
@@ -298,6 +293,7 @@ export default function ArtifactForm({
         role: '',
         contributorClass: 'staff',
         isPrimary: false,
+        isOriginalArtist: false,
         position: credits.length
     }]);
     const removeCredit = (idx: number) => setCredits(credits.filter((_, i) => i !== idx));
@@ -335,8 +331,6 @@ export default function ArtifactForm({
                 const formData = new FormData();
                 formData.append('file', pendingThumbnailFile);
                 formData.append('context', 'artifact_asset');
-                formData.append('artifactId', artifactId);
-                formData.append('role', 'thumbnail');
                 const res = await uploadMediaAction(formData);
                 finalThumbnailId = res.mediaId;
                 finalThumbnailUrl = res.url;
@@ -345,8 +339,6 @@ export default function ArtifactForm({
                 const formData = new FormData();
                 formData.append('url', pendingThumbnailUrl);
                 formData.append('context', 'artifact_asset');
-                formData.append('artifactId', artifactId);
-                formData.append('role', 'thumbnail');
                 const res = await uploadMediaAction(formData);
                 finalThumbnailId = res.mediaId;
                 finalThumbnailUrl = res.url;
@@ -360,8 +352,6 @@ export default function ArtifactForm({
                 const formData = new FormData();
                 formData.append('file', pendingPosterFile);
                 formData.append('context', 'artifact_asset');
-                formData.append('artifactId', artifactId);
-                formData.append('role', 'poster');
                 const res = await uploadMediaAction(formData);
                 finalPosterId = res.mediaId;
                 finalPosterUrl = res.url;
@@ -370,20 +360,23 @@ export default function ArtifactForm({
                 const formData = new FormData();
                 formData.append('url', pendingPosterUrl);
                 formData.append('context', 'artifact_asset');
-                formData.append('artifactId', artifactId);
-                formData.append('role', 'poster');
                 const res = await uploadMediaAction(formData);
                 finalPosterId = res.mediaId;
                 finalPosterUrl = res.url;
             }
 
 
-            const cleanResources = resources.filter(r => r.url.trim() !== '');
             const cleanCredits = credits.filter(c => c.entityId.trim() !== '' || c.manualName?.trim() !== '');
             const cleanSpecs = specs.reduce((acc, curr) => {
                 if (curr.key.trim()) acc[curr.key] = curr.value;
                 return acc;
             }, {} as Record<string, string>);
+            const cleanResources = resources.filter(r => r.url).map(r => ({
+                platform: r.platform,
+                url: r.url,
+                role: r.role,
+                isPrimary: r.isPrimary,
+            }));
             const cleanTags = tags.filter(t => t.name.trim() !== '');
 
             const payload = {
@@ -437,21 +430,6 @@ export default function ArtifactForm({
         }
     };
 
-    const upsertCredit = (role: string, entityId: string | null) => {
-        setCredits(prev => {
-            const filtered = prev.filter(c => c.role !== role);
-            if (!entityId) return filtered;
-            return [...filtered, {
-                role,
-                entityId,
-                manualName: '',
-                contributorClass: 'staff',
-                isPrimary: false,
-                position: prev.length
-            }];
-        });
-    };
-
     return (
         <div className="relative pb-24">
             <form onSubmit={handleSubmit} className="space-y-12">
@@ -494,37 +472,6 @@ export default function ArtifactForm({
                     setStatus={setStatus}
                     lockFlags={!!verificationId}
                 />
-
-                {(category === 'anime' || category === 'music') && (
-                    <div className="space-y-4 bg-zinc-950/40 p-6 border border-zinc-900 rounded-sm">
-                        <div className="flex items-center gap-2 mb-4 border-b border-zinc-900 pb-2">
-                            <Icon icon="lucide:briefcase" className="text-violet-500" width={14} />
-                            <span className="text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">02 // Professional_Registry</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {category === 'anime' && (
-                                <EntitySearchPicker
-                                    label="Production_Studio"
-                                    type="organization"
-                                    value={credits.find(c => c.role === 'studio')?.entityId}
-                                    onSelect={(entity) => upsertCredit('studio', entity?.id || null)}
-                                    placeholder="Search or register studio..."
-                                    entities={entities}
-                                />
-                            )}
-                            {category === 'music' && (
-                                <EntitySearchPicker
-                                    label="Record_Label"
-                                    type="organization"
-                                    value={credits.find(c => c.role === 'label')?.entityId}
-                                    onSelect={(entity) => upsertCredit('label', entity?.id || null)}
-                                    placeholder="Search or register label..."
-                                    entities={entities}
-                                />
-                            )}
-                        </div>
-                    </div>
-                )}
 
                 <ResourcesSection
                     resources={resources}

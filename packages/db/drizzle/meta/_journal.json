@@ -85,6 +85,13 @@
       "when": 1773048429210,
       "tag": "0011_ordinary_wild_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1773061634047,
+      "tag": "0012_add_entity_is_encrypted",
+      "breakpoints": true
     }
   ]
 }

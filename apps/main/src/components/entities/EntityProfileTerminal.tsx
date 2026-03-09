@@ -7,6 +7,75 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
     const translations = entity.translations || [];
     const translation = translations.find((t: any) => t.locale === locale) || translations[0];
     const name = translation?.name || "Anonymous Artist";
+
+    /**
+     * CONSENT_FIRST_GATE
+     * Encrypted entities are sealed — only the name leaks through.
+     * No data, no pages, just a message.
+     */
+    if (entity.isEncrypted) {
+        return (
+            <MainLayout>
+                <div className="fixed inset-0 pointer-events-none -z-20 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 animate-pulse" style={{ top: '15%' }} />
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 animate-pulse" style={{ top: '85%' }} />
+                </div>
+
+                <div className="relative z-10 animate-in fade-in duration-1000 min-h-[80vh] flex items-center justify-center">
+                    <div className="text-center space-y-8 max-w-md mx-auto px-6">
+                        {/* Encrypted Signal Icon */}
+                        <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
+                            <div className="absolute inset-0 border-2 border-zinc-800 animate-pulse" />
+                            <div className="absolute inset-2 border border-zinc-900" />
+                            <Icon icon="lucide:lock" width={32} className="text-zinc-700" />
+                        </div>
+
+                        {/* Entity Name — the only thing that leaks through */}
+                        <div className="space-y-2">
+                            <div className="text-[10px] font-mono font-bold text-zinc-700 uppercase tracking-[0.4em]">
+                                Resident_Signal
+                            </div>
+                            <h1 className="text-4xl font-black italic tracking-tighter uppercase text-zinc-500 leading-none">
+                                {name}
+                            </h1>
+                        </div>
+
+                        {/* Encryption Message */}
+                        <div className="space-y-4 pt-4">
+                            <div className="inline-block px-4 py-2 border border-zinc-800 bg-zinc-950">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
+                                    Data_Resident_Is_Encrypted
+                                </span>
+                            </div>
+                            <p className="text-xs text-zinc-700 font-mono leading-relaxed">
+                                This entity has not opened a channel in the district.
+                                <br />
+                                There is nothing here.
+                            </p>
+                        </div>
+
+                        {/* Back Navigation */}
+                        <div className="pt-8">
+                            <Link href="/artists" className="inline-flex items-center gap-2 px-6 py-3 border border-zinc-800 text-zinc-600 hover:text-white hover:border-zinc-500 transition-all text-[10px] font-black uppercase tracking-widest">
+                                <Icon icon="lucide:arrow-left" width={14} />
+                                Back_To_Registry
+                            </Link>
+                        </div>
+
+                        {/* Bottom Signal Deco */}
+                        <div className="pt-12 flex justify-center">
+                            <div className="flex items-center gap-1.5">
+                                {Array.from({ length: 12 }).map((_, i) => (
+                                    <div key={i} className={`h-1 w-3 ${i % 4 === 0 ? 'bg-zinc-800' : 'bg-zinc-900'}`} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </MainLayout>
+        );
+    }
+
     const bio = translation?.bio || "";
     const type = entity.type?.toUpperCase() || "INDIVIDUAL";
 

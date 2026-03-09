@@ -10,14 +10,13 @@ interface Translation {
     locale: 'en' | 'id' | 'ja';
     title: string;
     description: string;
-    sourceCredit?: string;
 }
 
 interface BasicInfoSectionProps {
     activeTab: 'en' | 'id' | 'ja';
     setActiveTab: (tab: 'en' | 'id' | 'ja') => void;
     translations: Translation[];
-    updateTrans: (locale: string, field: 'title' | 'description' | 'sourceCredit', value: string) => void;
+    updateTrans: (locale: string, field: 'title' | 'description', value: string) => void;
     thumbnailId: string | null;
     setThumbnailId: (id: string | null) => void;
     thumbnailUrl: string;
@@ -271,20 +270,6 @@ export default function BasicInfoSection({
                         placeholder="Link this entry to its original source record..."
                     />
 
-                    {/* Manual Citation for External Sources (Yorushika etc.) */}
-                    <div className="mt-4 pt-4 border-t border-rose-900/10">
-                        <label className="text-[10px] uppercase font-black text-rose-800 tracking-widest mb-2 block">EXTERNAL_SOURCE_CITATION</label>
-                        <input
-                            type="text"
-                            value={translations.find(t => t.locale === activeTab)?.sourceCredit || ''}
-                            onChange={(e) => updateTrans(activeTab, 'sourceCredit', e.target.value)}
-                            placeholder='Manual reference e.g. "Original by Yorushika"'
-                            className="w-full bg-black border border-rose-950 p-3 text-xs text-rose-100 placeholder:text-rose-900/40 focus:border-rose-600 outline-none transition-all rounded-sm font-mono"
-                        />
-                        <p className="mt-2 text-[9px] text-rose-900/40 leading-relaxed italic">
-                            Used when the origin is outside the Shimokitan Registry (Major Labels, Non-consenting entities).
-                        </p>
-                    </div>
                 </div>
             )}
         </div>

@@ -1,0 +1,1 @@
+ALTER TABLE "entities" ADD COLUMN "is_encrypted" boolean DEFAULT false;

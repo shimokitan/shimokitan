@@ -18,6 +18,7 @@
      displayRole?: string;
      contributorClass: 'author' | 'collaborator' | 'staff';
      isPrimary: boolean;
+    isOriginalArtist: boolean;
      position: number;
  }
  
@@ -107,6 +108,20 @@
                                 >
                                     <Icon icon={credit.isPrimary ? "lucide:star" : "lucide:star-off"} width={14} />
                                 </button>
+                                 <button
+                                     type="button"
+                                     onClick={() => {
+                                         const newState = !credit.isOriginalArtist;
+                                         updateCredit(i, 'isOriginalArtist', newState);
+                                         if (newState && !credit.role) {
+                                             updateCredit(i, 'role', 'original');
+                                         }
+                                     }}
+                                     className={`p-2 border transition-all ${credit.isOriginalArtist ? 'bg-rose-600/20 border-rose-600 text-rose-500' : 'bg-black border-zinc-800 text-zinc-700'}`}
+                                     title="Original Artist (Source Authority)"
+                                 >
+                                     <Icon icon="lucide:copyright" width={14} />
+                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => removeCredit(i)}
@@ -118,12 +133,12 @@
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
-                            <select
-                                value={credit.role}
-                                onChange={(e) => updateCredit(i, 'role', e.target.value)}
-                                className="bg-black border border-zinc-900 p-2 text-[10px] font-mono uppercase text-violet-400 outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
-                            >
-                                <option value="" disabled>Select Department...</option>
+                             <select
+                                 value={credit.role}
+                                 onChange={(e) => updateCredit(i, 'role', e.target.value)}
+                                 className="bg-black border border-zinc-900 p-2 text-[10px] font-mono uppercase text-violet-400 outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
+                             >
+                                 <option value="" disabled>{credit.isOriginalArtist ? 'Source_Nature...' : 'Select Department...'}</option>
                                 {CREDIT_ROLES.map((r) => (
                                     <option key={r.slug} value={r.slug} className="bg-zinc-950">
                                         {r.labels[uiLocale as 'en' | 'ja'] || r.labels.en}
@@ -138,24 +153,26 @@
                             />
                         </div>
 
-                        <div className="flex gap-2">
-                            <select
-                                value={credit.contributorClass}
-                                onChange={(e) => updateCredit(i, 'contributorClass', e.target.value)}
-                                className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 outline-none flex-1"
-                            >
-                                <option value="author">Class: Author</option>
-                                <option value="collaborator">Class: Collaborator</option>
-                                <option value="staff">Class: Staff</option>
-                            </select>
-                            <input
-                                type="number"
-                                value={credit.position}
-                                onChange={(e) => updateCredit(i, 'position', parseInt(e.target.value) || 0)}
-                                placeholder="Pos"
-                                className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 w-16 outline-none"
-                            />
-                        </div>
+                         {!credit.isOriginalArtist && (
+                            <div className="flex gap-2">
+                                <select
+                                    value={credit.contributorClass}
+                                    onChange={(e) => updateCredit(i, 'contributorClass', e.target.value)}
+                                    className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 outline-none flex-1"
+                                >
+                                    <option value="author">Class: Author</option>
+                                    <option value="collaborator">Class: Collaborator</option>
+                                    <option value="staff">Class: Staff</option>
+                                </select>
+                                <input
+                                    type="number"
+                                    value={credit.position}
+                                    onChange={(e) => updateCredit(i, 'position', parseInt(e.target.value) || 0)}
+                                    placeholder="Pos"
+                                    className="bg-zinc-900 border border-zinc-800 p-2 text-[10px] font-mono text-zinc-500 w-16 outline-none"
+                                />
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

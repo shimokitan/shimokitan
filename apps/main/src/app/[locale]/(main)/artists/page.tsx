@@ -8,7 +8,10 @@ export default async function ArtistsBrowsePage(props: { params: Promise<{ local
     const entities = await getAllEntities();
 
     // Map DB entities to the format expected by the browser component
-    const formattedEntities = entities.map((e: any) => {
+    // Encrypted entities are excluded — they have no public surface area
+    const formattedEntities = entities
+        .filter((e: any) => !e.isEncrypted)
+        .map((e: any) => {
         const translation = e.translations?.find((t: any) => t.locale === locale) || e.translations?.[0];
         return {
             id: e.id,

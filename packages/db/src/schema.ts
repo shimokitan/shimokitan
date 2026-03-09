@@ -124,6 +124,7 @@ export const entities = pgTable("entities", {
     socialLinks: jsonb("social_links").default([]),
     isVerified: boolean("is_verified").default(false),
     isActive: boolean("is_active").default(true),   // soft-disable without deletion
+    isEncrypted: boolean("is_encrypted").default(false), // consent-first: sealed entity, name-only reference for cover attribution
     avatarId: text("avatar_id").references(() => media.id, { onDelete: "set null" }),
     thumbnailId: text("thumbnail_id").references(() => media.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),

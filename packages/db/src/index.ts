@@ -77,6 +77,13 @@ export async function getArtifactById(id: string) {
       resources: true,
       thumbnail: true,
       poster: true,
+      sourceArtifact: {
+        with: {
+          translations: true,
+          thumbnail: true
+        }
+      },
+      externalOriginal: true,
       zines: {
         with: {
           translations: true,

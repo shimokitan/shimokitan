@@ -45,6 +45,7 @@ export default function EntityForm({
     );
 
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
+    const [isEncrypted, setIsEncrypted] = useState(initialData?.isEncrypted || false);
     const [type, setType] = useState(initialData?.type || 'individual');
     const [members, setMembers] = useState<Member[]>(
         initialData?.members?.map((m: any) => ({ memberId: m.memberId, memberRole: m.memberRole })) || []
@@ -82,6 +83,7 @@ export default function EntityForm({
                 type,
                 uid: uid || null,
                 isVerified,
+                isEncrypted,
                 socialLinks: cleanSocials,
                 translations: translations.filter(t => t.name.trim() !== ''),
                 members: type === 'circle' ? members.filter(m => m.memberId) : [],
@@ -106,7 +108,7 @@ export default function EntityForm({
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, initialData?.id, socials, type, uid, isVerified, translations, members, avatarId, thumbnailId, router]);
+    }, [isSubmitting, initialData?.id, socials, type, uid, isVerified, isEncrypted, translations, members, avatarId, thumbnailId, router, tags]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -197,6 +199,21 @@ export default function EntityForm({
                                             <Icon icon={isVerified ? "lucide:shield-check" : "lucide:shield"} width={16} />
                                             <span className="text-[10px] font-black uppercase">Verified_Link</span>
                                         </div>
+                                    </div>
+
+                                    <div className="pt-1">
+                                        <div
+                                            className={`flex items-center justify-center gap-2 border cursor-pointer transition-all h-[46px] rounded-lg ${isEncrypted ? 'bg-rose-600 border-rose-500 text-black shadow-[0_0_20px_rgba(244,63,94,0.3)]' : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-rose-900'}`}
+                                            onClick={() => setIsEncrypted(!isEncrypted)}
+                                        >
+                                            <Icon icon={isEncrypted ? "lucide:lock" : "lucide:lock-open"} width={16} />
+                                            <span className="text-[10px] font-black uppercase">Encrypted_Signal</span>
+                                        </div>
+                                        {isEncrypted && (
+                                            <p className="text-[8px] text-rose-500/60 font-mono italic mt-2 text-center leading-relaxed">
+                                                CONSENT_FIRST: Profile will be sealed. Name-only reference for cover attribution.
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

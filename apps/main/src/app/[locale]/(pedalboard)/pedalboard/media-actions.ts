@@ -27,8 +27,6 @@ export async function uploadMediaAction(formData: FormData) {
     const file = formData.get('file') as File | null;
     const url = formData.get('url') as string | null;
     const contextType = formData.get('context') as 'entity_avatar' | 'artifact_asset' | 'general' || 'general';
-    const artifactId = formData.get('artifactId') as string | null;
-    const role = formData.get('role') as string | null; // e.g. cover, poster
 
     if (!file && !url) throw new Error('No_File_Or_Url_Provided');
 
@@ -90,8 +88,7 @@ export async function uploadMediaAction(formData: FormData) {
     const key = generateStoragePath({
         mediaType: isImage ? 'images' : 'raw',
         context: contextType === 'entity_avatar' ? 'profiles' : 'artifacts',
-        identifier: artifactId || mediaId, // Use Artifact ID for grouping if available
-        role: role || undefined,
+        identifier: mediaId, // Default to mediaId for isolation
         filename: `${nanoid(8)}.${extension}`
     });
 
@@ -99,34 +96,18 @@ export async function uploadMediaAction(formData: FormData) {
     const publicUrl = await uploadFileToR2(processedBuffer, key, mimeType);
 
     // Register Media in DB
-    await db.transaction(async (tx) => {
-        await tx.insert(schema.media).values({
-            id: mediaId,
-            type: isImage ? 'image' : 'document',
-            url: publicUrl,
-            r2Key: key,
-            blurhash: blurhashStr,
-            width,
-            height,
-            sizeBytes: processedBuffer.length,
-            mimeType,
-            uploaderId: user.id,
-            isOrphan: !artifactId // Orphan until linked if no artifactId provided
-        });
-
-        // If artifactId and role provided, create the connection immediately
-        if (artifactId && role) {
-            const roleType = role as "cover" | "poster" | "background" | "logo" | "gallery" | "thumbnail";
-            await tx.insert(schema.artifactMedia).values({
-                artifactId,
-                mediaId,
-                role: roleType,
-                isPrimary: roleType === 'cover', // Default cover is primary
-            }).onConflictDoUpdate({
-                target: [schema.artifactMedia.artifactId, schema.artifactMedia.mediaId, schema.artifactMedia.role],
-                set: { isPrimary: roleType === 'cover' }
-            });
-        }
+    await db.insert(schema.media).values({
+        id: mediaId,
+        type: isImage ? 'image' : 'document',
+        url: publicUrl,
+        r2Key: key,
+        blurhash: blurhashStr,
+        width,
+        height,
+        sizeBytes: processedBuffer.length,
+        mimeType,
+        uploaderId: user.id,
+        isOrphan: true // Always orphan until parent action links it
     });
 
     return { mediaId, url: publicUrl, blurhash: blurhashStr };

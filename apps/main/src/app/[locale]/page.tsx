@@ -104,7 +104,7 @@ export default async function AppPage({
     const rawFeatured = await db.query.artifacts.findFirst({
       where: and(
         eq(schema.artifacts.status, "the_pit"),
-        eq(schema.artifacts.category, "anime")
+        sql`${schema.artifacts.category} IN ('anime', 'music')`
       ),
       orderBy: sql`RANDOM()`,
       with: {
@@ -120,7 +120,9 @@ export default async function AppPage({
       let videoUrl = null;
       const primaryVideo = rawFeatured.resources?.find(
         (r: any) =>
-          r.type === "video" || r.type === "mv" || r.platform === "youtube",
+          r.role === "embed_video" || 
+          r.role === "stream" || 
+          r.platform === "youtube",
       );
       if (primaryVideo) {
         if (primaryVideo.value.includes("youtube.com/watch?v=")) {
@@ -129,6 +131,9 @@ export default async function AppPage({
         } else if (primaryVideo.value.includes("youtu.be/")) {
           const vId = primaryVideo.value.split("youtu.be/")[1]?.split("?")[0];
           videoUrl = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=1`;
+        } else if (primaryVideo.platform === 'youtube' && !primaryVideo.value.includes('/')) {
+          // Handle case where just the ID was stored
+          videoUrl = `https://www.youtube.com/embed/${primaryVideo.value}?autoplay=1&mute=1`;
         } else {
           videoUrl = primaryVideo.value;
         }

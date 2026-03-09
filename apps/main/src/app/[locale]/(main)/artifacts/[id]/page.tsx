@@ -22,6 +22,9 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
     const title = translation?.title || "Untitled";
     const description = translation?.description || "";
 
+    // Original artists from ledger - single source of truth for provenance root
+    const originalArtistCredits = artifact.credits?.filter((c: any) => c.isOriginalArtist) || [];
+
     // Helper to get primary resource
     const primaryResource = artifact.resources?.find((r: any) => r.isPrimary) || artifact.resources?.[0];
 
@@ -30,13 +33,18 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
         artifact.credits?.find((c: any) => c.isPrimary) ||
         artifact.credits?.[0];
     const primaryEntity = primaryCredit?.entity;
-    const primaryArtistName = primaryEntity?.translations?.find((t: any) => t.locale === locale)?.name ||
+    const primaryArtistName = primaryCredit?.manualName ||
+        primaryEntity?.translations?.find((t: any) => t.locale === locale)?.name ||
         primaryEntity?.translations?.[0]?.name ||
         "ANONYMOUS_SOURCE";
 
+    // Specs categorization
+    const specs = (artifact.specs as Record<string, any>) || {};
+    const hasSpecs = Object.keys(specs).length > 0;
+
     return (
         <MainLayout>
-            <div className="w-full flex flex-col gap-8 animate-in fade-in duration-700 pb-24">
+            <div className="w-full flex flex-col gap-8 animate-in fade-in duration-700 pb-24 text-white">
 
                 {/* 1. Identity Header: Compact & High Impact */}
                 <header className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-6 border-b border-zinc-900 relative">
@@ -48,7 +56,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     Registry_Record // Sector_03
                                 </span>
                                 <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-[0.2em] font-bold mt-0.5">
-                                    Authenticity_Verified // Ver_{artifact.id.slice(-2).toUpperCase()}
+                                    Authenticity_Verified // ID_{artifact.id.slice(0, 8).toUpperCase()}
                                 </span>
                             </div>
                         </div>
@@ -59,24 +67,31 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
 
                     <div className="flex items-center gap-6">
                         <div className="hidden lg:flex flex-col items-end gap-1 font-mono">
-                            <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Classification_Unit</span>
-                            <div className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-sm italic font-black text-white tracking-tighter uppercase relative group">
+                            <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Nature_Registry</span>
+                            <div className="px-3 py-1 bg-violet-600/10 border border-violet-600/30 text-[10px] italic font-black text-violet-400 tracking-tighter uppercase relative group">
                                 <div className="absolute top-0 left-0 w-0.5 h-full bg-violet-600" />
-                                {artifact.category}
+                                {artifact.nature || 'original'}
+                            </div>
+                        </div>
+                        <div className="hidden lg:flex flex-col items-end gap-1 font-mono">
+                            <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Classification</span>
+                            <div className="px-3 py-1 bg-zinc-900 border border-zinc-800 text-[10px] italic font-black text-white tracking-tighter uppercase relative group">
+                                {artifact.category || 'music'}
+                                {artifact.animeType && ` // ${artifact.animeType}`}
                             </div>
                         </div>
                         <div className="flex flex-col items-end gap-1 font-mono">
-                            <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Status_Feed</span>
-                            <div className="flex items-center gap-2 px-1 text-[10px] text-emerald-500 uppercase tracking-widest font-black italic bg-emerald-500/5 border border-emerald-500/10 px-2 py-1 rounded-sm">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />
-                                SIGNAL_OK
+                            <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-bold">Signal_Status</span>
+                            <div className="flex items-center gap-2 px-3 py-1 text-[10px] text-emerald-500 uppercase tracking-widest font-black italic bg-emerald-500/5 border border-emerald-500/10 rounded-sm">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                {(artifact.status || 'the_pit').replace(/_/g, ' ')}
                             </div>
                         </div>
                     </div>
                 </header>
 
                 {/* 2. Main Console: Editorial Flow */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pl-1 pr-1 lg:pl-0 lg:pr-0">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
                     {/* Left Column: Media & Content (8 cols) */}
                     <div className="lg:col-span-8 flex flex-col gap-8">
@@ -86,7 +101,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             <BentoCard className="w-full aspect-video p-0 bg-black overflow-hidden relative border-zinc-900 shadow-2xl group" minimal>
                                 {/* Ambient Signal Aura */}
                                 <div className="absolute inset-0 opacity-20 filter blur-3xl saturate-200 pointer-events-none scale-110">
-                                    <img src={(artifact as any).thumbnail?.url || undefined} className="w-full h-full object-cover" />
+                                    <img src={artifact.thumbnail?.url || undefined} className="w-full h-full object-cover" />
                                 </div>
 
                                 {primaryResource?.platform === 'youtube' ? (
@@ -98,7 +113,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <img src={(artifact as any).thumbnail?.url || undefined} className="w-full h-full object-cover opacity-60 mix-blend-screen" />
+                                        <img src={artifact.thumbnail?.url || undefined} className="w-full h-full object-cover opacity-60 mix-blend-screen" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
                                     </div>
                                 )}
@@ -108,38 +123,140 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     <div className="flex gap-0.5">
                                         {[1, 2].map(i => <div key={i} className="w-2 h-0.5 bg-violet-500" />)}
                                     </div>
-                                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">SIGNAL_LOCK // 16:9</span>
+                                    <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">SIGNAL_LOCK // {(artifact as any).hostingStatus || 'OFFLINE'}</span>
                                 </div>
                             </BentoCard>
 
                             {/* Back Link & Session */}
                             <div className="flex items-center justify-between px-1 mt-2">
                                 <Link href="/artifacts" className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors text-[10px] font-mono font-black uppercase tracking-[0.2em] group">
-                                    <Icon icon="lucide:arrow-left" className="w-3 h-3 group-hover:-translate-x-0.5 transition-transform" />
+                                    <Icon icon="lucide:arrow-left" className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
                                     BACK_TO_DATABASE
                                 </Link>
                                 <div className="text-[9px] font-mono text-zinc-700 font-bold uppercase tracking-[0.3em]">
-                                    SESSION_ID // SHM_{Math.random().toString(36).slice(2, 6).toUpperCase()}
+                                    REGISTRY_VERIFY // {artifact.isVerified ? 'ENCRYPTED_AUTH' : 'OPEN_SOURCE'}
                                 </div>
                             </div>
                         </div>
 
-                        {/* 2.2 Editorial Analysis */}
+                        {/* 2.2 Derivation Source (if cover/remix) */}
+                        {(artifact.nature !== 'original' || originalArtistCredits.length > 0) && (
+                            <div className="flex flex-col gap-4 p-6 bg-zinc-950/50 border border-zinc-900 rounded-xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                                    <Icon icon="lucide:git-branch" width={40} />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icon icon="lucide:corner-down-right" width={14} className="text-rose-500" />
+                                    <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.4em]">Derivation_Origin</span>
+                                </div>
+                                
+                                <div className="flex flex-col gap-4">
+                                    {artifact.sourceArtifact && (
+                                        <Link 
+                                            href={`/artifacts/${artifact.sourceArtifact.id}`}
+                                            className="flex items-center gap-4 group/src"
+                                        >
+                                            <div className="w-16 h-10 bg-zinc-900 border border-zinc-800 rounded overflow-hidden">
+                                                {artifact.sourceArtifact.thumbnail?.url && (
+                                                    <img src={artifact.sourceArtifact.thumbnail.url} className="w-full h-full object-cover grayscale group-hover/src:grayscale-0 transition-all" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Linked_Registry_Item</div>
+                                                <div className="text-sm font-black italic uppercase text-zinc-300 group-hover/src:text-white transition-colors">
+                                                    {artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || artifact.sourceArtifact.translations?.[0]?.title}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    )}
+
+                                    {artifact.externalOriginal && (
+                                        <div className="flex flex-col gap-1">
+                                            <div className="text-[11px] font-black italic uppercase text-white">
+                                                {artifact.externalOriginal.title}
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                {artifact.externalOriginal.platformUrl && (
+                                                    <a 
+                                                        href={artifact.externalOriginal.platformUrl} 
+                                                        target="_blank" 
+                                                        className="text-[10px] font-mono text-rose-400 hover:text-white flex items-center gap-1 transition-colors"
+                                                    >
+                                                        <Icon icon="lucide:external-link" width={10} />
+                                                        VIEW_ORIGINAL_SOURCE
+                                                    </a>
+                                                )}
+                                                {artifact.externalOriginal.platform && (
+                                                    <span className="text-[8px] font-mono text-zinc-600 uppercase bg-zinc-900 px-1.5 py-0.5 rounded">
+                                                        {artifact.externalOriginal.platform}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal && (
+                                        <div className="flex flex-col gap-2">
+                                            {originalArtistCredits.map((credit: any, i: number) => {
+                                                const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANONYMOUS_ORIGIN";
+                                                return (
+                                                    <div key={i} className="text-sm font-black italic uppercase text-zinc-400">
+                                                        {name}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 2.3 Editorial Analysis */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-px bg-violet-600" />
                                 <span className="text-[11px] font-mono text-violet-500 font-black uppercase tracking-[0.4em]">Editorial_Analysis</span>
                             </div>
                             <div className="prose prose-invert prose-zinc max-w-none">
-                                <p className="text-base lg:text-lg text-zinc-300 italic font-medium leading-relaxed tracking-tight">
+                                <p className="text-base lg:text-lg text-zinc-300 italic font-medium leading-relaxed tracking-tight whitespace-pre-wrap">
                                     {description || "UNIDENTIFIED_CONTENT_ORIGIN"}
                                 </p>
                             </div>
                         </div>
 
-                        {/* 2.3 Tags */}
+                        {/* 2.4 Specs Grid */}
+                        {hasSpecs && (
+                            <div className="flex flex-col gap-4 pt-6 mt-4 border-t border-zinc-900/50">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-px bg-zinc-700" />
+                                    <span className="text-[9px] font-mono text-zinc-500 font-black uppercase tracking-[0.4em]">Technical_Specifications</span>
+                                </div>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {Object.entries(specs).map(([key, value]) => {
+                                        let displayValue = typeof value === 'boolean' ? (value ? 'YES' : 'NO') : String(value);
+                                        
+                                        if (key === 'durationMs' && typeof value === 'number') {
+                                            const mins = Math.floor(value / 60000);
+                                            const secs = Math.floor((value % 60000) / 1000);
+                                            displayValue = `${mins}:${secs.toString().padStart(2, '0')}`;
+                                        }
+
+                                        return (
+                                            <div key={key} className="flex flex-col p-3 bg-zinc-950 border border-zinc-900 rounded-lg">
+                                                <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-widest mb-1">{key.replace(/([A-Z])/g, '_$1')}</span>
+                                                <span className="text-xs font-black uppercase italic text-zinc-300">
+                                                    {displayValue}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 2.5 Tags */}
                         {artifact.tags && artifact.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 pt-4 border-t border-zinc-900/50">
+                            <div className="flex flex-wrap gap-2 pt-6 mt-4 border-t border-zinc-900/50">
                                 {artifact.tags.map((at: any, i: number) => (
                                     <span key={`tag-${i}`} className="px-2.5 py-1 bg-zinc-900/50 border border-zinc-800 text-[10px] font-mono font-black text-zinc-400 rounded-md hover:border-zinc-700 hover:text-zinc-300 transition-colors uppercase tracking-widest">
                                         #{at.tag.translations?.find((t: any) => t.locale === locale)?.name || at.tag.translations?.[0]?.name}
@@ -148,7 +265,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             </div>
                         )}
 
-                        {/* 2.4 Echo Flux (Zines/Reviews) */}
+                        {/* 2.6 Echo Flux (Zines) */}
                         <div className="flex flex-col gap-4 pt-12">
                             <div className="flex items-center justify-between pb-4 border-b border-zinc-900/50">
                                 <div className="flex items-center gap-2">
@@ -186,16 +303,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     </div>
                                 )}
                             </div>
-                            {artifact.zines && artifact.zines.length > 2 && (
-                                <Link
-                                    href={`/artifacts/${id}/zines`}
-                                    className="block mt-2 text-center p-3 bg-zinc-900/20 border border-zinc-800 rounded-lg text-[10px] font-mono font-black text-zinc-500 hover:text-white hover:border-zinc-700 transition-all uppercase tracking-[0.2em]"
-                                >
-                                    [ VIEW_FULL_ARCHIVE // SIGNAL_OVERFLOW ]
-                                </Link>
-                            )}
                         </div>
-
                     </div>
 
                     {/* Right Column: Sticky Sidebar (4 cols) */}
@@ -217,8 +325,8 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                     </div>
                                     <div className="flex-1 h-12 bg-black border border-zinc-800 rounded-lg flex items-end p-1 overflow-hidden relative">
                                         <div
-                                            className="w-full bg-gradient-to-t from-rose-900 to-rose-500 shadow-[0_0_12px_rgba(225,29,72,0.5)] relative z-10"
-                                            style={{ height: `${Math.min(100, (artifact.score || 0) * 10)}%` }}
+                                            className="w-full bg-gradient-to-t from-rose-900 to-rose-500 shadow-[0_0_12px_rgba(225,29,72,0.5)] relative z-10 animate-pulse"
+                                            style={{ height: `${Math.min(100, (artifact.score || 0) * 1.33)}%` }}
                                         />
                                         <div className="absolute inset-0 cyber-grid opacity-10" />
                                     </div>
@@ -226,57 +334,179 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             </div>
 
                             {/* Provenance Tree (Entity & Credits) */}
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-6">
                                 <div className="flex items-center gap-2 mb-1 px-1">
                                     <Icon icon="lucide:cpu" width={14} className="text-zinc-500" />
                                     <span className="text-[11px] font-mono text-white font-black uppercase tracking-[0.3em]">Provenance_Tree</span>
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    {/* Primary Artist */}
-                                    <Link
-                                        href={primaryEntity ? getEntityUrl(primaryEntity) : '#'}
-                                        className="bg-zinc-900/80 border border-zinc-800 p-3 rounded-xl flex items-center gap-4 hover:border-violet-500/50 hover:bg-zinc-900 transition-all group relative overflow-hidden"
-                                    >
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-violet-600 opacity-50 group-hover:opacity-100 transition-opacity" />
-                                        <div className="w-10 h-10 shrink-0 relative p-0.5 border border-zinc-700 rounded-full bg-zinc-950 group-hover:border-violet-400 transition-all duration-500">
-                                            {primaryEntity?.avatar?.url ? (
-                                                <img src={primaryEntity.avatar.url} className="w-full h-full object-cover rounded-full md:grayscale md:group-hover:grayscale-0 transition-all" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-zinc-900">
-                                                    <Icon icon="lucide:user" width={16} />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <span className="text-[9px] font-mono text-violet-400 font-bold uppercase tracking-[0.2em] mb-0.5 block">Primary_Source</span>
-                                            <div className="text-sm font-black text-zinc-200 group-hover:text-white transition-colors truncate italic uppercase tracking-tighter">
-                                                {primaryArtistName}
-                                            </div>
-                                        </div>
-                                    </Link>
+                                <div className="flex flex-col gap-6">
+                                    {[
+                                        { id: 'ROOT_AUTHORITY', label: 'Root_Authority', source: true },
+                                        { id: 'CORE_AUTHORITY', label: 'Core_Authority', classes: ['author'] },
+                                        { id: 'COLLABORATIVE_FLUX', label: 'Collaborative_Flux', classes: ['collaborator'] },
+                                        { id: 'SUPPORT_GRID', label: 'Support_Grid', classes: ['staff'] }
+                                    ].map((group) => {
+                                        if (group.source) {
+                                            const hasOrigin = artifact.sourceArtifact || artifact.externalOriginal || originalArtistCredits.length > 0;
+                                            if (!hasOrigin) return null;
 
-                                    {/* Additional Credits */}
-                                    {artifact.credits?.filter((c: any) => !c.isPrimary || c.contributorClass === 'staff').map((credit: any, i: number) => {
-                                        const name = credit.entity.translations?.find((t: any) => t.locale === locale)?.name || credit.entity.translations?.[0]?.name || "Anon";
+                                            return (
+                                                <div key={group.id} className="flex flex-col gap-2">
+                                                    <div className="flex items-center gap-2 px-1 mb-1">
+                                                        <Icon icon="lucide:anchor" width={10} className="text-rose-500" />
+                                                        <span className="text-[8px] font-mono text-rose-500 font-bold uppercase tracking-[0.4em]">{group.label}</span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        {artifact.sourceArtifact && (
+                                                            <Link
+                                                                href={`/artifacts/${artifact.sourceArtifact.id}`}
+                                                                className="flex items-center gap-3 p-2.5 bg-rose-950/20 border border-rose-900/30 rounded-lg group/root transition-all hover:bg-rose-900/10 relative overflow-hidden"
+                                                            >
+                                                                <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.5)]" />
+                                                                <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 rounded overflow-hidden flex items-center justify-center">
+                                                                    {artifact.sourceArtifact.thumbnail?.url ? (
+                                                                        <img src={artifact.sourceArtifact.thumbnail.url} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
+                                                                    ) : (
+                                                                        <Icon icon="lucide:database" width={14} className="text-zinc-700" />
+                                                                    )}
+                                                                </div>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <div className="text-[11px] font-black text-rose-100 uppercase italic truncate">
+                                                                        {artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || artifact.sourceArtifact.translations?.[0]?.title}
+                                                                    </div>
+                                                                    <div className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest mt-1 italic">LINKED_REGISTRY</div>
+                                                                </div>
+                                                            </Link>
+                                                        )}
+
+                                                        {artifact.externalOriginal && (
+                                                            <div className="flex items-center gap-3 p-2.5 bg-rose-950/10 border border-rose-900/20 rounded-lg relative overflow-hidden">
+                                                                <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-900/50" />
+                                                                <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-900 rounded overflow-hidden flex items-center justify-center">
+                                                                    <Icon icon="lucide:external-link" width={14} className="text-rose-900" />
+                                                                </div>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <div className="text-[11px] font-black text-rose-200 uppercase italic truncate">
+                                                                        {artifact.externalOriginal.title}
+                                                                    </div>
+                                                                    <div className="text-[9px] font-mono text-rose-800 uppercase tracking-widest mt-1 italic">EXTERNAL_ORIGIN</div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal && (
+                                                            <div className="flex flex-col gap-2">
+                                                                {originalArtistCredits.map((credit: any, i: number) => {
+                                                                    const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANON";
+                                                                    const url = credit.entity ? getEntityUrl(credit.entity) : "#";
+                                                                    
+                                                                    return (
+                                                                        <Link 
+                                                                            key={i} 
+                                                                            href={url}
+                                                                            className="flex items-center gap-3 p-2.5 bg-rose-950/20 border border-rose-900/30 rounded-lg group/root transition-all hover:bg-rose-900/10 relative overflow-hidden"
+                                                                        >
+                                                                            <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.5)]" />
+                                                                            <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 rounded overflow-hidden flex items-center justify-center">
+                                                                                {credit.entity?.avatar?.url ? (
+                                                                                    <img src={credit.entity.avatar.url} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
+                                                                                ) : (
+                                                                                    <Icon icon="lucide:feather" width={14} className="text-rose-900" />
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="min-w-0 flex-1">
+                                                                                <div className="text-[11px] font-black text-rose-100 uppercase italic truncate">
+                                                                                    {name}
+                                                                                </div>
+                                                                                <div className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest mt-1 italic">CITATIONAL_ANCESTRY</div>
+                                                                            </div>
+                                                                        </Link>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex justify-center -mb-2 -mt-1 opacity-50">
+                                                        <div className="h-4 w-px border-l border-dashed border-rose-900" />
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        const groupCredits = artifact.credits?.filter((c: any) => 
+                                            group.classes!.includes(c.contributorClass) && !c.isOriginalArtist
+                                        ) || [];
+                                        if (groupCredits.length === 0) return null;
+
                                         return (
-                                            <Link
-                                                key={`crew-${i}`}
-                                                href={getEntityUrl(credit.entity)}
-                                                className="flex items-center gap-3 p-2.5 bg-zinc-900/30 border border-zinc-800/80 rounded-lg hover:border-violet-500/30 transition-all group/item ml-4"
-                                            >
-                                                <div className="w-7 h-7 shrink-0 bg-zinc-950 border border-zinc-800 rounded md:grayscale md:group-hover/item:grayscale-0 transition-all flex items-center justify-center">
-                                                    {credit.entity.avatar?.url ? (
-                                                        <img src={credit.entity.avatar.url} className="w-full h-full object-cover rounded-sm" />
-                                                    ) : (
-                                                        <Icon icon="lucide:user" width={12} className="text-zinc-700" />
-                                                    )}
+                                            <div key={group.id} className="flex flex-col gap-2">
+                                                <div className="flex items-center gap-2 px-1 mb-1">
+                                                    <div className="w-1 h-1 bg-zinc-800 rounded-full" />
+                                                    <span className="text-[8px] font-mono text-zinc-600 font-bold uppercase tracking-[0.4em]">{group.label}</span>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <div className="text-[11px] font-bold text-zinc-400 group-hover/item:text-zinc-200 truncate uppercase italic leading-none transition-colors">{name}</div>
-                                                    <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest mt-1 truncate">{credit.displayRole || credit.role}</div>
+                                                <div className="flex flex-col gap-2">
+                                                    {groupCredits.sort((a: any, b: any) => (a.isPrimary ? -1 : 1)).map((credit: any, i: number) => {
+                                                        const name = credit.manualName || credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "Anon";
+                                                        const isGhost = !credit.entityId;
+                                                        const isEncrypted = credit.entity?.isEncrypted;
+                                                        const isPrimary = credit.isPrimary;
+                                                        const isOriginal = credit.isOriginalArtist;
+
+                                                        return (
+                                                            <Link
+                                                                key={`${group.id}-${i}`}
+                                                                href={credit.entity ? getEntityUrl(credit.entity) : '#'}
+                                                                className={cn(
+                                                                    "flex items-center gap-3 p-2.5 bg-zinc-900/30 border border-zinc-800/80 rounded-lg transition-all group/item relative overflow-hidden",
+                                                                    credit.entity && "hover:border-violet-500/30 hover:bg-zinc-900/50",
+                                                                    isPrimary && "bg-zinc-900 border-zinc-700/50 shadow-lg",
+                                                                    isOriginal && "border-rose-900/30 bg-rose-900/5"
+                                                                )}
+                                                            >
+                                                                {isPrimary && (
+                                                                    <div className="absolute top-0 left-0 w-0.5 h-full bg-violet-600 shadow-[0_0_8px_rgba(124,58,237,0.5)]" />
+                                                                )}
+                                                                {isOriginal && (
+                                                                    <div className="absolute top-0 right-0 p-1 opacity-20">
+                                                                        <Icon icon="lucide:star" width={8} className="text-rose-500" />
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 rounded transition-all flex items-center justify-center relative overflow-hidden">
+                                                                    {credit.entity?.avatar?.url ? (
+                                                                        <img src={credit.entity.avatar.url} className="w-full h-full object-cover rounded-sm grayscale group-hover/item:grayscale-0" />
+                                                                    ) : (
+                                                                        <Icon icon={isGhost ? "lucide:ghost" : (isEncrypted ? "lucide:lock" : "lucide:user")} width={14} className="text-zinc-700" />
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="min-w-0 flex-1">
+                                                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                                                        <div className={cn(
+                                                                            "text-[11px] font-bold text-zinc-400 group-hover/item:text-zinc-100 truncate uppercase italic leading-none transition-colors",
+                                                                            isPrimary && "text-white text-xs font-black"
+                                                                        )}>
+                                                                            {name}
+                                                                        </div>
+                                                                        {isOriginal && (
+                                                                            <span className="text-[7px] font-mono text-rose-500 border border-rose-500/20 px-1 rounded-sm uppercase tracking-tighter">SOURCE_AUTHORITY</span>
+                                                                        )}
+                                                                        {(isGhost || isEncrypted) && (
+                                                                            <Icon icon={isGhost ? "lucide:ghost" : "lucide:lock"} width={8} className="text-rose-500/50" />
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest mt-1 truncate">
+                                                                        {credit.displayRole || credit.role.replace(/_/g, ' ')}
+                                                                        {isPrimary && " // PRIMARY"}
+                                                                    </div>
+                                                                </div>
+                                                            </Link>
+                                                        );
+                                                    })}
                                                 </div>
-                                            </Link>
+                                            </div>
                                         );
                                     })}
                                 </div>
@@ -287,7 +517,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                 <div className="flex flex-col gap-2 pt-2">
                                     <div className="flex items-center justify-between px-1 mb-1">
                                         <span className="text-[10px] font-mono text-zinc-500 font-black uppercase tracking-[0.4em]">Gateway_Links</span>
-                                        <span className="text-[9px] font-mono text-zinc-700">UPLINK_STABLE</span>
+                                        <span className="text-[9px] font-mono text-zinc-700 animate-pulse">UPLINK_STABLE</span>
                                     </div>
                                     <div className="flex flex-col gap-1.5">
                                         {artifact.resources.map((res: any, i: number) => (
@@ -300,9 +530,9 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-7 h-7 rounded-lg bg-zinc-950 flex items-center justify-center border border-zinc-800 group-hover/gate:border-violet-500/50 transition-all shadow-inner">
-                                                        <Icon icon={`simple-icons:${res.platform.toLowerCase()}`} className="text-zinc-500 group-hover/gate:text-violet-400" width={14} />
+                                                        <Icon icon={res.platform === 'r2_hosted' ? 'lucide:box' : `simple-icons:${res.platform.toLowerCase()}`} className="text-zinc-500 group-hover/gate:text-violet-400" width={14} />
                                                     </div>
-                                                    <span className="text-[11px] font-black text-zinc-400 group-hover/gate:text-white uppercase tracking-tighter transition-colors">{res.platform}</span>
+                                                    <span className="text-[11px] font-black text-zinc-400 group-hover/gate:text-white uppercase tracking-tighter transition-colors">{res.platform.replace(/_/g, ' ')}</span>
                                                 </div>
                                                 <Icon icon="lucide:external-link" width={12} className="text-zinc-800 group-hover/gate:text-violet-500" />
                                             </a>

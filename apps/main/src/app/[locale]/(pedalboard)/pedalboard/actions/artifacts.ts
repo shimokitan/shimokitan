@@ -85,7 +85,6 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                     locale: t.locale,
                     title: t.title || '',
                     description: t.description,
-                    sourceCredit: t.sourceCredit,
                 }))
             );
         }
@@ -95,7 +94,6 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                 validated.resources.map((r) => ({
                     id: nanoid(),
                     artifactId,
-                    type: r.type,
                     platform: r.platform as any,
                     role: r.role as any,
                     value: r.url,
@@ -116,7 +114,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
                     contributorClass: c.contributorClass,
                     isPrimary: c.isPrimary,
                     position: c.position,
-                    isOriginalArtist: false,
+                    isOriginalArtist: c.isOriginalArtist || false,
                 }))
             );
         }
@@ -197,7 +195,6 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                     locale: t.locale,
                     title: t.title || '',
                     description: t.description,
-                    sourceCredit: t.sourceCredit,
                 }))
             );
         }
@@ -208,7 +205,6 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 validated.resources.map((r) => ({
                     id: nanoid(),
                     artifactId: id,
-                    type: r.type,
                     platform: r.platform as any,
                     role: r.role as any,
                     value: r.url,
@@ -229,8 +225,8 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                     displayRole: c.displayRole,
                     contributorClass: c.contributorClass,
                     isPrimary: c.isPrimary,
+                    isOriginalArtist: c.isOriginalArtist || false,
                     position: c.position,
-                    isOriginalArtist: false,
                 }))
             );
         }

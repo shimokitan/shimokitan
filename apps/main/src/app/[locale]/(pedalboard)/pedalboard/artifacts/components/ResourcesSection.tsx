@@ -6,7 +6,7 @@ import { Icon } from '@iconify/react';
 
 import { RESOURCE_ROLES } from '@/lib/validations/pedalboard';
 
-interface Resource {
+export interface Resource {
     type: string;
     platform: string;
     url: string;
