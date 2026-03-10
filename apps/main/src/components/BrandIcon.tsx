@@ -19,8 +19,8 @@ interface BrandIconProps {
 export function BrandIcon({ 
   platform, 
   className, 
-  width = 24, 
-  height = 24, 
+  width, 
+  height, 
   fallbackIcon 
 }: BrandIconProps) {
   const cdnUrl = getBrandIconUrl(platform);

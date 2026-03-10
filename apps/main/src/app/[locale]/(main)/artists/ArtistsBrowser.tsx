@@ -87,7 +87,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                         className="group relative bg-zinc-950 border border-zinc-900 hover:border-violet-500/40 p-4 transition-all duration-500"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 p-1 transform group-hover:-rotate-3 transition-transform duration-500">
+                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 transform group-hover:-rotate-3 transition-transform duration-500 overflow-hidden">
                                 {entity.avatarUrl ? (
                                     <img
                                         src={entity.avatarUrl}

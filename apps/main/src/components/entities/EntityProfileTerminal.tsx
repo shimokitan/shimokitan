@@ -102,7 +102,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                     <div className="lg:col-span-3 lg:sticky lg:top-0 h-fit bg-black p-6 space-y-8 lg:border-r lg:border-zinc-900">
                         <div className="space-y-6">
                             {/* Bio-Scan Frame */}
-                            <div className="relative group mx-auto lg:mx-0 w-48 lg:w-full aspect-square bg-zinc-950 border border-zinc-800 p-2 overflow-hidden">
+                            <div className="relative group mx-auto lg:mx-0 w-48 lg:w-full aspect-square bg-zinc-950 border border-zinc-800 overflow-hidden">
                                 <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-zinc-500" />
                                 <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-zinc-500" />
                                 <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-zinc-500" />
@@ -166,9 +166,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                                 <div className="w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center bg-zinc-900 border border-zinc-800 group-hover:border-zinc-500 group-hover:bg-zinc-950 transition-colors">
                                                     <BrandIcon
                                                         platform={link.platform}
-                                                        className="text-zinc-400 group-hover:text-white"
-                                                        width={24}
-                                                        height={24}
+                                                        className="text-zinc-400 group-hover:text-white w-full h-full"
                                                     />
                                                 </div>
                                                 <div className="space-y-1">
