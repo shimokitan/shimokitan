@@ -202,7 +202,7 @@ export function Navbar() {
                                     <MobileNavLink icon="lucide:radio" label={navDict.home} href="/" active={pathname === "/"} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={pathname?.startsWith("/artifacts")} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} onClick={() => setIsOpen(false)} />
-                                    <MobileNavLink icon="lucide:message-square-plus" label={navDict.zines} href="/zines" active={pathname?.startsWith("/zines")} onClick={() => setIsOpen(false)} />
+                                    <MobileNavLink icon="lucide:broadcast" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" active={false} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={pathname?.startsWith("/pedalboard")} onClick={() => setIsOpen(false)} />
                                 </nav>
 
@@ -318,11 +318,9 @@ export function Navbar() {
     );
 }
 
-function MobileNavLink({ icon, label, href, active, onClick }: { icon: string, label: string, href: string, active: boolean, onClick?: () => void }) {
-    return (
-        <Link
-            href={href}
-            onClick={onClick}
+function MobileNavLink({ icon, label, href, active, onClick, target, rel }: { icon: string, label: string, href: string, active: boolean, onClick?: () => void, target?: string, rel?: string }) {
+    const content = (
+        <div
             className={cn(
                 "flex items-center gap-4 px-4 py-4 rounded-xl border transition-all duration-300 group relative overflow-hidden",
                 active
@@ -344,6 +342,20 @@ function MobileNavLink({ icon, label, href, active, onClick }: { icon: string, l
             ) : (
                 <Icon icon="lucide:chevron-right" width={14} className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-zinc-700" />
             )}
+        </div>
+    );
+
+    if (href.startsWith('http')) {
+        return (
+            <a href={href} target={target} rel={rel} onClick={onClick} className="block">
+                {content}
+            </a>
+        );
+    }
+
+    return (
+        <Link href={href} onClick={onClick} className="block">
+            {content}
         </Link>
     );
 }

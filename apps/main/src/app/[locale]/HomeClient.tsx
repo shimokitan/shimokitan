@@ -51,10 +51,43 @@ export default function HomeClient({
 }) {
   const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
   const [activeEntity, setActiveEntity] = useState<number>(0);
+  const [activeSignal, setActiveSignal] = useState<number>(0);
   const station = useStationStore();
+
+  // Hardcoded Signal Issues from signal project
+  const signalIssues = [
+    {
+      id: "SIG-001",
+      title: "API Latency Degradation in Core Services",
+      severity: "Critical",
+      date: "2026-03-08",
+      description: "Significant latency observed across all routes accessing the core database, leading to timeouts in user-facing applications.",
+    },
+    {
+      id: "SIG-002",
+      title: "Webhook Delivery Delays",
+      severity: "High",
+      date: "2026-03-08",
+      description: "Outgoing webhooks are delayed by up to 5 minutes due to an overloaded worker queue.",
+    },
+    {
+      id: "SIG-003",
+      title: "Intermittent Database Connection Drops",
+      severity: "Monitoring",
+      date: "2026-03-07",
+      description: "Occasional connection drops to the read replica in the eu-central region.",
+    },
+  ];
 
   const [randomFreq, setRandomFreq] = useState<string>("000");
   const time = useTime();
+
+  useEffect(() => {
+    const signalInterval = setInterval(() => {
+      setActiveSignal((prev) => (prev + 1) % signalIssues.length);
+    }, 8000);
+    return () => clearInterval(signalInterval);
+  }, [signalIssues.length]);
 
   useEffect(() => {
     setRandomFreq(Math.floor(Math.random() * 1000).toString(16));
@@ -117,13 +150,15 @@ export default function HomeClient({
                 <Icon icon="lucide:users" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
                 {dict.home.nav_entities}
               </Link>
-              <Link
-                href="/zines"
+              <a
+                href="https://signal.shimokitan.live"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
               >
-                <Icon icon="lucide:notebook-pen" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
-                {dict.home.nav_zines}
-              </Link>
+                <Icon icon="lucide:radio" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
+                Signal Station
+              </a>
             </div>
 
             {/* Stats strip */}
@@ -656,79 +691,112 @@ export default function HomeClient({
 
       {/* 9. Narrative Collapse / Zine Feed */}
       <BentoCard
-        className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0"
-        title="Narrative Collapse"
-        icon="lucide:notebook-pen"
+        className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0 bg-white"
+        title="Signal Station"
+        icon="lucide:radio"
         minimal
       >
-        <div className="flex flex-col h-full bg-zinc-950/20 backdrop-blur-sm p-4 md:p-6">
-          <div className="flex items-center justify-between mb-4 border-b border-zinc-900 pb-2">
-            <div className="flex items-center gap-2">
-              <Icon icon="lucide:activity" className="text-violet-500 animate-pulse" width={14} />
-              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest font-black">
-                Live_Feed // Resonance_Events
-              </span>
+        <div className="relative h-full flex flex-col bg-white">
+          <div className="absolute inset-0 pointer-events-none z-40 opacity-[0.06] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,1)_2px,rgba(0,0,0,1)_3px)]" />
+          
+          <div className="relative p-2.5 md:p-3 flex items-center justify-between z-30 border-b-2 border-zinc-900 bg-white/95 backdrop-blur-md">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="bg-zinc-900 text-white text-[8px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 md:py-1 uppercase tracking-tighter italic">
+                Signal.
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[7px] md:text-[9px] font-black text-zinc-900 uppercase leading-none">Transmission Log</span>
+                <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest leading-none mt-0.5">
+                  104.2 FM // {time.slice(0, 5)}
+                </span>
+              </div>
             </div>
-            <div className="text-[10px] font-mono text-zinc-600 uppercase flex items-center gap-2">
-              <span className="w-1 h-3 bg-zinc-800" />
-              Pulse_Registry
+            
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-[6px] md:text-[7px] font-mono text-zinc-500 font-bold uppercase tracking-widest opacity-60">District Pulse</span>
+                <span className="text-[7px] md:text-[8px] font-black text-zinc-900 uppercase">Operational</span>
+              </div>
+              <a 
+                href="https://signal.shimokitan.live"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 md:px-4 md:py-1.5 bg-zinc-900 text-white text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] italic hover:bg-rose-600 transition-all shadow-[2px_2px_0px_rgba(225,29,72,1)]"
+              >
+                Access Hub ↗
+              </a>
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
-            {recentZines.length > 0 ? (
-              recentZines.slice(0, 3).map((zine) => (
-                <div
-                  key={zine.id}
-                  className="flex gap-4 p-3 border border-zinc-900 bg-zinc-950/50 rounded-lg group hover:border-violet-500/50 transition-all hover:bg-zinc-900/50"
-                >
-                  {/* Linked Artifact Thumbnail */}
-                  <div className="shrink-0 w-12 h-12 rounded overflow-hidden border border-zinc-800 bg-zinc-900 shadow-inner group-hover:border-violet-500/30 transition-colors">
-                    <Link href={`/artifacts/${zine.artifact.id}`} className="block w-full h-full">
-                      {zine.artifact.thumbnailImage ? (
-                        <img
-                          src={zine.artifact.thumbnailImage}
-                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-110"
-                          alt={zine.artifact.title}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-zinc-700">
-                          <Icon icon="lucide:disc" width={20} />
-                        </div>
-                      )}
-                    </Link>
-                  </div>
-                  {/* Zine Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-[10px] font-mono text-violet-500 font-black uppercase tracking-widest truncate">
-                          @{zine.author}
-                        </span>
-                        <span className="text-[9px] font-mono text-zinc-600 truncate opacity-60">
-                          // {zine.artifact.title}
-                        </span>
-                      </div>
-                      {(zine.resonance || 0) > 0 && (
-                        <div className="flex items-center gap-1 text-[9px] font-mono text-rose-500/70 shrink-0">
-                          <Icon icon="lucide:zap" width={8} />
-                          <span>{zine.resonance}</span>
-                        </div>
-                      )}
+          <div className="relative flex-1 overflow-hidden">
+            {signalIssues.map((issue, idx) => (
+              <div
+                key={issue.id}
+                className={cn(
+                  "absolute inset-0 p-3 md:p-5 transition-all duration-1000 flex flex-col justify-center",
+                  idx === activeSignal ? "opacity-100 scale-100 z-20" : "opacity-0 scale-95 z-10"
+                )}
+              >
+                <div className="max-w-3xl mx-auto w-full space-y-2.5 md:space-y-3.5">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-400 text-[8px] md:text-[9px] font-mono font-bold tracking-tight">
+                        REF_LOG::{issue.id}
+                      </span>
+                      <span className={cn(
+                        "text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border",
+                        issue.severity === 'Critical' ? "border-red-600 text-red-600 bg-red-50/50" :
+                        issue.severity === 'High' ? "border-amber-600 text-amber-600 bg-amber-50/50" :
+                        "border-blue-600 text-blue-600 bg-blue-50/50"
+                      )}>
+                        {issue.severity}
+                      </span>
                     </div>
-                    <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-2 italic opacity-85 group-hover:opacity-100 transition-opacity">
-                      &quot;{zine.content}&quot;
-                    </p>
+                    <h3 className="text-lg md:text-2xl font-black text-zinc-900 leading-[0.9] tracking-tighter uppercase italic drop-shadow-sm">
+                      {issue.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-[10px] md:text-[13px] text-zinc-800 leading-tight font-bold max-w-2xl border-l-[2px] md:border-l-[3px] border-zinc-900 pl-2 md:pl-3 italic">
+                    &ldquo;{issue.description}&rdquo;
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2.5 md:pt-3.5 border-t border-zinc-900/10">
+                    <div className="flex flex-col">
+                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">Logged On</span>
+                      <time className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase">
+                        {issue.date.replace(/-/g, '.')} // {time.slice(0, 5)}
+                      </time>
+                    </div>
+                    
+                    <div className="flex items-center gap-1.5 md:gap-3">
+                      {signalIssues.map((_, dotIdx) => (
+                        <button
+                          key={dotIdx}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setActiveSignal(dotIdx);
+                          }}
+                          className={cn(
+                            "h-2 md:h-2.5 border border-zinc-900 transition-all duration-300",
+                            dotIdx === activeSignal ? "w-6 md:w-10 bg-zinc-900" : "w-2 md:w-2.5 bg-transparent hover:bg-zinc-100"
+                          )}
+                          aria-label={`Go to issue ${dotIdx + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="hidden sm:flex flex-col items-end">
+                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">Feed Status</span>
+                      <span className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase tracking-tighter">Secure // Encrypted</span>
+                    </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-zinc-800 border border-dashed border-zinc-900 rounded-xl py-8">
-                <Icon icon="lucide:inbox" width={32} className="opacity-20 mb-2" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.5em] opacity-40">No_Active_Pulse</span>
               </div>
-            )}
+            ))}
           </div>
+          
+          <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
         </div>
       </BentoCard>
     </div>

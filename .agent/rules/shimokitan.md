@@ -11,4 +11,4 @@ trigger: always_on
 * **Maintenance:** Audit existing packages before adding new ones
 * **Auth:** Neon Auth
 * **Project Type:** Enterprise-grade, Scaling Ready
-* **Responsiveness:** Always make a design with mobile, tablet, and desktop in min
+* **Responsiveness:** Always make a design with mobile, tablet, and desktop in mind

@@ -54,7 +54,7 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                             <NavigationLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={isArtifactsActive} />
                             <NavigationLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} />
 
-                            <NavigationLink icon="lucide:message-square-plus" label={navDict.zines} href="/zines" active={isZinesActive} />
+                            <NavigationLink icon="lucide:broadcast" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" />
                             <NavigationLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={isPedalboardActive} />
 
                             <div className="h-px bg-zinc-800/80 w-full my-1" />

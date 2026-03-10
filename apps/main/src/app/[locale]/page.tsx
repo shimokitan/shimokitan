@@ -127,13 +127,13 @@ export default async function AppPage({
       if (primaryVideo) {
         if (primaryVideo.value.includes("youtube.com/watch?v=")) {
           const vId = primaryVideo.value.split("v=")[1]?.split("&")[0];
-          videoUrl = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=1`;
+          videoUrl = `https://www.youtube.com/embed/${vId}`;
         } else if (primaryVideo.value.includes("youtu.be/")) {
           const vId = primaryVideo.value.split("youtu.be/")[1]?.split("?")[0];
-          videoUrl = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=1`;
+          videoUrl = `https://www.youtube.com/embed/${vId}`;
         } else if (primaryVideo.platform === 'youtube' && !primaryVideo.value.includes('/')) {
           // Handle case where just the ID was stored
-          videoUrl = `https://www.youtube.com/embed/${primaryVideo.value}?autoplay=1&mute=1`;
+          videoUrl = `https://www.youtube.com/embed/${primaryVideo.value}`;
         } else {
           videoUrl = primaryVideo.value;
         }

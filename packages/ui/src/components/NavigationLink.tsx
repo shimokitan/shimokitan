@@ -11,6 +11,8 @@ interface NavigationLinkProps {
     active?: boolean;
     onClick?: () => void;
     href?: string;
+    target?: string;
+    rel?: string;
 }
 
 export const NavigationLink = ({
@@ -18,7 +20,9 @@ export const NavigationLink = ({
     label,
     active = false,
     onClick,
-    href
+    href,
+    target,
+    rel
 }: NavigationLinkProps) => {
     const content = (
         <button
@@ -37,9 +41,15 @@ export const NavigationLink = ({
     return (
         <div className="relative group flex items-center cursor-pointer">
             {href ? (
-                <Link href={href} className="block">
-                    {content}
-                </Link>
+                href.startsWith('http') ? (
+                    <a href={href} target={target} rel={rel} className="block">
+                        {content}
+                    </a>
+                ) : (
+                    <Link href={href} className="block">
+                        {content}
+                    </Link>
+                )
             ) : content}
 
             {/* Floating Tooltip - Firmly to the Right */}
