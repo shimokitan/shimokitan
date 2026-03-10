@@ -138,77 +138,6 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                             </div>
                         </div>
 
-                        {/* 2.2 Derivation Source (if cover/remix) */}
-                        {(artifact.nature !== 'original' || originalArtistCredits.length > 0) && (
-                            <div className="flex flex-col gap-4 p-6 bg-zinc-950/50 border border-zinc-900 rounded-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                                    <Icon icon="lucide:git-branch" width={40} />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icon icon="lucide:corner-down-right" width={14} className="text-rose-500" />
-                                    <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.4em]">Derivation_Origin</span>
-                                </div>
-                                
-                                <div className="flex flex-col gap-4">
-                                    {artifact.sourceArtifact && (
-                                        <Link 
-                                            href={`/artifacts/${artifact.sourceArtifact.id}`}
-                                            className="flex items-center gap-4 group/src"
-                                        >
-                                            <div className="w-16 h-10 bg-zinc-900 border border-zinc-800 rounded overflow-hidden">
-                                                {artifact.sourceArtifact.thumbnail?.url && (
-                                                    <img src={artifact.sourceArtifact.thumbnail.url} className="w-full h-full object-cover grayscale group-hover/src:grayscale-0 transition-all" />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <div className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Linked_Registry_Item</div>
-                                                <div className="text-sm font-black italic uppercase text-zinc-300 group-hover/src:text-white transition-colors">
-                                                    {artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || artifact.sourceArtifact.translations?.[0]?.title}
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    )}
-
-                                    {artifact.externalOriginal && (
-                                        <div className="flex flex-col gap-1">
-                                            <div className="text-[11px] font-black italic uppercase text-white">
-                                                {artifact.externalOriginal.title}
-                                            </div>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                {artifact.externalOriginal.platformUrl && (
-                                                    <a 
-                                                        href={artifact.externalOriginal.platformUrl} 
-                                                        target="_blank" 
-                                                        className="text-[10px] font-mono text-rose-400 hover:text-white flex items-center gap-1 transition-colors"
-                                                    >
-                                                        <Icon icon="lucide:external-link" width={10} />
-                                                        VIEW_ORIGINAL_SOURCE
-                                                    </a>
-                                                )}
-                                                {artifact.externalOriginal.platform && (
-                                                    <span className="text-[8px] font-mono text-zinc-600 uppercase bg-zinc-900 px-1.5 py-0.5 rounded">
-                                                        {artifact.externalOriginal.platform}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal && (
-                                        <div className="flex flex-col gap-2">
-                                            {originalArtistCredits.map((credit: any, i: number) => {
-                                                const name = credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANONYMOUS_ORIGIN";
-                                                return (
-                                                    <div key={i} className="text-sm font-black italic uppercase text-zinc-400">
-                                                        {name}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
 
                         {/* 2.3 Editorial Analysis */}
                         <div className="flex flex-col gap-4">
@@ -216,11 +145,17 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                 <div className="w-4 h-px bg-violet-600" />
                                 <span className="text-[11px] font-mono text-violet-500 font-black uppercase tracking-[0.4em]">Editorial_Analysis</span>
                             </div>
-                            <div className="prose prose-invert prose-zinc max-w-none">
-                                <p className="text-base lg:text-lg text-zinc-300 italic font-medium leading-relaxed tracking-tight whitespace-pre-wrap">
-                                    {description || "UNIDENTIFIED_CONTENT_ORIGIN"}
-                                </p>
-                            </div>
+                            {description ? (
+                                <div className="prose prose-invert prose-zinc max-w-none">
+                                    <p className="text-base lg:text-lg text-zinc-300 italic font-medium leading-relaxed tracking-tight whitespace-pre-wrap">
+                                        {description}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="p-8 border border-dashed border-zinc-900 rounded-2xl flex items-center justify-center text-[10px] font-mono text-zinc-700 uppercase tracking-widest italic bg-zinc-950/20">
+                                    ANALYSIS_PENDING // VACUUM_STATE
+                                </div>
+                            )}
                         </div>
 
                         {/* 2.4 Specs Grid */}
