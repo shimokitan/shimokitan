@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { BentoCard, Badge, cn } from "@shimokitan/ui";
 import { useTime } from "../../hooks/use-time";
 import Link from "../../components/Link";
+import Image from "next/image";
 import { Dictionary, getEntityUrl } from "@shimokitan/utils";
 import { useStationStore } from "../../lib/store/station-store";
 
@@ -54,28 +55,30 @@ export default function HomeClient({
   const [activeSignal, setActiveSignal] = useState<number>(0);
   const station = useStationStore();
 
-  // Hardcoded Signal Issues from signal project
   const signalIssues = [
     {
       id: "SIG-001",
       title: "API Latency Degradation in Core Services",
       severity: "Critical",
       date: "2026-03-08",
-      description: "Significant latency observed across all routes accessing the core database, leading to timeouts in user-facing applications.",
+      description:
+        "Significant latency observed across all routes accessing the core database, leading to timeouts in user-facing applications.",
     },
     {
       id: "SIG-002",
       title: "Webhook Delivery Delays",
       severity: "High",
       date: "2026-03-08",
-      description: "Outgoing webhooks are delayed by up to 5 minutes due to an overloaded worker queue.",
+      description:
+        "Outgoing webhooks are delayed by up to 5 minutes due to an overloaded worker queue.",
     },
     {
       id: "SIG-003",
       title: "Intermittent Database Connection Drops",
       severity: "Monitoring",
       date: "2026-03-07",
-      description: "Occasional connection drops to the read replica in the eu-central region.",
+      description:
+        "Occasional connection drops to the read replica in the eu-central region.",
     },
   ];
 
@@ -95,85 +98,140 @@ export default function HomeClient({
 
   const heroArtifact = spotlightArtifacts[0];
 
-  /** Derived state: docked audio player is visible when initialized and not minimized */
   const isDockedActive = station.isInitialized && !station.isMinimized;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 md:grid-rows-7 gap-3 h-auto md:h-full">
+
       {/* 1. Hero / District Branding */}
-      <div className="col-span-2 md:col-span-2 md:row-span-3 relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl">
+      <div className="col-span-2 md:col-span-2 md:row-span-3 md:col-start-1 md:row-start-1 relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl">
+        {/* Hero Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/tokyo.jpg"
+            alt="Tokyo street scene"
+            fill
+            priority
+            className="object-cover object-[35%_center] opacity-40 group-hover:opacity-60 transition-all duration-1000 grayscale group-hover:grayscale-[0.3] scale-105 group-hover:scale-100"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-950/90 via-zinc-950/40 to-zinc-950/90" />
+          <div className="absolute inset-0 bg-zinc-950/20 mix-blend-overlay" />
+        </div>
+
         {/* Scanline overlay */}
-        <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.1)_2px,rgba(255,255,255,0.1)_4px)]" />
+        <div className="absolute inset-0 pointer-events-none z-40 opacity-[0.08] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,1)_2px,rgba(0,0,0,1)_3px)]" />
 
-        <div className="h-full p-6 md:p-8 flex flex-col items-center justify-center text-center relative">
-          <div className="absolute top-0 right-0 w-12 h-12 border-t border-r border-zinc-800" />
+        {/* On mobile: single-column layout (no branding strip) */}
+        {/* On desktop: two-column layout with branding strip */}
+        <div className="h-full relative z-20 group/hero">
 
-          <div>
-            <div className="flex items-center justify-center gap-3 mb-4 md:mb-6">
-              <span className="w-8 h-px bg-zinc-800" />
-              <span className="text-[11px] font-mono text-zinc-600 uppercase tracking-widest">
-                {dict.home.district}
-              </span>
-              <span className="w-8 h-px bg-zinc-800" />
+          {/* Left Vertical Branding Strip — desktop only */}
+          <div className="hidden md:flex absolute left-0 top-0 bottom-0 w-[80px] border-r border-white/10 bg-zinc-950/80 backdrop-blur-md flex-col items-center py-10 z-30">
+            <div className="text-[10px] font-mono text-zinc-500 uppercase [writing-mode:vertical-lr] rotate-180 tracking-[0.5em] font-black italic mb-12">
+              DISTRICT _ SYSTEM
             </div>
-
-            <h2 className="flex flex-col items-center py-2 text-center">
-              <div className="flex flex-col md:flex-row items-center md:gap-3 text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter uppercase italic leading-[0.85] md:leading-none">
-                <span className="text-zinc-800 drop-shadow-sm">SHIMO</span>
-                <span className="text-white drop-shadow-md">KITAN</span>
+            <div className="flex flex-col gap-1.5 items-center">
+              {"SHIMOKITAN".split("").map((char, i) => (
+                <span
+                  key={i}
+                  className="text-xl font-black text-white/20 transition-all duration-500 group-hover/hero:text-white group-hover/hero:scale-110"
+                  style={{ transitionDelay: `${i * 30}ms` }}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+            <div className="mt-auto flex flex-col items-center gap-4">
+              <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-violet-500 to-transparent animate-pulse" />
+              <div className="text-[8px] font-mono text-violet-500 uppercase [writing-mode:vertical-lr] rotate-180 tracking-widest font-black opacity-60">
+                ACTIVE_LINK
               </div>
-              <span className="text-violet-600 text-[11px] font-mono tracking-[0.5em] mt-2 md:mt-4 italic drop-shadow-none">
-                DIGITAL_DISTRICT
-              </span>
-            </h2>
-
-            {/* Tagline */}
-            <p className="text-zinc-400 text-xs font-mono mt-4 tracking-wide leading-relaxed mx-auto max-w-[260px]">
-              &quot;{dict.home.tagline}&quot;
-            </p>
+            </div>
           </div>
 
-          {/* Quick-nav links */}
-          <div className="mt-6 space-y-3">
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <Link
-                href="/artifacts"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
-              >
-                <Icon icon="lucide:archive" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
-                {dict.home.nav_archive}
-              </Link>
-              <Link
-                href="/artists"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
-              >
-                <Icon icon="lucide:users" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
-                {dict.home.nav_entities}
-              </Link>
-              <a
-                href="https://signal.shimokitan.live"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700 rounded bg-zinc-900/50 text-zinc-300 hover:text-white hover:border-violet-500/60 hover:bg-violet-500/10 transition-all group"
-              >
-                <Icon icon="lucide:radio" width={11} className="text-violet-500 group-hover:scale-110 transition-transform" />
-                Signal Station
-              </a>
+          {/* Main Cinematic Viewport — offset on desktop to account for strip */}
+          <div className="relative overflow-hidden h-full md:ml-[80px]">
+            {/* Viewport Corners (HUD Style) */}
+            <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-white/20 z-30" />
+            <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-white/20 z-30" />
+            <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-white/20 z-30" />
+            <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-white/20 z-30" />
+
+            {/* Top Info Bar */}
+            <div className="absolute top-8 left-8 right-8 flex justify-between items-start z-30 pointer-events-none">
+              <div className="space-y-1">
+                <div className="text-[10px] font-black text-rose-500 uppercase italic tracking-tighter bg-rose-500/10 px-2 py-0.5 border-l-2 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.1)]">
+                  Emergent_Feed
+                </div>
+                <div className="text-[8px] font-mono text-zinc-400 uppercase tracking-[0.3em]">
+                  Timestamp::{time.replace(/:/g, ".")}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pointer-events-auto">
+                {[
+                  { href: "/artifacts", icon: "lucide:archive" },
+                  { href: "/artists", icon: "lucide:users" },
+                  {
+                    href: "https://signal.shimokitan.live",
+                    icon: "lucide:radio",
+                    external: true,
+                  },
+                ].map((port, i) => (
+                  <Link
+                    key={i}
+                    href={port.href}
+                    target={port.external ? "_blank" : undefined}
+                    className="w-10 h-10 flex items-center justify-center bg-zinc-950/90 border border-white/10 text-zinc-400 hover:text-white hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group/port shadow-2xl"
+                  >
+                    <Icon
+                      icon={port.icon}
+                      width={14}
+                      className="group-hover/port:scale-110 transition-transform"
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* Stats strip */}
-            <div className="flex items-center justify-center gap-4 text-[10px] font-mono text-zinc-600 uppercase tracking-wider">
-              <span className="flex items-center gap-1.5">
-                <Icon icon="lucide:database" width={10} className="text-violet-500/70" />
-                <span className="text-zinc-400 font-bold">{artifactCount}</span> {dict.home.stats_artifacts}
-              </span>
-              <span className="w-px h-3 bg-zinc-800" />
-              <span className="flex items-center gap-1.5">
-                <Icon icon="lucide:user-check" width={10} className="text-violet-500/70" />
-                <span className="text-zinc-400 font-bold">{entityCount}</span> {dict.home.stats_entities}
-              </span>
-              <span className="w-px h-3 bg-zinc-800" />
-              <span className="text-zinc-700">{dict.home.stats_version}</span>
+            {/* Bottom Title Overlay */}
+            <div className="absolute bottom-10 left-8 right-8 z-50 pointer-events-none">
+              <div className="space-y-0.5 mb-2">
+                <span className="text-[10px] font-black text-violet-500 uppercase tracking-[0.4em] block drop-shadow-sm italic">
+                  SECTOR _ SHIMOKITAZAWA
+                </span>
+                <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-[0_8px_24px_rgba(0,0,0,1)]">
+                  SHIMO<span className="text-violet-500">KITAN</span>
+                </h2>
+              </div>
+              <div className="p-4 border-l-2 border-violet-500/50 bg-zinc-950/90 backdrop-blur-md max-w-sm shadow-2xl">
+                <p className="text-[11px] md:text-xs font-bold text-zinc-200 italic leading-snug">
+                  &ldquo;{dict.home.tagline}&rdquo;
+                </p>
+              </div>
+            </div>
+
+            {/* Viewport Effects */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <div className="absolute inset-y-0 left-1/4 w-[1px] bg-white/5" />
+              <div className="absolute inset-y-0 left-2/4 w-[1px] bg-white/5" />
+              <div className="absolute inset-y-0 left-3/4 w-[1px] bg-white/5" />
+              <div className="w-full h-[1px] bg-violet-500/20 absolute top-0 animate-[scan_8s_linear_infinite]" />
+            </div>
+
+            {/* Unsplash Attribution */}
+            <div className="absolute bottom-4 right-4 z-40 opacity-0 group-hover/hero:opacity-40 transition-opacity duration-700 pointer-events-none group-hover/hero:pointer-events-auto">
+              <p className="text-[7px] font-mono text-zinc-500 uppercase tracking-[0.2em] whitespace-nowrap bg-zinc-950/80 p-2 backdrop-blur-sm">
+                Photo by{" "}
+                <a
+                  href="https://unsplash.com/@rojiurayokocho?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-400 hover:text-violet-400 underline transition-colors"
+                >
+                  露地裏 横丁
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -181,7 +239,7 @@ export default function HomeClient({
 
       {/* 2. Current Signal / Audio Player */}
       <BentoCard
-        className="col-span-2 md:col-span-1 md:row-span-3 p-0 overflow-hidden"
+        className="col-span-2 md:col-span-1 md:row-span-3 md:col-start-3 md:row-start-1 p-0 overflow-hidden"
         title="Current Signal"
         icon="lucide:radio"
         minimal
@@ -190,8 +248,14 @@ export default function HomeClient({
           {/* Header */}
           <div className="h-9 border-b border-zinc-800/50 flex items-center justify-between px-4 bg-zinc-950/40 shrink-0">
             <div className="flex items-center gap-2 text-zinc-500">
-              <Icon icon="lucide:disc" width={12} className={isDockedActive ? "animate-spin" : ""} />
-              <span className="text-[9px] font-mono tracking-[0.15em] uppercase">LIVE_CENTER</span>
+              <Icon
+                icon="lucide:disc"
+                width={12}
+                className={isDockedActive ? "animate-spin" : ""}
+              />
+              <span className="text-[9px] font-mono tracking-[0.15em] uppercase">
+                LIVE_CENTER
+              </span>
             </div>
             <div className="flex items-center gap-2">
               {station.isInitialized && !station.isMinimized && (
@@ -203,22 +267,34 @@ export default function HomeClient({
                   <Icon icon="lucide:minus" width={12} />
                 </button>
               )}
-              <div className={cn(
-                "w-1.5 h-1.5 rounded-full transition-all",
-                isDockedActive ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" : "bg-zinc-800"
-              )} />
+              <div
+                className={cn(
+                  "w-1.5 h-1.5 rounded-full transition-all",
+                  isDockedActive
+                    ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                    : "bg-zinc-800"
+                )}
+              />
             </div>
           </div>
 
           {/* Vinyl & Tonearm */}
           <div className="flex-1 flex flex-col items-center justify-center relative p-4 min-h-0">
             <div className="relative group/vinyl">
-              <div className={cn(
-                "w-32 h-32 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-950 overflow-hidden relative shadow-[0_24px_48px_-12px_rgba(0,0,0,1)] transition-all duration-700",
-                isDockedActive ? "animate-[spin_4s_linear_infinite]" : "scale-95 opacity-60 grayscale-[0.3]"
-              )}>
+              <div
+                className={cn(
+                  "w-32 h-32 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-950 overflow-hidden relative shadow-[0_24px_48px_-12px_rgba(0,0,0,1)] transition-all duration-700",
+                  isDockedActive
+                    ? "animate-[spin_4s_linear_infinite]"
+                    : "scale-95 opacity-60 grayscale-[0.3]"
+                )}
+              >
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="absolute rounded-full border border-zinc-900" style={{ inset: `${(i + 1) * 1.5}rem` }} />
+                  <div
+                    key={i}
+                    className="absolute rounded-full border border-zinc-900"
+                    style={{ inset: `${(i + 1) * 1.5}rem` }}
+                  />
                 ))}
                 <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10 shadow-lg">
                   <img
@@ -240,7 +316,7 @@ export default function HomeClient({
                   "absolute -right-3 top-0 w-20 h-24 origin-top transition-transform duration-1000 ease-[cubic-bezier(0.45,0.05,0.55,0.95)] z-20 pointer-events-none",
                   isDockedActive ? "rotate-[20deg]" : "rotate-[-12deg]"
                 )}
-                style={{ transformOrigin: '80% 15%' }}
+                style={{ transformOrigin: "80% 15%" }}
               >
                 <div className="absolute top-0 right-1 w-10 h-10 bg-zinc-900 rounded-full shadow-[3px_3px_0px_rgba(0,0,0,0.5)] flex items-center justify-center border border-zinc-800">
                   <div className="w-7 h-7 bg-zinc-800 rounded-full border border-zinc-700 flex items-center justify-center">
@@ -268,18 +344,24 @@ export default function HomeClient({
             <div className="mt-3 flex flex-col items-center">
               <div className="flex items-center gap-2 mb-1">
                 <Badge variant="zinc">LOSSLESS</Badge>
-                <span className="text-[8px] font-mono text-zinc-600 uppercase">1411_KBPS</span>
+                <span className="text-[8px] font-mono text-zinc-600 uppercase">
+                  1411_KBPS
+                </span>
               </div>
-              <h3 className={cn(
-                "text-sm font-black tracking-tighter uppercase italic leading-none transition-colors",
-                isDockedActive ? "text-white" : "text-zinc-700"
-              )}>
+              <h3
+                className={cn(
+                  "text-sm font-black tracking-tighter uppercase italic leading-none transition-colors",
+                  isDockedActive ? "text-white" : "text-zinc-700"
+                )}
+              >
                 {isDockedActive ? "Starboy" : "---"}
               </h3>
-              <p className={cn(
-                "text-[9px] font-mono font-bold uppercase tracking-widest mt-1",
-                isDockedActive ? "text-violet-500" : "text-zinc-800"
-              )}>
+              <p
+                className={cn(
+                  "text-[9px] font-mono font-bold uppercase tracking-widest mt-1",
+                  isDockedActive ? "text-violet-500" : "text-zinc-800"
+                )}
+              >
                 {isDockedActive ? "The Weeknd, Daft Punk" : "Enter_Frequency"}
               </p>
             </div>
@@ -290,7 +372,12 @@ export default function HomeClient({
             <div className="w-full flex items-center gap-2 text-[9px] text-zinc-500 font-mono font-black italic">
               <span className="w-7">1:24</span>
               <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                <div className={cn("h-full bg-violet-600 transition-all duration-300", isDockedActive ? "w-[35%]" : "w-0")} />
+                <div
+                  className={cn(
+                    "h-full bg-violet-600 transition-all duration-300",
+                    isDockedActive ? "w-[35%]" : "w-0"
+                  )}
+                />
               </div>
               <span className="w-7">3:50</span>
             </div>
@@ -311,7 +398,11 @@ export default function HomeClient({
                     : "bg-zinc-800 text-zinc-600 border border-zinc-700"
                 )}
               >
-                <Icon icon={station.isInitialized ? "lucide:pause" : "lucide:play"} width={16} className={!station.isInitialized ? "ml-0.5" : ""} />
+                <Icon
+                  icon={station.isInitialized ? "lucide:pause" : "lucide:play"}
+                  width={16}
+                  className={!station.isInitialized ? "ml-0.5" : ""}
+                />
               </button>
               <button className="text-zinc-600 hover:text-white transition-colors">
                 <Icon icon="lucide:skip-forward" width={14} />
@@ -319,7 +410,11 @@ export default function HomeClient({
             </div>
 
             <div className="flex items-center justify-center gap-2 mx-auto w-24">
-              <Icon icon="lucide:volume-2" width={12} className="text-zinc-600" />
+              <Icon
+                icon="lucide:volume-2"
+                width={12}
+                className="text-zinc-600"
+              />
               <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-zinc-500 w-[80%]" />
               </div>
@@ -330,7 +425,7 @@ export default function HomeClient({
 
       {/* 3. Featured Card Stack */}
       <BentoCard
-        className="col-span-2 md:col-span-1 md:row-span-3 p-0 overflow-hidden md:overflow-visible min-h-[340px] md:min-h-0"
+        className="col-span-2 md:col-span-1 md:row-span-3 md:col-start-4 md:row-start-1 p-0 overflow-hidden md:overflow-visible min-h-[340px] md:min-h-0"
         title={dict.home.recent_shards}
         icon="lucide:star"
       >
@@ -340,12 +435,16 @@ export default function HomeClient({
               <div
                 key={item.id}
                 onClick={() => setActiveSpotlight(i)}
-                className={`absolute cursor-pointer transition-all duration-500 hover:z-40 ${activeSpotlight === i ? "z-30 scale-110 shadow-2xl" : "z-10 opacity-80"}`}
+                className={`absolute cursor-pointer transition-all duration-500 hover:z-40 ${activeSpotlight === i
+                    ? "z-30 scale-110 shadow-2xl"
+                    : "z-10 opacity-80"
+                  }`}
                 style={{
                   transform:
                     activeSpotlight === i
                       ? "rotate(0deg) translateX(0) translateY(0)"
-                      : `rotate(${i === 0 ? -12 : i === 1 ? 5 : -6}deg) translateX(${(i - 1) * 20}px) translateY(${i * 10}px)`,
+                      : `rotate(${i === 0 ? -12 : i === 1 ? 5 : -6}deg) translateX(${(i - 1) * 20
+                      }px) translateY(${i * 10}px)`,
                 }}
               >
                 <div className="bg-white p-2 md:p-2.5 rounded-lg shadow-2xl border-2 border-zinc-800 w-32 sm:w-40 md:w-48 text-black">
@@ -379,10 +478,9 @@ export default function HomeClient({
 
       {/* 4. District / Dynamic Time */}
       <BentoCard
-        className="col-span-2 md:col-span-1 md:row-span-3 p-0 overflow-hidden relative"
+        className="col-span-2 md:col-span-1 md:row-span-3 md:col-start-5 md:row-start-1 p-0 overflow-hidden relative"
         minimal
       >
-        {/* Background Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 
         <div className="flex flex-col h-full relative z-10 bg-gradient-to-b from-transparent to-zinc-950/90">
@@ -504,7 +602,6 @@ export default function HomeClient({
                     </span>
                   </div>
                 )}
-                {/* Solid Flat Overlay */}
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-zinc-950/60 flex flex-col justify-end p-2">
                   <div className="text-[9px] font-mono text-rose-500 uppercase tracking-tighter">
                     High_Resonance // 0.96
@@ -533,52 +630,52 @@ export default function HomeClient({
             .filter((entity) => !entity.isEncrypted)
             .slice(0, 2)
             .map((entity) => (
-            <Link
-              key={entity.id}
-              href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}
-              className="flex items-center gap-4 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group shadow-sm"
-            >
-              <div className="w-12 md:w-14 h-12 md:h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover:border-violet-500/50 transition-colors">
-                {entity.avatar ? (
-                  <img
-                    src={entity.avatar}
-                    className="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 transition-all duration-500"
-                    alt={entity.name}
-                  />
-                ) : (
-                  <Icon icon="lucide:user" width={24} />
-                )}
-                <div className="absolute top-0 right-0 bg-emerald-500 w-2.5 h-2.5 rounded-bl border-b border-l border-zinc-800 z-10 animate-pulse" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-black text-white uppercase italic tracking-tight group-hover:text-violet-400 truncate mb-1">
-                  {entity.name}
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <Icon
-                      icon="lucide:fingerprint"
-                      width={10}
-                      className="text-zinc-500"
+              <Link
+                key={entity.id}
+                href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}
+                className="flex items-center gap-4 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group shadow-sm"
+              >
+                <div className="w-12 md:w-14 h-12 md:h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover:border-violet-500/50 transition-colors">
+                  {entity.avatar ? (
+                    <img
+                      src={entity.avatar}
+                      className="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 transition-all duration-500"
+                      alt={entity.name}
                     />
-                    <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest truncate">
-                      {entity.uid}
-                    </span>
+                  ) : (
+                    <Icon icon="lucide:user" width={24} />
+                  )}
+                  <div className="absolute top-0 right-0 bg-emerald-500 w-2.5 h-2.5 rounded-bl border-b border-l border-zinc-800 z-10 animate-pulse" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-black text-white uppercase italic tracking-tight group-hover:text-violet-400 truncate mb-1">
+                    {entity.name}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Icon
-                      icon="lucide:tag"
-                      width={10}
-                      className="text-violet-500/70"
-                    />
-                    <span className="text-[11px] font-mono text-violet-400 font-bold uppercase truncate">
-                      {entity.type.split("_").join(" ")}
-                    </span>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <Icon
+                        icon="lucide:fingerprint"
+                        width={10}
+                        className="text-zinc-500"
+                      />
+                      <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest truncate">
+                        {entity.uid}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon
+                        icon="lucide:tag"
+                        width={10}
+                        className="text-violet-500/70"
+                      />
+                      <span className="text-[11px] font-mono text-violet-400 font-bold uppercase truncate">
+                        {entity.type.split("_").join(" ")}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
           <Link
             href="/artists"
             className="mt-auto border border-dashed border-zinc-800 rounded bg-zinc-950/30 text-zinc-500 hover:text-white hover:border-zinc-500 hover:bg-zinc-900 transition-colors py-2 px-3 flex justify-between items-center gap-2 text-[11px] font-mono uppercase tracking-widest group"
@@ -593,7 +690,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* 7. Featured Archives - Bento Layout */}
+      {/* 7. Featured Archives */}
       <BentoCard
         className="col-span-2 md:col-span-1 md:row-span-2 md:col-start-3 md:row-start-4"
         title="Featured Archives"
@@ -601,11 +698,14 @@ export default function HomeClient({
       >
         <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[160px] md:h-full">
           {(() => {
-            const animeArtifact = spotlightArtifacts.find((a) => a.category === "anime");
-            const otherArtifacts = spotlightArtifacts.filter((a) => a.id !== animeArtifact?.id).slice(0, 2);
+            const animeArtifact = spotlightArtifacts.find(
+              (a) => a.category === "anime"
+            );
+            const otherArtifacts = spotlightArtifacts
+              .filter((a) => a.id !== animeArtifact?.id)
+              .slice(0, 2);
             return (
               <>
-                {/* Primary - tall vertical slot (always anime) */}
                 {animeArtifact && (
                   <Link
                     href={`/artifacts/${animeArtifact.id}`}
@@ -632,8 +732,6 @@ export default function HomeClient({
                     </div>
                   </Link>
                 )}
-
-                {/* Secondary - two horizontal slots stacked */}
                 {otherArtifacts.map((artifact) => (
                   <Link
                     key={artifact.id}
@@ -689,7 +787,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* 9. Narrative Collapse / Zine Feed */}
+      {/* 9. Signal Station / Zine Feed */}
       <BentoCard
         className="col-span-2 md:col-span-3 md:row-span-2 md:col-start-1 md:row-start-6 overflow-hidden p-0 bg-white"
         title="Signal Station"
@@ -698,26 +796,32 @@ export default function HomeClient({
       >
         <div className="relative h-full flex flex-col bg-white">
           <div className="absolute inset-0 pointer-events-none z-40 opacity-[0.06] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,1)_2px,rgba(0,0,0,1)_3px)]" />
-          
+
           <div className="relative p-2.5 md:p-3 flex items-center justify-between z-30 border-b-2 border-zinc-900 bg-white/95 backdrop-blur-md">
             <div className="flex items-center gap-2 md:gap-3">
               <div className="bg-zinc-900 text-white text-[8px] md:text-[10px] font-black px-1.5 md:px-2 py-0.5 md:py-1 uppercase tracking-tighter italic">
                 Signal.
               </div>
               <div className="flex flex-col">
-                <span className="text-[7px] md:text-[9px] font-black text-zinc-900 uppercase leading-none">Transmission Log</span>
+                <span className="text-[7px] md:text-[9px] font-black text-zinc-900 uppercase leading-none">
+                  Transmission Log
+                </span>
                 <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest leading-none mt-0.5">
                   104.2 FM // {time.slice(0, 5)}
                 </span>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 md:gap-4">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-[6px] md:text-[7px] font-mono text-zinc-500 font-bold uppercase tracking-widest opacity-60">District Pulse</span>
-                <span className="text-[7px] md:text-[8px] font-black text-zinc-900 uppercase">Operational</span>
+                <span className="text-[6px] md:text-[7px] font-mono text-zinc-500 font-bold uppercase tracking-widest opacity-60">
+                  District Pulse
+                </span>
+                <span className="text-[7px] md:text-[8px] font-black text-zinc-900 uppercase">
+                  Operational
+                </span>
               </div>
-              <a 
+              <a
                 href="https://signal.shimokitan.live"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -734,7 +838,9 @@ export default function HomeClient({
                 key={issue.id}
                 className={cn(
                   "absolute inset-0 p-3 md:p-5 transition-all duration-1000 flex flex-col justify-center",
-                  idx === activeSignal ? "opacity-100 scale-100 z-20" : "opacity-0 scale-95 z-10"
+                  idx === activeSignal
+                    ? "opacity-100 scale-100 z-20"
+                    : "opacity-0 scale-95 z-10"
                 )}
               >
                 <div className="max-w-3xl mx-auto w-full space-y-2.5 md:space-y-3.5">
@@ -743,12 +849,16 @@ export default function HomeClient({
                       <span className="text-zinc-400 text-[8px] md:text-[9px] font-mono font-bold tracking-tight">
                         REF_LOG::{issue.id}
                       </span>
-                      <span className={cn(
-                        "text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border",
-                        issue.severity === 'Critical' ? "border-red-600 text-red-600 bg-red-50/50" :
-                        issue.severity === 'High' ? "border-amber-600 text-amber-600 bg-amber-50/50" :
-                        "border-blue-600 text-blue-600 bg-blue-50/50"
-                      )}>
+                      <span
+                        className={cn(
+                          "text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border",
+                          issue.severity === "Critical"
+                            ? "border-red-600 text-red-600 bg-red-50/50"
+                            : issue.severity === "High"
+                              ? "border-amber-600 text-amber-600 bg-amber-50/50"
+                              : "border-blue-600 text-blue-600 bg-blue-50/50"
+                        )}
+                      >
                         {issue.severity}
                       </span>
                     </div>
@@ -763,12 +873,14 @@ export default function HomeClient({
 
                   <div className="flex items-center justify-between pt-2.5 md:pt-3.5 border-t border-zinc-900/10">
                     <div className="flex flex-col">
-                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">Logged On</span>
+                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                        Logged On
+                      </span>
                       <time className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase">
-                        {issue.date.replace(/-/g, '.')} // {time.slice(0, 5)}
+                        {issue.date.replace(/-/g, ".")} // {time.slice(0, 5)}
                       </time>
                     </div>
-                    
+
                     <div className="flex items-center gap-1.5 md:gap-3">
                       {signalIssues.map((_, dotIdx) => (
                         <button
@@ -779,7 +891,9 @@ export default function HomeClient({
                           }}
                           className={cn(
                             "h-2 md:h-2.5 border border-zinc-900 transition-all duration-300",
-                            dotIdx === activeSignal ? "w-6 md:w-10 bg-zinc-900" : "w-2 md:w-2.5 bg-transparent hover:bg-zinc-100"
+                            dotIdx === activeSignal
+                              ? "w-6 md:w-10 bg-zinc-900"
+                              : "w-2 md:w-2.5 bg-transparent hover:bg-zinc-100"
                           )}
                           aria-label={`Go to issue ${dotIdx + 1}`}
                         />
@@ -787,15 +901,19 @@ export default function HomeClient({
                     </div>
 
                     <div className="hidden sm:flex flex-col items-end">
-                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">Feed Status</span>
-                      <span className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase tracking-tighter">Secure // Encrypted</span>
+                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                        Feed Status
+                      </span>
+                      <span className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase tracking-tighter">
+                        Secure // Encrypted
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          
+
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
         </div>
       </BentoCard>
