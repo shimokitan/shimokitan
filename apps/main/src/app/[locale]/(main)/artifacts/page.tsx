@@ -16,6 +16,7 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
 
         return {
             id: a.id,
+            slug: a.slug,
             title: translation?.title || "Untitled",
             category: a.category || "UNKNOWN",
             coverImage: a.cover?.url || null,

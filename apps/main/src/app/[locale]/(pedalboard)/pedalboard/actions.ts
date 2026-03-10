@@ -121,7 +121,7 @@ export async function createFullEntity(data: z.infer<typeof entitySchema>) {
 
     const entityId = nanoid();
 
-    const slug = slugify(validated.translations?.[0]?.name || entityId);
+    const slug = validated.slug || slugify(validated.translations?.[0]?.name || entityId);
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.entities).values({
@@ -234,7 +234,7 @@ export async function quickCreateEntity(name: string, type: string) {
     if (!db) throw new Error('DB_Terminal_Offline');
 
     const entityId = nanoid();
-    const slug = slugify(name || entityId);
+    const slug = entityId; // Use ID as slug for initial registration to ensure absolute encryption (no name leakage in URL)
 
     await db.transaction(async (tx) => {
         await tx.insert(schema.entities).values({
@@ -242,6 +242,7 @@ export async function quickCreateEntity(name: string, type: string) {
             type: type as any,
             slug,
             isVerified: false,
+            isEncrypted: true, // Consent-first: Seal on-the-fly registrations. Must be manually unsealed.
         });
 
         await tx.insert(schema.entitiesI18n).values({
@@ -262,17 +263,23 @@ export async function updateFullEntity(id: string, data: z.infer<typeof entitySc
     if (!db) throw new Error('DB_Terminal_Offline');
 
     await db.transaction(async (tx) => {
+        const updateData: any = {
+            type: validated.type,
+            uid: validated.uid,
+            isVerified: validated.isVerified,
+            isEncrypted: validated.isEncrypted,
+            socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
+            avatarId: validated.avatarId || null,
+            thumbnailId: validated.thumbnailId || null,
+            updatedAt: new Date(),
+        };
+
+        if (validated.slug) {
+            updateData.slug = validated.slug;
+        }
+
         await tx.update(schema.entities)
-            .set({
-                type: validated.type,
-                uid: validated.uid,
-                isVerified: validated.isVerified,
-                isEncrypted: validated.isEncrypted,
-                socialLinks: validated.socialLinks ? JSON.stringify(validated.socialLinks) : '[]',
-                avatarId: validated.avatarId || null,
-                thumbnailId: validated.thumbnailId || null,
-                updatedAt: new Date(),
-            })
+            .set(updateData)
             .where(eq(schema.entities.id, id));
 
         if (validated.avatarId) {

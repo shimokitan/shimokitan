@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 type Artifact = {
     id: string;
+    slug: string; // added for handle-based navigation
     title: string;
     category: string;
     coverImage: string | null;

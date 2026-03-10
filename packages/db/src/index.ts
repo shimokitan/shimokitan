@@ -62,46 +62,58 @@ export async function getArtifactById(id: string) {
 
   return await db.query.artifacts.findFirst({
     where: eq(schema.artifacts.id, id),
-    with: {
-      credits: {
-        with: {
-          entity: {
-            with: {
-              translations: true,
-              avatar: true
-            }
-          }
-        }
-      },
-      translations: true,
-      resources: true,
-      thumbnail: true,
-      poster: true,
-      sourceArtifact: {
-        with: {
-          translations: true,
-          thumbnail: true
-        }
-      },
-      externalOriginal: true,
-      zines: {
-        with: {
-          translations: true,
-          author: true,
-        }
-      },
-      tags: {
-        with: {
-          tag: {
-            with: {
-              translations: true
-            }
-          }
-        }
-      }
-    }
+    with: artifactRelations
   });
 }
+
+export async function getArtifactBySlug(slug: string) {
+    const db = getDb();
+    if (!db) return null;
+
+    return await db.query.artifacts.findFirst({
+        where: eq(schema.artifacts.slug, slug),
+        with: artifactRelations
+    });
+}
+
+const artifactRelations = {
+    credits: {
+        with: {
+            entity: {
+                with: {
+                    translations: true,
+                    avatar: true
+                }
+            }
+        }
+    },
+    translations: true,
+    resources: true,
+    thumbnail: true,
+    poster: true,
+    sourceArtifact: {
+        with: {
+            translations: true,
+            thumbnail: true
+        }
+    },
+    externalOriginal: true,
+    zines: {
+        with: {
+            translations: true,
+            author: true,
+        }
+    },
+    tags: {
+        with: {
+            tag: {
+                with: {
+                    translations: true
+                }
+            }
+        }
+    }
+} as const;
 
 export async function getZinesByArtifact(artifactId: string) {
   const db = getDb();

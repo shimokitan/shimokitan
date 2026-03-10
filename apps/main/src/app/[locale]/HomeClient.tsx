@@ -494,7 +494,10 @@ export default function HomeClient({
         icon="lucide:user-check"
       >
         <div className="flex flex-col gap-3 h-full">
-          {entities.slice(0, 2).map((entity) => (
+          {entities
+            .filter((entity) => !entity.isEncrypted)
+            .slice(0, 2)
+            .map((entity) => (
             <Link
               key={entity.id}
               href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}

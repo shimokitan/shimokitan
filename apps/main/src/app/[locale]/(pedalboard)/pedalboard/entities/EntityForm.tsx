@@ -65,6 +65,7 @@ export default function EntityForm({
     const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(initialData?.thumbnail?.url || initialData?.thumbnailUrl || null);
     const [thumbnailId, setThumbnailId] = useState<string | null>(initialData?.thumbnailId || null);
     const [uid, setUid] = useState(initialData?.uid || '');
+    const [slug, setSlug] = useState(initialData?.slug || '');
     const [tags, setTags] = useState<{ name: string }[]>(
         initialData?.tags?.map((t: any) => ({ name: t.tag.translations?.[0]?.name || '' })) || []
     );
@@ -84,6 +85,7 @@ export default function EntityForm({
                 uid: uid || null,
                 isVerified,
                 isEncrypted,
+                slug: slug || null,
                 socialLinks: cleanSocials,
                 translations: translations.filter(t => t.name.trim() !== ''),
                 members: type === 'circle' ? members.filter(m => m.memberId) : [],
@@ -108,7 +110,7 @@ export default function EntityForm({
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, initialData?.id, socials, type, uid, isVerified, isEncrypted, translations, members, avatarId, thumbnailId, router, tags]);
+    }, [isSubmitting, initialData?.id, socials, type, uid, slug, isVerified, isEncrypted, translations, members, avatarId, thumbnailId, router, tags]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -179,6 +181,20 @@ export default function EntityForm({
                                             <option value="agency">MANAGEMENT_AGENCY</option>
                                             <option value="circle">CREATIVE_CIRCLE (UNIT)</option>
                                         </select>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-mono uppercase text-zinc-400 pl-1">Handle_Reference</label>
+                                        <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-900 focus-within:border-violet-600 outline-none transition-all rounded-lg pl-3 pr-1">
+                                            <span className="text-[10px] font-mono text-zinc-600">@</span>
+                                            <input
+                                                value={slug}
+                                                onChange={(e) => setSlug(e.target.value)}
+                                                className="w-full bg-transparent border-none p-3 pl-0 text-xs text-white outline-none font-mono"
+                                                placeholder="custom-alias-here..."
+                                            />
+                                        </div>
+                                        <p className="text-[8px] text-zinc-600 font-mono italic pl-2">System current: {initialData?.slug || 'PENDING'}</p>
                                     </div>
 
                                     <div className="space-y-1">

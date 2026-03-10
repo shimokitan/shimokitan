@@ -87,6 +87,7 @@ const unitMemberSchema = z.object({
 
 export const entitySchema = z.object({
     type: z.enum(ENTITY_TYPES),
+    slug: z.string().optional().nullable(),
     uid: z.string().optional().nullable(),
     isVerified: z.boolean().default(false),
     isEncrypted: z.boolean().default(false),
