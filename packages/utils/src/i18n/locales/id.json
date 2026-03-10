@@ -73,7 +73,7 @@
         "a1_1": "Shimokitan adalah arsip terkurasi untuk budaya kreatif Jepang. Kami mengindeks, menyusun, dan merayakan anime, musik, gim, beserta para kreator di baliknya - bukan sebagai poin data atau peringkat, melainkan sebagai pengalaman hidup yang layak diingat.",
         "a1_2": "Bayangkan ini sebagai koleksi piringan hitam pribadi untuk segala hal yang Anda cintai dalam media Jepang. Setiap entri adalah sebuah artefak - potongan budaya yang didokumentasikan dengan penuh perhatian.",
         "q2": "Mengapa Shimokitan Ada",
-        "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakan dari mereka memperlakukan budaya layaknya lembar kerja - skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
+        "a2_1": "Internet sudah penuh dengan basis data dan pelacak untuk anime, musik, dan gim. Kebanyakkan dari mereka memperlakukan budaya layaknya lembar kerja - skor, statistik, dan persentase penyelesaian. Kami menginginkan sesuatu yang berbeda.",
         "a2_2": "Shimokitan dibangun di atas ide bahwa selera Anda menceritakan sebuah kisah. Anime yang membuat Anda terjaga sepanjang malam, album yang Anda putar berulang kali di musim tertentu, gim yang mengubah cara pandang Anda - ini adalah kenangan, bukan metrik. Kami mengarsipkannya dengan nilai tersebut.",
         "q3": "Cara Kerja",
         "a3_1": "Shimokitan adalah arsip terkurasi yang dibangun atas dasar persetujuan. Kami tidak mengarsipkan artis rekaman atau kreator spesifik tanpa izin eksplisit dari mereka. Kami mengundang mereka untuk menetap di Distrik, dan jika disetujui, mereka memilih bagaimana karya mereka disajikan: melalui sematan pihak ketiga atau di-hosting langsung di pemutar khusus kami.",
@@ -140,6 +140,10 @@
                 "l5": "Kami tidak akan mengindeks atau menerima media yang dihasilkan oleh AI. Shimokitan secara ketat merupakan arsip untuk upaya manusia, kreator manusia, dan budaya manusia."
             }
         }
+    },
+    "entities": {
+        "biography": "Biografi",
+        "biography_empty": "Biografi kosong."
     },
     "legal": {
         "last_updated": "Terakhir Diperbarui",

@@ -141,6 +141,10 @@
             }
         }
     },
+    "entities": {
+        "biography": "略歴",
+        "biography_empty": "略歴は空です。"
+    },
     "legal": {
         "last_updated": "最終更新日",
         "last_updated_date": "2026年3月9日",

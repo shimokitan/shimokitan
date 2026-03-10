@@ -1,10 +1,12 @@
 import React from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { getEntityBySlug } from '@shimokitan/db';
+import { getDictionary, Locale } from '@shimokitan/utils';
 import { EntityProfileTerminal } from '@/components/entities/EntityProfileTerminal';
 
 export default async function EntityProfilePage(props: { params: Promise<{ locale: string, slug: string }> }) {
     const { locale, slug: rawSlug } = await props.params;
+    const dict = getDictionary(locale as Locale);
 
     const decodedSlug = decodeURIComponent(rawSlug);
     
@@ -29,5 +31,5 @@ export default async function EntityProfilePage(props: { params: Promise<{ local
         notFound();
     }
 
-    return <EntityProfileTerminal entity={entity} locale={locale} />;
+    return <EntityProfileTerminal entity={entity} locale={locale} dict={dict} />;
 }

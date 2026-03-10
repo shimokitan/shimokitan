@@ -2,8 +2,9 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import Link from 'next/link';
+import { Dictionary } from '@shimokitan/utils';
 
-export function EntityProfileTerminal({ entity, locale }: { entity: any, locale: string }) {
+export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, locale: string, dict: Dictionary }) {
     const translations = entity.translations || [];
     const translation = translations.find((t: any) => t.locale === locale) || translations[0];
     const name = translation?.name || "Anonymous Artist";
@@ -125,9 +126,9 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                             </div>
 
                             <div className="pt-6 border-t border-zinc-900">
-                                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] block mb-2">Biography</span>
+                                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] block mb-2">{dict.entities.biography}</span>
                                 <p className="text-base text-zinc-300 leading-relaxed font-serif italic italic-shadow">
-                                    {bio || "DATA_PURGED // NO_HISTORICAL_MATCH"}
+                                    {bio || dict.entities.biography_empty}
                                 </p>
                             </div>
 

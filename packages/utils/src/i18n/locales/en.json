@@ -141,6 +141,10 @@
             }
         }
     },
+    "entities": {
+        "biography": "Biography",
+        "biography_empty": "Biography is empty."
+    },
     "legal": {
         "last_updated": "Last Updated",
         "last_updated_date": "March 9, 2026",
