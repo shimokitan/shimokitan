@@ -256,9 +256,33 @@ export default function ArtifactForm({
             } else if (v.includes('nicovideo.jp/')) {
                 newResources[idx].platform = 'niconico';
                 newResources[idx].type = 'mv';
-            } else if (v.includes('twitter.com/') || v.includes('x.com/')) {
-                newResources[idx].platform = 'twitter';
+            } else if (v.includes('x.com/')) {
+                newResources[idx].platform = 'x';
                 newResources[idx].type = 'social';
+            } else if (v.includes('ko-fi.com/')) {
+                newResources[idx].platform = 'ko_fi';
+                newResources[idx].type = 'social';
+            } else if (v.includes('booth.pm/')) {
+                newResources[idx].platform = 'booth';
+                newResources[idx].type = 'store';
+            } else if (v.includes('vgen.co/')) {
+                newResources[idx].platform = 'vgen';
+                newResources[idx].type = 'social';
+            } else if (v.includes('skeb.jp/')) {
+                newResources[idx].platform = 'skeb';
+                newResources[idx].type = 'social';
+            } else if (v.includes('patreon.com/')) {
+                newResources[idx].platform = 'patreon';
+                newResources[idx].type = 'social';
+            } else if (v.includes('fanbox.cc/')) {
+                newResources[idx].platform = 'fanbox';
+                newResources[idx].type = 'social';
+            } else if (v.includes('pixiv.net/')) {
+                newResources[idx].platform = 'pixiv';
+                newResources[idx].type = 'social';
+            } else if (v.includes('bandcamp.com/')) {
+                newResources[idx].platform = 'bandcamp';
+                newResources[idx].type = 'stream';
             } else if (v.includes('instagram.com/')) {
                 newResources[idx].platform = 'instagram';
                 newResources[idx].type = 'social';

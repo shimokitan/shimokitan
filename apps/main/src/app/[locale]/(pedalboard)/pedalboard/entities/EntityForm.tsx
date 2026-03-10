@@ -462,12 +462,28 @@ export default function EntityForm({
                                         onChange={(e) => updateSocial(i, 'platform', e.target.value)}
                                         className="w-full bg-zinc-950 border border-zinc-800 p-2.5 text-[10px] text-white rounded-lg focus:border-violet-600 outline-none cursor-pointer"
                                     >
-                                        <option value="twitter">X_TWITTER</option>
-                                        <option value="instagram">INSTAGRAM</option>
-                                        <option value="pixiv">PIXIV</option>
-                                        <option value="niconico">NICONICO</option>
-                                        <option value="github">GITHUB</option>
+                                        <option value="x">X</option>
                                         <option value="youtube">YOUTUBE</option>
+                                        <option value="niconico">NICONICO</option>
+                                        <option value="ko_fi">KO-FI</option>
+                                        <option value="booth">BOOTH</option>
+                                        <option value="vgen">VGEN</option>
+                                        <option value="skeb">SKEB</option>
+                                        <option value="pixiv">PIXIV</option>
+                                        <option value="fanbox">FANBOX</option>
+                                        <option value="patreon">PATREON</option>
+                                        <option value="buymeacoffee">BUY_ME_A_COFFEE</option>
+                                        <option value="artstation">ARTSTATION</option>
+                                        <option value="behance">BEHANCE</option>
+                                        <option value="instagram">INSTAGRAM</option>
+                                        <option value="tiktok">TIKTOK</option>
+                                        <option value="bandcamp">BANDCAMP</option>
+                                        <option value="soundcloud">SOUNDCLOUD</option>
+                                        <option value="landr">LANDR</option>
+                                        <option value="gumroad">GUMROAD</option>
+                                        <option value="etsy">ETSY</option>
+                                        <option value="fiverr">FIVERR</option>
+                                        <option value="github">GITHUB</option>
                                         <option value="other">OTHER_NODE</option>
                                     </select>
                                 </div>

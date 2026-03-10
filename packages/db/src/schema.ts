@@ -51,7 +51,11 @@ export const resourceRoleEnum = pgEnum("resource_role", [
 
 export const resourcePlatformEnum = pgEnum("resource_platform", [
     "youtube", "spotify", "soundcloud", "apple_music",
-    "bilibili", "niconico", "twitter", "instagram", "tiktok",
+    "bilibili", "niconico", "x", "instagram", "tiktok",
+    "ko_fi", "booth", "vgen", "patreon", "buymeacoffee", "fanbox",
+    "fiverr", "gumroad", "etsy", "society6",
+    "redbubble", "artstation", "behance",
+    "bandcamp", "skeb", "pixiv",
     "r2",      // internal hosted
     "other",
 ]);

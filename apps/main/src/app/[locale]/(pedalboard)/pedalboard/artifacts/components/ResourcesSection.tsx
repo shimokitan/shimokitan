@@ -115,7 +115,20 @@ export default function ResourcesSection({
                                     <option value="apple_music">Apple Music</option>
                                     <option value="bilibili">Bilibili</option>
                                     <option value="niconico">NicoNico</option>
-                                    <option value="twitter">X_Twitter</option>
+                                    <option value="x">X</option>
+                                    <option value="ko_fi">Ko-Fi</option>
+                                    <option value="booth">Booth</option>
+                                    <option value="vgen">VGen</option>
+                                    <option value="skeb">Skeb</option>
+                                    <option value="fanbox">Fanbox</option>
+                                    <option value="patreon">Patreon</option>
+                                    <option value="buymeacoffee">Buy Me A Coffee</option>
+                                    <option value="artstation">ArtStation</option>
+                                    <option value="behance">Behance</option>
+                                    <option value="bandcamp">Bandcamp</option>
+                                    <option value="pixiv">Pixiv</option>
+                                    <option value="landr">LANDR</option>
+                                    <option value="gumroad">Gumroad</option>
                                     <option value="instagram">Instagram</option>
                                     <option value="tiktok">TikTok</option>
                                 </>

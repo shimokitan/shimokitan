@@ -92,3 +92,37 @@ export function getOptimizedImageUrl(
     // Format: /cdn-cgi/image/{params}/{url}
     return `/cdn-cgi/image/${params.join(',')}/${url}`;
 }
+
+/**
+ * Returns the CDN URL for a brand icon.
+ * Assets are served from cdn.shimokitan.live/images/brand/*.webp
+ */
+export function getBrandIconUrl(platform: string): string | null {
+    if (!platform) return null;
+
+    const p = platform.toLowerCase();
+
+    // Map internal slugs to CDN filenames
+    const mapping: Record<string, string> = {
+        'ko_fi': 'ko-fi',
+        'twitter': 'x',
+        'apple_music': 'apple-music', // check if apple-music exists, user didn't mention it but good to have
+        'buymeacoffee': 'buymeacoffee',
+        'youtube_music': 'youtube',
+    };
+
+    const fileName = mapping[p] || p.replace(/_/g, '-');
+
+    // List of supported brand icons provided by user
+    const supported = [
+        'niconico', 'youtube', 'x', 'ko-fi', 'booth', 'vgen', 'patreon',
+        'buymeacoffee', 'fanbox', 'fiverr',
+        'gumroad', 'etsy', 'society6', 'redbubble', 'artstation',
+        'behance', 'bandcamp', 'soundcloud',
+        'skeb', 'pixiv'
+    ];
+
+    if (!supported.includes(fileName)) return null;
+
+    return `https://cdn.shimokitan.live/images/brand/${fileName}.webp`;
+}

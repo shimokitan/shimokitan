@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { BrandIcon } from '@/components/BrandIcon';
 import { MainLayout } from '@/components/layout/MainLayout';
 import Link from 'next/link';
 import { Dictionary } from '@shimokitan/utils';
@@ -163,10 +164,11 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4 lg:gap-6">
                                                 <div className="w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center bg-zinc-900 border border-zinc-800 group-hover:border-zinc-500 group-hover:bg-zinc-950 transition-colors">
-                                                    <Icon
-                                                        icon={`simple-icons:${link.platform?.toLowerCase() || 'link'}`}
+                                                    <BrandIcon
+                                                        platform={link.platform}
                                                         className="text-zinc-400 group-hover:text-white"
                                                         width={24}
+                                                        height={24}
                                                     />
                                                 </div>
                                                 <div className="space-y-1">

@@ -52,7 +52,13 @@ const translationSchema = z.object({
     thesis: z.string().optional(),
 }).passthrough();
 
-export const RESOURCE_PLATFORMS = ['youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'niconico', 'twitter', 'instagram', 'tiktok', 'r2', 'other'] as const;
+export const RESOURCE_PLATFORMS = [
+    'youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'niconico',
+    'x', 'instagram', 'tiktok', 'ko_fi', 'booth', 'vgen', 'patreon', 
+    'buymeacoffee', 'fanbox', 'fiverr', 'gumroad', 
+    'etsy', 'society6', 'redbubble', 'artstation', 'behance', 
+    'bandcamp', 'skeb', 'pixiv', 'r2', 'other'
+] as const;
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 
 const resourceSchema = z.object({

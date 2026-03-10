@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { BrandIcon } from '@/components/BrandIcon';
 import { Badge, cn } from '@shimokitan/ui';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getArtifactById } from '@shimokitan/db';
@@ -195,10 +196,12 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 className="flex items-center justify-between px-3 py-2 bg-zinc-900/40 border border-zinc-800 hover:border-violet-500/40 hover:bg-zinc-900 transition-all group/gate"
                                             >
                                                 <div className="flex items-center gap-2.5">
-                                                    <Icon
-                                                        icon={res.platform === 'r2_hosted' ? 'lucide:box' : `simple-icons:${res.platform.toLowerCase()}`}
+                                                    <BrandIcon
+                                                        platform={res.platform}
                                                         className="text-zinc-600 group-hover/gate:text-violet-400 shrink-0"
                                                         width={12}
+                                                        height={12}
+                                                        fallbackIcon={res.platform === 'r2_hosted' ? 'lucide:box' : undefined}
                                                     />
                                                     <span className="text-[11px] font-black text-zinc-400 group-hover/gate:text-white uppercase tracking-tight transition-colors truncate">
                                                         {res.platform.replace(/_/g, ' ')}
