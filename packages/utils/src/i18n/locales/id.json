@@ -455,6 +455,8 @@
         }
     },
     "navbar": {
+        "language_protocols": "Protokol Bahasa",
+        "external_uplinks": "Uplink Eksternal",
         "system_status": "Status Sistem",
         "operational": "Operasional",
         "location": "Lokasi",
@@ -463,7 +465,9 @@
         "identity_panel": "Identitas // Panel",
         "initialize_session": "Inisialisasi Sesi",
         "register_resident": "Daftar Residen",
-        "guest_protocol": "Guest_Protocol_Active"
+        "guest_protocol": "Protokol Tamu Aktif",
+        "mobile_access": "Akses Mobile",
+        "resident_stable": "Residen Stabil"
     },
     "footer": {
         "contact_us": "HUBUNGI KAMI",
@@ -471,5 +475,16 @@
         "copyright": "Hak Cipta",
         "affiliates": "Afiliasi",
         "faq": "FAQ"
+    },
+    "navigation": {
+        "home": "The District",
+        "artifacts": "Crate Digging",
+        "artists": "Artis",
+        "zines": "Echo Pulse",
+        "pedalboard": "Pedalboard",
+        "contact": "Protokol Kontak",
+        "about": "Tentang Distrik",
+        "mixtapes": "Mixtapes",
+        "back_alley": "Gang Gelap"
     }
 }

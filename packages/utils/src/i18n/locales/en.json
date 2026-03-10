@@ -455,6 +455,8 @@
         }
     },
     "navbar": {
+        "language_protocols": "Language Protocols",
+        "external_uplinks": "External Uplinks",
         "system_status": "System Status",
         "operational": "Operational",
         "location": "Location",
@@ -463,7 +465,9 @@
         "identity_panel": "Identity // Panel",
         "initialize_session": "Initialize Session",
         "register_resident": "Register Resident",
-        "guest_protocol": "Guest_Protocol_Active"
+        "guest_protocol": "Guest Protocol Active",
+        "mobile_access": "Mobile Access",
+        "resident_stable": "Resident Stable"
     },
     "footer": {
         "contact_us": "CONTACT US",
@@ -471,5 +475,16 @@
         "copyright": "Copyright",
         "affiliates": "Affiliates",
         "faq": "FAQ"
+    },
+    "navigation": {
+        "home": "The District",
+        "artifacts": "Crate Digging",
+        "artists": "Artists",
+        "zines": "Echo Pulse",
+        "pedalboard": "Pedalboard",
+        "contact": "Contact Protocol",
+        "about": "About District",
+        "mixtapes": "Mixtapes",
+        "back_alley": "Back-Alley"
     }
 }

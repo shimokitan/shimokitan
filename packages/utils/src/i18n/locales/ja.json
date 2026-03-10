@@ -455,6 +455,8 @@
         }
     },
     "navbar": {
+        "language_protocols": "言語プロトコル",
+        "external_uplinks": "外部アップリンク",
         "system_status": "システム状況",
         "operational": "稼働中",
         "location": "所在地",
@@ -463,7 +465,9 @@
         "identity_panel": "Identity // パネル",
         "initialize_session": "セッション初期化",
         "register_resident": "居住者登録",
-        "guest_protocol": "Guest_Protocol_Active"
+        "guest_protocol": "ゲストプロトコル有効",
+        "mobile_access": "モバイルアクセス",
+        "resident_stable": "居住者安定"
     },
     "footer": {
         "contact_us": "お問い合わせ",
@@ -471,5 +475,16 @@
         "copyright": "著作権",
         "affiliates": "アフィリエイト",
         "faq": "FAQ"
+    },
+    "navigation": {
+        "home": "The District",
+        "artifacts": "Crate Digging",
+        "artists": "アーティスト",
+        "zines": "Echo Pulse",
+        "pedalboard": "Pedalboard",
+        "contact": "通信プロトコル",
+        "about": "ディストリクトについて",
+        "mixtapes": "ミックステープ",
+        "back_alley": "裏路地"
     }
 }

@@ -12,9 +12,13 @@ import {
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useStationStore } from '../../lib/store/station-store';
+import { Locale, getDictionary } from '@shimokitan/utils';
+import { useLocale } from '../../hooks/use-i18n';
 
 export function MainLayout({ children, noScroll = false }: { children: React.ReactNode, noScroll?: boolean }) {
     const pathname = usePathname();
+    const currentLocale = useLocale() as Locale;
+    const navDict = getDictionary(currentLocale).navigation;
     const { isInitialized, isMinimized } = useStationStore();
 
     const [mounted, setMounted] = React.useState(false);
@@ -46,16 +50,16 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                     {/* Sidebar */}
                     <nav className="hidden md:flex flex-col gap-4 shrink-0 justify-center z-50">
                         <div className="bg-zinc-950/40 border border-zinc-800/80 p-2.5 rounded-3xl backdrop-blur-2xl flex flex-col items-center gap-3.5 shadow-2xl relative w-16">
-                            <NavigationLink icon="lucide:radio" label="The District" href="/" active={isHomeActive} />
-                            <NavigationLink icon="lucide:disc" label="Crate Digging" href="/artifacts" active={isArtifactsActive} />
-                            <NavigationLink icon="lucide:users" label="Artists" href="/artists" active={pathname?.startsWith("/artists")} />
+                            <NavigationLink icon="lucide:radio" label={navDict.home} href="/" active={isHomeActive} />
+                            <NavigationLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={isArtifactsActive} />
+                            <NavigationLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} />
 
-                            <NavigationLink icon="lucide:message-square-plus" label="Echo Pulse" href="/zines" active={isZinesActive} />
-                            <NavigationLink icon="lucide:command" label="Pedalboard" href="/pedalboard" active={isPedalboardActive} />
+                            <NavigationLink icon="lucide:message-square-plus" label={navDict.zines} href="/zines" active={isZinesActive} />
+                            <NavigationLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={isPedalboardActive} />
 
                             <div className="h-px bg-zinc-800/80 w-full my-1" />
-                            <NavigationLink icon="lucide:headphones" label="Mixtapes" />
-                            <NavigationLink icon="lucide:ghost" label="Back-Alley" />
+                            <NavigationLink icon="lucide:headphones" label={navDict.mixtapes} />
+                            <NavigationLink icon="lucide:ghost" label={navDict.back_alley} />
                         </div>
                     </nav>
 
