@@ -8,6 +8,8 @@ import { createFullArtifact, updateFullArtifact } from '../actions/artifacts';
 import { uploadMediaAction } from '../media-actions';
 import { nanoid } from 'nanoid';
 import { toast } from 'sonner';
+import { artifactSchema } from '@/lib/validations/pedalboard';
+import { z, type ZodIssue } from 'zod';
 
 
 import { Icon } from '@iconify/react';
@@ -368,14 +370,12 @@ export default function ArtifactForm({
 
             const cleanCredits = credits.filter(c => c.entityId.trim() !== '');
             
-            console.log('[DEBUG] Form Credits Total:', credits.length);
-            console.log('[DEBUG] Form Credits Non-Empty:', cleanCredits.length);
-            console.log('[DEBUG] Credits Payload:', cleanCredits);
-
+            // --- Client-Side Validation ---
             const cleanSpecs = specs.reduce((acc, curr) => {
                 if (curr.key.trim()) acc[curr.key] = curr.value;
                 return acc;
             }, {} as Record<string, string>);
+
             const cleanResources = resources.filter(r => r.url).map(r => ({
                 platform: r.platform,
                 url: r.url,
@@ -383,6 +383,7 @@ export default function ArtifactForm({
                 isPrimary: r.isPrimary,
             }));
             const cleanTags = tags.filter(t => t.name.trim() !== '');
+            const cleanTranslations = translations.filter(t => t.title.trim() !== '');
 
             const payload = {
                 id: artifactId,
@@ -394,15 +395,38 @@ export default function ArtifactForm({
                 thumbnailId: finalThumbnailId,
                 posterId: finalPosterId,
                 status,
-
-
                 resources: cleanResources,
                 credits: cleanCredits,
                 specs: cleanSpecs,
                 tags: cleanTags,
-                translations: translations.filter(t => t.title.trim() !== ''),
+                translations: cleanTranslations,
                 verificationId: verificationId || undefined
             };
+
+            const validation = artifactSchema.safeParse(payload);
+            if (!validation.success) {
+                const errorMap: Record<string, string> = {
+                    'credits': 'Every contributor requires an assigned department.',
+                    'translations': 'An artifact title is required in at least one locale.',
+                    'category': 'Please select a primary category (Anime/Music).',
+                    'resources': 'At least one valid resource URL is required.'
+                };
+
+                validation.error.issues.forEach((issue: ZodIssue) => {
+                    const path = issue.path[0] as string;
+                    const message = errorMap[path] || `Registry_Error: ${issue.message}`;
+                    
+                    if (path === 'credits') {
+                        const index = issue.path[1] as number;
+                        const field = issue.path[2] as string;
+                        toast.error(`Contributor Ledger Error (Entry #${index + 1}): Missing ${field === 'role' ? 'Department' : 'Resident Record'}`);
+                    } else {
+                        toast.error(message);
+                    }
+                });
+                setIsSubmitting(false);
+                return;
+            }
 
             if (initialData?.id) {
                 await updateFullArtifact(initialData.id, payload as any);

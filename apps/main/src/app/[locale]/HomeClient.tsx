@@ -14,6 +14,7 @@ type Artifact = {
   title: string;
   category: string;
   thumbnailImage: string | null;
+  posterImage: string | null;
   description: string | null;
   resonance: number | null;
   status: string | null;
@@ -589,10 +590,10 @@ export default function HomeClient({
           >
             <div className="flex flex-col h-full">
               <div className="relative flex-1 rounded-lg overflow-hidden mb-2 bg-zinc-950">
-                {featuredArtifact.thumbnailImage ? (
+                {featuredArtifact.posterImage || featuredArtifact.thumbnailImage ? (
                   <img
-                    src={featuredArtifact.thumbnailImage}
-                    className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
+                    src={featuredArtifact.posterImage || featuredArtifact.thumbnailImage || ""}
+                    className="object-cover w-full h-full transition-all duration-500"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800">
@@ -639,7 +640,7 @@ export default function HomeClient({
                   {entity.avatar ? (
                     <img
                       src={entity.avatar}
-                      className="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:mix-blend-normal group-hover:grayscale-0 transition-all duration-500"
+                      className="w-full h-full object-cover transition-all duration-500"
                       alt={entity.name}
                     />
                   ) : (
@@ -696,7 +697,7 @@ export default function HomeClient({
         title="Featured Archives"
         icon="lucide:disc"
       >
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 h-[160px] md:h-full">
+        <div className="grid grid-cols-[0.8fr_1.2fr] grid-rows-2 gap-2 h-[160px] md:h-full">
           {(() => {
             const animeArtifact = spotlightArtifacts.find(
               (a) => a.category === "anime"
@@ -711,10 +712,10 @@ export default function HomeClient({
                     href={`/artifacts/${animeArtifact.id}`}
                     className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
                   >
-                    {animeArtifact.thumbnailImage ? (
+                    {animeArtifact.posterImage || animeArtifact.thumbnailImage ? (
                       <img
-                        src={animeArtifact.thumbnailImage}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        src={animeArtifact.posterImage || animeArtifact.thumbnailImage || ""}
+                        className="w-full h-full object-cover transition-all duration-500"
                         alt={animeArtifact.title}
                       />
                     ) : (
@@ -741,7 +742,7 @@ export default function HomeClient({
                     {artifact.thumbnailImage ? (
                       <img
                         src={artifact.thumbnailImage}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                        className="w-full h-full object-cover transition-all duration-500"
                         alt={artifact.title}
                       />
                     ) : (

@@ -106,9 +106,9 @@ export default function CreditsSection({
                              <select
                                  value={credit.role}
                                  onChange={(e) => updateCredit(i, 'role', e.target.value)}
-                                 className="bg-black border border-zinc-900 p-2 text-[10px] font-mono uppercase text-violet-400 outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
+                                 className={`bg-black border p-2 text-[10px] font-mono uppercase text-violet-400 outline-none focus:border-violet-500/50 appearance-none cursor-pointer ${!credit.role ? 'border-amber-900/50' : 'border-zinc-900'}`}
                              >
-                                 <option value="" disabled>{credit.isOriginalArtist ? 'Source_Nature...' : 'Select Department...'}</option>
+                                 <option value="" disabled>{credit.isOriginalArtist ? 'Source_Nature (REQUIRED)...' : 'Select Department (REQUIRED)...'}</option>
                                 {CREDIT_ROLES.map((r) => (
                                     <option key={r.slug} value={r.slug} className="bg-zinc-950">
                                         {r.labels[uiLocale as 'en' | 'ja'] || r.labels.en}

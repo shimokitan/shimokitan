@@ -36,6 +36,7 @@ export default async function AppPage({
       limit: 12, // Fetch more to allow in-memory sorting
       with: {
         thumbnail: true,
+        poster: true,
         translations: {
           where: eq(schema.artifactsI18n.locale, locale),
         },
@@ -49,6 +50,7 @@ export default async function AppPage({
         title: a.translations?.[0]?.title || "Untitled",
         description: a.translations?.[0]?.description || "",
         thumbnailImage: a.thumbnail?.url || null,
+        posterImage: a.poster?.url || null,
       }))
       .sort((a, b) => (b.resonance || 0) - (a.resonance || 0))
       .slice(0, 6);
@@ -68,6 +70,7 @@ export default async function AppPage({
         artifact: {
           with: {
             thumbnail: true,
+            poster: true,
             translations: {
               where: eq(schema.artifactsI18n.locale, locale),
             },
@@ -90,6 +93,7 @@ export default async function AppPage({
           title: z.artifact.translations?.[0]?.title || "Untitled",
           description: z.artifact.translations?.[0]?.description || "",
           thumbnailImage: z.artifact.thumbnail?.url || null,
+          posterImage: z.artifact.poster?.url || null,
         }
         : null,
     }));
@@ -109,6 +113,7 @@ export default async function AppPage({
       orderBy: sql`RANDOM()`,
       with: {
         thumbnail: true,
+        poster: true,
         translations: {
           where: eq(schema.artifactsI18n.locale, locale),
         },
@@ -144,6 +149,7 @@ export default async function AppPage({
         title: rawFeatured.translations?.[0]?.title || "Untitled",
         description: rawFeatured.translations?.[0]?.description || "",
         thumbnailImage: rawFeatured.thumbnail?.url || null,
+        posterImage: rawFeatured.poster?.url || null,
         videoUrl: videoUrl,
       };
     }
