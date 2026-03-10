@@ -47,53 +47,70 @@ const ALLOWED_SUBPATHS = [
 export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 1. Handle Locale Prefixing
-    const pathnameHasLocale = locales.some(
-        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-    );
-
-    if (!pathnameHasLocale) {
-        if (
-            pathname.startsWith('/_next') ||
-            pathname.startsWith('/api') ||
-            pathname.includes('.') ||
-            pathname === '/robots.txt'
-        ) {
-            return NextResponse.next();
-        }
-
-        const locale = getLocale(request);
-        request.nextUrl.pathname = `/${locale}${pathname}`;
-        return NextResponse.rewrite(request.nextUrl);
+    // 0. Skip system paths
+    if (
+        pathname.startsWith('/_next') ||
+        pathname.startsWith('/api') ||
+        pathname.includes('.') ||
+        pathname === '/robots.txt'
+    ) {
+        return NextResponse.next();
     }
 
+    // 1. Determine Locale and SubPathname (Unify)
+    const currentLocaleMatch = locales.find(
+        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    );
+    const pathnameHasLocale = !!currentLocaleMatch;
 
-    const segments = pathname.split('/');
-    const locale = segments[1];
-    const subPathname = '/' + segments.slice(2).join('/');
+    let locale: string;
+    let subPathname: string;
+
+    if (pathnameHasLocale && currentLocaleMatch) {
+         locale = currentLocaleMatch;
+         subPathname = pathname.replace(new RegExp(`^/${locale}/?`), '/') || '/';
+    } else {
+         locale = getLocale(request);
+         subPathname = pathname;
+    }
+
     const cleanSubPathname = subPathname.replace(/\/$/, '') || '/';
 
-    // 1.5 Gatekeeper (Coming Soon Mode)
+    // 2. Gatekeeper (Coming Soon Mode)
     const isDev = process.env.NODE_ENV === 'development';
     const isComingSoon = cleanSubPathname === '/coming-soon';
-    const isAllowed = ALLOWED_SUBPATHS.some(path => cleanSubPathname.startsWith(path));
+    const isAuth = cleanSubPathname.startsWith('/auth');
+    const isPedalboard = cleanSubPathname.startsWith('/pedalboard');
+    
+    // Check if it's an allowed subpath (Legal, About, and explicit redirections)
+    const isAllowed = ALLOWED_SUBPATHS.some(path => {
+        if (path === '/') return cleanSubPathname === '/';
+        return cleanSubPathname === path || cleanSubPathname.startsWith(`${path}/`);
+    });
 
-    if (!isDev && !isComingSoon && !isAllowed) {
+    // Check for active admin/user session
+    const sessionTokenActive = AUTH_COOKIE_NAMES.some(name => request.cookies.get(name)?.value);
+
+    // Gate logic: Redirect to coming-soon if it's NOT (dev OR coming-soon OR allowed OR auth OR session-active)
+    if (!isDev && !isComingSoon && !isAllowed && !isAuth && !sessionTokenActive) {
         return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
     }
 
-    // 1.6 Vision/Roadmap Aliases
+    // 3. Vision/Roadmap Aliases (Redirects)
     if (cleanSubPathname === '/roadmap' || cleanSubPathname === '/vision') {
         return NextResponse.redirect(new URL(`/${locale}/about/vision`, request.url));
     }
 
-    // 2. Authentication Check (for pedalboard)
-    if (subPathname.startsWith('/pedalboard')) {
-        const sessionToken = AUTH_COOKIE_NAMES.find(name => request.cookies.get(name)?.value);
+    // 4. Authenticated Area Enforcement (for pedalboard)
+    if (isPedalboard && !sessionTokenActive) {
+        const callbackUrl = encodeURIComponent(pathname);
+        return NextResponse.redirect(new URL(`/${locale}/auth/signin?callbackUrl=${callbackUrl}`, request.url));
+    }
 
-        if (!sessionToken) {
-            return NextResponse.redirect(new URL(`/${locale}/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`, request.url));
-        }
+    // 5. Handle Locale Prefixing (if not already there)
+    if (!pathnameHasLocale) {
+        request.nextUrl.pathname = `/${locale}${pathname}`;
+        return NextResponse.rewrite(request.nextUrl);
     }
 
     return NextResponse.next();
