@@ -122,7 +122,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                     <span>Identity //</span>
                                     <span className="text-zinc-400">{type}</span>
                                 </div>
-                                <h1 className="text-5xl font-black italic tracking-tighther uppercase text-white leading-none">{name}</h1>
+                                <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase text-white leading-none">{name}</h1>
                             </div>
 
                             <div className="pt-6 border-t border-zinc-900">
@@ -138,7 +138,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
 
                     {/* CENTER PANEL: UPLINK_TERMINAL */}
                     < div className="lg:col-span-5 bg-black border-r border-zinc-900 min-h-screen" >
-                        < div className="lg:sticky lg:top-0 z-20 h-20 bg-zinc-950/90 backdrop-blur-md px-6 border-b border-zinc-900" >
+                        <div className="lg:sticky lg:top-0 z-20 h-16 lg:h-20 bg-zinc-950/90 backdrop-blur-md px-4 lg:px-6 border-b border-zinc-900">
                             <div className="flex items-center justify-between h-full">
                                 <div className="flex items-center gap-3">
                                     <div className="w-6 h-6 border-2 border-zinc-600 flex items-center justify-center">
@@ -146,11 +146,11 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                     </div>
                                     <span className="text-[10px] font-bold tracking-[0.2em] text-zinc-400 uppercase italic">Active_Links</span>
                                 </div>
-                                <span className="text-[10px] font-mono font-bold text-zinc-600 uppercase tracking-tighter px-3 py-1 bg-zinc-900 border border-zinc-800">Registry_Uplink // Stable_Channel</span>
+                                <span className="hidden sm:block text-[10px] font-mono font-bold text-zinc-600 uppercase tracking-tighter px-3 py-1 bg-zinc-900 border border-zinc-800">Registry_Uplink // Stable_Channel</span>
                             </div>
                         </div >
 
-                        <div className="p-6 space-y-6">
+                        <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
                             {Array.isArray(entity.socialLinks) && entity.socialLinks.length > 0 ? (
                                 entity.socialLinks.map((link: any, i: number) => (
                                     <a
@@ -158,20 +158,20 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="group relative block bg-zinc-950 border border-zinc-900 hover:border-white p-6 transition-all duration-300"
+                                        className="group relative block bg-zinc-950 border border-zinc-900 hover:border-white p-4 lg:p-6 transition-all duration-300"
                                     >
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-6">
-                                                <div className="w-16 h-16 flex items-center justify-center bg-zinc-900 border border-zinc-800 group-hover:border-zinc-500 group-hover:bg-zinc-950 transition-colors">
+                                            <div className="flex items-center gap-4 lg:gap-6">
+                                                <div className="w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center bg-zinc-900 border border-zinc-800 group-hover:border-zinc-500 group-hover:bg-zinc-950 transition-colors">
                                                     <Icon
                                                         icon={`simple-icons:${link.platform?.toLowerCase() || 'link'}`}
                                                         className="text-zinc-400 group-hover:text-white"
-                                                        width={32}
+                                                        width={24}
                                                     />
                                                 </div>
                                                 <div className="space-y-1">
                                                     <div className="text-[10px] font-mono font-bold text-zinc-600 uppercase tracking-widest group-hover:text-zinc-400">Current_Channel</div>
-                                                    <div className="text-xl font-black uppercase tracking-widest text-zinc-100 group-hover:text-white transition-colors">
+                                                    <div className="text-lg lg:text-xl font-black uppercase tracking-widest text-zinc-100 group-hover:text-white transition-colors">
                                                         {link.platform || 'General Terminal'}
                                                     </div>
                                                 </div>
@@ -221,7 +221,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                     {/* RIGHT PANEL: RESONANCE_SHARDS */}
                     < div className="lg:col-span-4 bg-black p-0 min-h-screen" >
                         {/* Shard Archive Header */}
-                        < div className="lg:sticky lg:top-0 z-20 h-20 bg-zinc-950/90 backdrop-blur-md px-6 border-b border-zinc-900" >
+                        <div className="lg:sticky lg:top-0 z-20 h-16 lg:h-20 bg-zinc-950/90 backdrop-blur-md px-4 lg:px-6 border-b border-zinc-900">
                             <div className="flex items-center justify-between h-full">
                                 <div className="flex items-center gap-3">
                                     <div className="w-6 h-6 border-2 border-zinc-600 flex items-center justify-center">
@@ -239,10 +239,10 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                     <Link
                                         key={i}
                                         href={`/artifacts/${credit.artifact.id}`}
-                                        className="group flex flex-col p-8 hover:bg-white/[0.03] transition-colors relative"
+                                        className="group flex flex-col p-4 lg:p-8 hover:bg-white/[0.03] transition-colors relative"
                                     >
-                                        <div className="flex gap-8 items-start">
-                                            <div className="w-40 h-24 bg-zinc-900 flex-shrink-0 border-2 border-zinc-800 overflow-hidden group-hover:border-white transition-all shadow-2xl">
+                                        <div className="flex gap-4 lg:gap-8 items-start">
+                                            <div className="w-24 h-16 lg:w-40 lg:h-24 bg-zinc-900 flex-shrink-0 border-2 border-zinc-800 overflow-hidden group-hover:border-white transition-all shadow-2xl">
                                                 {credit.artifact.thumbnail?.url ? (
                                                     <img src={credit.artifact.thumbnail.url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                                 ) : (
