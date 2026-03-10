@@ -36,7 +36,7 @@ export default function middleware(request: NextRequest) {
             pathname.startsWith('/api') ||
             pathname.includes('.') ||
             pathname === '/robots.txt' ||
-             pathname === '/favicon.ico'
+            pathname === '/favicon.svg'
         ) {
             return NextResponse.next();
         }
@@ -51,6 +51,6 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!api|_next/static|_next/image|favicon.svg).*)',
     ],
 };
