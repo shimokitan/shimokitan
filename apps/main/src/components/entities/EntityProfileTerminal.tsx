@@ -30,13 +30,13 @@ export function EntityProfileTerminal({ entity, locale }: { entity: any, locale:
                             <Icon icon="lucide:lock" width={32} className="text-zinc-700" />
                         </div>
 
-                        {/* Entity Name — the only thing that leaks through */}
+                        {/* Absolute Encryption — No data leakage */}
                         <div className="space-y-2">
                             <div className="text-[10px] font-mono font-bold text-zinc-600 uppercase tracking-[0.4em]">
-                                Quiet_Signal
+                                Signal_Lost
                             </div>
-                            <h1 className="text-4xl font-black italic tracking-tighter uppercase text-zinc-500 leading-none">
-                                {name}
+                            <h1 className="text-4xl font-black italic tracking-tighter uppercase text-zinc-800 leading-none">
+                                [REDACTED]
                             </h1>
                         </div>
 
