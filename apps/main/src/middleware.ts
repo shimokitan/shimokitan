@@ -64,8 +64,9 @@ export default function middleware(request: NextRequest) {
 
         const locale = getLocale(request);
         request.nextUrl.pathname = `/${locale}${pathname}`;
-        return NextResponse.redirect(request.nextUrl);
+        return NextResponse.rewrite(request.nextUrl);
     }
+
 
     const segments = pathname.split('/');
     const locale = segments[1];

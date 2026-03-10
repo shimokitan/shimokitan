@@ -1,15 +1,19 @@
 import React from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getEntityBySlug } from '@shimokitan/db';
 import { EntityProfileTerminal } from '@/components/entities/EntityProfileTerminal';
 
-export default async function ArtistAliasPage(props: { params: Promise<{ locale: string, slug: string }> }) {
+export default async function EntityProfilePage(props: { params: Promise<{ locale: string, slug: string }> }) {
     const { locale, slug: rawSlug } = await props.params;
 
-    // The user lands on /artist/@slug.
-    // The slug parameter will be URL-encoded (e.g. %40MAPPA)
     const decodedSlug = decodeURIComponent(rawSlug);
-    const slug = decodedSlug.startsWith('@') ? decodedSlug.slice(1) : decodedSlug;
+    
+    // Legacy support for @ links — redirect to clean version
+    if (decodedSlug.startsWith('@')) {
+        redirect(`/${locale}/${decodedSlug.slice(1)}`);
+    }
+    
+    const slug = decodedSlug;
 
     let entity: any = null;
 
@@ -19,6 +23,8 @@ export default async function ArtistAliasPage(props: { params: Promise<{ locale:
         console.error(`SCANNER_ERROR: Failed to retrieve data for entity ${slug}.`);
     }
 
+    // Since this is a catch-all at the root level, we only show it if the entity exists.
+    // If not found, we let Next.js throw a 404.
     if (!entity) {
         notFound();
     }
