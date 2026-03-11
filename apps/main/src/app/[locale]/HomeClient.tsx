@@ -74,8 +74,39 @@ export default function HomeClient({
   const [activeSignal, setActiveSignal] = useState<number>(0);
   const station = useStationStore();
 
+  const [audioState, setAudioState] = useState({
+    isPlaying: false,
+    currentTime: 0,
+    duration: 0,
+    progress: 0,
+    volume: station.volume || 80
+  });
+
   const [randomFreq, setRandomFreq] = useState<string>("000");
   const time = useTime();
+
+  useEffect(() => {
+    const handleState = (e: Event) => {
+      setAudioState((e as CustomEvent).detail);
+    };
+    window.addEventListener('shim_audio_state', handleState);
+    return () => window.removeEventListener('shim_audio_state', handleState);
+  }, []);
+
+  const formatTime = (time: number) => {
+    if (!time || isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const dispatchCommand = (type: string, payload: any = {}) => {
+    if (type === 'volume') {
+      station.setVolume(payload.volume);
+      setAudioState(prev => ({ ...prev, volume: payload.volume }));
+    }
+    window.dispatchEvent(new CustomEvent('shim_audio_command', { detail: { type, ...payload } }));
+  };
 
   useEffect(() => {
     if (transmissions.length === 0) return;
@@ -91,7 +122,10 @@ export default function HomeClient({
 
   const heroArtifact = spotlightArtifacts[0];
 
-  const isDockedActive = station.isInitialized && !station.isMinimized;
+  const trackToDisplay = station.currentTrack || currentTrack || { title: "Station_Offline", artist: "Awaiting Input...", format: "null", bitrate: "0_kbps", cover: "" };
+  const hasTrack = !!station.currentTrack?.src || !!currentTrack?.src;
+
+  const isDockedActive = hasTrack;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 md:grid-rows-7 gap-3 h-auto md:h-full">
@@ -237,39 +271,39 @@ export default function HomeClient({
         icon="lucide:radio"
         minimal
       >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="h-9 border-b border-zinc-800/50 flex items-center justify-between px-4 bg-zinc-950/40 shrink-0">
-            <div className="flex items-center gap-2 text-zinc-500">
-              <Icon
-                icon="lucide:disc"
-                width={12}
-                className={isDockedActive ? "animate-spin" : ""}
-              />
-              <span className="text-[9px] font-mono tracking-[0.15em] uppercase">
-                LIVE_CENTER
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              {station.isInitialized && !station.isMinimized && (
-                <button
-                  onClick={() => station.setMinimized(true)}
-                  className="hidden md:flex items-center justify-center p-1 hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-white"
-                  title="Minimize to Floating Widget"
-                >
-                  <Icon icon="lucide:minus" width={12} />
-                </button>
-              )}
-              <div
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full transition-all",
-                  isDockedActive
-                    ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"
-                    : "bg-zinc-800"
+          <div className="flex flex-col h-full relative z-[60] pointer-events-auto">
+            {/* Header */}
+            <div className="h-9 border-b border-zinc-800/50 flex items-center justify-between px-4 bg-zinc-950/40 shrink-0 relative z-[70]">
+              <div className="flex items-center gap-2 text-zinc-500">
+                <Icon
+                  icon="lucide:disc"
+                  width={12}
+                  className={isDockedActive ? "animate-spin" : ""}
+                />
+                <span className="text-[9px] font-mono tracking-[0.15em] uppercase">
+                  LIVE_CENTER
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {station.isInitialized && !station.isMinimized && (
+                  <button
+                    onClick={() => station.setMinimized(true)}
+                    className="hidden md:flex items-center justify-center p-1 hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-white pointer-events-auto"
+                    title="Minimize to Floating Widget"
+                  >
+                    <Icon icon="lucide:minus" width={12} />
+                  </button>
                 )}
-              />
+                <div
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-all",
+                    isDockedActive
+                      ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                      : "bg-zinc-800"
+                  )}
+                />
+              </div>
             </div>
-          </div>
 
           {/* Vinyl & Tonearm */}
           <div className="flex-1 flex flex-col items-center justify-center relative p-4 min-h-0">
@@ -277,9 +311,9 @@ export default function HomeClient({
               <div
                 className={cn(
                   "w-32 h-32 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-950 overflow-hidden relative shadow-[0_24px_48px_-12px_rgba(0,0,0,1)] transition-all duration-700",
-                  isDockedActive
+                  audioState.isPlaying
                     ? "animate-[spin_4s_linear_infinite]"
-                    : "scale-95 opacity-60 grayscale-[0.3]"
+                    : isDockedActive ? "" : "scale-95 opacity-60 grayscale-[0.3]"
                 )}
               >
                 {[...Array(3)].map((_, i) => (
@@ -290,16 +324,31 @@ export default function HomeClient({
                   />
                 ))}
                 <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10 shadow-lg">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png"
-                    className={cn(
-                      "w-full h-full object-cover transition-opacity duration-700",
-                      !isDockedActive && "opacity-40"
-                    )}
-                    alt="current signal"
-                  />
+                  {trackToDisplay.cover ? (
+                    <img
+                      src={trackToDisplay.cover}
+                      className={cn(
+                        "w-full h-full object-cover transition-opacity duration-700",
+                        !isDockedActive && "opacity-40"
+                      )}
+                      alt="current signal"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+                      <Icon icon="lucide:radio" width={24} height={24} className="text-zinc-800" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-black/10" />
                 </div>
+                {/* Vinyl Spin Animation Overlay */}
+                <div
+                  className={cn(
+                    "absolute inset-0 transition-transform duration-1000",
+                    audioState.isPlaying
+                      ? "animate-[spin_4s_linear_infinite]"
+                      : ""
+                  )}
+                />
                 <div className="absolute w-2 h-2 bg-zinc-400 rounded-full border border-zinc-950 z-20" />
               </div>
 
@@ -307,7 +356,7 @@ export default function HomeClient({
               <div
                 className={cn(
                   "absolute -right-3 top-0 w-20 h-24 origin-top transition-transform duration-1000 ease-[cubic-bezier(0.45,0.05,0.55,0.95)] z-20 pointer-events-none",
-                  isDockedActive ? "rotate-[20deg]" : "rotate-[-12deg]"
+                  audioState.isPlaying ? "rotate-[20deg]" : "rotate-[-12deg]"
                 )}
                 style={{ transformOrigin: "80% 15%" }}
               >
@@ -336,9 +385,9 @@ export default function HomeClient({
             {/* Track Info */}
             <div className="mt-3 flex flex-col items-center">
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant="zinc">LOSSLESS</Badge>
+                <Badge variant="zinc">{trackToDisplay.format || "null"}</Badge>
                 <span className="text-[8px] font-mono text-zinc-600 uppercase">
-                  1411_KBPS
+                  {trackToDisplay.bitrate || "0_kbps"}
                 </span>
               </div>
               <h3
@@ -347,7 +396,7 @@ export default function HomeClient({
                   isDockedActive ? "text-white" : "text-zinc-700"
                 )}
               >
-                {isDockedActive ? "Starboy" : "---"}
+                {trackToDisplay.title || "Station_Offline"}
               </h3>
               <p
                 className={cn(
@@ -355,53 +404,58 @@ export default function HomeClient({
                   isDockedActive ? "text-violet-500" : "text-zinc-800"
                 )}
               >
-                {isDockedActive ? "The Weeknd, Daft Punk" : "Enter_Frequency"}
+                {trackToDisplay.artist || "Awaiting Input..."}
               </p>
             </div>
           </div>
-
           {/* Controls */}
-          <div className="p-3 bg-zinc-900/30 border-t border-zinc-900 space-y-2 shrink-0">
+          <div className="p-3 bg-zinc-900/30 border-t border-zinc-900 space-y-2 shrink-0 relative z-[100] pointer-events-auto">
             <div className="w-full flex items-center gap-2 text-[9px] text-zinc-500 font-mono font-black italic">
-              <span className="w-7">1:24</span>
-              <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full bg-violet-600 transition-all duration-300",
-                    station.isInitialized && !station.isMinimized ? "w-[35%]" : "w-0"
-                  )}
-                />
+              <span className="w-7 text-right">{formatTime(audioState.currentTime)}</span>
+              <div 
+                className="flex-1 h-3 flex items-center group/seek cursor-pointer"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                  dispatchCommand('seek', { time: pos * audioState.duration });
+                }}
+              >
+                <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden pointer-events-none relative">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-violet-600 transition-all duration-100 linear"
+                    style={{ width: isDockedActive ? `${audioState.progress}%` : '0%' }}
+                  />
+                </div>
               </div>
-              <span className="w-7">3:50</span>
+              <span className="w-7">{formatTime(audioState.duration)}</span>
             </div>
 
-            <div className="flex items-center justify-center gap-4">
-              <button className="text-zinc-600 hover:text-white transition-colors">
+            <div className="flex items-center justify-center gap-4 relative z-50">
+              <button disabled={!isDockedActive} className="text-zinc-600 hover:text-white transition-colors disabled:opacity-50">
                 <Icon icon="lucide:skip-back" width={14} />
               </button>
               <button
                 onClick={() => {
-                  if (!station.isInitialized && currentTrack?.src) {
+                  if (station.isInitialized && station.currentTrack?.src) {
+                     dispatchCommand('playToggle');
+                  } else if (currentTrack?.src) {
                      station.initialize(currentTrack as any);
-                  } else {
-                     station.toggle();
                   }
-                  if (station.isMinimized) station.setMinimized(false);
                 }}
                 className={cn(
                   "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300",
-                  station.isInitialized
+                  isDockedActive
                     ? "bg-white text-black shadow-lg"
                     : "bg-zinc-800 text-zinc-600 border border-zinc-700"
                 )}
               >
                 <Icon
-                  icon={station.isInitialized ? "lucide:pause" : "lucide:play"}
+                  icon={audioState.isPlaying ? "lucide:pause" : "lucide:play"}
                   width={16}
-                  className={!station.isInitialized ? "ml-0.5" : ""}
+                  className={!audioState.isPlaying ? "ml-0.5" : ""}
                 />
               </button>
-              <button className="text-zinc-600 hover:text-white transition-colors">
+              <button disabled={!isDockedActive} className="text-zinc-600 hover:text-white transition-colors disabled:opacity-50">
                 <Icon icon="lucide:skip-forward" width={14} />
               </button>
             </div>
@@ -410,10 +464,38 @@ export default function HomeClient({
               <Icon
                 icon="lucide:volume-2"
                 width={12}
-                className="text-zinc-600"
+                className={cn(isDockedActive ? "text-white" : "text-zinc-600")}
               />
-              <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-zinc-500 w-[80%]" />
+              <div 
+                className="flex-1 h-3 flex items-center cursor-pointer"
+                onMouseDown={(e) => {
+                  const updateVolume = (clientX: number, currentTarget: HTMLElement) => {
+                      const rect = currentTarget.getBoundingClientRect();
+                      const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                      dispatchCommand('volume', { volume: pos * 100 });
+                  };
+                  const target = e.currentTarget as HTMLElement;
+                  updateVolume(e.clientX, target);
+
+                  const handleMouseMove = (moveEvent: MouseEvent) => {
+                      updateVolume(moveEvent.clientX, target);
+                  };
+                  
+                  const handleMouseUp = () => {
+                      document.removeEventListener('mousemove', handleMouseMove);
+                      document.removeEventListener('mouseup', handleMouseUp);
+                  };
+
+                  document.addEventListener('mousemove', handleMouseMove);
+                  document.addEventListener('mouseup', handleMouseUp);
+                }}
+              >
+                  <div className="w-full h-1 bg-zinc-800 rounded-full relative pointer-events-none overflow-hidden">
+                      <div
+                          className="absolute top-0 left-0 h-full bg-zinc-500 rounded-full transition-all duration-75"
+                          style={{ width: `${audioState.volume}%` }}
+                      />
+                  </div>
               </div>
             </div>
           </div>

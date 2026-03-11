@@ -15,11 +15,13 @@ interface StationState {
     isInitialized: boolean;
     isMinimized: boolean;
     currentTrack: StationTrack | null;
+    volume: number;
     initialize: (track?: StationTrack) => void;
     reset: () => void;
     toggle: () => void;
     setMinimized: (minimized: boolean) => void;
     setTrack: (track: StationTrack) => void;
+    setVolume: (volume: number) => void;
 }
 
 export const useStationStore = create<StationState>()(
@@ -28,6 +30,7 @@ export const useStationStore = create<StationState>()(
             isInitialized: false,
             isMinimized: false,
             currentTrack: null,
+            volume: 80,
             initialize: (track) => set((state) => ({ 
                 isInitialized: true, 
                 isMinimized: false,
@@ -36,7 +39,8 @@ export const useStationStore = create<StationState>()(
             reset: () => set({ isInitialized: false, isMinimized: false, currentTrack: null }),
             toggle: () => set((state) => ({ isInitialized: !state.isInitialized })),
             setMinimized: (minimized) => set({ isMinimized: minimized }),
-            setTrack: (track) => set({ currentTrack: track, isInitialized: true }),
+            setTrack: (track) => set({ currentTrack: track, isInitialized: true, isMinimized: true }),
+            setVolume: (volume) => set({ volume }),
         }),
         {
             name: 'shimokitan-station-storage',
