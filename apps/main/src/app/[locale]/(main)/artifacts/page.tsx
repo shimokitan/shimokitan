@@ -19,7 +19,7 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
             slug: a.slug,
             title: translation?.title || "Untitled",
             category: a.category || "UNKNOWN",
-            coverImage: a.cover?.url || null,
+            coverImage: a.thumbnail?.url || a.poster?.url || null,
             status: a.status,
             resonance: a.resonance || 0,
             isMajor: (a.resonance || 0) > 10, // Featured based on Resonance Threshold

@@ -38,91 +38,98 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
     return (
         <div className="flex flex-col gap-8 pb-20 animate-in fade-in duration-700">
             {/* Header Section */}
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-1 bg-violet-600" />
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">District // Artist_Registry</span>
+            <header className="flex flex-col gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-12 bg-violet-600 shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                        THE_<span className="text-violet-600">ARCHITECTS</span>
+                    </h1>
                 </div>
-                <h1 className="text-5xl font-black italic tracking-tighter uppercase line-height-[0.8] mb-4">
-                    The <span className="text-transparent bg-clip-text bg-linear-to-r from-violet-500 to-rose-500">Inhabitants.</span>
-                </h1>
-                <p className="text-zinc-500 max-w-xl text-xs uppercase font-mono tracking-tight">
+                <p className="max-w-2xl font-mono text-zinc-500 text-xs uppercase tracking-widest leading-relaxed">
                     The architects of the district's resonance. Creators, agencies, and circles operating within the analog shadows.
                 </p>
-            </div>
+            </header>
 
             {/* Filter Bar */}
-            <div className="flex flex-wrap gap-2 sticky top-0 z-40 bg-black/80 backdrop-blur-md py-4 border-b border-zinc-900">
+            <div className="flex flex-wrap gap-3 sticky top-0 z-40 bg-black/90 backdrop-blur-xl py-4 border-b border-zinc-900 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
                 {entityTypes.map((type) => (
                     <button
                         key={type.value}
                         onClick={() => setActiveType(type.value)}
-                        className={`px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all border ${activeType === type.value
-                            ? 'bg-violet-600 border-violet-500 text-black shadow-[0_0_15px_rgba(139,92,246,0.3)]'
-                            : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+                        className={`px-4 py-2 text-[10px] font-black tracking-[0.2em] uppercase transition-all border-l-2 ${activeType === type.value
+                            ? 'bg-violet-600/10 border-violet-500 text-violet-400'
+                            : 'bg-zinc-950 border-zinc-900 text-zinc-500 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-300'
                             }`}
                     >
                         {type.label}
                     </button>
                 ))}
                 <div className="flex-1" />
-                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-full">
-                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-600" />
+                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-950 border-l-2 border-zinc-800 focus-within:border-violet-500 transition-colors">
+                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500" />
                     <input
                         type="text"
-                        placeholder="SEARCH_ARTIST..."
+                        placeholder="LOCATE_ENTITY..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-transparent border-none outline-none text-[10px] uppercase font-mono text-zinc-300 placeholder:text-zinc-700 w-32"
+                        className="bg-transparent border-none outline-none text-[10px] uppercase font-mono text-zinc-300 placeholder:text-zinc-700 w-40 tracking-widest"
                     />
                 </div>
             </div>
 
             {/* Entity Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredEntities.map((entity) => (
                     <Link
                         key={entity.id}
                         href={getEntityUrl(entity)}
-                        className="group relative bg-zinc-950 border border-zinc-900 hover:border-violet-500/40 p-4 transition-all duration-500"
+                        className="group relative bg-zinc-950/20 border border-zinc-900 hover:border-violet-900/50 p-5 transition-all duration-700 overflow-hidden flex flex-col gap-4"
                     >
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 transform group-hover:-rotate-3 transition-transform duration-500 overflow-hidden">
+                        <div className="flex items-start gap-4 z-10">
+                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 flex-shrink-0">
                                 {entity.avatarUrl ? (
                                     <img
                                         src={entity.avatarUrl}
                                         alt={entity.name}
-                                        className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-700"
+                                        className="w-full h-full object-cover transition-all duration-700"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950 text-zinc-700">
-                                        <div className="w-2 h-2 bg-zinc-800 rounded-full mb-1" />
+                                        <div className="w-2 h-2 bg-zinc-800 rounded-sm mb-1" />
                                         <span className="text-[6px] font-mono tracking-tighter">NO_SIGNAL</span>
                                     </div>
                                 )}
                             </div>
-                            <div className="flex flex-col flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 mb-1">
-                                    <span className="text-[7px] font-mono text-zinc-600 uppercase tracking-widest bg-zinc-900 px-1 py-0.5">{entity.type}</span>
-                                    {entity.isVerified && <Icon icon="lucide:check-circle" width={10} className="text-emerald-500" />}
+                            <div className="flex flex-col flex-1 min-w-0 pt-1">
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-1 h-1 bg-violet-600/50 group-hover:bg-violet-500 transition-colors" />
+                                        <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">{entity.type}</span>
+                                    </div>
+                                    {entity.isVerified && <Icon icon="lucide:check" width={12} className="text-violet-500" />}
                                 </div>
-                                <h3 className="text-lg font-black italic tracking-tighter uppercase text-white truncate group-hover:text-violet-400 transition-colors">
+                                <h3 className="text-xl font-black italic tracking-tighter uppercase text-zinc-300 group-hover:text-white transition-colors truncate">
                                     {entity.name}
                                 </h3>
-                                <div className="flex items-center gap-2 mt-2 md:opacity-40 md:group-hover:opacity-100 transition-opacity">
-                                    <div className="flex items-center gap-1">
-                                        <Icon icon="lucide:layers" width={10} className="text-zinc-500" />
-                                        <span className="text-[9px] font-mono text-zinc-500">{entity.artifactCount} SHARDS</span>
-                                    </div>
-                                    <div className="w-1 h-1 bg-zinc-800 rounded-full" />
-                                    <span className="text-[9px] font-mono text-zinc-700">UID_{entity.id}</span>
-                                </div>
                             </div>
                         </div>
 
+                        <div className="pt-3 border-t border-zinc-900 flex items-center justify-between z-10 transition-colors group-hover:border-violet-900/30">
+                            <div className="flex items-center gap-1.5">
+                                <Icon icon="lucide:file-box" width={10} className="text-zinc-600 group-hover:text-violet-500/50" />
+                                <span className="text-[10px] font-black italic text-zinc-400 group-hover:text-violet-400 uppercase tracking-tighter transition-colors">
+                                    {entity.artifactCount} Artifacts
+                                </span>
+                            </div>
+                            <span className="text-[8px] font-mono text-zinc-600">ID_{entity.id.slice(0, 8)}</span>
+                        </div>
+
+                        {/* Hover Overlay Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-violet-950/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                        
                         {/* Static Deco HUD */}
-                        <div className="absolute top-0 right-0 p-1 border-b border-l border-zinc-900 md:opacity-20 md:group-hover:opacity-100 md:group-hover:border-violet-500/20 transition-all">
-                            <div className="w-2 h-2 bg-zinc-800 group-hover:bg-violet-600" />
+                        <div className="absolute top-0 right-0 p-1 border-b border-l border-zinc-900 group-hover:border-violet-900/50 transition-colors z-10">
+                            <div className="w-1.5 h-1.5 bg-zinc-800 group-hover:bg-violet-500 transition-colors" />
                         </div>
                     </Link>
                 ))}

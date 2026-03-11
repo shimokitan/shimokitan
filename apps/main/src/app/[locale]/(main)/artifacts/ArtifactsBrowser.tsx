@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { BentoCard, Badge, cn } from '@shimokitan/ui';
+import { Badge, cn } from '@shimokitan/ui';
 import Link from 'next/link';
 
 type Artifact = {
@@ -19,7 +19,7 @@ type Artifact = {
 };
 
 const categories = [
-    { label: 'ALL_SHARDS', value: 'all' },
+    { label: 'ALL_ARTIFACTS', value: 'all' },
     { label: 'ANIME', value: 'anime' },
     { label: 'MUSIC', value: 'music' },
     { label: 'VTUBER', value: 'vtuber' },
@@ -39,42 +39,41 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
     return (
         <div className="w-full flex flex-col gap-6 pb-20 animate-in fade-in duration-700">
             {/* Header Section */}
-            <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-px bg-violet-600" />
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">District // Archive</span>
+            <header className="flex flex-col gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-12 bg-violet-600 shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                        CRATE_<span className="text-violet-600">DIGGING</span>
+                    </h1>
                 </div>
-                <h1 className="text-3xl font-black italic tracking-tighter uppercase mb-2">
-                    Crate <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-rose-500">Digging.</span>
-                </h1>
-                <p className="text-zinc-600 max-w-lg text-[12px] uppercase font-mono tracking-tight leading-relaxed">
-                    Consult the shards of the district. Sift through the analog noise to find the resonance that fits your frequency.
+                <p className="max-w-2xl font-mono text-zinc-500 text-xs uppercase tracking-widest leading-relaxed">
+                    Consult the artifacts of the district. Sift through the analog noise to find the resonance that fits your frequency.
                 </p>
-            </div>
+            </header>
 
             {/* Filter Bar */}
-            <div className="flex flex-wrap gap-2 sticky top-0 z-40 bg-black/80 backdrop-blur-md py-3 border-b border-zinc-900">
+            <div className="flex flex-wrap gap-3 sticky top-0 z-40 bg-black/90 backdrop-blur-xl py-4 border-b border-zinc-900 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
                 {categories.map((cat) => (
                     <button
                         key={cat.value}
                         onClick={() => setActiveCategory(cat.value)}
-                        className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all border ${activeCategory === cat.value
-                            ? 'bg-violet-600 border-violet-500 text-black shadow-[0_0_10px_rgba(139,92,246,0.2)]'
-                            : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+                        className={`px-4 py-2 text-[10px] font-black tracking-[0.2em] uppercase transition-all border-l-2 ${activeCategory === cat.value
+                            ? 'bg-violet-600/10 border-violet-500 text-violet-400'
+                            : 'bg-zinc-950 border-zinc-900 text-zinc-500 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-300'
                             }`}
                     >
                         {cat.label}
                     </button>
                 ))}
                 <div className="flex-1" />
-                <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-zinc-950 border border-zinc-800 rounded-full">
-                    <Icon icon="lucide:search" width={10} height={10} className="text-zinc-600" />
+                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-950 border-l-2 border-zinc-800 focus-within:border-violet-500 transition-colors">
+                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500" />
                     <input
                         type="text"
-                        placeholder="SEARCH_SHARD..."
+                        placeholder="ISOLATE_SIGNAL..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-transparent border-none outline-none text-[11px] uppercase font-mono text-zinc-300 placeholder:text-zinc-700 w-28"
+                        className="bg-transparent border-none outline-none text-[10px] uppercase font-mono text-zinc-300 placeholder:text-zinc-700 w-40 tracking-widest"
                     />
                 </div>
             </div>
@@ -85,22 +84,18 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                     <Link
                         key={artifact.id}
                         href={`/artifacts/${artifact.id}`}
-                        className="group/item transition-all duration-500"
+                        className={cn(
+                            "group/item transition-all duration-700 bg-zinc-950/20 border border-zinc-900 flex flex-col relative overflow-hidden hover:border-violet-900/50",
+                            artifact.isMajor && "border-rose-900/30 hover:border-rose-500/50"
+                        )}
                     >
-                        <BentoCard
-                            minimal
-                            className={cn(
-                                "h-full border-zinc-900 bg-zinc-950/50 hover:bg-zinc-900/50 transition-all duration-500 overflow-hidden",
-                                artifact.isMajor && "border-rose-900/20"
-                            )}
-                        >
                             <div className="flex flex-col h-full">
                                 {/* Visual Entry Focus */}
                                 <div className="relative aspect-video overflow-hidden bg-zinc-900">
                                     <img
                                         src={artifact.coverImage || '/placeholder.png'}
                                         alt={artifact.title}
-                                        className="w-full h-full object-cover md:grayscale md:group-hover/item:grayscale-0 group-hover/item:scale-105 transition-all duration-700 md:opacity-70 group-hover/item:opacity-100"
+                                        className="w-full h-full object-cover group-hover/item:scale-105 transition-all duration-700"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
 
@@ -116,19 +111,18 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                         </Badge>
                                     </div>
 
-                                    {/* Industry Signature */}
-                                    <div className="absolute bottom-2 left-2">
-                                        <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.3em] block mb-0.5">Origin</span>
-                                        <div className="text-[11px] font-black italic text-white/80 group-hover/item:text-white uppercase tracking-tighter truncate max-w-[100px]">
-                                            {artifact.artist || "ANON"}
-                                        </div>
-                                    </div>
                                 </div>
 
                                 {/* Registry Entry Data */}
                                 <div className="p-3.5 flex flex-col gap-3 relative">
                                     <div className="flex flex-col gap-0.5 pt-0.5">
-                                        <h3 className="text-sm font-black italic tracking-tighter uppercase text-zinc-300 group-hover/item:text-white transition-colors leading-tight">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.2em]">Origin //</span>
+                                            <span className="text-[10px] font-black italic text-zinc-400 uppercase tracking-tighter truncate">
+                                                {artifact.artist || "ANON"}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-sm font-black italic tracking-tighter uppercase text-zinc-300 group-hover/item:text-white transition-colors leading-tight line-clamp-2">
                                             {artifact.title}
                                         </h3>
                                     </div>
@@ -149,7 +143,6 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
                                     </div>
                                 </div>
                             </div>
-                        </BentoCard>
                     </Link>
                 ))}
             </div>

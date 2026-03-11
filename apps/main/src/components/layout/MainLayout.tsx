@@ -26,7 +26,7 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
         setMounted(true);
     }, []);
 
-    const isHomeActive = pathname === "/";
+    const isHomeActive = pathname === "/" || pathname === `/${currentLocale}`;
     const isArtifactsActive = pathname?.startsWith("/artifacts");
     const isZinesActive = pathname?.startsWith("/zines");
     const isPedalboardActive = pathname?.startsWith("/pedalboard");
@@ -54,12 +54,11 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                             <NavigationLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={isArtifactsActive} />
                             <NavigationLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} />
 
-                            <NavigationLink icon="lucide:broadcast" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" />
+                            <NavigationLink icon="lucide:signal" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" />
                             <NavigationLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={isPedalboardActive} />
 
                             <div className="h-px bg-zinc-800/80 w-full my-1" />
-                            <NavigationLink icon="lucide:headphones" label={navDict.mixtapes} />
-                            <NavigationLink icon="lucide:ghost" label={navDict.back_alley} />
+                            <NavigationLink icon="lucide:ghost" label={navDict.back_alley} href="/back-alley" active={pathname?.startsWith("/back-alley")} />
                         </div>
                     </nav>
 

@@ -199,11 +199,12 @@ export function Navbar() {
 
                             <div className="flex-1 overflow-y-auto custom-scroll overflow-x-hidden">
                                 <nav className="p-4 grid gap-2">
-                                    <MobileNavLink icon="lucide:radio" label={navDict.home} href="/" active={pathname === "/"} onClick={() => setIsOpen(false)} />
+                                    <MobileNavLink icon="lucide:radio" label={navDict.home} href="/" active={pathname === "/" || pathname === `/${currentLocale}`} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={pathname?.startsWith("/artifacts")} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} onClick={() => setIsOpen(false)} />
-                                    <MobileNavLink icon="lucide:broadcast" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" active={false} onClick={() => setIsOpen(false)} />
+                                    <MobileNavLink icon="lucide:signal" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" active={false} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={pathname?.startsWith("/pedalboard")} onClick={() => setIsOpen(false)} />
+                                    <MobileNavLink icon="lucide:ghost" label={navDict.back_alley} href="/back-alley" active={pathname?.startsWith("/back-alley")} onClick={() => setIsOpen(false)} />
                                 </nav>
 
                                 <div className="px-4 py-2">
