@@ -30,6 +30,18 @@ type Zine = {
   resonance: number | null;
 };
 
+type Transmission = {
+  id: string;
+  type: "issue" | "editorial" | "changelog" | "broadcast";
+  title: string;
+  topic: string | null;
+  content: string;
+  severity: "critical" | "high" | "monitoring" | "resolved" | null;
+  affectedUsers: number | null;
+  publishedAt: Date | string | null;
+  description?: string; // fallback if content is used as description
+};
+
 export default function HomeClient({
   spotlightArtifacts,
   recentZines,
@@ -40,6 +52,7 @@ export default function HomeClient({
   totalResonance,
   artifactCount,
   entityCount,
+  transmissions,
   dict,
 }: {
   spotlightArtifacts: Artifact[];
@@ -49,6 +62,7 @@ export default function HomeClient({
   entities: any[];
   weatherTemp: string;
   totalResonance: string;
+  transmissions: Transmission[];
   artifactCount: number;
   entityCount: number;
   dict: Dictionary;
@@ -58,42 +72,16 @@ export default function HomeClient({
   const [activeSignal, setActiveSignal] = useState<number>(0);
   const station = useStationStore();
 
-  const signalIssues = [
-    {
-      id: "SIG-001",
-      title: "API Latency Degradation in Core Services",
-      severity: "Critical",
-      date: "2026-03-08",
-      description:
-        "Significant latency observed across all routes accessing the core database, leading to timeouts in user-facing applications.",
-    },
-    {
-      id: "SIG-002",
-      title: "Webhook Delivery Delays",
-      severity: "High",
-      date: "2026-03-08",
-      description:
-        "Outgoing webhooks are delayed by up to 5 minutes due to an overloaded worker queue.",
-    },
-    {
-      id: "SIG-003",
-      title: "Intermittent Database Connection Drops",
-      severity: "Monitoring",
-      date: "2026-03-07",
-      description:
-        "Occasional connection drops to the read replica in the eu-central region.",
-    },
-  ];
-
   const [randomFreq, setRandomFreq] = useState<string>("000");
   const time = useTime();
 
   useEffect(() => {
+    if (transmissions.length === 0) return;
     const signalInterval = setInterval(() => {
-      setActiveSignal((prev) => (prev + 1) % signalIssues.length);
+      setActiveSignal((prev) => (prev + 1) % transmissions.length);
     }, 8000);
     return () => clearInterval(signalInterval);
-  }, [signalIssues.length]);
+  }, [transmissions.length]);
 
   useEffect(() => {
     setRandomFreq(Math.floor(Math.random() * 1000).toString(16));
@@ -836,85 +824,111 @@ export default function HomeClient({
           </div>
 
           <div className="relative flex-1 overflow-hidden">
-            {signalIssues.map((issue, idx) => (
-              <div
-                key={issue.id}
-                className={cn(
-                  "absolute inset-0 p-3 md:p-5 transition-all duration-1000 flex flex-col justify-center",
-                  idx === activeSignal
-                    ? "opacity-100 scale-100 z-20"
-                    : "opacity-0 scale-95 z-10"
-                )}
-              >
-                <div className="max-w-3xl mx-auto w-full space-y-2.5 md:space-y-3.5">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-zinc-400 text-[8px] md:text-[9px] font-mono font-bold tracking-tight">
-                        REF_LOG::{issue.id}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border",
-                          issue.severity === "Critical"
-                            ? "border-red-600 text-red-600 bg-red-50/50"
-                            : issue.severity === "High"
-                              ? "border-amber-600 text-amber-600 bg-amber-50/50"
-                              : "border-blue-600 text-blue-600 bg-blue-50/50"
+            {transmissions.length > 0 ? (
+              transmissions.map((issue, idx) => (
+                <div
+                  key={issue.id}
+                  className={cn(
+                    "absolute inset-0 p-3 md:p-5 transition-all duration-1000 flex flex-col justify-center",
+                    idx === activeSignal
+                      ? "opacity-100 scale-100 z-20"
+                      : "opacity-0 scale-95 z-10"
+                  )}
+                >
+                  <div className="max-w-3xl mx-auto w-full space-y-2.5 md:space-y-3.5">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-zinc-400 text-[8px] md:text-[9px] font-mono font-bold tracking-tight">
+                          REF_LOG::{issue.id}
+                        </span>
+                        {issue.type === "issue" && (
+                          <span
+                            className={cn(
+                              "text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border",
+                              issue.severity === "critical"
+                                ? "border-red-600 text-red-600 bg-red-50/50"
+                                : issue.severity === "high"
+                                  ? "border-amber-600 text-amber-600 bg-amber-50/50"
+                                  : "border-blue-600 text-blue-600 bg-blue-50/50"
+                            )}
+                          >
+                            {issue.severity}
+                          </span>
                         )}
-                      >
-                        {issue.severity}
-                      </span>
-                    </div>
-                    <h3 className="text-lg md:text-2xl font-black text-zinc-900 leading-[0.9] tracking-tighter uppercase italic drop-shadow-sm">
-                      {issue.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-[10px] md:text-[13px] text-zinc-800 leading-tight font-bold max-w-2xl border-l-[2px] md:border-l-[3px] border-zinc-900 pl-2 md:pl-3 italic">
-                    &ldquo;{issue.description}&rdquo;
-                  </p>
-
-                  <div className="flex items-center justify-between pt-2.5 md:pt-3.5 border-t border-zinc-900/10">
-                    <div className="flex flex-col">
-                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
-                        Logged On
-                      </span>
-                      <time className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase">
-                        {issue.date.replace(/-/g, ".")} // {time.slice(0, 5)}
-                      </time>
+                        {issue.type === "editorial" && (
+                          <span className="text-[6px] md:text-[7px] font-black uppercase px-1.5 py-0.5 rounded-full border border-violet-600 text-violet-600 bg-violet-50/50">
+                            Editorial
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-lg md:text-2xl font-black text-zinc-900 leading-[0.9] tracking-tighter uppercase italic drop-shadow-sm">
+                        {issue.title}
+                      </h3>
                     </div>
 
-                    <div className="flex items-center gap-1.5 md:gap-3">
-                      {signalIssues.map((_, dotIdx) => (
-                        <button
-                          key={dotIdx}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setActiveSignal(dotIdx);
-                          }}
-                          className={cn(
-                            "h-2 md:h-2.5 border border-zinc-900 transition-all duration-300",
-                            dotIdx === activeSignal
-                              ? "w-6 md:w-10 bg-zinc-900"
-                              : "w-2 md:w-2.5 bg-transparent hover:bg-zinc-100"
-                          )}
-                          aria-label={`Go to issue ${dotIdx + 1}`}
-                        />
-                      ))}
-                    </div>
+                    <p className="text-[10px] md:text-[13px] text-zinc-800 leading-tight font-bold max-w-2xl border-l-[2px] md:border-l-[3px] border-zinc-900 pl-2 md:pl-3 italic line-clamp-3">
+                      &ldquo;{issue.content}&rdquo;
+                    </p>
 
-                    <div className="hidden sm:flex flex-col items-end">
-                      <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
-                        Feed Status
-                      </span>
-                      <span className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase tracking-tighter">
-                        Secure // Encrypted
-                      </span>
+                    <div className="flex items-center justify-between pt-2.5 md:pt-3.5 border-t border-zinc-900/10">
+                      <div className="flex flex-col">
+                        <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                          {issue.type === "editorial" ? "Published On" : "Logged On"}
+                        </span>
+                        <time className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase">
+                          {issue.publishedAt
+                            ? new Date(issue.publishedAt).toLocaleDateString().replace(/\//g, ".")
+                            : "NO_DATE"}{" "}
+                          // {time.slice(0, 5)}
+                        </time>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 md:gap-3">
+                        {transmissions.map((_, dotIdx) => (
+                          <button
+                            key={dotIdx}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setActiveSignal(dotIdx);
+                            }}
+                            className={cn(
+                              "h-2 md:h-2.5 border border-zinc-900 transition-all duration-300",
+                              dotIdx === activeSignal
+                                ? "w-6 md:w-10 bg-zinc-900"
+                                : "w-2 md:w-2.5 bg-transparent hover:bg-zinc-100"
+                            )}
+                            aria-label={`Go to transmission ${dotIdx + 1}`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="hidden sm:flex flex-col items-end">
+                        <span className="text-[6px] md:text-[7px] font-mono text-zinc-400 font-bold uppercase tracking-widest">
+                          Topic
+                        </span>
+                        <span className="text-[8px] md:text-[10px] font-black text-zinc-900 uppercase tracking-tighter">
+                          {issue.topic || "District // General"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-zinc-400 font-mono italic p-8">
+                <Icon
+                  icon="lucide:signal-low"
+                  width={32}
+                  className="mb-3 opacity-30 animate-pulse"
+                />
+                <span className="text-[10px] uppercase tracking-[0.4em] font-black">
+                  No_Active_Transmissions
+                </span>
+                <p className="text-[8px] text-zinc-300 mt-2 uppercase tracking-widest text-center max-w-[200px]">
+                  The district air is silent. No signals detected in the range.
+                </p>
               </div>
-            ))}
+            )}
           </div>
 
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />

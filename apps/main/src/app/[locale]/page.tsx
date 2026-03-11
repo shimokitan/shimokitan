@@ -241,6 +241,19 @@ export default async function AppPage({
       console.error("Resonance Count Failed");
   }
 
+  // 6. Fetch Transmissions (Signal Feed)
+  let transmissions: any[] = [];
+  try {
+    transmissions = await db.query.transmissions.findMany({
+      where: eq(schema.transmissions.isActive, true),
+      orderBy: [desc(schema.transmissions.publishedAt)],
+      limit: 5,
+    });
+  } catch (e: any) {
+    if (process.env.NODE_ENV !== "production")
+      console.error("Transmissions Fetch Failed:", e.message);
+  }
+
   return (
     <MainLayout>
       <HomeClient
@@ -252,6 +265,7 @@ export default async function AppPage({
         dict={dict}
         weatherTemp={weatherTemp}
         totalResonance={totalResonance}
+        transmissions={transmissions}
         artifactCount={spotlightArtifacts.length}
         entityCount={entities.length}
       />

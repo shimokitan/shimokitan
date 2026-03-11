@@ -16,6 +16,10 @@ export const entityTypeEnum = pgEnum("entity_type", ["individual", "organization
 export const userRoleEnum = pgEnum("user_role", ["founder", "architect", "resident", "ghost"]);
 export const managerRoleEnum = pgEnum("manager_role", ["owner", "admin", "editor"]);
 
+// Signal / Transmission Enums
+export const signalSeverityEnum = pgEnum("signal_severity", ["critical", "high", "monitoring", "resolved"]);
+export const transmissionTypeEnum = pgEnum("transmission_type", ["issue", "editorial", "changelog", "broadcast"]);
+
 // Artifact-level enums
 export const artifactCategoryEnum = pgEnum("artifact_category", ["music", "anime"]);
 
@@ -446,6 +450,46 @@ export const verificationRegistry = pgTable("verification_registry", {
 }));
 
 // ==================================================================
+// 9. TRANSMISSIONS (Signal / System News / Editorial)
+// ==================================================================
+
+export const transmissions = pgTable("transmissions", {
+    id: text("id").primaryKey(),
+    type: transmissionTypeEnum("type").default("issue").notNull(),
+    title: text("title").notNull(),
+    topic: text("topic"),
+    content: text("content").notNull(), // Markdown supported
+    authorId: text("author_id").references(() => users.id),
+    
+    // Status Metadata (primarily for "issue" type)
+    severity: signalSeverityEnum("severity"),
+    affectedUsers: integer("affected_users").default(0),
+    attachmentId: text("attachment_id").references(() => media.id, { onDelete: "set null" }),
+
+    metadata: jsonb("metadata").default({}),
+    
+    isActive: boolean("is_active").default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+}, (t) => ({
+    typeIdx: index("idx_transmissions_type").on(t.type),
+    severityIdx: index("idx_transmissions_severity").on(t.severity),
+    publishedIdx: index("idx_transmissions_published").on(t.publishedAt),
+}));
+
+export const signalTimeline = pgTable("signal_timeline", {
+    id: text("id").primaryKey(),
+    transmissionId: text("transmission_id").references(() => transmissions.id, { onDelete: "cascade" }).notNull(),
+    state: text("state").notNull(),
+    note: text("note"),
+    actorId: text("actor_id").references(() => users.id),
+    timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow(),
+}, (t) => ({
+    transmissionIdx: index("idx_signal_timeline_transmission").on(t.transmissionId),
+}));
+
+// ==================================================================
 // 8.5. HOSTING RIGHTS LOG
 //
 // Dedicated audit trail for the music hosting lifecycle.
@@ -630,4 +674,15 @@ export const verificationRegistryRelations = relations(verificationRegistry, ({ 
 export const hostingRightsLogRelations = relations(hostingRightsLog, ({ one }) => ({
     artifact: one(artifacts, { fields: [hostingRightsLog.artifactId], references: [artifacts.id] }),
     actor: one(users, { fields: [hostingRightsLog.actorId], references: [users.id] }),
+}));
+
+export const transmissionsRelations = relations(transmissions, ({ one, many }) => ({
+    author: one(users, { fields: [transmissions.authorId], references: [users.id] }),
+    attachment: one(media, { fields: [transmissions.attachmentId], references: [media.id] }),
+    timeline: many(signalTimeline),
+}));
+
+export const signalTimelineRelations = relations(signalTimeline, ({ one }) => ({
+    transmission: one(transmissions, { fields: [signalTimeline.transmissionId], references: [transmissions.id] }),
+    actor: one(users, { fields: [signalTimeline.actorId], references: [users.id] }),
 }));
