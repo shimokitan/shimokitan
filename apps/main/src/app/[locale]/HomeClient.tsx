@@ -634,9 +634,9 @@ export default function HomeClient({
               <Link
                 key={entity.id}
                 href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}
-                className="flex items-center gap-4 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group shadow-sm"
+                className="flex items-center gap-4 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group/item shadow-sm"
               >
-                <div className="w-12 md:w-14 h-12 md:h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover:border-violet-500/50 transition-colors">
+                <div className="w-12 md:w-14 h-12 md:h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover/item:border-violet-500/50 transition-colors">
                   {entity.avatar ? (
                     <img
                       src={entity.avatar}
@@ -649,7 +649,7 @@ export default function HomeClient({
                   <div className="absolute top-0 right-0 bg-emerald-500 w-2.5 h-2.5 rounded-bl border-b border-l border-zinc-800 z-10 animate-pulse" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-black text-white uppercase italic tracking-tight group-hover:text-violet-400 truncate mb-1">
+                  <div className="text-sm font-black text-white uppercase italic tracking-tight group-hover/item:text-violet-400 truncate mb-1">
                     {entity.name}
                   </div>
                   <div className="flex flex-col gap-1">
@@ -679,13 +679,13 @@ export default function HomeClient({
             ))}
           <Link
             href="/artists"
-            className="mt-auto border border-dashed border-zinc-800 rounded bg-zinc-950/30 text-zinc-500 hover:text-white hover:border-zinc-500 hover:bg-zinc-900 transition-colors py-2 px-3 flex justify-between items-center gap-2 text-[11px] font-mono uppercase tracking-widest group"
+            className="mt-auto border border-dashed border-zinc-800 rounded bg-zinc-950/30 text-zinc-500 hover:text-white hover:border-zinc-500 hover:bg-zinc-900 transition-colors py-2 px-3 flex justify-between items-center gap-2 text-[11px] font-mono uppercase tracking-widest group/item"
           >
             <span>View Registry</span>
             <Icon
               icon="lucide:arrow-right"
               width={12}
-              className="group-hover:translate-x-1 group-hover:text-white transition-transform"
+              className="group-hover/item:translate-x-1 group-hover/item:text-white transition-transform"
             />
           </Link>
         </div>
@@ -710,7 +710,7 @@ export default function HomeClient({
                 {animeArtifact && (
                   <Link
                     href={`/artifacts/${animeArtifact.id}`}
-                    className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
+                    className="relative group/item rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950 row-span-2"
                   >
                     {animeArtifact.posterImage || animeArtifact.thumbnailImage ? (
                       <img
@@ -723,7 +723,7 @@ export default function HomeClient({
                         <Icon icon="lucide:music" width={32} />
                       </div>
                     )}
-                    <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-zinc-950/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-zinc-950/80 backdrop-blur-md md:translate-y-full md:group-hover/item:translate-y-0 transition-transform">
                       <div className="text-[9px] font-black text-white uppercase truncate">
                         {animeArtifact.title}
                       </div>
@@ -737,7 +737,7 @@ export default function HomeClient({
                   <Link
                     key={artifact.id}
                     href={`/artifacts/${artifact.id}`}
-                    className="relative group rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950"
+                    className="relative group/item rounded-lg overflow-hidden border border-zinc-900 bg-zinc-950"
                   >
                     {artifact.thumbnailImage ? (
                       <img
@@ -750,8 +750,8 @@ export default function HomeClient({
                         <Icon icon="lucide:music" width={24} />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/80 backdrop-blur-md md:translate-y-full md:group-hover:translate-y-0 transition-transform">
+                    <div className="absolute inset-0 bg-violet-600/20 opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/80 backdrop-blur-md md:translate-y-full md:group-hover/item:translate-y-0 transition-transform">
                       <div className="text-[8px] font-black text-white uppercase truncate px-0.5">
                         {artifact.title}
                       </div>

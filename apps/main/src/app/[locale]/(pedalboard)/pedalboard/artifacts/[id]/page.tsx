@@ -60,12 +60,13 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
         <div className="max-w-4xl mx-auto py-12">
             <header className="mb-12 flex items-start justify-between">
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Link href="/pedalboard/artifacts" className="text-zinc-500 hover:text-white transition-colors">
-                            <Icon icon="lucide:arrow-left" width={16} />
-                        </Link>
-                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Registry_Management // Audit</span>
-                    </div>
+                    <Link 
+                        href="/pedalboard/artifacts" 
+                        className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all mb-4"
+                    >
+                        <Icon icon="lucide:arrow-left" width={14} />
+                        Return_to_Registry
+                    </Link>
                     <h1 className="text-3xl font-black uppercase tracking-tighter text-white mb-2">
                         Modify_Artifact <span className="text-rose-600">// {params.id}</span>
                     </h1>

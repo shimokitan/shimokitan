@@ -36,12 +36,13 @@ export default async function NewArtifactPage() {
         <div className="space-y-6">
             <header className="flex items-end justify-between border-b border-zinc-900 pb-4">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/pedalboard/artifacts" className="text-zinc-500 hover:text-white transition-colors">
-                            <Icon icon="lucide:arrow-left" width={14} />
-                        </Link>
-                        <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Artifact_Registry / Initialize</span>
-                    </div>
+                    <Link 
+                        href="/pedalboard/artifacts" 
+                        className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all mb-4"
+                    >
+                        <Icon icon="lucide:arrow-left" width={14} />
+                        Return_to_Registry
+                    </Link>
                     <h1 className="text-2xl font-black italic tracking-tighter uppercase text-white">
                         Register <span className="text-rose-600">Artifact.</span>
                     </h1>

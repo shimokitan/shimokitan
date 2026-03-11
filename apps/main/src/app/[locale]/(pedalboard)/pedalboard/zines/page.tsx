@@ -60,6 +60,13 @@ export default async function ZinesPage(props: { searchParams: Promise<{ trash?:
         <div className="space-y-6">
             <header className="flex items-end justify-between">
                 <div>
+                    <Link 
+                        href="/pedalboard/console" 
+                        className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all mb-6"
+                    >
+                        <Icon icon="lucide:arrow-left" width={14} />
+                        Exit_to_Console
+                    </Link>
                     <h1 className="text-2xl font-black italic tracking-tighter uppercase text-white mb-2">
                         Underground <span className="text-emerald-500">Zines.</span>
                     </h1>
