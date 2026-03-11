@@ -1,12 +1,22 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { signalIssues } from "@/lib/data";
+import { getDb, schema, eq } from "@shimokitan/db";
 import { StatusBadge } from "@/components/status-badge";
 
 export default async function IssuePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const issue = signalIssues.find((i) => i.id === id);
+    const db = getDb();
+    if (!db) return <div>DB_CONNECTION_ERROR</div>;
+
+    const issue = await db.query.transmissions.findFirst({
+        where: eq(schema.transmissions.id, id),
+        with: {
+            timeline: {
+                orderBy: (t, { desc }) => [desc(t.timestamp)]
+            }
+        }
+    });
 
     if (!issue) {
         notFound();
@@ -31,9 +41,11 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div className="flex items-center gap-3">
                         <span className="text-muted-foreground text-sm font-mono">{issue.id}</span>
-                        <StatusBadge severity={issue.severity} />
+                        <StatusBadge severity={(issue.severity as any) || "monitoring"} />
                     </div>
-                    <time className="text-muted-foreground text-sm">{issue.date}</time>
+                    <time className="text-muted-foreground text-sm">
+                        {issue.publishedAt ? new Date(issue.publishedAt).toLocaleDateString() : "Pending"}
+                    </time>
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
@@ -43,11 +55,11 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                 <div className="flex items-center gap-6 mt-2 border-b border-border/40 pb-6">
                     <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
                         <Icon icon="lucide:users" className="w-4 h-4" />
-                        <span>{issue.affectedUsers.toLocaleString()} affected users</span>
+                        <span>{(issue.affectedUsers || 0).toLocaleString()} affected users</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
                         <Icon icon="lucide:message-square" className="w-4 h-4" />
-                        <span>{issue.feedbackSummary.length} reports</span>
+                        <span>{((issue.metadata as any)?.feedbackSummary as string[])?.length || 0} reports</span>
                     </div>
                 </div>
             </div>
@@ -59,7 +71,7 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                 <section className="flex flex-col gap-3">
                     <h2 className="text-lg font-bold tracking-tight">Issue Description</h2>
                     <p className="text-foreground/80 leading-relaxed">
-                        {issue.description}
+                        {issue.content}
                     </p>
                 </section>
 
@@ -70,7 +82,7 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                         Collective Feedback
                     </h2>
                     <ul className="flex flex-col gap-3">
-                        {issue.feedbackSummary.map((feedback, idx) => (
+                        {((issue.metadata as any)?.feedbackSummary as string[] || []).map((feedback, idx) => (
                             <li
                                 key={idx}
                                 className="bg-muted/50 border border-border/50 rounded-lg p-3 sm:p-4 text-sm text-foreground/90 flex gap-3"
@@ -79,6 +91,9 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                                 {feedback}
                             </li>
                         ))}
+                        {((issue.metadata as any)?.feedbackSummary as string[] || []).length === 0 && (
+                            <li className="text-muted-foreground text-xs italic">No collective feedback reports yet.</li>
+                        )}
                     </ul>
                 </section>
 
@@ -95,24 +110,36 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                         {/* Timeline Line for mobile */}
                         <div className="sm:hidden absolute left-0 top-3 bottom-5 w-px bg-border/60" />
 
-                        {issue.statusTimeline.map((tl, idx) => (
+                        {issue.timeline.map((tl, idx) => (
                             <div key={idx} className="flex flex-col sm:flex-row gap-2 sm:gap-6 relative py-4 sm:py-3">
 
                                 {/* Mobile dot */}
                                 <div className="sm:hidden absolute -left-[4.5px] top-[22px] w-2.5 h-2.5 rounded-full bg-border ring-4 ring-background" />
 
                                 <time className="sm:w-[120px] shrink-0 text-xs sm:text-sm font-medium text-muted-foreground sm:text-right sm:pt-0.5">
-                                    {tl.timestamp}
+                                    {tl.timestamp ? new Date(tl.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
                                 </time>
 
                                 {/* Desktop dot */}
                                 <div className="hidden sm:block absolute left-[120px] -translate-x-[4px] top-[18px] w-2.5 h-2.5 rounded-full bg-border ring-4 ring-background" />
 
-                                <div className="bg-card border border-border rounded-lg px-4 py-2 text-sm font-medium shadow-sm w-full sm:w-auto">
-                                    {tl.state}
+                                <div className="flex flex-col gap-2 w-full">
+                                    <div className="bg-card border border-border rounded-lg px-4 py-2 text-sm font-black shadow-sm w-fit uppercase italic tracking-tighter">
+                                        {tl.state}
+                                    </div>
+                                    {tl.note && (
+                                        <p className="text-sm text-muted-foreground leading-relaxed pl-1 max-w-xl">
+                                            {tl.note}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         ))}
+                        {issue.timeline.length === 0 && (
+                            <div className="py-8 text-center border border-dashed rounded-xl">
+                                <p className="text-xs text-muted-foreground uppercase tracking-widest font-mono italic">No_Timeline_Events</p>
+                            </div>
+                        )}
                     </div>
                 </section>
 

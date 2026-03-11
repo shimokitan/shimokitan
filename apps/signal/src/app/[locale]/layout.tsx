@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@shimokitan/ui";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { locales, Locale } from "@shimokitan/utils";
 
 const geistSans = Geist({
@@ -46,13 +44,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen flex flex-col selection:bg-primary selection:text-primary-foreground">
-            <Navbar />
-
-            <main className="flex-1 w-full flex flex-col overflow-hidden pb-12 pt-6">
+            <main className="flex-1 w-full flex flex-col overflow-hidden">
               {children}
             </main>
-
-            <Footer />
           </div>
         </ThemeProvider>
       </body>
