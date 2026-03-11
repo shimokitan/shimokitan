@@ -7,11 +7,15 @@
         "packages/*"
     ],
     "scripts": {
-        "sync-env": "bun -e \"import fs from 'node:fs'; fs.copyFileSync('.env.local', 'apps/main/.env.local')\"",
-        "build": "bun run sync-env && bun x turbo build --filter=main",
-        "dev": "bun run sync-env && bun x turbo dev --filter=main",
-        "lint": "bun run sync-env && bun x turbo lint --filter=main",
-        "type-check": "bun run sync-env && bun x turbo type-check --filter=main",
+        "sync-env": "bun -e \"import fs from 'node:fs'; const env = '.env.local'; ['apps/main', 'apps/signal'].forEach(dir => { if (fs.existsSync(env)) fs.copyFileSync(env, dir + '/' + env) })\"",
+        "build": "bun run sync-env && bun x turbo build",
+        "build:main": "bun run sync-env && bun x turbo build --filter=main",
+        "build:signal": "bun run sync-env && bun x turbo build --filter=signal",
+        "dev": "bun run sync-env && bun x turbo dev",
+        "dev:main": "bun run sync-env && bun x turbo dev --filter=main",
+        "dev:signal": "bun run sync-env && bun x turbo dev --filter=signal",
+        "lint": "bun run sync-env && bun x turbo lint",
+        "type-check": "bun run sync-env && bun x turbo type-check",
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {

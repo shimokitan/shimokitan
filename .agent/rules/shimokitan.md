@@ -12,3 +12,4 @@ trigger: always_on
 * **Auth:** Neon Auth
 * **Project Type:** Enterprise-grade, Scaling Ready
 * **Responsiveness:** Always make a design with mobile, tablet, and desktop in mind
+* **Project Existing:** `main` as our main public facing face and `signal` as dev2residents communication platform (bulletin board/magazines)
