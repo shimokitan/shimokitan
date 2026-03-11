@@ -31,6 +31,13 @@ interface BasicInfoSectionProps {
     onPosterFileSelect?: (file: File, objectUrl: string) => void;
     onPosterUrlSelect?: (url: string) => void;
 
+    vinylId: string | null;
+    setVinylId: (id: string | null) => void;
+    vinylUrl: string;
+    setVinylUrl: (url: string) => void;
+    onVinylFileSelect?: (file: File, objectUrl: string) => void;
+    onVinylUrlSelect?: (url: string) => void;
+
     category: string;
     setCategory: (val: string) => void;
 
@@ -70,6 +77,12 @@ export default function BasicInfoSection({
     setPosterUrl,
     onPosterFileSelect,
     onPosterUrlSelect,
+    vinylId,
+    setVinylId,
+    vinylUrl,
+    setVinylUrl,
+    onVinylFileSelect,
+    onVinylUrlSelect,
     category,
     setCategory,
 
@@ -162,17 +175,20 @@ export default function BasicInfoSection({
 
                                     {isHosted && (
                                         <div className="pt-2">
-                                            <label className="text-[10px] font-mono uppercase text-zinc-500 mb-2 block">Canonical_Audio_Uplink</label>
+                                            <label className="text-[10px] font-mono uppercase text-zinc-500 mb-2 block text-violet-400">Canonical_Audio_Uplink (HLS_SUPPORTED)</label>
                                             <PresignedUploader
                                                 context="artifacts"
                                                 contextId={artifactId}
-                                                accept="audio/*"
-                                                label="UPLINK_AUDIO_FILE"
+                                                accept="audio/*,application/x-mpegURL,.m3u8,.ts,.m4s,.m4a"
+                                                label="UPLINK_BATCH_FILES"
+                                                multiple={true}
+                                                preserveFilename={true}
                                                 onUploadSuccess={(url) => {
                                                     if (onHostedAudioUploaded) onHostedAudioUploaded(url);
                                                 }}
-                                                className="h-24 border-dashed border-zinc-800 hover:border-violet-600"
+                                                className="h-28 border-dashed border-zinc-800 hover:border-violet-600"
                                             />
+                                            <p className="text-[8px] text-zinc-600 font-mono italic mt-2 uppercase">Select all HLS segments + index.m3u8 for full synchronization.</p>
                                         </div>
                                     )}
                                 </div>
@@ -222,7 +238,26 @@ export default function BasicInfoSection({
                                     onUrlSelect={onThumbnailUrlSelect}
                                     className="aspect-[16/9] rounded-lg border border-zinc-900 overflow-hidden shadow-inner w-full"
                                 />
-                                <p className="text-[8px] text-zinc-700 font-mono italic mt-2 uppercase tracking-tighter">Aesthetic_Synchronization_Required.</p>
+                            </div>
+                        </div>
+                        <div className="pt-4 border-t border-zinc-900/50">
+                            <div className="grid grid-cols-12 gap-6">
+                                <div className="col-span-4 space-y-2">
+                                    <label className="text-[9px] font-mono text-violet-400 uppercase tracking-tighter">Vinyl_Cover (1:1)</label>
+                                    <MediaUploader
+                                        value={vinylUrl}
+                                        contextType="artifact_asset"
+                                        onFileSelect={onVinylFileSelect}
+                                        onUrlSelect={onVinylUrlSelect}
+                                        className="aspect-square rounded-lg border border-zinc-900 overflow-hidden shadow-inner w-full bg-zinc-950"
+                                    />
+                                    <p className="text-[8px] text-zinc-700 font-mono italic mt-2 uppercase tracking-tighter">Canonical_Media_Selection_Required.</p>
+                                </div>
+                                <div className="col-span-8 flex flex-col justify-end pb-8">
+                                    <p className="text-[9px] text-zinc-500 font-mono italic uppercase tracking-widest leading-relaxed">
+                                        The square vinyl art is the primary visual identity for the audio station and physical distribution layouts. High-fidelity renders recommended.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

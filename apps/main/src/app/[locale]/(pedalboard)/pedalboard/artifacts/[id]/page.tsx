@@ -20,6 +20,7 @@ export default async function EditArtifactPage(props: { params: Promise<{ id: st
             translations: true,
             thumbnail: true,
             poster: true,
+            vinyl: true,
             sourceArtifact: {
                 with: {
                     translations: true

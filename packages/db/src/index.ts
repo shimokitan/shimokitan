@@ -91,6 +91,7 @@ const artifactRelations = {
     resources: true,
     thumbnail: true,
     poster: true,
+    vinyl: true,
     sourceArtifact: {
         with: {
             translations: true,

@@ -64,7 +64,7 @@ export const resourcePlatformEnum = pgEnum("resource_platform", [
 export const contributorClassEnum = pgEnum("contributor_class", ["author", "collaborator", "staff"]);
 export const verificationTargetEnum = pgEnum("verification_target", ["artifact", "entity", "role_upgrade"]);
 export const verificationStatusEnum = pgEnum("verification_status", ["pending", "approved", "rejected"]);
-export const artifactMediaRoleEnum = pgEnum("artifact_media_role", ["cover", "poster", "background", "logo", "gallery", "thumbnail"]);
+export const artifactMediaRoleEnum = pgEnum("artifact_media_role", ["cover", "poster", "background", "logo", "gallery", "thumbnail", "vinyl"]);
 
 // ==================================================================
 // 1.5. MEDIA REGISTRY
@@ -238,6 +238,7 @@ export const artifacts = pgTable("artifacts", {
     isVerified: boolean("is_verified").default(false),
     thumbnailId: text("thumbnail_id").references(() => media.id, { onDelete: "set null" }),
     posterId: text("poster_id").references(() => media.id, { onDelete: "set null" }),
+    vinylId: text("vinyl_id").references(() => media.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -547,6 +548,10 @@ export const artifactsRelations = relations(artifacts, ({ one, many }) => ({
     }),
     poster: one(media, {
         fields: [artifacts.posterId],
+        references: [media.id],
+    }),
+    vinyl: one(media, {
+        fields: [artifacts.vinylId],
         references: [media.id],
     }),
 }));

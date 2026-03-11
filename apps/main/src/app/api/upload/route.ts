@@ -14,35 +14,36 @@ export async function POST(req: Request) {
     try {
         await requireArchitect();
 
-        const { filename, contentType, context, contextId, role } = await req.json();
+        const { filename, contentType, context, contextId, role, preserveFilename } = await req.json();
 
         if (!filename || !contentType || !context || !contextId) {
             return NextResponse.json({ error: 'MISSING_REQUIRED_FIELDS' }, { status: 400 });
         }
 
         const extension = filename.split('.').pop() || 'bin';
-        const uniqueFilename = `${nanoid()}.${extension}`;
+        const finalFilename = preserveFilename ? filename : `${nanoid()}.${extension}`;
         
         let key = '';
 
         switch (context) {
             case 'artifacts':
                 if (contentType.startsWith('image/')) {
-                    key = storagePaths.artifactImage(contextId, uniqueFilename);
-                } else if (contentType.startsWith('audio/')) {
-                    key = storagePaths.artifactAudio(contextId, uniqueFilename);
+                    key = storagePaths.artifactImage(contextId, finalFilename);
+                } else if (contentType.startsWith('audio/') || contentType === 'application/x-mpegURL' || filename.endsWith('.m3u8') || filename.endsWith('.m4s') || filename.endsWith('.ts') || filename.endsWith('.m4a')) {
+                    // For HLS, we often have different extensions. We path them into the audio folder.
+                    key = storagePaths.artifactAudio(contextId, finalFilename);
                 } else {
-                    key = `raw/artifacts/${contextId}/${uniqueFilename}`;
+                    key = `raw/artifacts/${contextId}/${finalFilename}`;
                 }
                 break;
             case 'profiles':
-                key = storagePaths.userAvatar(contextId, uniqueFilename);
+                key = storagePaths.userAvatar(contextId, finalFilename);
                 break;
             case 'zines':
-                key = storagePaths.zineImage(contextId, uniqueFilename);
+                key = storagePaths.zineImage(contextId, finalFilename);
                 break;
             case 'collections':
-                key = storagePaths.collectionImage(contextId, uniqueFilename);
+                key = storagePaths.collectionImage(contextId, finalFilename);
                 break;
             default:
                 return NextResponse.json({ error: 'INVALID_CONTEXT' }, { status: 400 });
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
             uploadUrl,
             key,
             url: `${process.env.NEXT_PUBLIC_R2_DOMAIN || 'https://cdn.shimokitan.live'}/${key}`,
-            filename: uniqueFilename
+            filename: finalFilename
         });
 
     } catch (error: any) {

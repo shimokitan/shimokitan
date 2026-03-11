@@ -7,6 +7,8 @@ import { getArtifactById } from '@shimokitan/db';
 import Link from '@/components/Link';
 import { getEntityUrl } from '@shimokitan/utils';
 import { notFound } from 'next/navigation';
+import { PlayButton } from './PlayButton';
+import { StationTrack } from '@/lib/store/station-store';
 
 export default async function ArtifactPage(props: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await props.params;
@@ -45,6 +47,19 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
     ) || [];
 
     const hasProvenance = artifact.sourceArtifact || artifact.externalOriginal || originalArtistCredits.length > 0;
+
+    const hostedAudio = artifact.resources?.find((r: any) => r.role === 'hosted_audio');
+    
+    // Construct track data for AudioWidget
+    const trackData: StationTrack | null = hostedAudio ? {
+        title,
+        artist: primaryArtistName,
+        album: artifact.category || "Single",
+        cover: artifact.vinyl?.url || artifact.thumbnail?.url || "",
+        bitrate: (specs.bitrate as string) || "1411 KBPS",
+        format: (specs.format as string) || "LOSSLESS",
+        src: hostedAudio.value
+    } : null;
 
     return (
         <MainLayout>
@@ -221,7 +236,17 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
 
                         <PanelHeader
                             label="Media_Hub"
-                            right={<span className="text-[7px] text-zinc-700 uppercase tracking-widest">SIGNAL_LOCK // {(artifact as any).isHosted ? 'HOSTED' : 'OFFLINE'}</span>}
+                            right={
+                                <div className="flex items-center gap-4">
+                                    {trackData && (
+                                        <PlayButton 
+                                            track={trackData} 
+                                            className="flex items-center gap-2 text-[9px] font-black text-rose-500 hover:text-white transition-all px-2 py-1 border border-rose-500/40 uppercase tracking-widest bg-rose-500/5"
+                                        />
+                                    )}
+                                    <span className="text-[7px] text-zinc-700 uppercase tracking-widest">SIGNAL_LOCK // {(artifact as any).isHosted ? 'HOSTED' : 'OFFLINE'}</span>
+                                </div>
+                            }
                         />
 
                         {/* ── Title strip — sits just above the video ── */}

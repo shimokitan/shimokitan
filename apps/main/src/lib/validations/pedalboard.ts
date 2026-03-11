@@ -127,6 +127,7 @@ export const artifactSchema = z.object({
     verificationId: z.string().optional(), // Link to pending proof
     thumbnailId: z.string().optional().nullable(),
     posterId: z.string().optional().nullable(),
+    vinylId: z.string().optional().nullable(),
     translations: z.array(translationSchema).optional(),
 
     resources: z.array(resourceSchema).optional(),

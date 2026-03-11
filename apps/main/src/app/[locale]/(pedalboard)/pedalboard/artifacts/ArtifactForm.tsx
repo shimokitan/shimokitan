@@ -131,6 +131,11 @@ export default function ArtifactForm({
     const [pendingPosterFile, setPendingPosterFile] = useState<File | null>(null);
     const [pendingPosterUrl, setPendingPosterUrl] = useState<string | null>(null);
 
+    const [vinylId, setVinylId] = useState<string | null>(initialData?.vinylId || null);
+    const [vinylUrl, setVinylUrl] = useState((initialData as any)?.vinyl?.url || '');
+    const [pendingVinylFile, setPendingVinylFile] = useState<File | null>(null);
+    const [pendingVinylUrl, setPendingVinylUrl] = useState<string | null>(null);
+
 
     const [category, setCategory] = useState(initialData?.category || (anilistId ? 'anime' : 'music'));
     const [nature, setNature] = useState(initialData?.nature || 'original');
@@ -400,6 +405,27 @@ export default function ArtifactForm({
                 finalPosterUrl = res.url;
             }
 
+            // Handle delayed image upload: VINYL
+            let finalVinylId = vinylId;
+            let finalVinylUrl = vinylUrl;
+            if (pendingVinylFile) {
+                toast.info('Uploading local vinyl cover...');
+                const formData = new FormData();
+                formData.append('file', pendingVinylFile);
+                formData.append('context', 'artifact_asset');
+                const res = await uploadMediaAction(formData);
+                finalVinylId = res.mediaId;
+                finalVinylUrl = res.url;
+            } else if (pendingVinylUrl) {
+                toast.info('Downloading external vinyl cover...');
+                const formData = new FormData();
+                formData.append('url', pendingVinylUrl);
+                formData.append('context', 'artifact_asset');
+                const res = await uploadMediaAction(formData);
+                finalVinylId = res.mediaId;
+                finalVinylUrl = res.url;
+            }
+
 
             const cleanCredits = credits.filter(c => c.entityId.trim() !== '');
             
@@ -427,6 +453,7 @@ export default function ArtifactForm({
                 isHosted,
                 thumbnailId: finalThumbnailId,
                 posterId: finalPosterId,
+                vinylId: finalVinylId,
                 status,
                 resources: cleanResources,
                 credits: cleanCredits,
@@ -447,12 +474,14 @@ export default function ArtifactForm({
 
                 validation.error.issues.forEach((issue: ZodIssue) => {
                     const path = issue.path[0] as string;
-                    const message = errorMap[path] || `Registry_Error: ${issue.message}`;
+                    const field = issue.path[issue.path.length - 1] as string;
+                    const customMessage = errorMap[path];
+                    const message = customMessage ? `${customMessage} (${issue.message})` : `Registry_Error [${path}.${field}]: ${issue.message}`;
                     
                     if (path === 'credits') {
                         const index = issue.path[1] as number;
-                        const field = issue.path[2] as string;
-                        toast.error(`Contributor Ledger Error (Entry #${index + 1}): Missing ${field === 'role' ? 'Department' : 'Resident Record'}`);
+                        const subField = issue.path[2] as string;
+                        toast.error(`Contributor Ledger Error (Entry #${index + 1}): Missing ${subField === 'role' ? 'Department' : 'Resident Record'}`);
                     } else {
                         toast.error(message);
                     }
@@ -509,14 +538,20 @@ export default function ArtifactForm({
                     setThumbnailId={setThumbnailId}
                     thumbnailUrl={thumbnailUrl}
                     setThumbnailUrl={setThumbnailUrl}
-                    onThumbnailFileSelect={handleThumbnailFileSelect}
-                    onThumbnailUrlSelect={handleThumbnailUrlSelect}
+                    onThumbnailFileSelect={(file: File, url: string) => { setPendingThumbnailFile(file); setThumbnailUrl(url); }}
+                    onThumbnailUrlSelect={(url: string) => { setPendingThumbnailUrl(url); setThumbnailUrl(url); }}
                     posterId={posterId}
                     setPosterId={setPosterId}
                     posterUrl={posterUrl}
                     setPosterUrl={setPosterUrl}
-                    onPosterFileSelect={handlePosterFileSelect}
-                    onPosterUrlSelect={handlePosterUrlSelect}
+                    onPosterFileSelect={(file: File, url: string) => { setPendingPosterFile(file); setPosterUrl(url); }}
+                    onPosterUrlSelect={(url: string) => { setPendingPosterUrl(url); setPosterUrl(url); }}
+                    vinylId={vinylId}
+                    setVinylId={setVinylId}
+                    vinylUrl={vinylUrl}
+                    setVinylUrl={setVinylUrl}
+                    onVinylFileSelect={(file: File, url: string) => { setPendingVinylFile(file); setVinylUrl(url); }}
+                    onVinylUrlSelect={(url: string) => { setPendingVinylUrl(url); setVinylUrl(url); }}
                     category={category}
                     setCategory={setCategory}
                     nature={nature}
@@ -526,13 +561,13 @@ export default function ArtifactForm({
                     artifactId={artifactId}
                     isHosted={isHosted}
                     setIsHosted={setIsHosted}
-                    onHostedAudioUploaded={(url) => {
+                    onHostedAudioUploaded={(url: string) => {
                         const existingAudio = resources.find(r => r.role === 'hosted_audio');
                         if (existingAudio) {
                             updateResource(resources.indexOf(existingAudio), 'url', url);
                         } else {
                             setResources([...resources, { 
-                                type: 'other', 
+                                type: 'other',
                                 platform: 'r2', 
                                 url, 
                                 role: 'hosted_audio', 

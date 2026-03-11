@@ -21,6 +21,12 @@ interface AudioWidgetProps {
     track?: Track | null;
 }
 
+const EmptyVinyl: React.FC = () => (
+    <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+        <Icon icon="lucide:radio" width={24} height={24} className="text-zinc-800" />
+    </div>
+);
+
 
 
 export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
@@ -49,13 +55,14 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
         });
     }, []);
 
+    const isEmpty = !track || !track.src;
     const currentTrack = track || {
-        title: "Starboy",
-        artist: "The Weeknd, Daft Punk",
-        album: "Starboy",
-        cover: "https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png",
-        bitrate: "1411 KBPS",
-        format: "LOSSLESS",
+        title: "Station_Offline",
+        artist: "Waiting_for_Signal",
+        album: "---",
+        cover: "", // Empty or placeholder
+        bitrate: "0 KBPS",
+        format: "SILENCE",
         src: ""
     };
 
@@ -82,19 +89,42 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
     };
 
     useEffect(() => {
-        if (!audioRef.current || !currentTrack?.src) return;
-
-        let hls: Hls | null = null;
+        if (!audioRef.current) return;
         const audio = audioRef.current;
+        let hls: Hls | null = null;
 
-        const onPlay = () => setIsPlaying(true);
-        const onPause = () => setIsPlaying(false);
+        if (!currentTrack?.src) {
+            audio.pause();
+            audio.src = "";
+            setIsPlaying(false);
+            setCurrentTime(0);
+            setDuration(0);
+            setProgress(0);
+            return;
+        }
+
+        const broadcastState = () => {
+            window.dispatchEvent(new CustomEvent('shim_audio_state', {
+                detail: {
+                    isPlaying: !audio.paused,
+                    currentTime: audio.currentTime,
+                    duration: audio.duration,
+                    progress: (audio.currentTime / (audio.duration || 1)) * 100,
+                    volume: audio.volume * 100
+                }
+            }));
+        };
+
+        const onPlay = () => { setIsPlaying(true); broadcastState(); };
+        const onPause = () => { setIsPlaying(false); broadcastState(); };
         const onTimeUpdate = () => {
             setCurrentTime(audio.currentTime);
             setProgress((audio.currentTime / (audio.duration || 1)) * 100);
+            broadcastState();
         };
         const onLoadedMetadata = () => {
             setDuration(audio.duration);
+            broadcastState();
         };
 
         audio.addEventListener('play', onPlay);
@@ -102,34 +132,50 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
         audio.addEventListener('timeupdate', onTimeUpdate);
         audio.addEventListener('loadedmetadata', onLoadedMetadata);
 
-        if (Hls.isSupported() && currentTrack.src.endsWith('.m3u8')) {
+        const handleCommand = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.type === 'playToggle') {
+                if (audio.paused) audio.play();
+                else audio.pause();
+            } else if (detail?.type === 'seek') {
+                audio.currentTime = detail.time;
+            } else if (detail?.type === 'volume') {
+                setVolume(detail.volume);
+                audio.volume = detail.volume / 100;
+            }
+        };
+        window.addEventListener('shim_audio_command', handleCommand);
+
+        setIsPlaying(true);
+        // Force state broadcast to update HomeClient before play()
+        setTimeout(broadcastState, 50);
+
+        if (Hls.isSupported() && currentTrack.src.includes('.m3u8')) {
             hls = new Hls();
             hls.loadSource(currentTrack.src);
             hls.attachMedia(audio);
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                if (isPlaying) {
-                     audio.play().catch(console.error);
-                }
+                 audio.play().catch(console.error);
             });
         } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
             // Safari supports HLS natively
             audio.src = currentTrack.src;
-            if (isPlaying) {
-                audio.play().catch(console.error);
-            }
+            audio.play().catch(console.error);
         } else {
-            // Fallback
+            // Fallback for standard audio files
             audio.src = currentTrack.src;
+            audio.play().catch(console.error);
         }
 
         return () => {
-            if (hls) {
+             if (hls) {
                 hls.destroy();
             }
             audio.removeEventListener('play', onPlay);
             audio.removeEventListener('pause', onPause);
             audio.removeEventListener('timeupdate', onTimeUpdate);
             audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+            window.removeEventListener('shim_audio_command', handleCommand);
         };
     }, [currentTrack]);
 
@@ -267,14 +313,15 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
 
 
 
-                                {/* Album Art */}
                                 <div className="relative w-[42%] h-[42%] rounded-full overflow-hidden border-[3px] border-zinc-950 z-10 pointer-events-none">
-                                    <img
-                                        src={currentTrack.cover}
-                                        className="w-full h-full object-cover"
-                                        alt="cover"
-                                        draggable="false"
-                                    />
+                                    {currentTrack.cover ? (
+                                        <img
+                                            src={currentTrack.cover}
+                                            className="w-full h-full object-cover"
+                                            alt="cover"
+                                            draggable="false"
+                                        />
+                                    ) : <EmptyVinyl />}
                                 </div>
 
                                 {/* Spindle */}
@@ -325,28 +372,32 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                         {isExpanded && (
                             <div className="flex-1 flex items-center justify-between ml-10 mr-4 transition-all duration-500">
                                 {/* Track Info */}
-                                <div className="flex flex-col min-w-[180px] ml-4">
+                                <div className="flex flex-col shrink w-32 md:w-48 pl-2 pr-4 md:px-6 overflow-hidden">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Badge variant="zinc">{currentTrack.format}</Badge>
-                                        <span className="text-[9px] font-mono text-zinc-600 tracking-tighter">{currentTrack.bitrate}</span>
+                                        <span className="text-[8px] font-mono text-zinc-600 uppercase hidden md:inline">
+                                            {currentTrack.bitrate}
+                                        </span>
                                     </div>
-                                    <h3 className="text-white font-bold text-xl leading-none tracking-tighter truncate max-w-[220px] uppercase">
+                                    <h3 className="text-sm font-black tracking-tighter uppercase italic leading-none text-white truncate">
                                         {currentTrack.title}
                                     </h3>
-                                    <p className="text-zinc-500 text-[10px] font-medium uppercase tracking-wider mt-1.5 flex items-center gap-2">
-                                        <span className="w-4 h-px bg-zinc-800" /> {currentTrack.artist}
+                                    <p className="text-zinc-500 text-[10px] font-medium uppercase tracking-wider mt-1.5 flex items-center gap-2 truncate">
+                                        <span className="w-4 h-px bg-zinc-800 shrink-0 hidden md:block" />
+                                        <span className="truncate">{currentTrack.artist}</span>
                                     </p>
                                 </div>
 
                                 {/* Controls & Progress */}
-                                <div className="flex flex-col items-center flex-1 max-w-xs px-6 border-x border-zinc-800/30 h-full justify-center">
-                                    <div className="flex items-center gap-10 mb-4">
+                                <div className="flex flex-col items-center flex-1 px-4 md:px-6 border-x border-zinc-800/30 h-full justify-center min-w-[120px]">
+                                    <div className="flex items-center gap-6 md:gap-10 mb-4">
                                         <button className="text-zinc-500 hover:text-white transition-all transform hover:scale-110 active:scale-90">
                                             <Icon icon="lucide:skip-back" width={18} height={18} />
                                         </button>
                                         <button
                                             onClick={togglePlay}
-                                            className="w-10 h-10 flex items-center justify-center bg-white text-black rounded-full hover:scale-110 active:scale-90 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                                            disabled={isEmpty}
+                                            className="w-10 h-10 flex items-center justify-center bg-white text-black rounded-full hover:scale-110 active:scale-90 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] disabled:bg-zinc-800 disabled:text-zinc-600 disabled:scale-100 disabled:shadow-none shrink-0"
                                         >
                                             <Icon icon={isPlaying ? "lucide:pause" : "lucide:play"} width={20} height={20} />
                                         </button>
@@ -356,10 +407,10 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                     </div>
 
                                     {/* Scrubber */}
-                                    <div className="w-full flex items-center gap-4 text-[10px] text-zinc-600 font-black font-mono">
-                                        <span className="w-8 text-right tracking-tight">{formatTime(currentTime)}</span>
+                                    <div className="w-full flex items-center gap-2 md:gap-4 text-[10px] text-zinc-600 font-black font-mono">
+                                        <span className="w-8 text-right tracking-tight shrink-0">{formatTime(currentTime)}</span>
                                         <div 
-                                          className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden"
+                                          className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden min-w-[50px]"
                                           onClick={(e) => {
                                               if (!audioRef.current) return;
                                               const rect = e.currentTarget.getBoundingClientRect();
@@ -372,24 +423,43 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                                 style={{ width: `${progress}%` }}
                                             />
                                         </div>
-                                        <span className="w-8 tracking-tight">{formatTime(duration)}</span>
+                                        <span className="w-8 tracking-tight shrink-0">{formatTime(duration)}</span>
                                     </div>
                                 </div>
 
                                 {/* Volume */}
-                                <div className="flex items-center gap-3 w-28 group px-2">
-                                    <Icon icon="lucide:volume-2" width={16} height={16} className="text-zinc-600 group-hover:text-white transition-colors" />
-                                    <div className="flex-1 h-1 bg-zinc-800 rounded-full cursor-pointer relative"
-    onClick={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        setVolume(pos * 100);
-    }}
->
-                                        <div
-                                            className="absolute top-0 left-0 h-full bg-zinc-500 group-hover:bg-violet-500 rounded-full pointer-events-none transition-all duration-300"
-                                            style={{ width: `${volume}%` }}
-                                        />
+                                <div className="flex items-center gap-2 md:gap-3 w-20 md:w-28 shrink-0 group pl-4 pr-4 md:pr-6">
+                                    <Icon icon="lucide:volume-2" width={16} height={16} className="text-zinc-600 group-hover:text-white transition-colors flex-shrink-0" />
+                                    <div 
+                                        className="flex-1 h-6 flex items-center cursor-pointer"
+                                        onMouseDown={(e) => {
+                                            const updateVolume = (clientX: number, currentTarget: HTMLElement) => {
+                                                const rect = currentTarget.getBoundingClientRect();
+                                                const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                                                setVolume(pos * 100);
+                                            };
+                                            const target = e.currentTarget as HTMLElement;
+                                            updateVolume(e.clientX, target);
+
+                                            const handleMouseMove = (moveEvent: MouseEvent) => {
+                                                updateVolume(moveEvent.clientX, target);
+                                            };
+                                            
+                                            const handleMouseUp = () => {
+                                                document.removeEventListener('mousemove', handleMouseMove);
+                                                document.removeEventListener('mouseup', handleMouseUp);
+                                            };
+
+                                            document.addEventListener('mousemove', handleMouseMove);
+                                            document.addEventListener('mouseup', handleMouseUp);
+                                        }}
+                                    >
+                                        <div className="w-full h-1 bg-zinc-800 rounded-full relative pointer-events-none overflow-hidden">
+                                            <div
+                                                className="absolute top-0 left-0 h-full bg-zinc-500 group-hover:bg-violet-500 rounded-full transition-all duration-75"
+                                                style={{ width: `${volume}%` }}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -401,7 +471,8 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                 <div className={`w-12 h-12 rounded-full border border-violet-500/30 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-opacity ${isPlaying ? 'opacity-0' : 'opacity-100 group-hover:opacity-100'}`}>
                                     <button
                                         onClick={togglePlay}
-                                        className="pointer-events-auto w-10 h-10 flex items-center justify-center"
+                                        disabled={isEmpty}
+                                        className={`pointer-events-auto w-10 h-10 flex items-center justify-center disabled:opacity-20 disabled:cursor-not-allowed`}
                                     >
                                         <Icon icon={isPlaying ? "lucide:pause" : "lucide:play"} width={24} height={24} className="text-white ml-1" />
                                     </button>
@@ -410,6 +481,7 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                         )}
                     </div>
                 </div>
+                <audio ref={audioRef} />
             </div>
         </div>
     );

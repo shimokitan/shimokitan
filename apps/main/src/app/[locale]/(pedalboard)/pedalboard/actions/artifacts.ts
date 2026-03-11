@@ -35,14 +35,16 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
             resonance: 0, // Initial resonance is always 0 until Zines are written
             specs: validated.specs || {},
             isVerified: false, // Verification is a separate administrative event
-            thumbnailId: validated.thumbnailId || null,
+                    thumbnailId: validated.thumbnailId || null,
             posterId: validated.posterId || null,
+            vinylId: validated.vinylId || null,
         });
 
         // Bridge Table Sync
         const mediaLinks = [];
         if (validated.thumbnailId) mediaLinks.push({ artifactId, mediaId: validated.thumbnailId, role: 'cover' as any, isPrimary: true });
         if (validated.posterId) mediaLinks.push({ artifactId, mediaId: validated.posterId, role: 'poster' as any, isPrimary: false });
+        if (validated.vinylId) mediaLinks.push({ artifactId, mediaId: validated.vinylId, role: 'vinyl' as any, isPrimary: false });
 
         if (mediaLinks.length) {
             await tx.insert(schema.artifactMedia).values(mediaLinks);
@@ -154,6 +156,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 isHosted: validated.isHosted,
                 thumbnailId: validated.thumbnailId,
                 posterId: validated.posterId,
+                vinylId: validated.vinylId,
                 status: validated.status,
                 specs: validated.specs,
                 updatedAt: new Date(),
@@ -170,6 +173,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
         const mediaLinks = [];
         if (validated.thumbnailId) mediaLinks.push({ artifactId: id, mediaId: validated.thumbnailId, role: 'cover' as any, isPrimary: true });
         if (validated.posterId) mediaLinks.push({ artifactId: id, mediaId: validated.posterId, role: 'poster' as any, isPrimary: false });
+        if (validated.vinylId) mediaLinks.push({ artifactId: id, mediaId: validated.vinylId, role: 'vinyl' as any, isPrimary: false });
 
         if (mediaLinks.length) {
             await tx.insert(schema.artifactMedia).values(mediaLinks);
