@@ -1,5 +1,6 @@
 
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { storagePaths, nanoid } from '@shimokitan/utils';
 import { Buffer } from 'node:buffer';
 
@@ -108,4 +109,24 @@ export async function uploadFileToR2(
     await client.send(command);
 
     return `${R2_DOMAIN}/${key}`;
+}
+
+/**
+ * Generates a presigned URL for direct client-side upload to R2.
+ */
+export async function getPresignedUploadUrl(
+    key: string,
+    contentType: string,
+    expiresIn: number = 3600
+): Promise<string> {
+    const client = getS3Client();
+    const bucketName = process.env.R2_BUCKET_NAME || 'shimokitan';
+
+    const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        ContentType: contentType,
+    });
+
+    return await getSignedUrl(client, command, { expiresIn });
 }

@@ -29,7 +29,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
             nature: validated.nature,
             sourceArtifactId: validated.sourceArtifactId,
             animeType: validated.animeType,
-            hostingStatus: validated.hostingStatus,
+            isHosted: validated.isHosted,
             slug,
             status: validated.status,
             resonance: 0, // Initial resonance is always 0 until Zines are written
@@ -151,7 +151,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
                 nature: validated.nature,
                 sourceArtifactId: validated.sourceArtifactId,
                 animeType: validated.animeType,
-                hostingStatus: validated.hostingStatus,
+                isHosted: validated.isHosted,
                 thumbnailId: validated.thumbnailId,
                 posterId: validated.posterId,
                 status: validated.status,

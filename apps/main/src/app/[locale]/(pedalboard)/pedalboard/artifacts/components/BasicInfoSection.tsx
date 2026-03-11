@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { MediaUploader } from '@shimokitan/ui';
+import { MediaUploader, PresignedUploader } from '@shimokitan/ui';
 import { uploadMediaAction } from '../../media-actions';
 import ArtifactSearchPicker from './ArtifactSearchPicker';
 
@@ -40,8 +40,8 @@ interface BasicInfoSectionProps {
     setSourceArtifactId: (val: string | null) => void;
     animeType: string | null;
     setAnimeType: (val: string | null) => void;
-    hostingStatus: string;
-    setHostingStatus: (val: string) => void;
+    isHosted: boolean;
+    setIsHosted: (val: boolean) => void;
     sourceArtifactTitle?: string | null;
 
     entities: any[];
@@ -49,6 +49,8 @@ interface BasicInfoSectionProps {
     status: string;
     setStatus: (val: string) => void;
     lockFlags?: boolean;
+    artifactId: string;
+    onHostedAudioUploaded?: (url: string) => void;
 }
 
 export default function BasicInfoSection({
@@ -77,16 +79,17 @@ export default function BasicInfoSection({
     setSourceArtifactId,
     animeType,
     setAnimeType,
-    hostingStatus,
-    setHostingStatus,
+    isHosted,
+    setIsHosted,
     sourceArtifactTitle,
 
     entities,
     userRole,
     status,
     setStatus,
-
-    lockFlags = false
+    lockFlags = false,
+    artifactId,
+    onHostedAudioUploaded
 }: BasicInfoSectionProps) {
 
     return (
@@ -144,16 +147,34 @@ export default function BasicInfoSection({
                             </div>
 
                             {category === 'music' && (
-                                <div className="space-y-1 animate-in fade-in slide-in-from-top-1">
-                                    <label className="text-[10px] font-mono uppercase text-zinc-500 text-violet-400">Hosting_Status</label>
-                                    <select
-                                        value={hostingStatus}
-                                        onChange={(e) => setHostingStatus(e.target.value)}
-                                        className="w-full bg-black border border-zinc-900 p-3 text-xs text-white focus:border-violet-600 outline-none rounded-lg"
-                                    >
-                                        <option value="unhosted">UNHOSTED (EXTERNAL)</option>
-                                        <option value="hosted">HOSTED (INTERNAL)</option>
-                                    </select>
+                                <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] font-mono uppercase text-zinc-500 text-violet-400">Hosting_Signal</label>
+                                        <select
+                                            value={isHosted ? "hosted" : "unhosted"}
+                                            onChange={(e) => setIsHosted(e.target.value === "hosted")}
+                                            className="w-full bg-black border border-zinc-900 p-3 text-xs text-white focus:border-violet-600 outline-none rounded-lg"
+                                        >
+                                            <option value="unhosted">UNHOSTED (EXTERNAL)</option>
+                                            <option value="hosted">HOSTED (INTERNAL)</option>
+                                        </select>
+                                    </div>
+
+                                    {isHosted && (
+                                        <div className="pt-2">
+                                            <label className="text-[10px] font-mono uppercase text-zinc-500 mb-2 block">Canonical_Audio_Uplink</label>
+                                            <PresignedUploader
+                                                context="artifacts"
+                                                contextId={artifactId}
+                                                accept="audio/*"
+                                                label="UPLINK_AUDIO_FILE"
+                                                onUploadSuccess={(url) => {
+                                                    if (onHostedAudioUploaded) onHostedAudioUploaded(url);
+                                                }}
+                                                className="h-24 border-dashed border-zinc-800 hover:border-violet-600"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

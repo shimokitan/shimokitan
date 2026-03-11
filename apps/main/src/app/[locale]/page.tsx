@@ -241,7 +241,60 @@ export default async function AppPage({
       console.error("Resonance Count Failed");
   }
 
-  // 6. Fetch Transmissions (Signal Feed)
+  // 6. Fetch Latest Hosted Track for Audio Widget
+  let currentTrack: any = null;
+  try {
+    const latestHosted = await db.query.artifacts.findFirst({
+      where: and(
+        eq(schema.artifacts.isHosted, true),
+        eq(schema.artifacts.category, 'music'),
+        isNull(schema.artifacts.deletedAt)
+      ),
+      orderBy: [desc(schema.artifacts.createdAt)],
+      with: {
+        thumbnail: true,
+        translations: {
+          where: eq(schema.artifactsI18n.locale, locale),
+        },
+        resources: true,
+        credits: {
+            with: {
+                entity: {
+                    with: {
+                        translations: {
+                            where: eq(schema.entitiesI18n.locale, locale)
+                        }
+                    }
+                }
+            }
+        }
+      }
+    });
+
+    if (latestHosted) {
+      const audioRes = latestHosted.resources?.find(r => r.role === 'hosted_audio');
+      const artistNames = (latestHosted as any).credits
+        ?.filter((c: any) => c.isPrimary)
+        .map((c: any) => c.entity?.translations?.[0]?.name || c.entity?.name)
+        .filter(Boolean)
+        .join(", ") || "Unknown Artist";
+
+      currentTrack = {
+        title: latestHosted.translations?.[0]?.title || "Untitled",
+        artist: artistNames,
+        album: latestHosted.translations?.[0]?.description?.slice(0, 50) || "Single",
+        cover: latestHosted.thumbnail?.url || "https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png",
+        bitrate: "1411 KBPS",
+        format: (audioRes as any)?.value?.endsWith('.m3u8') ? "HLS" : "LOSSLESS",
+        src: (audioRes as any)?.value || ""
+      };
+    }
+  } catch (e: any) {
+    if (process.env.NODE_ENV !== "production")
+      console.error("Hosted track fetch failed:", e.message);
+  }
+
+  // 7. Fetch Transmissions (Signal Feed)
   let transmissions: any[] = [];
   try {
     transmissions = await db.query.transmissions.findMany({
@@ -268,6 +321,7 @@ export default async function AppPage({
         transmissions={transmissions}
         artifactCount={spotlightArtifacts.length}
         entityCount={entities.length}
+        currentTrack={currentTrack}
       />
     </MainLayout>
   );

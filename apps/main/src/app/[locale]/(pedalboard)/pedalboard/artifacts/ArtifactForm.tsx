@@ -136,7 +136,7 @@ export default function ArtifactForm({
     const [nature, setNature] = useState(initialData?.nature || 'original');
     const [sourceArtifactId, setSourceArtifactId] = useState<string | null>(initialData?.sourceArtifactId || null);
     const [animeType, setAnimeType] = useState(initialData?.animeType || null);
-    const [hostingStatus, setHostingStatus] = useState(initialData?.hostingStatus || 'unhosted');
+    const [isHosted, setIsHosted] = useState<boolean>(!!initialData?.isHosted);
 
     const [status, setStatus] = useState(initialData?.status || 'the_pit');
 
@@ -424,7 +424,7 @@ export default function ArtifactForm({
                 nature,
                 sourceArtifactId,
                 animeType,
-                hostingStatus,
+                isHosted,
                 thumbnailId: finalThumbnailId,
                 posterId: finalPosterId,
                 status,
@@ -523,8 +523,23 @@ export default function ArtifactForm({
                     setNature={setNature}
                     animeType={animeType}
                     setAnimeType={setAnimeType}
-                    hostingStatus={hostingStatus}
-                    setHostingStatus={setHostingStatus}
+                    artifactId={artifactId}
+                    isHosted={isHosted}
+                    setIsHosted={setIsHosted}
+                    onHostedAudioUploaded={(url) => {
+                        const existingAudio = resources.find(r => r.role === 'hosted_audio');
+                        if (existingAudio) {
+                            updateResource(resources.indexOf(existingAudio), 'url', url);
+                        } else {
+                            setResources([...resources, { 
+                                type: 'other', 
+                                platform: 'r2', 
+                                url, 
+                                role: 'hosted_audio', 
+                                isPrimary: true 
+                            }]);
+                        }
+                    }}
                     sourceArtifactId={sourceArtifactId}
                     setSourceArtifactId={setSourceArtifactId}
                     sourceArtifactTitle={initialData?.sourceArtifact?.translations?.find((t: any) => t.locale === 'en')?.title || initialData?.sourceArtifact?.translations?.[0]?.title}
@@ -545,6 +560,7 @@ export default function ArtifactForm({
 
                 <MetadataSection
                     category={category}
+                    isHosted={isHosted}
                     specs={specs}
                     updateSpec={updateSpec}
                     upsertSpec={upsertSpec}

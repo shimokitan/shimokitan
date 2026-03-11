@@ -1,26 +1,35 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import Hls from 'hls.js';
 import { Icon } from '@iconify/react';
 import { Badge } from './Badge';
 
 // --- Types ---
 
-interface Track {
+export interface Track {
     title: string;
     artist: string;
     album: string;
     cover: string;
     bitrate: string;
     format: string;
+    src?: string;
+}
+
+interface AudioWidgetProps {
+    track?: Track | null;
 }
 
 
 
-export const AudioWidget: React.FC = () => {
+export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    const [progress] = useState<number>(35);
-    const [volume] = useState<number>(80);
+    const [progress, setProgress] = useState<number>(0);
+    const [currentTime, setCurrentTime] = useState<number>(0);
+    const [duration, setDuration] = useState<number>(0);
+    const [volume, setVolume] = useState<number>(80);
+    const audioRef = useRef<HTMLAudioElement>(null);
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
     const [mounted, setMounted] = useState(false);
 
@@ -40,20 +49,95 @@ export const AudioWidget: React.FC = () => {
         });
     }, []);
 
-    // Song Data
-    const currentTrack: Track = {
+    const currentTrack = track || {
         title: "Starboy",
         artist: "The Weeknd, Daft Punk",
         album: "Starboy",
         cover: "https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png",
         bitrate: "1411 KBPS",
-        format: "LOSSLESS"
+        format: "LOSSLESS",
+        src: ""
+    };
+
+    const formatTime = (time: number) => {
+        if (isNaN(time)) return "0:00";
+        const m = Math.floor(time / 60);
+        const s = Math.floor(time % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
     const togglePlay = (e: React.MouseEvent): void => {
         e.stopPropagation();
-        setIsPlaying(!isPlaying);
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.pause();
+                setIsPlaying(false);
+            } else {
+                audioRef.current.play().catch(console.error);
+                setIsPlaying(true);
+            }
+        } else {
+           setIsPlaying(!isPlaying);
+        }
     };
+
+    useEffect(() => {
+        if (!audioRef.current || !currentTrack?.src) return;
+
+        let hls: Hls | null = null;
+        const audio = audioRef.current;
+
+        const onPlay = () => setIsPlaying(true);
+        const onPause = () => setIsPlaying(false);
+        const onTimeUpdate = () => {
+            setCurrentTime(audio.currentTime);
+            setProgress((audio.currentTime / (audio.duration || 1)) * 100);
+        };
+        const onLoadedMetadata = () => {
+            setDuration(audio.duration);
+        };
+
+        audio.addEventListener('play', onPlay);
+        audio.addEventListener('pause', onPause);
+        audio.addEventListener('timeupdate', onTimeUpdate);
+        audio.addEventListener('loadedmetadata', onLoadedMetadata);
+
+        if (Hls.isSupported() && currentTrack.src.endsWith('.m3u8')) {
+            hls = new Hls();
+            hls.loadSource(currentTrack.src);
+            hls.attachMedia(audio);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                if (isPlaying) {
+                     audio.play().catch(console.error);
+                }
+            });
+        } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari supports HLS natively
+            audio.src = currentTrack.src;
+            if (isPlaying) {
+                audio.play().catch(console.error);
+            }
+        } else {
+            // Fallback
+            audio.src = currentTrack.src;
+        }
+
+        return () => {
+            if (hls) {
+                hls.destroy();
+            }
+            audio.removeEventListener('play', onPlay);
+            audio.removeEventListener('pause', onPause);
+            audio.removeEventListener('timeupdate', onTimeUpdate);
+            audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+        };
+    }, [currentTrack]);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume / 100;
+        }
+    }, [volume]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (e.button !== 0) return;
@@ -236,6 +320,7 @@ export const AudioWidget: React.FC = () => {
                             )}
                         </div>
 
+                        <audio ref={audioRef} />
                         {/* --- CONTENT AREA --- */}
                         {isExpanded && (
                             <div className="flex-1 flex items-center justify-between ml-10 mr-4 transition-all duration-500">
@@ -272,23 +357,37 @@ export const AudioWidget: React.FC = () => {
 
                                     {/* Scrubber */}
                                     <div className="w-full flex items-center gap-4 text-[10px] text-zinc-600 font-black font-mono">
-                                        <span className="w-8 text-right tracking-tight">1:24</span>
-                                        <div className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden">
+                                        <span className="w-8 text-right tracking-tight">{formatTime(currentTime)}</span>
+                                        <div 
+                                          className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden"
+                                          onClick={(e) => {
+                                              if (!audioRef.current) return;
+                                              const rect = e.currentTarget.getBoundingClientRect();
+                                              const pos = (e.clientX - rect.left) / rect.width;
+                                              audioRef.current.currentTime = pos * (audioRef.current.duration || 0);
+                                          }}
+                                        >
                                             <div
-                                                className="absolute top-0 left-0 h-full bg-violet-600 rounded-full transition-all duration-300"
+                                                className="absolute top-0 left-0 h-full bg-violet-600 rounded-full pointer-events-none transition-all duration-100 ease-linear"
                                                 style={{ width: `${progress}%` }}
                                             />
                                         </div>
-                                        <span className="w-8 tracking-tight">3:50</span>
+                                        <span className="w-8 tracking-tight">{formatTime(duration)}</span>
                                     </div>
                                 </div>
 
                                 {/* Volume */}
                                 <div className="flex items-center gap-3 w-28 group px-2">
                                     <Icon icon="lucide:volume-2" width={16} height={16} className="text-zinc-600 group-hover:text-white transition-colors" />
-                                    <div className="flex-1 h-1 bg-zinc-800 rounded-full cursor-pointer relative">
+                                    <div className="flex-1 h-1 bg-zinc-800 rounded-full cursor-pointer relative"
+    onClick={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        setVolume(pos * 100);
+    }}
+>
                                         <div
-                                            className="absolute top-0 left-0 h-full bg-zinc-500 group-hover:bg-violet-500 transition-all rounded-full"
+                                            className="absolute top-0 left-0 h-full bg-zinc-500 group-hover:bg-violet-500 rounded-full pointer-events-none transition-all duration-300"
                                             style={{ width: `${volume}%` }}
                                         />
                                     </div>

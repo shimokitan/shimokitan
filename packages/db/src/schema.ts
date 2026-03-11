@@ -32,13 +32,10 @@ export const artifactNatureEnum = pgEnum("artifact_nature", ["original", "cover"
 
 export const artifactStatusEnum = pgEnum("artifact_status", ["the_pit", "back_alley", "archived"]);
 
-// Hosting lifecycle — tracks the audio player readiness
-// unhosted         : external links only (YouTube, Spotify, etc.)
-// pending_rights   : rights request submitted, awaiting artist approval
-// rights_granted   : artist approved, upload in progress or ready
-// hosted           : audio file is live on R2, player can serve it
-// rights_revoked   : was hosted, rights withdrawn, file removed
-export const hostingStatusEnum = pgEnum("hosting_status", ["unhosted", "pending_rights", "rights_granted", "hosted", "rights_revoked"]);
+// true   : audio file is live on R2, player can serve it
+// false  : external links only or rights pending
+// (Advanced rights states like pending/revoked are tracked in hosting_rights_log)
+export const hostingRightsEnum = pgEnum("hosting_rights", ["unhosted", "pending", "granted", "hosted", "revoked"]);
 
 // Anime artifact sub-type — describes the visual context
 export const animeTypeEnum = pgEnum("anime_type", ["pv", "mv", "trailer", "op", "ed", "special"]);
@@ -225,7 +222,7 @@ export const artifacts = pgTable("artifacts", {
 
     slug: text("slug").notNull().unique(),
     status: artifactStatusEnum("status").default("back_alley"),
-    hostingStatus: hostingStatusEnum("hosting_status").default("unhosted"),
+    isHosted: boolean("is_hosted").default(false),
 
 
     resonance: integer("resonance").default(0),
@@ -248,10 +245,10 @@ export const artifacts = pgTable("artifacts", {
     categoryIdx: index("idx_artifacts_category").on(t.category),
     statusIdx: index("idx_artifacts_status").on(t.status),
     natureIdx: index("idx_artifacts_nature").on(t.nature),
-    hostingStatusIdx: index("idx_artifacts_hosting_status").on(t.hostingStatus),
+    isHostedIdx: index("idx_artifacts_is_hosted").on(t.isHosted),
     // Composite — common query: "all hosted music originals"
-    categoryNatureHostingIdx: index("idx_artifacts_cat_nature_hosting").on(
-        t.category, t.nature, t.hostingStatus
+    categoryNatureHostedIdx: index("idx_artifacts_cat_nature_hosted").on(
+        t.category, t.nature, t.isHosted
     ),
 }));
 
@@ -502,8 +499,8 @@ export const hostingRightsLog = pgTable("hosting_rights_log", {
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: "cascade" }).notNull(),
 
     // Transition recorded
-    fromStatus: hostingStatusEnum("from_status").notNull(),
-    toStatus: hostingStatusEnum("to_status").notNull(),
+    fromStatus: hostingRightsEnum("from_status").notNull(),
+    toStatus: hostingRightsEnum("to_status").notNull(),
 
     // Who actioned it and any supporting evidence
     actorId: text("actor_id").references(() => users.id).notNull(),

@@ -10,7 +10,6 @@ export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;
 export const ARTIFACT_STATUSES = ['the_pit', 'back_alley', 'archived'] as const;
 export const ARTIFACT_NATURES = ['original', 'cover', 'live', 'compilation'] as const;
 export const ANIME_TYPES = ['pv', 'mv', 'trailer', 'op', 'ed', 'special'] as const;
-export const HOSTING_STATUSES = ['unhosted', 'pending_rights', 'rights_granted', 'hosted', 'rights_revoked'] as const;
 
 export const TAG_CATEGORIES = ['genre', 'mood', 'style', 'theme', 'other', 'identity'] as const;
 export const VERIFICATION_TARGET_TYPES = ['artifact', 'entity', 'role_upgrade'] as const;
@@ -121,7 +120,7 @@ export const artifactSchema = z.object({
     nature: z.enum(ARTIFACT_NATURES).default('original'),
     sourceArtifactId: z.string().optional().nullable(),
     animeType: z.enum(ANIME_TYPES).optional().nullable(),
-    hostingStatus: z.enum(HOSTING_STATUSES).default('unhosted'),
+    isHosted: z.boolean().default(false),
 
     status: z.enum(ARTIFACT_STATUSES).default('back_alley'),
     specs: z.any().optional(), // JSON

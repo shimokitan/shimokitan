@@ -66,7 +66,9 @@ export {
 
 // --- Composite Components ---
 export { MediaUploader } from "./components/MediaUploader";
+export { PresignedUploader } from "./components/PresignedUploader";
 export { AudioWidget } from "./components/AudioWidget";
+export type { Track } from "./components/AudioWidget";
 export { Badge, badgeVariants } from "./components/Badge";
 export { BentoCard } from "./components/BentoCard";
 export { CyberpunkShell, CyberpunkStyles } from "./components/CyberpunkShell";

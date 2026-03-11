@@ -221,7 +221,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
 
                         <PanelHeader
                             label="Media_Hub"
-                            right={<span className="text-[7px] text-zinc-700 uppercase tracking-widest">SIGNAL_LOCK // {(artifact as any).hostingStatus || 'OFFLINE'}</span>}
+                            right={<span className="text-[7px] text-zinc-700 uppercase tracking-widest">SIGNAL_LOCK // {(artifact as any).isHosted ? 'HOSTED' : 'OFFLINE'}</span>}
                         />
 
                         {/* ── Title strip — sits just above the video ── */}

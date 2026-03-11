@@ -19,7 +19,7 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
     const pathname = usePathname();
     const currentLocale = useLocale() as Locale;
     const navDict = getDictionary(currentLocale).navigation;
-    const { isInitialized, isMinimized } = useStationStore();
+    const { isInitialized, isMinimized, currentTrack } = useStationStore();
 
     const [mounted, setMounted] = React.useState(false);
     React.useEffect(() => {
@@ -74,7 +74,7 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                     </main>
                 </div>
 
-                {mounted && isInitialized && isMinimized && <AudioWidget />}
+                {mounted && isInitialized && isMinimized && <AudioWidget track={currentTrack} />}
 
                 <div className="hidden md:block">
                     <Footer />

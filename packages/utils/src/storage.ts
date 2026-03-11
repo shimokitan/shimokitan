@@ -54,6 +54,12 @@ export const storagePaths = {
         generateStoragePath({ mediaType: 'images', context: 'artifacts', identifier: artifactId, filename }),
 
     /**
+     * Path for an Artifact's canonical audio file.
+     */
+    artifactAudio: (artifactId: string, filename: string) =>
+        generateStoragePath({ mediaType: 'audio', context: 'artifacts', identifier: artifactId, filename }),
+
+    /**
      * Path for an Echo audio fragment.
      */
     echoAudio: (shardId: string, filename: string) =>

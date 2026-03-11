@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import { BentoCard, Badge, cn } from "@shimokitan/ui";
+import { BentoCard, Badge, cn, Track } from "@shimokitan/ui";
 import { useTime } from "../../hooks/use-time";
 import Link from "../../components/Link";
 import Image from "next/image";
@@ -54,6 +54,7 @@ export default function HomeClient({
   entityCount,
   transmissions,
   dict,
+  currentTrack,
 }: {
   spotlightArtifacts: Artifact[];
   recentZines: (Zine & { artifact: Artifact })[];
@@ -66,6 +67,7 @@ export default function HomeClient({
   artifactCount: number;
   entityCount: number;
   dict: Dictionary;
+  currentTrack?: Track | null;
 }) {
   const [activeSpotlight, setActiveSpotlight] = useState<number>(0);
   const [activeEntity, setActiveEntity] = useState<number>(0);
@@ -366,7 +368,7 @@ export default function HomeClient({
                 <div
                   className={cn(
                     "h-full bg-violet-600 transition-all duration-300",
-                    isDockedActive ? "w-[35%]" : "w-0"
+                    station.isInitialized && !station.isMinimized ? "w-[35%]" : "w-0"
                   )}
                 />
               </div>
@@ -379,7 +381,11 @@ export default function HomeClient({
               </button>
               <button
                 onClick={() => {
-                  station.toggle();
+                  if (!station.isInitialized && currentTrack?.src) {
+                     station.initialize(currentTrack as any);
+                  } else {
+                     station.toggle();
+                  }
                   if (station.isMinimized) station.setMinimized(false);
                 }}
                 className={cn(
