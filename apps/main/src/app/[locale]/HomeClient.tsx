@@ -34,6 +34,7 @@ export default function HomeClient({
   spotlightArtifacts,
   recentZines,
   featuredArtifact,
+  videoArtifact,
   entities,
   weatherTemp,
   totalResonance,
@@ -44,6 +45,7 @@ export default function HomeClient({
   spotlightArtifacts: Artifact[];
   recentZines: (Zine & { artifact: Artifact })[];
   featuredArtifact: Artifact | null;
+  videoArtifact: Artifact | null;
   entities: any[];
   weatherTemp: string;
   totalResonance: string;
@@ -654,14 +656,14 @@ export default function HomeClient({
                   </div>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <Icon
-                        icon="lucide:fingerprint"
-                        width={10}
-                        className="text-zinc-500"
-                      />
-                      <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest truncate">
-                        {entity.uid}
-                      </span>
+                       <Icon
+                         icon="lucide:id-card"
+                         width={10}
+                         className="text-zinc-500"
+                       />
+                       <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest truncate">
+                         {entity.professionalTitle}
+                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Icon
@@ -770,9 +772,9 @@ export default function HomeClient({
         minimal
       >
         <div className="w-full h-full aspect-video md:aspect-auto">
-          {featuredArtifact?.videoUrl ? (
+          {videoArtifact?.videoUrl ? (
             <iframe
-              src={featuredArtifact.videoUrl}
+              src={videoArtifact.videoUrl}
               className="w-full h-full border-0 pointer-events-auto"
               allow="autoplay; encrypted-media"
               allowFullScreen

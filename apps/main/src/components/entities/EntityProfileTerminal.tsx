@@ -99,10 +99,10 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-px bg-zinc-900 border-x border-zinc-900 min-h-screen">
 
                     {/* LEFT PANEL: RESIDENT_ID */}
-                    <div className="lg:col-span-3 lg:sticky lg:top-0 h-fit bg-black p-6 space-y-8 lg:border-r lg:border-zinc-900">
-                        <div className="space-y-6">
+                    <div className="lg:col-span-3 lg:sticky lg:top-0 h-fit bg-black p-6 space-y-8 lg:border-r lg:border-zinc-900 flex flex-col items-center text-center">
+                        <div className="space-y-6 w-full">
                             {/* Bio-Scan Frame */}
-                            <div className="relative group mx-auto lg:mx-0 w-48 lg:w-full aspect-square bg-zinc-950 border border-zinc-800 overflow-hidden">
+                            <div className="relative group mx-auto w-48 aspect-square bg-zinc-950 border border-zinc-800 overflow-hidden">
                                 <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-zinc-500" />
                                 <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-zinc-500" />
                                 <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-zinc-500" />
@@ -119,16 +119,16 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex justify-between items-end text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
+                                <div className="flex justify-center items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
                                     <span>Identity //</span>
                                     <span className="text-zinc-400">{type}</span>
                                 </div>
-                                <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase text-white leading-none">{name}</h1>
+                                <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase text-white leading-none whitespace-pre-wrap">{name}</h1>
                             </div>
 
-                            <div className="pt-6 border-t border-zinc-900">
+                            <div className="pt-6 border-t border-zinc-900 flex flex-col items-center">
                                 <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em] block mb-2">{dict.entities.biography}</span>
-                                <p className="text-base text-zinc-300 leading-relaxed font-serif italic italic-shadow">
+                                <p className="text-base text-zinc-300 leading-relaxed font-serif italic italic-shadow text-center">
                                     {bio || dict.entities.biography_empty}
                                 </p>
                             </div>

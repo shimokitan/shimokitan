@@ -102,15 +102,17 @@ export default async function AppPage({
       console.error("Zines Fetch Failed:", e.message);
   }
 
-  // 3. Featured Artifact (The one in "The Pit")
+  // 3. Featured Artifacts (The ones in "The Pit")
   let featuredArtifact: any = null;
+  let videoArtifact: any = null;
   try {
-    const rawFeatured = await db.query.artifacts.findFirst({
+    const rawPitArtifacts = await db.query.artifacts.findMany({
       where: and(
         eq(schema.artifacts.status, "the_pit"),
         sql`${schema.artifacts.category} IN ('anime', 'music')`
       ),
       orderBy: sql`RANDOM()`,
+      limit: 10,
       with: {
         thumbnail: true,
         poster: true,
@@ -121,9 +123,9 @@ export default async function AppPage({
       },
     });
 
-    if (rawFeatured) {
+    const processArtifact = (raw: any) => {
       let videoUrl = null;
-      const primaryVideo = rawFeatured.resources?.find(
+      const primaryVideo = raw.resources?.find(
         (r: any) =>
           r.role === "embed_video" || 
           r.role === "stream" || 
@@ -137,21 +139,40 @@ export default async function AppPage({
           const vId = primaryVideo.value.split("youtu.be/")[1]?.split("?")[0];
           videoUrl = `https://www.youtube.com/embed/${vId}`;
         } else if (primaryVideo.platform === 'youtube' && !primaryVideo.value.includes('/')) {
-          // Handle case where just the ID was stored
           videoUrl = `https://www.youtube.com/embed/${primaryVideo.value}`;
         } else {
           videoUrl = primaryVideo.value;
         }
       }
 
-      featuredArtifact = {
-        ...rawFeatured,
-        title: rawFeatured.translations?.[0]?.title || "Untitled",
-        description: rawFeatured.translations?.[0]?.description || "",
-        thumbnailImage: rawFeatured.thumbnail?.url || null,
-        posterImage: rawFeatured.poster?.url || null,
+      return {
+        ...raw,
+        title: raw.translations?.[0]?.title || "Untitled",
+        description: raw.translations?.[0]?.description || "",
+        thumbnailImage: raw.thumbnail?.url || null,
+        posterImage: raw.poster?.url || null,
         videoUrl: videoUrl,
       };
+    };
+
+    if (rawPitArtifacts.length > 0) {
+      // Pick the first one for the "In The Pit" card
+      featuredArtifact = processArtifact(rawPitArtifacts[0]);
+
+      // Pick a different one for the "Video" card, ideally one with a videoUrl
+      const artifactsWithVideo = rawPitArtifacts.filter((a, idx) => {
+        if (idx === 0) return false; // Don't pick the same one
+        return a.resources?.some(r => r.role === "embed_video" || r.platform === "youtube");
+      });
+
+      if (artifactsWithVideo.length > 0) {
+        videoArtifact = processArtifact(artifactsWithVideo[0]);
+      } else if (rawPitArtifacts.length > 1) {
+        videoArtifact = processArtifact(rawPitArtifacts[1]);
+      } else {
+        // Fallback: if only one exists, they stay the same or we leave videoArtifact null
+        videoArtifact = featuredArtifact;
+      }
     }
   } catch (e: any) {
     if (process.env.NODE_ENV !== "production")
@@ -179,6 +200,7 @@ export default async function AppPage({
       _rawType: e.type,
       slug: e.slug,
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
+      professionalTitle: e.translations?.[0]?.status || (e.type === 'individual' ? 'Resident' : e.type?.toUpperCase() || "Resident"),
       avatar: e.avatar?.url || null,
       highlights: [], // We could fetch credits here if needed
     }));
@@ -225,6 +247,7 @@ export default async function AppPage({
         spotlightArtifacts={spotlightArtifacts}
         recentZines={recentZines}
         featuredArtifact={featuredArtifact}
+        videoArtifact={videoArtifact}
         entities={entities}
         dict={dict}
         weatherTemp={weatherTemp}
