@@ -55,7 +55,7 @@ export const resourcePlatformEnum = pgEnum("resource_platform", [
     "ko_fi", "booth", "vgen", "patreon", "buymeacoffee", "fanbox",
     "fiverr", "gumroad", "etsy", "society6",
     "redbubble", "artstation", "behance",
-    "bandcamp", "skeb", "pixiv",
+    "bandcamp", "skeb", "pixiv", "crunchyroll",
     "r2",      // internal hosted
     "other",
 ]);

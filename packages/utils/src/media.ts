@@ -109,6 +109,7 @@ export function getBrandIconUrl(platform: string): string | null {
         'apple_music': 'apple-music', // check if apple-music exists, user didn't mention it but good to have
         'buymeacoffee': 'buymeacoffee',
         'youtube_music': 'youtube',
+        'crunchyroll': 'crunchyroll',
     };
 
     const fileName = mapping[p] || p.replace(/_/g, '-');
@@ -119,7 +120,7 @@ export function getBrandIconUrl(platform: string): string | null {
         'buymeacoffee', 'fanbox', 'fiverr',
         'gumroad', 'etsy', 'society6', 'redbubble', 'artstation',
         'behance', 'bandcamp', 'soundcloud',
-        'skeb', 'pixiv'
+        'skeb', 'pixiv', 'crunchyroll'
     ];
 
     if (!supported.includes(fileName)) return null;

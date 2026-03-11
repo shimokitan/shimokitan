@@ -289,6 +289,9 @@ export default function ArtifactForm({
             } else if (v.includes('tiktok.com/')) {
                 newResources[idx].platform = 'tiktok';
                 newResources[idx].type = 'social';
+            } else if (v.includes('crunchyroll.com/')) {
+                newResources[idx].platform = 'crunchyroll';
+                newResources[idx].type = 'stream';
             }
         }
 

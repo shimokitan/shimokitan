@@ -57,7 +57,7 @@ export const RESOURCE_PLATFORMS = [
     'x', 'instagram', 'tiktok', 'ko_fi', 'booth', 'vgen', 'patreon', 
     'buymeacoffee', 'fanbox', 'fiverr', 'gumroad', 
     'etsy', 'society6', 'redbubble', 'artstation', 'behance', 
-    'bandcamp', 'skeb', 'pixiv', 'r2', 'other'
+    'bandcamp', 'skeb', 'pixiv', 'crunchyroll', 'r2', 'other'
 ] as const;
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 

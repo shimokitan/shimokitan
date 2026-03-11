@@ -98,6 +98,7 @@ export default function ResourcesSection({
                                     <option value="spotify">Spotify</option>
                                     <option value="soundcloud">SoundCloud</option>
                                     <option value="apple_music">Apple Music</option>
+                                    <option value="crunchyroll">Crunchyroll</option>
                                 </>
                             )}
                             {res.type === 'social' && (
@@ -131,6 +132,7 @@ export default function ResourcesSection({
                                     <option value="gumroad">Gumroad</option>
                                     <option value="instagram">Instagram</option>
                                     <option value="tiktok">TikTok</option>
+                                    <option value="crunchyroll">Crunchyroll</option>
                                 </>
                             )}
                             <option value="r2">R2_STORAGE</option>

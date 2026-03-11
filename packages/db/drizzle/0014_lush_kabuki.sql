@@ -1,0 +1,1 @@
+ALTER TYPE "public"."resource_platform" ADD VALUE 'crunchyroll' BEFORE 'r2';
