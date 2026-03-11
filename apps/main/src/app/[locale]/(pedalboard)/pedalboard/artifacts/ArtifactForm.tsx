@@ -237,8 +237,14 @@ export default function ArtifactForm({
 
         // Auto-detect platform and type from URL if it's a URL field
         if (field === 'url' && value) {
-            const v = value.toLowerCase();
+            let v = value.toLowerCase();
             if (v.includes('youtube.com/') || v.includes('youtu.be/')) {
+                // Instantly normalize YouTube URLs to the standard format
+                const match = value.match(/(?:v=|\/)([\w-]{11})(?:\?|&|\/|$)/);
+                if (match && match[1]) {
+                    value = `https://www.youtube.com/watch?v=${match[1]}`;
+                    v = value.toLowerCase();
+                }
                 newResources[idx].platform = 'youtube';
                 newResources[idx].type = 'mv';
             } else if (v.includes('spotify.com/')) {

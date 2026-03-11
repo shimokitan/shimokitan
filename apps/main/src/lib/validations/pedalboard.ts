@@ -61,11 +61,21 @@ export const RESOURCE_PLATFORMS = [
 ] as const;
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 
+const youtubeVideoRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})$/;
+
 const resourceSchema = z.object({
     platform: z.enum(RESOURCE_PLATFORMS),
     url: z.string().url(),
     role: z.enum(RESOURCE_ROLES).default('stream'),
     isPrimary: z.boolean().default(false),
+}).refine(data => {
+    if (data.platform === 'youtube') {
+        return youtubeVideoRegex.test(data.url);
+    }
+    return true;
+}, {
+    message: "Must be a standard YouTube video URL (e.g. https://www.youtube.com/watch?v=...)",
+    path: ["url"]
 });
 
 
