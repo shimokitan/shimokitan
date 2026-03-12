@@ -8,48 +8,44 @@ import Link from 'next/link';
 import { Dictionary } from '@shimokitan/utils';
 
 // ─── Link Category Detection ─────────────────────────────────────────────────
-type LinkCategory = 'social' | 'commerce' | 'support' | 'subscription';
+type LinkCategory = 'social_media' | 'commerce' | 'platform';
 type LinkPriority = 'hero' | 'shard' | 'archive';
 
-const COMMERCE_PLATFORMS = ['booth', 'base', 'toranoana', 'melonbooks'];
-const SUPPORT_PLATFORMS = ['trakteer', 'ko-fi', 'saweria', 'buymeacoffee'];
-const SUBSCRIPTION_PLATFORMS = ['fanbox', 'fantia', 'patreon', 'ci-en'];
+const COMMERCE_PLATFORMS = [
+    'booth', 'base', 'toranoana', 'melonbooks', 'gumroad', 'etsy', 'society6', 
+    'redbubble', 'bandcamp', 'skeb', 'vgen', 'fiverr', 'dlsite', 'bookwalker',
+    'trakteer', 'ko-fi', 'saweria', 'buymeacoffee', 'fanbox', 'fantia', 'patreon', 'ci-en'
+];
+
+const GENERAL_PLATFORMS = [
+    'pixiv', 'artstation', 'behance', 'crunchyroll', 'github', 
+    'bilibili', 'niconico', 'youtube', 'soundcloud', 'spotify', 'apple_music'
+];
 
 function getLinkCategory(platform: string): LinkCategory {
     const p = platform?.toLowerCase() || '';
     if (COMMERCE_PLATFORMS.some(x => p.includes(x))) return 'commerce';
-    if (SUPPORT_PLATFORMS.some(x => p.includes(x))) return 'support';
-    if (SUBSCRIPTION_PLATFORMS.some(x => p.includes(x))) return 'subscription';
-    return 'social';
+    if (GENERAL_PLATFORMS.some(x => p.includes(x))) return 'platform';
+    return 'social_media';
 }
 
 function getLinkPriority(platform: string): LinkPriority {
     const cat = getLinkCategory(platform);
-    if (cat === 'commerce') return 'hero';
-    if (cat === 'support' || cat === 'subscription') return 'hero';
+    if (cat === 'commerce' || cat === 'platform') return 'hero';
     return 'shard';
 }
 
 // ─── Category accent colors ───────────────────────────────────────────────────
 const CATEGORY_ACCENT: Record<LinkCategory, string> = {
-    social: 'border-zinc-700 hover:border-zinc-400',
-    commerce: 'border-violet-700/60 hover:border-violet-400',
-    support: 'border-rose-700/60 hover:border-rose-400',
-    subscription: 'border-amber-700/60 hover:border-amber-400',
+    social_media: 'border-zinc-700 hover:border-zinc-400',
+    commerce: 'border-amber-700/60 hover:border-amber-400',
+    platform: 'border-violet-700/60 hover:border-violet-400',
 };
 
 const CATEGORY_LABEL_COLOR: Record<LinkCategory, string> = {
-    social: 'text-zinc-500',
-    commerce: 'text-violet-500',
-    support: 'text-rose-500',
-    subscription: 'text-amber-500',
-};
-
-const CATEGORY_LABEL: Record<LinkCategory, string> = {
-    social: 'SOCIAL_CHANNEL',
-    commerce: 'COMMERCE',
-    support: 'SUPPORT',
-    subscription: 'SUBSCRIPTION',
+    social_media: 'text-zinc-500',
+    commerce: 'text-amber-500',
+    platform: 'text-violet-500',
 };
 
 // ─── Collapsible Module ───────────────────────────────────────────────────────
@@ -109,40 +105,19 @@ function Module({
     );
 }
 
-// ─── Shard Grid (compact social links) ────────────────────────────────────────
-function ShardGrid({ links }: { links: any[] }) {
-    const socialLinks = links.filter(l => getLinkCategory(l.platform) === 'social');
 
-    if (socialLinks.length === 0) return null;
 
-    return (
-        <div className="grid grid-cols-3 gap-px bg-zinc-900">
-            {socialLinks.map((link, i) => (
-                <a
-                    key={i}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center justify-center gap-1.5 py-4 bg-black hover:bg-zinc-950 transition-colors"
-                >
-                    <div className="w-8 h-8 flex items-center justify-center text-zinc-500 group-hover:text-white transition-colors">
-                        <BrandIcon platform={link.platform} className="w-full h-full" />
-                    </div>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-600 group-hover:text-zinc-300 transition-colors">
-                        {link.platform}
-                    </span>
-                </a>
-            ))}
-        </div>
-    );
-}
-
-// ─── Hero Link Card (commerce / support / subscription) ───────────────────────
-function HeroLinkCard({ link }: { link: any }) {
+// ─── Hero Link Card (commerce / platform / social) ───────────────────────────
+function HeroLinkCard({ link, dict }: { link: any, dict: Dictionary }) {
     const category = getLinkCategory(link.platform);
     const accent = CATEGORY_ACCENT[category];
     const labelColor = CATEGORY_LABEL_COLOR[category];
-    const label = CATEGORY_LABEL[category];
+    
+    const label = {
+        commerce: dict.entities.links.commerce,
+        platform: dict.entities.links.platform,
+        social_media: dict.entities.links.social_media
+    }[category];
 
     return (
         <a
@@ -232,8 +207,9 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
     const credits = entity.credits || [];
     const sortedCredits = [...credits].sort((a: any, b: any) => (b.artifact?.resonance || 0) - (a.artifact?.resonance || 0));
     const featuredCredit = sortedCredits[0];
-    const socialLinks = (entity.socialLinks || []).filter((l: any) => getLinkCategory(l.platform) === 'social');
-    const heroLinks = (entity.socialLinks || []).filter((l: any) => getLinkCategory(l.platform) !== 'social');
+    const commerceLinks = (entity.socialLinks || []).filter((l: any) => getLinkCategory(l.platform) === 'commerce');
+    const platformLinks = (entity.socialLinks || []).filter((l: any) => getLinkCategory(l.platform) === 'platform');
+    const socialLinks = (entity.socialLinks || []).filter((l: any) => getLinkCategory(l.platform) === 'social_media');
     const hasLinks = (entity.socialLinks || []).length > 0;
 
     const commissionStatus = entity.commissionStatus || null;
@@ -475,26 +451,53 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                             </Module>
                         )}
 
-                        {/* MODULE: ACTIVE_LINKS */}
-                        {hasLinks && (
+                        {/* MODULE: PLATFORM */}
+                        {platformLinks.length > 0 && (
                             <Module
-                                id="links"
-                                label="ACTIVE_LINKS"
-                                count={`${(entity.socialLinks || []).length} CHANNELS`}
-                                statusColor="bg-emerald-500"
+                                id="platform"
+                                label={dict.entities.links.platform}
+                                count={`${platformLinks.length} CHANNELS`}
+                                statusColor="bg-violet-500"
                                 defaultOpen={true}
                             >
                                 <div className="flex flex-col gap-px bg-zinc-900">
-                                    {heroLinks.length > 0 && (
-                                        <div className="flex flex-col gap-px bg-zinc-900">
-                                            {heroLinks.map((link: any, i: number) => (
-                                                <HeroLinkCard key={i} link={link} />
-                                            ))}
-                                        </div>
-                                    )}
-                                    {socialLinks.length > 0 && (
-                                        <ShardGrid links={entity.socialLinks} />
-                                    )}
+                                    {platformLinks.map((link: any, i: number) => (
+                                        <HeroLinkCard key={i} link={link} dict={dict} />
+                                    ))}
+                                </div>
+                            </Module>
+                        )}
+
+                        {/* MODULE: SOCIAL MEDIA */}
+                        {socialLinks.length > 0 && (
+                            <Module
+                                id="social"
+                                label={dict.entities.links.social_media}
+                                count={`${socialLinks.length} CHANNELS`}
+                                statusColor="bg-zinc-500"
+                                defaultOpen={false}
+                            >
+                                <div className="flex flex-col gap-px bg-zinc-900">
+                                    {socialLinks.map((link: any, i: number) => (
+                                        <HeroLinkCard key={i} link={link} dict={dict} />
+                                    ))}
+                                </div>
+                            </Module>
+                        )}
+
+                        {/* MODULE: COMMERCE */}
+                        {commerceLinks.length > 0 && (
+                            <Module
+                                id="commerce"
+                                label={dict.entities.links.commerce}
+                                count={`${commerceLinks.length} CHANNELS`}
+                                statusColor="bg-amber-500"
+                                defaultOpen={true}
+                            >
+                                <div className="flex flex-col gap-px bg-zinc-900">
+                                    {commerceLinks.map((link: any, i: number) => (
+                                        <HeroLinkCard key={i} link={link} dict={dict} />
+                                    ))}
                                 </div>
                             </Module>
                         )}
@@ -503,7 +506,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                             <div className="px-5 py-10 text-center border-t border-zinc-900">
                                 <Icon icon="lucide:unplug" className="mx-auto text-zinc-800 mb-2" width={32} />
                                 <span className="text-[10px] font-mono font-bold text-zinc-700 uppercase tracking-widest">
-                                    No uplinks connected
+                                    {dict.entities.links.no_uplinks}
                                 </span>
                             </div>
                         )}

@@ -151,7 +151,14 @@
     },
     "entities": {
         "biography": "略歴",
-        "biography_empty": "略歴は空です。"
+        "biography_empty": "略歴は空です。",
+        "links": {
+            "commerce": "コマース",
+            "platform": "プラットフォーム",
+            "social_media": "ソーシャルメディア",
+            "active_links": "有効なリンク",
+            "no_uplinks": "接続されたアップリンクはありません"
+        }
     },
     "legal": {
         "last_updated": "最終更新日",

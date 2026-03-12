@@ -151,7 +151,14 @@
     },
     "entities": {
         "biography": "Biography",
-        "biography_empty": "Biography is empty."
+        "biography_empty": "Biography is empty.",
+        "links": {
+            "commerce": "COMMERCE",
+            "platform": "PLATFORM",
+            "social_media": "SOCIAL_MEDIA",
+            "active_links": "ACTIVE_LINKS",
+            "no_uplinks": "No uplinks connected"
+        }
     },
     "legal": {
         "last_updated": "Last Updated",

@@ -151,7 +151,14 @@
     },
     "entities": {
         "biography": "Biografi",
-        "biography_empty": "Biografi kosong."
+        "biography_empty": "Biografi kosong.",
+        "links": {
+            "commerce": "KOMERSIAL",
+            "platform": "PLATFORM",
+            "social_media": "MEDIA SOSIAL",
+            "active_links": "LINK AKTIF",
+            "no_uplinks": "Tidak ada uplink yang terhubung"
+        }
     },
     "legal": {
         "last_updated": "Terakhir Diperbarui",
