@@ -110,17 +110,14 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
     useEffect(() => {
         if (!mounted || !audioRef.current) return;
         const audio = audioRef.current;
-        console.log("AudioWidget: Initializing listeners. Audio source is currently:", audio.src);
-
-        const onPlay = () => { console.log("Audio: play event fired"); setIsPlaying(true); broadcastState(); };
-        const onPause = () => { console.log("Audio: pause event fired"); setIsPlaying(false); broadcastState(); };
+        const onPlay = () => { setIsPlaying(true); broadcastState(); };
+        const onPause = () => { setIsPlaying(false); broadcastState(); };
         const onTimeUpdate = () => {
             setCurrentTime(audio.currentTime);
             setProgress((audio.currentTime / (audio.duration || 1)) * 100);
             broadcastState();
         };
         const onLoadedMetadata = () => {
-            console.log("Audio: loadedmetadata fired, duration:", audio.duration);
             setDuration(audio.duration);
             broadcastState();
         };
@@ -132,11 +129,8 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
 
         const handleCommand = (e: Event) => {
             const detail = (e as CustomEvent).detail;
-            console.log("AudioWidget: Dispatching command handler for:", detail?.type);
-            
             if (detail?.type === 'playToggle') {
                 if (audio.paused) {
-                    console.log("AudioWidget: Calling audio.play(). Current src:", audio.src);
                     const playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
@@ -144,7 +138,6 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
                         });
                     }
                 } else {
-                    console.log("AudioWidget: Calling audio.pause()");
                     audio.pause();
                 }
             } else if (detail?.type === 'seek') {
@@ -174,10 +167,7 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
         const audio = audioRef.current;
         const targetSrc = track?.src || "";
 
-        console.log("AudioWidget: Source Effect Triggered. Prop src:", targetSrc, "Current audio.src:", audio.src);
-
         if (!targetSrc) {
-            console.log("AudioWidget: No source in prop. Clearing audio.");
             if (audio.src && audio.src !== window.location.href) {
                 audio.pause();
                 audio.src = "";
@@ -187,23 +177,19 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
             return;
         }
 
-        console.log("AudioWidget: Applying source:", targetSrc);
         let hls: Hls | null = null;
         
         setIsPlaying(false);
         setCurrentTime(0);
 
         if (Hls.isSupported() && targetSrc.includes('.m3u8')) {
-            console.log("AudioWidget: Using Hls.js");
             hls = new Hls();
             hls.loadSource(targetSrc);
             hls.attachMedia(audio);
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                 console.log("AudioWidget: HLS Manifest Ready");
                  broadcastState();
             });
         } else {
-            console.log("AudioWidget: Using native src");
             audio.src = targetSrc;
         }
 
@@ -211,7 +197,6 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
 
         return () => {
             if (hls) {
-                console.log("AudioWidget: Cleaning up HLS");
                 hls.destroy();
             }
         };

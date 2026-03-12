@@ -505,19 +505,12 @@ export default function HomeClient({
               </button>
               <button
                 onClick={() => {
-                  console.log("Play button clicked. Station initialized:", station.isInitialized);
-                  console.log("Current station track:", station.currentTrack);
-                  console.log("Fallback prop track:", currentTrack);
-                  
                   if (station.isInitialized && station.currentTrack?.src) {
-                    console.log("Dispatching playToggle to existing track:", station.currentTrack.src);
                     dispatchCommand("playToggle");
                   } else if (currentTrack?.src) {
-                    console.log("Initializing station with track:", currentTrack.title, currentTrack.src);
                     station.initialize(currentTrack as any);
                     // Give the store a moment to update then trigger play
                     setTimeout(() => {
-                      console.log("Dispatching playToggle after initialization");
                       dispatchCommand("playToggle");
                     }, 100);
                   } else {

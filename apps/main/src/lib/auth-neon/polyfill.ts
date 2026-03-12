@@ -18,7 +18,8 @@ export function initPolyfill() {
         if (!window.crypto) {
             // @ts-ignore
             window.crypto = { randomUUID: polyfillUUID };
-            console.log('SHIMOKITAN_AUTH: Crypto object polyfilled.');
+            if (process.env.NODE_ENV !== 'production')
+                console.log('SHIMOKITAN_AUTH: Crypto object polyfilled.');
         }
         // If crypto exists but randomUUID is missing
         else if (!window.crypto.randomUUID) {
@@ -28,7 +29,8 @@ export function initPolyfill() {
                     configurable: true,
                     writable: true,
                 });
-                console.log('SHIMOKITAN_AUTH: randomUUID method polyfilled.');
+                if (process.env.NODE_ENV !== 'production')
+                    console.log('SHIMOKITAN_AUTH: randomUUID method polyfilled.');
             } catch (e) {
                 // If the crypto object is frozen, attempt to replace the whole object on window
                 const originalCrypto = window.crypto;
@@ -40,10 +42,12 @@ export function initPolyfill() {
                     configurable: true,
                     writable: true,
                 });
-                console.log('SHIMOKITAN_AUTH: Crypto object replaced via Proxy/Handoff.');
+                if (process.env.NODE_ENV !== 'production')
+                    console.log('SHIMOKITAN_AUTH: Crypto object replaced via Proxy/Handoff.');
             }
         }
     } catch (err) {
-        console.error('SHIMOKITAN_AUTH: Failed to polyfill crypto.', err);
+        if (process.env.NODE_ENV !== 'production')
+            console.error('SHIMOKITAN_AUTH: Failed to polyfill crypto.', err);
     }
 }
