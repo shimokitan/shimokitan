@@ -60,7 +60,7 @@ export default function CreditsSection({
                             <div className="flex-1">
                                 <EntitySearchPicker
                                     label=""
-                                    type="independent"
+                                    type="all"
                                     value={credit.entityId}
                                     onSelect={(entity) => {
                                         updateCredit(i, 'entityId', entity?.id || '');

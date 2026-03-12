@@ -8,7 +8,8 @@ import EntitySearchPicker from '../artifacts/components/EntitySearchPicker';
 import { MediaUploader } from '@shimokitan/ui';
  import { uploadMediaAction } from '../media-actions';
  import { CREDIT_ROLES } from '@/lib/validations/pedalboard';
- import { toast } from 'sonner';
+  import { toast } from 'sonner';
+ import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 
 type SocialLink = {
     platform: string;
@@ -62,8 +63,12 @@ export default function EntityForm({
 
     const [avatarUrl, setAvatarUrl] = useState<string | null>(initialData?.avatar?.url || initialData?.avatarUrl || null);
     const [avatarId, setAvatarId] = useState<string | null>(initialData?.avatarId || null);
+    const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
+
     const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(initialData?.thumbnail?.url || initialData?.thumbnailUrl || null);
     const [thumbnailId, setThumbnailId] = useState<string | null>(initialData?.thumbnailId || null);
+    const [pendingThumbnailUrl, setPendingThumbnailUrl] = useState<string | null>(null);
+
     const [uid, setUid] = useState(initialData?.uid || '');
     const [slug, setSlug] = useState(initialData?.slug || '');
     const [tags, setTags] = useState<{ name: string }[]>(
@@ -79,6 +84,25 @@ export default function EntityForm({
         const t = toast.loading(`${initialData?.id ? 'UPDATING_RECORD' : 'PUBLISHING_RECORD'}...`);
 
         try {
+            let finalAvatarId = avatarId;
+            let finalThumbnailId = thumbnailId;
+
+            if (pendingAvatarUrl) {
+                const formData = new FormData();
+                formData.append('url', pendingAvatarUrl);
+                formData.append('context', 'entity_avatar');
+                const res = await uploadMediaAction(formData);
+                finalAvatarId = res.mediaId;
+            }
+
+            if (pendingThumbnailUrl) {
+                const formData = new FormData();
+                formData.append('url', pendingThumbnailUrl);
+                formData.append('context', 'entity_thumbnail');
+                const res = await uploadMediaAction(formData);
+                finalThumbnailId = res.mediaId;
+            }
+
             const cleanSocials = socials.filter(s => s.platform.trim() && s.url.trim());
             const payload = {
                 type,
@@ -90,8 +114,8 @@ export default function EntityForm({
                 translations: translations.filter(t => t.name.trim() !== ''),
                 members: type === 'circle' ? members.filter(m => m.memberId) : [],
                 tags: tags.filter(t => t.name.trim() !== ''),
-                avatarId,
-                thumbnailId
+                avatarId: finalAvatarId,
+                thumbnailId: finalThumbnailId
             };
 
             if (initialData?.id) {
@@ -110,7 +134,7 @@ export default function EntityForm({
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, initialData?.id, socials, type, uid, slug, isVerified, isEncrypted, translations, members, avatarId, thumbnailId, router, tags]);
+    }, [isSubmitting, initialData?.id, socials, type, uid, slug, isVerified, isEncrypted, translations, members, avatarId, thumbnailId, pendingAvatarUrl, pendingThumbnailUrl, router, tags]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -151,6 +175,28 @@ export default function EntityForm({
         const newTags = [...tags];
         newTags[idx] = { name };
         setTags(newTags);
+    };
+
+    const handleAvatarUrlSelect = (url: string) => {
+        let targetUrl = url;
+        if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+            const id = extractMediaId(url, 'youtube');
+            const thumb = getThumbnailUrl(id, 'youtube');
+            if (thumb) targetUrl = thumb;
+        }
+        setAvatarUrl(targetUrl);
+        setPendingAvatarUrl(targetUrl);
+    };
+
+    const handleThumbnailUrlSelect = (url: string) => {
+        let targetUrl = url;
+        if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+            const id = extractMediaId(url, 'youtube');
+            const thumb = getThumbnailUrl(id, 'youtube');
+            if (thumb) targetUrl = thumb;
+        }
+        setThumbnailUrl(targetUrl);
+        setPendingThumbnailUrl(targetUrl);
     };
 
     return (
@@ -245,6 +291,7 @@ export default function EntityForm({
                                             value={avatarUrl}
                                             uploadAction={uploadMediaAction}
                                             onChange={(id, url) => { setAvatarId(id); setAvatarUrl(url); }}
+                                            onUrlSelect={handleAvatarUrlSelect}
                                             contextType="entity_avatar"
                                             className="w-full aspect-square"
                                         />
@@ -255,6 +302,7 @@ export default function EntityForm({
                                             value={thumbnailUrl}
                                             uploadAction={uploadMediaAction}
                                             onChange={(id, url) => { setThumbnailId(id); setThumbnailUrl(url); }}
+                                            onUrlSelect={handleThumbnailUrlSelect}
                                             contextType="entity_thumbnail"
                                             className="w-full aspect-[21/9] md:aspect-[16/6]"
                                         />

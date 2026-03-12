@@ -15,8 +15,9 @@ export function extractMediaId(url: string, platform: string): string | null {
             // youtu.be/ID
             // youtube.com/embed/ID
             // youtube.com/v/ID
+            // youtube.com/shorts/ID
             // music.youtube.com/watch?v=ID
-            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
             const match = trimmedUrl.match(regex);
             return match ? match[1] : null;
         }

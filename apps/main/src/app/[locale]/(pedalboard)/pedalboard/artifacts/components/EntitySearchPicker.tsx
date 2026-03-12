@@ -16,7 +16,7 @@ interface Entity {
 
 interface EntitySearchPickerProps {
     label: string;
-    type: 'independent' | 'organization' | 'agency' | 'circle' | 'staff';
+    type: 'independent' | 'organization' | 'agency' | 'circle' | 'staff' | 'all';
     value?: string; // entityId
     onSelect: (entity: Entity | null) => void;
     placeholder?: string;
@@ -57,7 +57,7 @@ export default function EntitySearchPicker({
             }
             setIsLoading(true);
             try {
-                const data = await searchEntities(q, type);
+                const data = await searchEntities(q, type === 'all' ? undefined : type);
                 setResults(data);
             } catch (error) {
                 console.error(error);
@@ -75,10 +75,9 @@ export default function EntitySearchPicker({
     }, [query, isOpen, fetchEntities]);
 
     const handleCreate = async () => {
-        if (!query.trim()) return;
         setIsLoading(true);
         try {
-            const newEntity = await quickCreateEntity(query, type);
+            const newEntity = await quickCreateEntity(query, type === 'all' ? 'independent' : type);
             toast.success(`Registered Profession Record: ${query}`);
             onSelect({ id: newEntity.id, name: query, type });
             setSelectedName(query);

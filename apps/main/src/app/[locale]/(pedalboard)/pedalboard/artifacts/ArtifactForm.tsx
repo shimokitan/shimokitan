@@ -186,9 +186,37 @@ export default function ArtifactForm({
     };
 
     const handlePosterUrlSelect = (url: string) => {
-        setPosterUrl(url);
-        setPendingPosterUrl(url);
+        let targetUrl = url;
+        // Support pasting YouTube video links directly into the image selector
+        if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+            const id = extractMediaId(url, 'youtube');
+            const thumb = getThumbnailUrl(id, 'youtube');
+            if (thumb) targetUrl = thumb;
+        }
+
+        setPosterUrl(targetUrl);
+        setPendingPosterUrl(targetUrl);
         setPendingPosterFile(null);
+    };
+
+    const handleVinylFileSelect = (file: File, objectUrl: string) => {
+        setVinylUrl(objectUrl);
+        setPendingVinylFile(file);
+        setPendingVinylUrl(null);
+    };
+
+    const handleVinylUrlSelect = (url: string) => {
+        let targetUrl = url;
+        // Support pasting YouTube video links directly into the image selector
+        if (url.includes('youtube.com/') || url.includes('youtu.be/')) {
+            const id = extractMediaId(url, 'youtube');
+            const thumb = getThumbnailUrl(id, 'youtube');
+            if (thumb) targetUrl = thumb;
+        }
+
+        setVinylUrl(targetUrl);
+        setPendingVinylUrl(targetUrl);
+        setPendingVinylFile(null);
     };
 
 
@@ -538,20 +566,20 @@ export default function ArtifactForm({
                     setThumbnailId={setThumbnailId}
                     thumbnailUrl={thumbnailUrl}
                     setThumbnailUrl={setThumbnailUrl}
-                    onThumbnailFileSelect={(file: File, url: string) => { setPendingThumbnailFile(file); setThumbnailUrl(url); }}
-                    onThumbnailUrlSelect={(url: string) => { setPendingThumbnailUrl(url); setThumbnailUrl(url); }}
+                    onThumbnailFileSelect={handleThumbnailFileSelect}
+                    onThumbnailUrlSelect={handleThumbnailUrlSelect}
                     posterId={posterId}
                     setPosterId={setPosterId}
                     posterUrl={posterUrl}
                     setPosterUrl={setPosterUrl}
-                    onPosterFileSelect={(file: File, url: string) => { setPendingPosterFile(file); setPosterUrl(url); }}
-                    onPosterUrlSelect={(url: string) => { setPendingPosterUrl(url); setPosterUrl(url); }}
+                    onPosterFileSelect={handlePosterFileSelect}
+                    onPosterUrlSelect={handlePosterUrlSelect}
                     vinylId={vinylId}
                     setVinylId={setVinylId}
                     vinylUrl={vinylUrl}
                     setVinylUrl={setVinylUrl}
-                    onVinylFileSelect={(file: File, url: string) => { setPendingVinylFile(file); setVinylUrl(url); }}
-                    onVinylUrlSelect={(url: string) => { setPendingVinylUrl(url); setVinylUrl(url); }}
+                    onVinylFileSelect={handleVinylFileSelect}
+                    onVinylUrlSelect={handleVinylUrlSelect}
                     category={category}
                     setCategory={setCategory}
                     nature={nature}
