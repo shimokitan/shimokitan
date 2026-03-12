@@ -78,11 +78,11 @@
             "changelog": "Changelog"
         },
         "q1": "What is This Place?",
-        "a1_1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them -- not as data points or rankings, but as lived experiences worth remembering.",
-        "a1_2": "Think of it as a personal record collection for everything you care about in Japanese media. Each entry is an artifact -- a piece of culture documented with the attention it deserves.",
+        "a1_1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them - not as data points or rankings, but as lived experiences worth remembering.",
+        "a1_2": "Think of it as a personal record collection for everything you care about in Japanese media. Each entry is an artifact - a piece of culture documented with the attention it deserves.",
         "q2": "Why Shimokitan Exists",
-        "a2_1": "The internet has an abundance of databases and trackers for anime, music, and games. Most of them treat culture as spreadsheets -- scores, stats, completion percentages. We wanted something different.",
-        "a2_2": "Shimokitan is built on the idea that your taste tells a story. The anime that kept you up at night, the album you played on repeat during a specific season, the game that changed how you see things -- these are memories, not metrics. We archive them with that weight.",
+        "a2_1": "The internet has an abundance of databases and trackers for anime, music, and games. Most of them treat culture as spreadsheets - scores, stats, completion percentages. We wanted something different.",
+        "a2_2": "Shimokitan is built on the idea that your taste tells a story. The anime that kept you up at night, the album you played on repeat during a specific season, the game that changed how you see things - these are memories, not metrics. We archive them with that weight.",
         "q3": "How It Works",
         "a3_1": "Shimokitan is a curated archive built on consent. We do not archive recording artists or specific creators without their explicit permission. We invite them to reside in the District, and if they agree, they choose how they want to be presented: via third-party embeds or hosted directly in our custom, distraction-free players.",
         "a3_2": "Because we operate on a strictly consent-first basis for artists, every creator you see here has agreed to be here. For broader architectural entries like anime or video games, we index public metadata and host visual assets (like covers) purely for referential and archival purposes.",
@@ -96,8 +96,8 @@
         "zines_desc": "Community logs and radio signals. Written reflections on artifacts and District events.",
         "q4": "Who Runs This",
         "a4_1": "Shimokitan is independently operated from Indonesia. There is no company, no investors, no board. It exists because the people building it genuinely love this culture and wanted a better home for it online.",
-        "a4_2": "The platform is named after Shimokitazawa -- a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, guided by human resonance rather than predictive algorithms.",
-        "a4_3": "The platform is built by a solo developer using AI coding assistants. While the code is assisted, the culture we archive is strictly human -- we do not index AI-generated media.",
+        "a4_2": "The platform is named after Shimokitazawa - a neighborhood in Tokyo known for its independent record shops, second-hand stores, and small theaters. The kind of place where you discover things by wandering, guided by human resonance rather than predictive algorithms.",
+        "a4_3": "The platform is built by a solo developer using AI coding assistants. While the code is assisted, the culture we archive is strictly human - we do not index AI-generated media.",
         "q5": "Open to the World",
         "a5_1": "Shimokitan is built for anyone who shares a deep appreciation for Japanese creative work, regardless of where they are. The platform is free to browse, free to read, and free to explore.",
         "a5_2": "Everything you see on the platform is hand-curated. There are no engagement-driven feeds, no auto-generated pages, and no user-submitted content at this time. Discovery here is deterministic, never a black box.",
@@ -111,7 +111,7 @@
             "title": "Vision and Roadmap",
             "section1": {
                 "title": "Where We Are Going",
-                "content": "Shimokitan started as a personal archive -- a place to catalog the anime, music, and games that matter. The long-term vision is to grow it into a living cultural index that anyone can contribute to, without losing the curatorial soul that makes it different from a list or a tracker."
+                "content": "Shimokitan started as a personal archive - a place to catalog the anime, music, and games that matter. The long-term vision is to grow it into a living cultural index that anyone can contribute to, without losing the curatorial soul that makes it different from a list or a tracker."
             },
             "section2": {
                 "title": "Phase 0: Prelude",
@@ -199,10 +199,10 @@
             "s4": {
                 "title": "4. Third-Party Services",
                 "p1": "We use the following third-party services that may process data in connection with your visit:",
-                "l1": "**Cloudflare** (United States) -- Hosting, CDN, and DDoS protection.",
-                "l2": "**Resend** (United States) -- Email delivery for contact form submissions.",
-                "l3": "**Google** (United States) -- Embedded video playback (YouTube) and operational email forwarding (Gmail).",
-                "l4": "**Hostinger** (International) -- Email hosting for contact form submissions.",
+                "l1": "**Cloudflare** (United States) - Hosting, CDN, and DDoS protection.",
+                "l2": "**Resend** (United States) - Email delivery for contact form submissions.",
+                "l3": "**Google** (United States) - Embedded video playback (YouTube) and operational email forwarding (Gmail).",
+                "l4": "**Hostinger** (International) - Email hosting for contact form submissions.",
                 "p2": "Our database infrastructure is provided by **Neon** (United States); no personal visitor data is stored in our database. We plan to integrate affiliate programs (Crunchyroll, Apple Music) that will use tracking parameters. See our [Affiliate Disclosure](/affiliate-disclosure) for details."
             },
             "s5": {
@@ -256,7 +256,7 @@
             },
             "s4": {
                 "title": "4. Intellectual Property",
-                "p1": "All original content provided on the Service -- including but not limited to editorial text, UI/UX design, graphics, logos, and the \"District\" concept framework -- is the property of Shimokitan and is protected by applicable copyright and intellectual property laws.",
+                "p1": "All original content provided on the Service - including but not limited to editorial text, UI/UX design, graphics, logos, and the \"District\" concept framework - is the property of Shimokitan and is protected by applicable copyright and intellectual property laws.",
                 "p2": "Third-party content (including anime titles, music, video embeds, and artist imagery) remains the property of its respective owners. Shimokitan does not claim ownership of third-party content indexed or embedded within the Service."
             },
             "s5": {
@@ -313,11 +313,11 @@
             },
             "s3": {
                 "title": "3. Essential / Infrastructure Cookies",
-                "content": "**Cloudflare cookies** (e.g., __cf_bm, cf_clearance) -- Set by our hosting and CDN provider, Cloudflare, for bot detection, DDoS protection, and security purposes. These are strictly necessary for the secure operation of the site. You cannot opt out of these without leaving the site."
+                "content": "**Cloudflare cookies** (e.g., __cf_bm, cf_clearance) - Set by our hosting and CDN provider, Cloudflare, for bot detection, DDoS protection, and security purposes. These are strictly necessary for the secure operation of the site. You cannot opt out of these without leaving the site."
             },
             "s4": {
                 "title": "4. Third-Party Cookies",
-                "p1": "**YouTube / Google cookies** -- When you view a page containing an embedded YouTube video, Google may set cookies on your device (such as VISITOR_INFO1_LIVE, YSC, and others). These cookies are governed by Google's Privacy Policy. We do not control the data collected by these cookies.",
+                "p1": "**YouTube / Google cookies** - When you view a page containing an embedded YouTube video, Google may set cookies on your device (such as VISITOR_INFO1_LIVE, YSC, and others). These cookies are governed by Google's Privacy Policy. We do not control the data collected by these cookies.",
                 "p2": "If additional third-party integrations are introduced in the future, this policy will be updated accordingly."
             },
             "s5": {
@@ -409,8 +409,8 @@
             "s2": {
                 "title": "2. Planned Affiliate Partners",
                 "p1": "We plan to participate in affiliate programs with:",
-                "l1": "**Crunchyroll** -- Anime streaming subscriptions",
-                "l2": "**Apple Music** -- Music streaming subscriptions and purchases",
+                "l1": "**Crunchyroll** - Anime streaming subscriptions",
+                "l2": "**Apple Music** - Music streaming subscriptions and purchases",
                 "p2": "This disclosure will be updated when affiliate links go live."
             },
             "s3": {
@@ -439,7 +439,7 @@
             "s1": {
                 "title": "General",
                 "q1": "What is Shimokitan?",
-                "a1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them -- not as data points or rankings, but as lived experiences worth remembering."
+                "a1": "Shimokitan is a curated archive for Japanese creative culture. We index, organize, and celebrate anime, music, games, and the creators behind them - not as data points or rankings, but as lived experiences worth remembering."
             },
             "s2": {
                 "title": "Using the Platform",
