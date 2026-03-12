@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://shimokitan.live";
   const dict = getDictionary(locale as Locale);
   
-  const title = locale === 'ja' ? "Shimokitan // 近日公開" : locale === 'id' ? "Shimokitan // SEGERA HADIR" : "Coming Soon // Shimokitan";
+  const title = dict.home.title;
   const description = dict.home.description;
 
   return {

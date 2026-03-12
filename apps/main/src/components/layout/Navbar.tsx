@@ -205,7 +205,7 @@ export function Navbar() {
                                     <MobileNavLink icon="lucide:disc" label={navDict.artifacts} href="/artifacts" active={pathname?.startsWith("/artifacts")} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:users" label={navDict.artists} href="/artists" active={pathname?.startsWith("/artists")} onClick={() => setIsOpen(false)} />
                                     <MobileNavLink icon="lucide:signal" label="Signal" href="https://signal.shimokitan.live" target="_blank" rel="noopener noreferrer" active={false} onClick={() => setIsOpen(false)} />
-                                    <MobileNavLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={pathname?.startsWith("/pedalboard")} onClick={() => setIsOpen(false)} />
+                                    {!isProd && <MobileNavLink icon="lucide:command" label={navDict.pedalboard} href="/pedalboard" active={pathname?.startsWith("/pedalboard")} onClick={() => setIsOpen(false)} />}
                                     <MobileNavLink icon="lucide:ghost" label={navDict.back_alley} href="/back-alley" active={pathname?.startsWith("/back-alley")} onClick={() => setIsOpen(false)} />
                                 </nav>
 

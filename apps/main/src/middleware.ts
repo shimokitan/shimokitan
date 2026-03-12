@@ -26,20 +26,6 @@ function getLocale(request: NextRequest): string {
     return defaultLocale;
 }
 
-const ALLOWED_SUBPATHS = [
-    '/coming-soon',
-    '/about',
-    '/vision',
-    '/roadmap',
-    '/privacy',
-    '/terms',
-    '/cookies',
-    '/copyright',
-    '/affiliate-disclosure',
-    '/community-guidelines',
-    '/faq',
-    '/registry'
-];
 
 /**
  * Next.js Middleware.
@@ -77,46 +63,33 @@ export default function middleware(request: NextRequest) {
 
     const cleanSubPathname = subPathname.replace(/\/$/, '') || '/';
 
-    // 2. Gatekeeper (Coming Soon Mode)
-    const isDev = process.env.NODE_ENV === 'development';
+    // 2. Special Routes and Gatekeeper
+    const isProduction = process.env.NODE_ENV === 'production';
     const isComingSoon = cleanSubPathname === '/coming-soon';
     const isAuth = cleanSubPathname.startsWith('/auth');
     const isPedalboard = cleanSubPathname.startsWith('/pedalboard');
-    
-    // Check if it's an allowed subpath (Legal, About, and explicit redirections)
-    const isAllowed = ALLOWED_SUBPATHS.some(path => {
-        if (path === '/') return cleanSubPathname === '/';
-        return cleanSubPathname === path || cleanSubPathname.startsWith(`${path}/`);
-    });
+    const isLogin = cleanSubPathname === '/login';
+    const isDisconnect = cleanSubPathname === '/disconnect';
 
-    // Check for active admin/user session
-    const sessionTokenActive = AUTH_COOKIE_NAMES.some(name => request.cookies.get(name)?.value);
-
-    // 2.1 Entity Slug Exception (Allow /@slug or /slug)
-    const segments = cleanSubPathname.split('/').filter(Boolean);
-    const rootSegment = segments[0];
-    
-    // Explicitly protected platform roots
-    const PROTECTED_ROOTS = [
-        'artifacts',
-        'artists',
-        'back-alley',
-        'zines',
-        'contact',
-        'pedalboard',
-        'auth',
-        'coming-soon'
-    ];
-
-    // It's an artist slug if:
-    // - It's a single segment path (e.g., /en/rou)
-    // - The segment is NOT a protected platform root
-    const isEntitySlug = segments.length === 1 && !PROTECTED_ROOTS.includes(rootSegment);
-
-    // Gate logic: Redirect to coming-soon if it's NOT (dev OR coming-soon OR allowed OR auth OR session-active OR isEntitySlug)
-    if (!isDev && !isComingSoon && !isAllowed && !isAuth && !sessionTokenActive && !isEntitySlug) {
-        return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
+    // Hide coming-soon pages for production
+    if (isProduction && isComingSoon) {
+        return NextResponse.redirect(new URL(`/${locale}/`, request.url));
     }
+
+    // Hide all auth-based routes in production
+    if (isProduction && (isAuth || isPedalboard || isLogin || isDisconnect)) {
+        return NextResponse.redirect(new URL(`/${locale}/`, request.url));
+    }
+
+    // Handle Auth Aliases (Development only, as production is covered above)
+    if (isLogin) {
+        return NextResponse.redirect(new URL(`/${locale}/auth/signin`, request.url));
+    }
+    if (isDisconnect) {
+        return NextResponse.redirect(new URL(`/${locale}/api/auth/signout?callbackUrl=/${locale}/`, request.url));
+    }
+
+    const sessionTokenActive = AUTH_COOKIE_NAMES.some(name => request.cookies.get(name)?.value);
 
     // 3. Vision/Roadmap Aliases (Redirects)
     if (cleanSubPathname === '/roadmap' || cleanSubPathname === '/vision') {
