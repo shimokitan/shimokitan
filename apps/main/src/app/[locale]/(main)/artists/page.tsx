@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     const dict = getDictionary(locale);
     return {
         title: dict.navigation.artists,
+        description: dict.home.district,
     };
 }
 

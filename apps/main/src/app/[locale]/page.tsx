@@ -330,8 +330,28 @@ export default async function AppPage({
       console.error("Transmissions Fetch Failed:", e.message);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Shimokitan",
+    "url": process.env.NEXT_PUBLIC_BASE_URL || "https://shimokitan.live",
+    "description": dict.home.description,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Shimokitan",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${process.env.NEXT_PUBLIC_BASE_URL || "https://shimokitan.live"}/icon.svg`
+      }
+    }
+  };
+
   return (
     <MainLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HomeClient
         spotlightArtifacts={spotlightArtifacts}
         recentZines={recentZines}

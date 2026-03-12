@@ -13,8 +13,23 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     const locale = (await params).locale;
     const dict = getDictionary(locale);
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": dict.about.title,
+        "description": dict.about.a1_1,
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "Shimokitan"
+        }
+    };
+
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <h1>{dict.about.title}</h1>
             <p className="opacity-80">{dict.about.last_updated}: {dict.about.last_updated_date}</p>
 

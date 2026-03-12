@@ -66,7 +66,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                 ))}
                 <div className="flex-1" />
                 <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-zinc-950 border-l-2 border-zinc-800 focus-within:border-violet-500 transition-colors">
-                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500" />
+                    <Icon icon="lucide:search" width={12} height={12} className="text-zinc-500" aria-hidden="true" />
                     <input
                         type="text"
                         placeholder="LOCATE_ENTITY..."
@@ -106,7 +106,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                                         <div className="w-1 h-1 bg-violet-600/50 group-hover:bg-violet-500 transition-colors" />
                                         <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">{entity.type}</span>
                                     </div>
-                                    {entity.isVerified && <Icon icon="lucide:check" width={12} className="text-violet-500" />}
+                                    {entity.isVerified && <Icon icon="lucide:check" width={12} className="text-violet-500" aria-hidden="true" />}
                                 </div>
                                 <h3 className="text-xl font-black italic tracking-tighter uppercase text-zinc-300 group-hover:text-white transition-colors truncate">
                                     {entity.name}
@@ -116,7 +116,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
 
                         <div className="pt-3 border-t border-zinc-900 flex items-center justify-between z-10 transition-colors group-hover:border-violet-900/30">
                             <div className="flex items-center gap-1.5">
-                                <Icon icon="lucide:file-box" width={10} className="text-zinc-600 group-hover:text-violet-500/50" />
+                                <Icon icon="lucide:file-box" width={10} className="text-zinc-600 group-hover:text-violet-500/50" aria-hidden="true" />
                                 <span className="text-[10px] font-black italic text-zinc-400 group-hover:text-violet-400 uppercase tracking-tighter transition-colors">
                                     {entity.artifactCount} Artifacts
                                 </span>

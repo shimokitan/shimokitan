@@ -15,7 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         title: {
             template: `%s // ${dict.legal.sidebar_title} // Shimokitan`,
             default: dict.legal.sidebar_title
-        }
+        },
+        description: `${dict.legal.sidebar_title} // ${dict.home.tagline}`
     };
 }
 

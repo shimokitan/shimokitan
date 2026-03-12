@@ -32,10 +32,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: description,
     metadataBase: new URL(baseUrl),
     alternates: {
+      canonical: baseUrl + (locale ? `/${locale}` : ''),
       languages: {
         'en': '/en',
         'ja': '/ja',
         'id': '/id',
+        'x-default': '/en',
       },
     },
     openGraph: {
