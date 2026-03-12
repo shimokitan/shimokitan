@@ -3,7 +3,6 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import {
-    AudioWidget,
     CyberpunkShell,
     NavigationLink,
     cn
@@ -11,7 +10,6 @@ import {
 
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { useStationStore } from '../../lib/store/station-store';
 import { Locale, getDictionary } from '@shimokitan/utils';
 import { useLocale } from '../../hooks/use-i18n';
 
@@ -19,12 +17,6 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
     const pathname = usePathname();
     const currentLocale = useLocale() as Locale;
     const navDict = getDictionary(currentLocale).navigation;
-    const { isInitialized, isMinimized, currentTrack } = useStationStore();
-
-    const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const isHomeActive = pathname === "/" || pathname === `/${currentLocale}`;
     const isArtifactsActive = pathname?.startsWith("/artifacts");
@@ -35,6 +27,7 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
     return (
         <CyberpunkShell>
             <div className="bg-black text-white h-screen w-screen overflow-hidden flex flex-col font-sans selection:bg-violet-500/40 selection:text-violet-100 italic-selection">
+
 
                 {/* Dynamic Background Mesh */}
                 <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -73,12 +66,6 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                         </div>
                     </main>
                 </div>
-
-                {mounted && (
-                    <div className={cn("transition-opacity duration-300", (!isInitialized || !isMinimized) ? "opacity-0 pointer-events-none absolute -bottom-full" : "opacity-100")}>
-                        <AudioWidget track={currentTrack} />
-                    </div>
-                )}
 
                 <div className="hidden md:block">
                     <Footer />

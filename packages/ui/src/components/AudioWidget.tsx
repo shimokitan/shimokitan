@@ -10,15 +10,16 @@ import { Badge } from './Badge';
 export interface Track {
     title: string;
     artist: string;
-    album: string;
-    cover: string;
-    bitrate: string;
-    format: string;
-    src?: string;
+    album?: string;
+    cover?: string;
+    src: string;
+    bitrate?: string;
+    format?: string;
 }
 
 interface AudioWidgetProps {
     track?: Track | null;
+    onClose?: () => void;
 }
 
 const EmptyVinyl: React.FC = () => (
@@ -27,9 +28,7 @@ const EmptyVinyl: React.FC = () => (
     </div>
 );
 
-
-
-export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
+export const AudioWidget: React.FC<AudioWidgetProps> = ({ track, onClose }) => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
     const [currentTime, setCurrentTime] = useState<number>(0);
@@ -273,6 +272,15 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
         }
     };
 
+    const handleClose = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (audioRef.current) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+        }
+        onClose?.();
+    };
+
     if (!mounted) return null;
 
     return (
@@ -303,6 +311,20 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                     {!isExpanded && isPlaying && (
                         <div className="absolute inset-0 rounded-full bg-violet-500/10 animate-pulse scale-110 pointer-events-none" />
                     )}
+
+                    {/* Minimize/Close buttons for circle state */}
+                    {!isExpanded && (
+                        <div className="absolute -top-1 -right-1 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
+                            <button
+                                onClick={handleClose}
+                                className="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center hover:bg-rose-500 shadow-lg border border-rose-400/20"
+                                title="Close Signal"
+                            >
+                                <Icon icon="lucide:x" width={12} />
+                            </button>
+                        </div>
+                    )}
+
                     {isExpanded && (
                         <div
                             className="absolute top-0 left-0 right-0 h-8 border-b border-zinc-800/50 flex items-center justify-between px-4 bg-zinc-950/60 rounded-t-xl cursor-grab active:cursor-grabbing"
@@ -316,11 +338,21 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                 <div className="px-2 py-0.5 rounded bg-violet-900/40 text-violet-200 border border-violet-700/40 text-[9px] font-mono tracking-tighter uppercase whitespace-nowrap">LIVE RESONANCE</div>
                                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse mr-2" />
                                 <div className="h-4 w-px bg-zinc-800 mx-1" />
+                                
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
                                     className="p-1 text-zinc-500 hover:text-white transition-colors hover:bg-zinc-800 rounded-md cursor-pointer"
+                                    title="Minimize to Circle"
                                 >
                                     <Icon icon="lucide:minimize-2" width={14} height={14} />
+                                </button>
+
+                                <button
+                                    onClick={handleClose}
+                                    className="p-1 text-rose-500 hover:text-rose-400 transition-colors hover:bg-rose-950/30 rounded-md cursor-pointer"
+                                    title="Close Engine"
+                                >
+                                    <Icon icon="lucide:x" width={14} height={14} />
                                 </button>
                             </div>
                         </div>

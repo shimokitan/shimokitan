@@ -215,12 +215,12 @@ export default function BasicInfoSection({
                         </div>
                     </div>
 
-                    {/* Column 2-3: Visual Branding */}
-                    <div className="lg:col-span-2 bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl space-y-4">
+                    {/* Column 2: Main Visuals */}
+                    <div className="bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl space-y-4">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500 italic mb-4">Visual_Branding</h3>
-                        <div className="grid grid-cols-12 gap-6 h-full min-h-[160px]">
-                            <div className="col-span-4 space-y-2">
-                                <label className="text-[9px] font-mono text-zinc-600 uppercase tracking-tighter">Poster_KV (2:3)</label>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-mono text-zinc-500 uppercase tracking-tighter">Poster_KV (2:3)</label>
                                 <MediaUploader
                                     value={posterUrl}
                                     contextType="artifact_asset"
@@ -229,8 +229,8 @@ export default function BasicInfoSection({
                                     className="aspect-[2/3] rounded-lg border border-zinc-900 overflow-hidden shadow-inner w-full"
                                 />
                             </div>
-                            <div className="col-span-8 space-y-2">
-                                <label className="text-[9px] font-mono text-zinc-600 uppercase tracking-tighter">Editorial_Thumb (16:9)</label>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-mono text-zinc-500 uppercase tracking-tighter">Editorial_Thumb (16:9)</label>
                                 <MediaUploader
                                     value={thumbnailUrl}
                                     contextType="artifact_asset"
@@ -240,24 +240,27 @@ export default function BasicInfoSection({
                                 />
                             </div>
                         </div>
-                        <div className="pt-4 border-t border-zinc-900/50">
-                            <div className="grid grid-cols-12 gap-6">
-                                <div className="col-span-4 space-y-2">
-                                    <label className="text-[9px] font-mono text-violet-400 uppercase tracking-tighter">Vinyl_Cover (1:1)</label>
-                                    <MediaUploader
-                                        value={vinylUrl}
-                                        contextType="artifact_asset"
-                                        onFileSelect={onVinylFileSelect}
-                                        onUrlSelect={onVinylUrlSelect}
-                                        className="aspect-square rounded-lg border border-zinc-900 overflow-hidden shadow-inner w-full bg-zinc-950"
-                                    />
-                                    <p className="text-[8px] text-zinc-700 font-mono italic mt-2 uppercase tracking-tighter">Canonical_Media_Selection_Required.</p>
-                                </div>
-                                <div className="col-span-8 flex flex-col justify-end pb-8">
-                                    <p className="text-[9px] text-zinc-500 font-mono italic uppercase tracking-widest leading-relaxed">
-                                        The square vinyl art is the primary visual identity for the audio station and physical distribution layouts. High-fidelity renders recommended.
-                                    </p>
-                                </div>
+                    </div>
+
+                    {/* Column 3: Format Aesthetic */}
+                    <div className="bg-zinc-950/50 p-6 border border-zinc-900 rounded-xl space-y-4">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-rose-500 italic mb-4">Vinyl_Branding</h3>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-mono text-zinc-500 uppercase tracking-tighter">Vinyl_Cover (1:1)</label>
+                                <MediaUploader
+                                    value={vinylUrl}
+                                    contextType="artifact_asset"
+                                    onFileSelect={onVinylFileSelect}
+                                    onUrlSelect={onVinylUrlSelect}
+                                    className="aspect-square rounded-lg border border-zinc-900 overflow-hidden shadow-inner w-full bg-zinc-950"
+                                />
+                                <p className="text-[8px] text-zinc-700 font-mono italic mt-2 uppercase tracking-tighter">Canonical_Media_Selection_Required.</p>
+                            </div>
+                            <div className="flex flex-col justify-end pt-4 border-t border-zinc-900/50">
+                                <p className="text-[9px] text-zinc-500 font-mono italic uppercase tracking-widest leading-relaxed">
+                                    The square vinyl art is the primary visual identity for the audio station and physical distribution layouts. High-fidelity renders recommended.
+                                </p>
                             </div>
                         </div>
                     </div>

@@ -319,11 +319,22 @@ export default function HomeClient({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {station.isInitialized && !station.isMinimized && (
+              {(station.isMinimized || station.isClosed) ? (
+                <button
+                  onClick={() => {
+                    station.setClosed(false);
+                    station.setMinimized(true);
+                  }}
+                  className="flex items-center justify-center p-1 hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-white pointer-events-auto"
+                  title="Launch Audio Engine"
+                >
+                  <Icon icon="lucide:external-link" width={12} />
+                </button>
+              ) : station.isInitialized && (
                 <button
                   onClick={() => station.setMinimized(true)}
                   className="hidden lg:flex items-center justify-center p-1 hover:bg-zinc-800 rounded-md transition-colors text-zinc-500 hover:text-white pointer-events-auto"
-                  title="Minimize to Floating Widget"
+                  title="Float Player"
                 >
                   <Icon icon="lucide:minus" width={12} />
                 </button>
@@ -331,7 +342,7 @@ export default function HomeClient({
               <div
                 className={cn(
                   "w-1.5 h-1.5 rounded-full transition-all",
-                  isDockedActive
+                  isDockedActive && !station.isClosed
                     ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"
                     : "bg-zinc-800"
                 )}
@@ -345,7 +356,7 @@ export default function HomeClient({
               <div
                 className={cn(
                   "w-32 h-32 lg:w-36 lg:h-36 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-950 overflow-hidden relative shadow-[0_24px_48px_-12px_rgba(0,0,0,1)] transition-all duration-700",
-                  audioState.isPlaying
+                  audioState.isPlaying && !station.isMinimized && !station.isClosed
                     ? "animate-[spin_4s_linear_infinite]"
                     : isDockedActive
                       ? ""
@@ -388,7 +399,7 @@ export default function HomeClient({
               <div
                 className={cn(
                   "absolute -right-3 top-0 w-20 h-24 origin-top transition-transform duration-1000 ease-[cubic-bezier(0.45,0.05,0.55,0.95)] z-20 pointer-events-none",
-                  audioState.isPlaying ? "rotate-[20deg]" : "rotate-[-12deg]"
+                  audioState.isPlaying && !station.isMinimized && !station.isClosed ? "rotate-[20deg]" : "rotate-[-12deg]"
                 )}
                 style={{ transformOrigin: "80% 15%" }}
               >
@@ -592,7 +603,7 @@ export default function HomeClient({
         title={dict.home.recent_shards}
         icon="lucide:star"
       >
-        <div className="flex flex-col items-center justify-center h-full relative">
+        <div className="flex flex-col items-center justify-start h-full relative pt-2">
           <div className="relative w-full h-64 flex items-center justify-center">
             {spotlightArtifacts.map((item, i) => (
               <div
@@ -765,14 +776,15 @@ export default function HomeClient({
           >
             <div className="flex flex-col h-full">
               <div className="relative flex-1 rounded-lg overflow-hidden mb-2 bg-zinc-950">
-                {featuredArtifact.posterImage || featuredArtifact.thumbnailImage ? (
+                {((featuredArtifact.category === "anime" ? featuredArtifact.thumbnailImage : featuredArtifact.posterImage) || featuredArtifact.thumbnailImage || featuredArtifact.posterImage) ? (
                   <img
                     src={
-                      featuredArtifact.posterImage ||
-                      featuredArtifact.thumbnailImage ||
-                      ""
+                      (featuredArtifact.category === "anime"
+                        ? featuredArtifact.thumbnailImage || featuredArtifact.posterImage
+                        : featuredArtifact.posterImage || featuredArtifact.thumbnailImage) || ""
                     }
                     className="object-cover w-full h-full transition-all duration-500"
+                    alt={featuredArtifact.title}
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800">

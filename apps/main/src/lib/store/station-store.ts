@@ -14,12 +14,14 @@ export interface StationTrack {
 interface StationState {
     isInitialized: boolean;
     isMinimized: boolean;
+    isClosed: boolean;
     currentTrack: StationTrack | null;
     volume: number;
     initialize: (track?: StationTrack) => void;
     reset: () => void;
     toggle: () => void;
     setMinimized: (minimized: boolean) => void;
+    setClosed: (closed: boolean) => void;
     setTrack: (track: StationTrack) => void;
     setVolume: (volume: number) => void;
 }
@@ -29,17 +31,20 @@ export const useStationStore = create<StationState>()(
         (set) => ({
             isInitialized: false,
             isMinimized: false,
+            isClosed: false,
             currentTrack: null,
             volume: 80,
             initialize: (track) => set((state) => ({ 
                 isInitialized: true, 
                 isMinimized: false,
+                isClosed: false,
                 currentTrack: track || state.currentTrack,
             })),
-            reset: () => set({ isInitialized: false, isMinimized: false, currentTrack: null }),
+            reset: () => set({ isInitialized: false, isMinimized: false, isClosed: true, currentTrack: null }),
             toggle: () => set((state) => ({ isInitialized: !state.isInitialized })),
-            setMinimized: (minimized) => set({ isMinimized: minimized }),
-            setTrack: (track) => set({ currentTrack: track, isInitialized: true, isMinimized: true }),
+            setMinimized: (minimized) => set({ isMinimized: minimized, isClosed: false }),
+            setClosed: (closed) => set({ isClosed: closed }),
+            setTrack: (track) => set({ currentTrack: track, isInitialized: true, isMinimized: true, isClosed: false }),
             setVolume: (volume) => set({ volume }),
         }),
         {
