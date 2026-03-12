@@ -610,6 +610,36 @@ export async function updateVerification(id: string, data: z.infer<typeof verifi
     return { success: true };
 }
 
+// --- REGISTRY APPLICATIONS (Founder Only) ---
+
+export async function updateRegistryApplicationStatus(id: string, status: 'pending' | 'reviewed' | 'approved' | 'rejected', notes?: string) {
+    await requireFounder();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    await db.update(schema.registryApplications)
+        .set({
+            status,
+            internalNotes: notes,
+            updatedAt: new Date(),
+        })
+        .where(eq(schema.registryApplications.id, id));
+
+    revalidatePath('/[locale]/pedalboard/verifications/registry', 'page');
+    return { success: true };
+}
+
+export async function deleteRegistryApplication(id: string) {
+    await requireFounder();
+    const db = getDb();
+    if (!db) throw new Error('DB_Terminal_Offline');
+
+    await db.delete(schema.registryApplications).where(eq(schema.registryApplications.id, id));
+    
+    revalidatePath('/[locale]/pedalboard/verifications/registry', 'page');
+    return { success: true };
+}
+
 // --- DELETE ACTIONS (Founder Only) ---
 
 export async function deleteEntity(id: string) {

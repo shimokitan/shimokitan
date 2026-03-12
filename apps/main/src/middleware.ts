@@ -37,7 +37,8 @@ const ALLOWED_SUBPATHS = [
     '/copyright',
     '/affiliate-disclosure',
     '/community-guidelines',
-    '/faq'
+    '/faq',
+    '/registry'
 ];
 
 /**

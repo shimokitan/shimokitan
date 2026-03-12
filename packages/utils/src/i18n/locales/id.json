@@ -71,7 +71,7 @@
     "about": {
         "title": "Tentang Shimokitan",
         "last_updated": "Terakhir Diperbarui",
-        "last_updated_date": "9 Maret 2026",
+        "last_updated_date": "13 Maret 2026",
         "sidebar_links": {
             "about": "Tentang Shimokitan",
             "vision": "Visi dan Rencana",
@@ -162,7 +162,7 @@
     },
     "legal": {
         "last_updated": "Terakhir Diperbarui",
-        "last_updated_date": "9 Maret 2026",
+        "last_updated_date": "13 Maret 2026",
         "sidebar_title": "Dokumen Hukum",
         "help_title": "Butuh Bantuan?",
         "help_text": "Jika Anda memiliki pertanyaan tentang kebijakan kami, silakan hubungi tim hukum kami.",
@@ -175,7 +175,10 @@
             "s2": {
                 "title": "2. Data yang Kami Kumpulkan",
                 "p1": "Kami berkomitmen untuk mengumpulkan sesedikit mungkin data pribadi. Shimokitan **tidak** menawarkan akun pengguna, pendaftaran, atau fitur masuk (sign-in). Kami tidak melacak, memprofil, atau melakukan sidik jari (fingerprint) pada pengunjung.",
-                "p2": "Satu-satunya data pribadi yang kami proses adalah melalui **Formulir Kontak**. Saat Anda mengirimkan formulir, kami menerima nama, alamat email, dan pesan Anda. Informasi ini dikirim melalui penyedia layanan email kami (Resend) dan dikirim ke kotak surat kami di Hostinger. Email juga dapat diteruskan ke Gmail untuk kemudahan operasional. Data formulir kontak **tidak disimpan** dalam basis data atau CRM - data tersebut hanya ada sebagai email standar dan akan dihapus setelah pertanyaan Anda selesai ditangani. Kami memproses data ini berdasarkan persetujuan Anda, yang diberikan saat Anda secara sukarela mengirimkan formulir."
+                "p2": "Kami memproses data pribadi melalui dua titik pengiriman sukarela:",
+                "l1": "**Formulir Kontak**: Kami menerima nama, email, dan pesan Anda melalui email (Resend). Data ini tidak disimpan dalam basis data dan akan dihapus setelah selesai.",
+                "l2": "**Formulir Registrasi Artis**: Kami mengumpulkan nama artis, gelar profesional, link sosial, sampel karya, dan email kontak. Untuk mencegah spam dan menjaga integritas antrean kurasi, kami juga mencatat **alamat IP** pengirim. Data ini disimpan dengan aman di basis data kami (Neon) untuk ditinjau secara manual oleh arsitek.",
+                "p3": "Kami memproses data ini berdasarkan persetujuan eksplisit Anda yang diberikan pada saat pengiriman."
             },
             "s2_5": {
                 "title": "2.5 Komunikasi Artis dan Pemegang Hak Cipta",
@@ -376,13 +379,13 @@
                 "l2": "Identifikasi materi di Shimokitan (misalnya, URL).",
                 "l3": "Informasi kontak Anda.",
                 "l4": "Pernyataan bahwa Anda memiliki keyakinan dengan itikad baik bahwa penggunaan materi tersebut tidak diizinkan oleh pemilik hak cipta, agennya, atau hukum.",
-                "l5": "Pernyataan, yang dibuat di bawah pernyataan kebenaran dan tunduk pada tanggung jawab hukum atas klaim palsu, bahwa informasi dalam pemberitahuan Anda akurat dan bahwa Anda adalah pemilik hak cipta atau berwenang untuk bertindak atas nama pemilik hak cipta.",
+                "l5": "Pernyataan, yang dibuat di bawah pernyataan kebenaran dan tunduk pada tanggung jawab hukum atas klaim palsu, bahwa informasi dalam pemberitahuan Anda akurat sea bahwa Anda adalah pemilik hak cipta atau berwenang untuk bertindak atas nama pemilik hak cipta.",
                 "l6": "Tanda tangan fisik atau elektronik Anda.",
                 "p2": "Kirim ke: legal@shimokitan.live"
             },
             "s9": {
                 "title": "9. Pemberitahuan Sanggahan",
-                "content": "Jika Anda yakin bahwa materi telah dihapus atau dibatasi karena kekeliruan, Anda dapat mengirimkan notifikasi balasan ke legal@shimokitan.live. Notifikasi balasan Anda harus mencakup: (1) identifikasi materi yang telah dihapus dan lokasinya sebelum penghapusan; (2) pernyataan, di bawah sumpah, bahwa Anda memiliki keyakinan dengan itikad baik bahwa materi tersebut dihapus atau dibatasi akibat kesalahan atau salah identifikasi; (3) nama, alamat, dan informasi kontak Anda; (4) pernyataan menyetujui yurisdiksi pengadilan di tempat tinggal Anda (atau Republik Indonesia jika Anda bertempat tinggal di luar Indonesia); dan (5) tanda tangan fisik atau elektronik Anda."
+                "content": "Jika Anda yakin bahwa materi telah dihapus atau dibatasi karena kekeliruan, Anda dapat mengirimkan notifikasi balasan ke legal@shimokitan.live. Notifikasi balasan Anda harus mencakup: (1) identifikasi materi yang telah dihapus dan lokasinya sebelum penghapusan; (2) pernyataan, di bawah sumpah, bahwa Anda memiliki keyakinan dengan itikad baik bahwa materi tersebut dihapus atau dibatasi akibat kesalahan atau salah identifikasi; (3) nama, alamat, dan informasi kontak Anda; (4) pernyataan menyetuju jurisdiksi pengadilan di tempat tinggal Anda (atau Republik Indonesia jika Anda bertempat tinggal di luar Indonesia); dan (5) tanda tangan fisik atau elektronik Anda."
             },
             "s10": {
                 "title": "10. Peninjauan Konten Sukarela",
@@ -458,6 +461,11 @@
     "changelog": {
         "title": "Catatan Perubahan",
         "description": "Log pembaruan dan perubahan penting pada platform Shimokitan.",
+        "march_2026_v2": {
+            "title": "13 Maret 2026",
+            "subtitle": "Penyempurnaan Registrasi Artis",
+            "l1": "Penyelarasan hub sinyal residensi dan resonansi data."
+        },
         "march_2026": {
             "title": "8 Maret 2026",
             "subtitle": "Fondasi & Kepatuhan",
@@ -501,5 +509,33 @@
         "about": "Tentang Distrik",
         "mixtapes": "Mixtapes",
         "back_alley": "Gang Gelap"
+    },
+    "registry": {
+        "title": "Protokol Registrasi Artis",
+        "description": "Bangun residensi Anda di Distrik Shimokitan. Kami mengkurasi setiap sinyal secara manual untuk menjaga artefak dengan resonansi tinggi.",
+        "step_01_title": "01 // Node Identitas",
+        "step_01_desc": "Nama artis, klasifikasi, dan peran profesional.",
+        "step_02_title": "02 // SOSIAL_UPLINK",
+        "step_02_desc": "Titik komunikasi eksternal. Mohon buka notifikasi Anda agar kami dapat mengirimkan pesan.",
+        "step_03_title": "03 // FRAGMEN_ARTEFAK",
+        "step_03_desc": "Sampel digital dari hasil kreatif Anda. Minimal 1 diperlukan.",
+        "step_04_title": "04 // STASIUN_KONTAK",
+        "step_04_desc": "Verifikasi akhir. Pastikan email Anda dapat menerima pesan kami.",
+        "form_artist_name": "Nama Artis",
+        "form_artist_type": "Tipe Identitas",
+        "form_professional_title": "Gelar Profesional (cth. Vsinger, Komposer, VTuber)",
+        "form_why": "Mengapa Anda ingin kami mengarsipkan karya Anda? (Aplikasi singkat)",
+        "form_email": "Email Kontak",
+        "add_social": "TAMBAH_LINK_SOSIAL",
+        "add_artifact": "TAMBAH_SAMPEL_KARYA",
+        "data_collection_warning": "Kami mengumpulkan nama, email, dan sampel karya Anda untuk keperluan kurasi. Akses dibatasi per alamat IP (1 pengiriman per 24 jam) untuk mencegah spam. Dengan mengirimkan aplikasi, Anda menyetujui protokol penanganan data sesuai dengan {{privacy_link}}.",
+        "privacy_policy": "Kebijakan Privasi",
+        "submit_application": "KIRIM",
+        "transmitting": "Mengenkripsi Sinyal...",
+        "success_title": "Sinyal Diterima",
+        "success_desc": "Aplikasi residensi Anda telah berhasil dienkripsi dan ditambahkan ke antrean kurasi manual oleh Arsitek.",
+        "reference_id": "ID Referensi",
+        "wait_period": "Mohon tunggu 7-14 siklus (hari) untuk sinkronisasi frekuensi manual.",
+        "error_rate_limit": "Signal Overload: Jendela transmisi terkunci selama 24 jam. Frekuensi Anda sudah tercatat."
     }
 }

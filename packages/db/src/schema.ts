@@ -65,6 +65,7 @@ export const contributorClassEnum = pgEnum("contributor_class", ["author", "coll
 export const verificationTargetEnum = pgEnum("verification_target", ["artifact", "entity", "role_upgrade"]);
 export const verificationStatusEnum = pgEnum("verification_status", ["pending", "approved", "rejected"]);
 export const artifactMediaRoleEnum = pgEnum("artifact_media_role", ["cover", "poster", "background", "logo", "gallery", "thumbnail", "vinyl"]);
+export const registryApplicationStatusEnum = pgEnum("registry_application_status", ["pending", "reviewed", "approved", "rejected"]);
 
 // ==================================================================
 // 1.5. MEDIA REGISTRY
@@ -512,6 +513,27 @@ export const signalTimeline = pgTable("signal_timeline", {
 }));
 
 // ==================================================================
+// 10. REGISTRY APPLICATIONS (External Onboarding Queue)
+// ==================================================================
+
+export const registryApplications = pgTable("registry_applications", {
+    id: text("id").primaryKey(),
+    contactEmail: text("contact_email").notNull(),
+    artistMetadata: jsonb("artist_metadata").notNull(), // { name: string, bio: string, type: string } localized
+    socialLinks: jsonb("social_links").default([]),
+    artifactSamples: jsonb("artifact_samples").default([]),
+    ipAddress: text("ip_address").notNull(),
+    status: registryApplicationStatusEnum("status").default("pending"),
+    internalNotes: text("internal_notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+}, (t) => ({
+    ipIdx: index("idx_registry_applications_ip").on(t.ipAddress),
+    statusIdx: index("idx_registry_applications_status").on(t.status),
+    emailIdx: index("idx_registry_applications_email").on(t.contactEmail),
+}));
+
+// ==================================================================
 // 8.5. HOSTING RIGHTS LOG
 //
 // Dedicated audit trail for the music hosting lifecycle.
@@ -726,4 +748,8 @@ export const transmissionsI18nRelations = relations(transmissionsI18n, ({ one })
 export const signalTimelineRelations = relations(signalTimeline, ({ one }) => ({
     transmission: one(transmissions, { fields: [signalTimeline.transmissionId], references: [transmissions.id] }),
     actor: one(users, { fields: [signalTimeline.actorId], references: [users.id] }),
+}));
+export const registryApplicationsRelations = relations(registryApplications, ({ many }) => ({
+    // Applications don't have direct relations to other tables yet 
+    // to maintain a clean queue, but can be referenced by audit logs if needed.
 }));

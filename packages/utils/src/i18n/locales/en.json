@@ -71,7 +71,7 @@
     "about": {
         "title": "About Shimokitan",
         "last_updated": "Last Updated",
-        "last_updated_date": "March 9, 2026",
+        "last_updated_date": "March 13, 2026",
         "sidebar_links": {
             "about": "About Shimokitan",
             "vision": "Vision and Roadmap",
@@ -162,7 +162,7 @@
     },
     "legal": {
         "last_updated": "Last Updated",
-        "last_updated_date": "March 9, 2026",
+        "last_updated_date": "March 13, 2026",
         "sidebar_title": "Legal Documents",
         "help_title": "Need Help?",
         "help_text": "If you have questions about our policies, please contact our legal team.",
@@ -175,7 +175,10 @@
             "s2": {
                 "title": "2. What We Collect",
                 "p1": "We are committed to collecting as little personal data as possible. Shimokitan does **not** offer user accounts, sign-up, or sign-in functionality. We do not track, profile, or fingerprint visitors.",
-                "p2": "The only personal data we process is through our **Contact Form**. When you submit a contact form, we receive your name, email address, and your message. This information is transmitted via our email service provider (Resend) and delivered to our mailbox hosted by Hostinger. Emails may also be forwarded to Gmail for operational convenience. Contact form data is **not stored** in any database or CRM -- it exists only as standard email in our inbox and is deleted after your inquiry has been resolved. We process this data on the basis of your consent, provided when you voluntarily submit the form."
+                "p2": "We process personal data through two voluntary submission points:",
+                "l1": "**Contact Form**: We receive your name, email, and message via email (Resend). This data is not stored in a database and is deleted after resolution.",
+                "l2": "**Artist Registry Form**: We collect artist names, professional titles, social links, creative samples, and contact emails. To prevent spam and maintain the integrity of our curation queue, we also record the **IP address** of the sender. This data is stored securely in our database (Neon) for manual review by the architects.",
+                "p3": "We process this data on the basis of your explicit consent provided at the time of transmission."
             },
             "s2_5": {
                 "title": "2.5 Artist and Rights Holder Communications",
@@ -458,6 +461,11 @@
     "changelog": {
         "title": "Changelog",
         "description": "A log of notable updates and changes to the Shimokitan platform.",
+        "march_2026_v2": {
+            "title": "March 13, 2026",
+            "subtitle": "Artist Registry Refinement",
+            "l1": "Polishing the residency signal hub and data resonance."
+        },
         "march_2026": {
             "title": "March 8, 2026",
             "subtitle": "Foundation & Compliance",
@@ -501,5 +509,33 @@
         "about": "About District",
         "mixtapes": "Mixtapes",
         "back_alley": "Back-Alley"
+    },
+    "registry": {
+        "title": "ARTIST_REGISTRY_PROTOCOLS",
+        "description": "Establish your residency in the Shimokitan district. We manually curate every signal to ensure high-resonance artifacts.",
+        "step_01_title": "01 // IDENTITY_NODES",
+        "step_01_desc": "Artist name, classification, and professional role.",
+        "step_02_title": "02 // SOCIAL_UPLINKS",
+        "step_02_desc": "External communication endpoints. Please open your notifications so we can send you a message.",
+        "step_03_title": "03 // ARTIFACT_SHARDS",
+        "step_03_desc": "Digital samples of your creative output. At least one required.",
+        "step_04_title": "04 // CONTACT_STATION",
+        "step_04_desc": "Final submission. Please ensure your email is open so we can send you a message.",
+        "form_artist_name": "Artist Name",
+        "form_artist_type": "Identity Type",
+        "form_professional_title": "Professional Title (e.g. Vsinger, Composer, VTuber)",
+        "form_why": "Why do you want us to archive you? (Short application)",
+        "form_email": "Contact Email",
+        "add_social": "ADD_SOCIAL_LINK",
+        "add_artifact": "ADD_ARTIFACT_SAMPLE",
+        "data_collection_warning": "We collect your name, email, and creative samples for curation purposes. Access is limited by IP address (1 submission per 24 hours) to prevent spam. By clicking submit, you agree to our data handling protocols as outlined in our {{privacy_link}}.",
+        "privacy_policy": "Privacy Policy",
+        "submit_application": "SUBMIT",
+        "transmitting": "ENCRYPTING_SIGNAL...",
+        "success_title": "SIGNAL_RECEIVED",
+        "success_desc": "Your residency application has been successfully encrypted and queued for manual curation by the architects.",
+        "reference_id": "REFERENCE_ID",
+        "wait_period": "Please allow 7-14 solar cycles for manual frequency alignment.",
+        "error_rate_limit": "SIGNAL_OVERLOAD: Transmission window locked for 24h. Your frequency has already been recorded."
     }
 }

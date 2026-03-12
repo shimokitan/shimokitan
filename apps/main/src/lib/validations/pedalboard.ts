@@ -53,7 +53,7 @@ const translationSchema = z.object({
 
 export const RESOURCE_PLATFORMS = [
     'youtube', 'spotify', 'soundcloud', 'apple_music', 'bilibili', 'niconico',
-    'x', 'instagram', 'tiktok', 'ko_fi', 'booth', 'vgen', 'patreon', 
+    'x', 'instagram', 'facebook', 'tiktok', 'ko_fi', 'booth', 'vgen', 'patreon', 
     'buymeacoffee', 'fanbox', 'fiverr', 'gumroad', 
     'etsy', 'society6', 'redbubble', 'artstation', 'behance', 
     'bandcamp', 'skeb', 'pixiv', 'crunchyroll', 'r2', 'other'
@@ -162,6 +162,25 @@ export const verificationSchema = z.object({
     grantedBy: z.string().optional(),
     expiresAt: z.union([z.string(), z.date()]).optional(),
     internalNotes: z.string().optional(),
+});
+
+export const registryApplicationSchema = z.object({
+    contactEmail: z.string().email("Valid email identifier required"),
+    artistMetadata: z.object({
+        name: z.string().min(2, "Artist identifier too short"),
+        professionalTitle: z.string().min(2, "Professional title (e.g. Vsinger) required"),
+        why: z.string().min(10, "Please briefly explain why you want to join Shimokitan").max(1000),
+        type: z.enum(ENTITY_TYPES).default('independent'),
+    }),
+    socialLinks: z.array(z.object({
+        platform: z.string().min(1, "Platform identifier required"),
+        url: z.string().url("Invalid social endpoint URL"),
+    })).min(1, "At least one social uplink is required"),
+    artifactSamples: z.array(z.object({
+        title: z.string().optional(),
+        url: z.string().url("Invalid artifact source URL"),
+        description: z.string().optional(),
+    })).min(1, "At least one artifact sample is required"),
 });
 
 // --- Types ---

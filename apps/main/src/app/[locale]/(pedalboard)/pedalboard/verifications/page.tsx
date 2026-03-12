@@ -77,6 +77,13 @@ export default async function VerificationsPage() {
                         <Icon icon="lucide:shield-plus" width={14} />
                         ISSUE_VERIFICATION
                     </Link>
+                    <Link
+                        href="/pedalboard/verifications/registry"
+                        className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase px-4 py-2 hover:bg-violet-600 hover:text-white transition-all shadow-lg"
+                    >
+                        <Icon icon="lucide:radio" width={14} />
+                        ARTIST_SIGNALS
+                    </Link>
                 </div>
             </header>
 
