@@ -3,6 +3,16 @@ import { Icon } from '@iconify/react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getDb, schema, desc } from '@shimokitan/db';
 import Link from 'next/link';
+import { getDictionary, Locale } from "@shimokitan/utils";
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const locale = (await params).locale as Locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.navigation.zines,
+    };
+}
 
 export default async function PublicZinesPage() {
     const db = getDb();

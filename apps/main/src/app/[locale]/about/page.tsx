@@ -1,9 +1,13 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-    title: "About",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const locale = (await params).locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.about.title,
+    };
+}
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const locale = (await params).locale;

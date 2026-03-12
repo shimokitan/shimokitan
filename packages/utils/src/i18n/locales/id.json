@@ -11,7 +11,15 @@
         "cookies": "COOKIE",
         "access_restricted": "AKSES DIBATASI",
         "stay_connected": "TETAP TERHUBUNG",
-        "follow_us": "Ikuti media sosial kami untuk pembaruan saat gerbang Distrik mulai dibuka."
+        "follow_us": "Ikuti media sosial kami untuk pembaruan saat gerbang Distrik mulai dibuka.",
+        "seo": {
+            "artifact_not_found": "SHARD_TIDAK_DITEMUKAN",
+            "artifact_untitled": "Artefak Tanpa Judul",
+            "artifact_description": "Jelajahi {title} di arsip Shimokitan.",
+            "entity_not_found": "ENTITAS_TIDAK_DITEMUKAN",
+            "entity_anonymous": "Penduduk Anonim",
+            "entity_description": "Profil Registri: {name} ({status}). Resonansi data aktif."
+        }
     },
     "home": {
         "title": "SHIMOKITAN // DISTRIK DIGITAL",

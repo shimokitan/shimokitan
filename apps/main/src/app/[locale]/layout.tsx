@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import Providers from "../providers";
-import { locales, Locale, defaultLocale } from "@shimokitan/utils";
+import { locales, Locale, defaultLocale, getDictionary } from "@shimokitan/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,13 +18,17 @@ const geistMono = Geist_Mono({
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://shimokitan.live";
+  const dict = getDictionary(locale as Locale);
   
+  const title = locale === 'ja' ? "Shimokitan // 近日公開" : locale === 'id' ? "Shimokitan // SEGERA HADIR" : "Coming Soon // Shimokitan";
+  const description = dict.home.description;
+
   return {
     title: {
-      default: locale === 'ja' ? "Shimokitan // 近日公開" : locale === 'id' ? "Shimokitan // SEGERA HADIR" : "Coming Soon // Shimokitan",
+      default: title,
       template: "%s // Shimokitan"
     },
-    description: "Shimokitan is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories - not data points.",
+    description: description,
     metadataBase: new URL(baseUrl),
     alternates: {
       languages: {
@@ -37,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: "website",
       siteName: "Shimokitan",
       title: "Shimokitan",
-      description: "Shimokitan is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories.",
+      description: description,
       images: [
         {
           url: "/tokyo.jpg",
@@ -50,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     twitter: {
       card: "summary_large_image",
       title: "Shimokitan",
-      description: "Shimokitan is a district for Japanese culture enthusiasts.",
+      description: description,
       images: ["/tokyo.jpg"],
     },
   };

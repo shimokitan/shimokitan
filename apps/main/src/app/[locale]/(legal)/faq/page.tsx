@@ -1,4 +1,13 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
+import { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const locale = (await params).locale as Locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.legal.faq.title,
+    };
+}
 import { InlineMarkdown } from "@shimokitan/ui";
 
 export default async function FAQPage({ params }: { params: Promise<{ locale: string }> }) {

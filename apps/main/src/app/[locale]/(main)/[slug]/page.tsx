@@ -15,12 +15,17 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
         entity = await getEntityBySlug(slug);
     } catch (e) {}
 
-    if (!entity) return { title: "ENTITY_NOT_FOUND" };
+    const dict = getDictionary(locale as Locale);
+    const s = dict.common.seo;
+
+    if (!entity) return { title: s.entity_not_found };
 
     const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
-    const name = translation?.name || entity.name || "Anonymous Resident";
+    const name = translation?.name || entity.name || s.entity_anonymous;
     const status = translation?.status || entity.type || "Resident";
-    const description = `Registry Profile: ${name} (${status}). Data resonance active.`;
+    const description = s.entity_description
+        .replace('{name}', name)
+        .replace('{status}', status);
 
     return {
         title: name,

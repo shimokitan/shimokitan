@@ -11,7 +11,15 @@
         "cookies": "COOKIES",
         "access_restricted": "ACCESS RESTRICTED",
         "stay_connected": "STAY CONNECTED",
-        "follow_us": "Follow us on social media for updates on when the District opens its gates."
+        "follow_us": "Follow us on social media for updates on when the District opens its gates.",
+        "seo": {
+            "artifact_not_found": "SHARD_NOT_FOUND",
+            "artifact_untitled": "Untitled Artifact",
+            "artifact_description": "Explore {title} in the Shimokitan archives.",
+            "entity_not_found": "ENTITY_NOT_FOUND",
+            "entity_anonymous": "Anonymous Resident",
+            "entity_description": "Registry Profile: {name} ({status}). Data resonance active."
+        }
     },
     "home": {
         "title": "SHIMOKITAN // DIGITAL DISTRICT",

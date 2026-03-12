@@ -1,5 +1,14 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
 import { InlineMarkdown } from "@shimokitan/ui";
+import { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const locale = (await params).locale as Locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.legal.privacy.title,
+    };
+}
 
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
     const locale = (await params).locale as Locale;

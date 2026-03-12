@@ -3,9 +3,15 @@ import { Footer } from '@/components/layout/Footer';
 import { CyberpunkShell } from '@shimokitan/ui';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: "Contact",
-};
+import { getDictionary, Locale } from "@shimokitan/utils";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale } = await params;
+    const dict = getDictionary(locale as Locale);
+    return {
+        title: dict.contact.title,
+    };
+}
 
 export default function ContactLayout({ children }: { children: React.ReactNode }) {
     return (

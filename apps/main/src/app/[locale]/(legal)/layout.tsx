@@ -5,6 +5,19 @@ import { MobileNavRibbon } from '@/components/layout/MobileNavRibbon';
 import { CopyMarkdownWrapper } from '@/components/CopyMarkdownWrapper';
 import { CyberpunkShell } from '@shimokitan/ui';
 import { getDictionary, Locale } from "@shimokitan/utils";
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const locale = (await params).locale as Locale;
+    const dict = getDictionary(locale);
+    
+    return {
+        title: {
+            template: `%s // ${dict.legal.sidebar_title} // Shimokitan`,
+            default: dict.legal.sidebar_title
+        }
+    };
+}
 
 export default async function LegalLayout({ children, params }: { children: React.ReactNode, params: Promise<{ locale: string }> }) {
     const locale = (await params).locale as Locale;

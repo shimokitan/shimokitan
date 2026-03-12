@@ -2,11 +2,16 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getAllEntities } from '@shimokitan/db';
 import ArtistsBrowser from './ArtistsBrowser';
-import type { Metadata } from 'next';
+import { getDictionary, Locale } from "@shimokitan/utils";
+import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: "Architects",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const locale = (await params).locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.navigation.artists,
+    };
+}
 
 export default async function ArtistsBrowsePage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;

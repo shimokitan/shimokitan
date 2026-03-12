@@ -6,9 +6,14 @@ import { Locale, getDictionary } from "@shimokitan/utils";
 
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "The District // Shimokitan",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dict = getDictionary(locale);
+  return {
+    title: dict.home.title,
+    description: dict.home.description,
+  };
+}
 
 export const dynamic = "force-dynamic";
 

@@ -11,7 +11,15 @@
         "cookies": "クッキー",
         "access_restricted": "アクセス制限",
         "stay_connected": "STAY CONNECTED",
-        "follow_us": "SNSをフォローして、ディストリクトのゲートが開く最新情報をご確認ください。"
+        "follow_us": "SNSをフォローして、ディストリクトのゲートが開く最新情報をご確認ください。",
+        "seo": {
+            "artifact_not_found": "シャードが見つかりません",
+            "artifact_untitled": "無題のアーティファクト",
+            "artifact_description": "下北んアーカイブで{title}を探索する。",
+            "entity_not_found": "エンティティが見つかりません",
+            "entity_anonymous": "匿名の居住者",
+            "entity_description": "登録プロファイル: {name} ({status})。データ共鳴アクティブ。"
+        }
     },
     "home": {
         "title": "SHIMOKITAN // デジタル・ディストリクト",

@@ -4,9 +4,15 @@ import { getAllArtifacts } from '@shimokitan/db';
 import ArtifactsBrowser from './ArtifactsBrowser';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: "Artifacts",
-};
+import { getDictionary, Locale } from "@shimokitan/utils";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const locale = (await params).locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.navigation.artifacts,
+    };
+}
 
 export default async function ArtifactsBrowsePage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;

@@ -9,44 +9,50 @@ import { getEntityUrl } from '@shimokitan/utils';
 import { notFound } from 'next/navigation';
 import { PlayButton } from './PlayButton';
 import { StationTrack } from '@/lib/store/station-store';
+import { getDictionary, Locale } from '@shimokitan/utils';
 
 import type { Metadata } from 'next';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string, id: string }> }): Promise<Metadata> {
     const { locale, id } = await props.params;
     const artifact = await getArtifactById(id);
-    if (!artifact) return { title: "SHARD_NOT_FOUND" };
+    const dict = getDictionary(locale as Locale);
+    const s = dict.common.seo;
+
+    if (!artifact) return { title: s.artifact_not_found };
 
     const translation = artifact.translations?.find((t: any) => t.locale === locale) || artifact.translations?.[0];
-    const title = translation?.title || "Untitled Artifact";
-    const description = translation?.description || `Explore ${title} in the Shimokitan archives.`;
+    const title = translation?.title || s.artifact_untitled;
+    const description = s.artifact_description.replace('{title}', title);
+
+    const imageUrl = artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg";
 
     return {
         title: title,
-        description: description.slice(0, 160),
+        description: description,
         alternates: {
             languages: {
-                'en': `/en/artifacts/${id}`,
-                'ja': `/ja/artifacts/${id}`,
-                'id': `/id/artifacts/${id}`,
+                'en': `/en/artifacts/${artifact.id}`,
+                'ja': `/ja/artifacts/${artifact.id}`,
+                'id': `/id/artifacts/${artifact.id}`,
             }
         },
         openGraph: {
             title: title,
-            description: description.slice(0, 160),
+            description: description,
             images: [
                 {
-                    url: artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg",
+                    url: imageUrl,
                     alt: title
                 }
             ],
-            type: "article"
+            type: "music.song"
         },
         twitter: {
             card: "summary_large_image",
             title: title,
-            description: description.slice(0, 160),
-            images: [artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg"]
+            description: description,
+            images: [imageUrl]
         }
     };
 }

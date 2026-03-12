@@ -4,9 +4,15 @@ import { getAllArtifacts } from '@shimokitan/db';
 import BackAlleyBrowser from './BackAlleyBrowser';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: "Back Alley",
-};
+import { getDictionary, Locale } from "@shimokitan/utils";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const locale = (await params).locale;
+    const dict = getDictionary(locale);
+    return {
+        title: dict.navigation.back_alley,
+    };
+}
 
 export default async function BackAlleyPage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;
