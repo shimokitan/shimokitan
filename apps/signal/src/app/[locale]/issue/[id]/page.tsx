@@ -1,17 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@iconify/react";
-import { getDb, schema, eq } from "@shimokitan/db";
+import { getDb, schema, eq, resolveTranslation } from "@shimokitan/db";
 import { StatusBadge } from "@/components/status-badge";
+import { Locale } from "@shimokitan/utils";
 
-export default async function IssuePage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function IssuePage({ params }: { params: Promise<{ id: string, locale: string }> }) {
+    const { id, locale } = await params;
     const db = getDb();
     if (!db) return <div>DB_CONNECTION_ERROR</div>;
 
     const issue = await db.query.transmissions.findFirst({
         where: eq(schema.transmissions.id, id),
         with: {
+            translations: true,
             timeline: {
                 orderBy: (t, { desc }) => [desc(t.timestamp)]
             }
@@ -49,7 +51,7 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-                    {issue.title}
+                    {resolveTranslation(issue.translations, locale)?.title || "Untitled Transmission"}
                 </h1>
 
                 <div className="flex items-center gap-6 mt-2 border-b border-border/40 pb-6">
@@ -71,7 +73,7 @@ export default async function IssuePage({ params }: { params: Promise<{ id: stri
                 <section className="flex flex-col gap-3">
                     <h2 className="text-lg font-bold tracking-tight">Issue Description</h2>
                     <p className="text-foreground/80 leading-relaxed">
-                        {issue.content}
+                        {resolveTranslation(issue.translations, locale)?.content || "No detailed description available."}
                     </p>
                 </section>
 

@@ -91,8 +91,29 @@ export default function middleware(request: NextRequest) {
     // Check for active admin/user session
     const sessionTokenActive = AUTH_COOKIE_NAMES.some(name => request.cookies.get(name)?.value);
 
-    // Gate logic: Redirect to coming-soon if it's NOT (dev OR coming-soon OR allowed OR auth OR session-active)
-    if (!isDev && !isComingSoon && !isAllowed && !isAuth && !sessionTokenActive) {
+    // 2.1 Entity Slug Exception (Allow /@slug or /slug)
+    const segments = cleanSubPathname.split('/').filter(Boolean);
+    const rootSegment = segments[0];
+    
+    // Explicitly protected platform roots
+    const PROTECTED_ROOTS = [
+        'artifacts',
+        'artists',
+        'back-alley',
+        'zines',
+        'contact',
+        'pedalboard',
+        'auth',
+        'coming-soon'
+    ];
+
+    // It's an artist slug if:
+    // - It's a single segment path (e.g., /en/rou)
+    // - The segment is NOT a protected platform root
+    const isEntitySlug = segments.length === 1 && !PROTECTED_ROOTS.includes(rootSegment);
+
+    // Gate logic: Redirect to coming-soon if it's NOT (dev OR coming-soon OR allowed OR auth OR session-active OR isEntitySlug)
+    if (!isDev && !isComingSoon && !isAllowed && !isAuth && !sessionTokenActive && !isEntitySlug) {
         return NextResponse.redirect(new URL(`/${locale}/coming-soon`, request.url));
     }
 

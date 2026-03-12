@@ -339,7 +339,7 @@ export const artifactCredits = pgTable("artifact_credits", {
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: "cascade" }).notNull(),
     entityId: text("entity_id").references(() => entities.id, { onDelete: "cascade" }).notNull(),
     role: text("role").notNull(),        // "Vocal", "Compose", "Arrange", "Illust", "MV Dir"
-    displayRole: text("display_role"),          // localised override for display
+    displayRole: text("display_role"),          // Deprecated: move to i18n table
     contributorClass: contributorClassEnum("contributor_class").default("staff").notNull(),
     isPrimary: boolean("is_primary").default(false).notNull(),
     position: integer("position").default(0).notNull(),
@@ -349,6 +349,14 @@ export const artifactCredits = pgTable("artifact_credits", {
     artifactIdx: index("idx_artifact_credits_artifact").on(t.artifactId),
     primaryIdx: index("idx_artifact_credits_primary").on(t.artifactId, t.isPrimary),
     entityIdx: index("idx_artifact_credits_entity").on(t.entityId),
+}));
+
+export const artifactCreditsI18n = pgTable("artifact_credits_i18n", {
+    creditId: text("credit_id").references(() => artifactCredits.id, { onDelete: "cascade" }).notNull(),
+    locale: localeEnum("locale").notNull(),
+    role: text("role"), // Localized role name (e.g. "Vocalist" vs "ボーカル")
+}, (t) => ({
+    pk: primaryKey({ columns: [t.creditId, t.locale] }),
 }));
 
 // ==================================================================
@@ -363,13 +371,22 @@ export const externalOriginals = pgTable("external_originals", {
     artifactId: text("artifact_id").references(() => artifacts.id, { onDelete: "cascade" }).notNull().unique(),
 
     // The original work's identity
-    title: text("title").notNull(),
-    originalArtistName: text("original_artist_name"),  // free text — may not be in registry
+    title: text("title"),                  // Deprecated: move to i18n table
+    originalArtistName: text("original_artist_name"), // Deprecated: move to i18n table
     platform: resourcePlatformEnum("platform"),
     platformUrl: text("platform_url"),           // link to original on NND, YouTube, etc.
 
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const externalOriginalsI18n = pgTable("external_originals_i18n", {
+    externalId: text("external_id").references(() => externalOriginals.id, { onDelete: "cascade" }).notNull(),
+    locale: localeEnum("locale").notNull(),
+    title: text("title").notNull(),
+    originalArtistName: text("original_artist_name"),
+}, (t) => ({
+    pk: primaryKey({ columns: [t.externalId, t.locale] }),
+}));
 
 // ==================================================================
 // 6. COLLECTIONS  (Playlists, Curated Sets)
@@ -454,9 +471,7 @@ export const verificationRegistry = pgTable("verification_registry", {
 export const transmissions = pgTable("transmissions", {
     id: text("id").primaryKey(),
     type: transmissionTypeEnum("type").default("issue").notNull(),
-    title: text("title").notNull(),
     topic: text("topic"),
-    content: text("content").notNull(), // Markdown supported
     authorId: text("author_id").references(() => users.id),
     
     // Status Metadata (primarily for "issue" type)
@@ -474,6 +489,15 @@ export const transmissions = pgTable("transmissions", {
     typeIdx: index("idx_transmissions_type").on(t.type),
     severityIdx: index("idx_transmissions_severity").on(t.severity),
     publishedIdx: index("idx_transmissions_published").on(t.publishedAt),
+}));
+
+export const transmissionsI18n = pgTable("transmissions_i18n", {
+    transmissionId: text("transmission_id").references(() => transmissions.id, { onDelete: "cascade" }).notNull(),
+    locale: localeEnum("locale").notNull(),
+    title: text("title").notNull(),
+    content: text("content").notNull(), // Markdown supported
+}, (t) => ({
+    pk: primaryKey({ columns: [t.transmissionId, t.locale] }),
 }));
 
 export const signalTimeline = pgTable("signal_timeline", {
@@ -575,13 +599,23 @@ export const artifactMediaRelations = relations(artifactMedia, ({ one }) => ({
     media: one(media, { fields: [artifactMedia.mediaId], references: [media.id] }),
 }));
 
-export const artifactCreditsRelations = relations(artifactCredits, ({ one }) => ({
+export const artifactCreditsRelations = relations(artifactCredits, ({ one, many }) => ({
     artifact: one(artifacts, { fields: [artifactCredits.artifactId], references: [artifacts.id] }),
     entity: one(entities, { fields: [artifactCredits.entityId], references: [entities.id] }),
+    translations: many(artifactCreditsI18n),
 }));
 
-export const externalOriginalsRelations = relations(externalOriginals, ({ one }) => ({
+export const artifactCreditsI18nRelations = relations(artifactCreditsI18n, ({ one }) => ({
+    credit: one(artifactCredits, { fields: [artifactCreditsI18n.creditId], references: [artifactCredits.id] }),
+}));
+
+export const externalOriginalsRelations = relations(externalOriginals, ({ one, many }) => ({
     artifact: one(artifacts, { fields: [externalOriginals.artifactId], references: [artifacts.id] }),
+    translations: many(externalOriginalsI18n),
+}));
+
+export const externalOriginalsI18nRelations = relations(externalOriginalsI18n, ({ one }) => ({
+    externalOriginal: one(externalOriginals, { fields: [externalOriginalsI18n.externalId], references: [externalOriginals.id] }),
 }));
 
 export const entitiesRelations = relations(entities, ({ one, many }) => ({
@@ -679,9 +713,14 @@ export const hostingRightsLogRelations = relations(hostingRightsLog, ({ one }) =
 }));
 
 export const transmissionsRelations = relations(transmissions, ({ one, many }) => ({
+    translations: many(transmissionsI18n),
     author: one(users, { fields: [transmissions.authorId], references: [users.id] }),
     attachment: one(media, { fields: [transmissions.attachmentId], references: [media.id] }),
     timeline: many(signalTimeline),
+}));
+
+export const transmissionsI18nRelations = relations(transmissionsI18n, ({ one }) => ({
+    transmission: one(transmissions, { fields: [transmissionsI18n.transmissionId], references: [transmissions.id] }),
 }));
 
 export const signalTimelineRelations = relations(signalTimeline, ({ one }) => ({

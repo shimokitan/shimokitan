@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import Link from '@/components/Link';
 import { Badge } from '@shimokitan/ui';
-import { getArtifactById } from '@shimokitan/db';
+import { getArtifactById, resolveTranslation } from '@shimokitan/db';
 import { notFound } from 'next/navigation';
 import ZineCreateForm from '@/components/zines/ZineCreateForm';
 
@@ -15,7 +15,7 @@ export default async function PostZinePage(props: { params: Promise<{ locale: st
         notFound();
     }
 
-    const title = artifact.translations?.find((t: any) => t.locale === locale)?.title || artifact.translations?.[0]?.title || "Untitled";
+    const title = resolveTranslation(artifact.translations, locale)?.title || "Untitled";
 
     return (
         <MainLayout>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { getAllEntities } from '@shimokitan/db';
+import { getAllEntities, resolveTranslation } from '@shimokitan/db';
 import ArtistsBrowser from './ArtistsBrowser';
 import { getDictionary, Locale } from "@shimokitan/utils";
 import { Metadata } from 'next';
@@ -22,11 +22,11 @@ export default async function ArtistsBrowsePage(props: { params: Promise<{ local
     const formattedEntities = entities
         .filter((e: any) => !e.isEncrypted)
         .map((e: any) => {
-        const translation = e.translations?.find((t: any) => t.locale === locale) || e.translations?.[0];
+        const translation = resolveTranslation(e.translations, locale);
         return {
             id: e.id,
             slug: e.slug,
-            name: translation?.name || "Anonymous Artist",
+            name: translation?.name || (e as any).name || "Anonymous Artist",
             type: e.type,
             avatarUrl: e.avatar?.url,
             isVerified: e.isVerified,

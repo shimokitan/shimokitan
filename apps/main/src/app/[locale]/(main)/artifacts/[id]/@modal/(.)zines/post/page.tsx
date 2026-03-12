@@ -1,6 +1,4 @@
-
-import React from 'react';
-import { getArtifactById } from '@shimokitan/db';
+import { getArtifactById, resolveTranslation } from '@shimokitan/db';
 import { notFound } from 'next/navigation';
 import ZineModalDispatcher from '@/components/zines/ZineModalDispatcher';
 
@@ -14,9 +12,7 @@ export default async function InterceptedZinePostPage(props: {
         notFound();
     }
 
-    const title = artifact.translations?.find((t: any) => t.locale === locale)?.title || 
-                  artifact.translations?.[0]?.title || 
-                  "Untitled_Fragment";
+    const title = resolveTranslation(artifact.translations, locale)?.title || "Untitled_Fragment";
 
     return (
         <ZineModalDispatcher artifactId={id} artifactTitle={title} />

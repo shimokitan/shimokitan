@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { BrandIcon } from '@/components/BrandIcon';
 import { Badge, cn } from '@shimokitan/ui';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { getArtifactById } from '@shimokitan/db';
+import { getArtifactById, resolveTranslation } from '@shimokitan/db';
 import Link from '@/components/Link';
 import { getEntityUrl } from '@shimokitan/utils';
 import { notFound } from 'next/navigation';
@@ -21,7 +21,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 
     if (!artifact) return { title: s.artifact_not_found };
 
-    const translation = artifact.translations?.find((t: any) => t.locale === locale) || artifact.translations?.[0];
+    const translation = resolveTranslation(artifact.translations, locale);
     const title = translation?.title || s.artifact_untitled;
     const description = s.artifact_description.replace('{title}', title);
     const imageUrl = artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg";
@@ -55,7 +55,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
     const artifact = await getArtifactById(id);
     if (!artifact) notFound();
 
-    const translation = artifact.translations?.find((t: any) => t.locale === locale) || artifact.translations?.[0];
+    const translation = resolveTranslation(artifact.translations, locale);
     const title = translation?.title || "Untitled";
     const description = translation?.description || "";
 
@@ -68,8 +68,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
         artifact.credits?.[0];
     const primaryEntity = primaryCredit?.entity;
     const primaryArtistName =
-        primaryEntity?.translations?.find((t: any) => t.locale === locale)?.name ||
-        primaryEntity?.translations?.[0]?.name ||
+        resolveTranslation(primaryEntity?.translations, locale)?.name ||
         "ANONYMOUS_SOURCE";
 
     const specs = (artifact.specs as Record<string, any>) || {};
@@ -249,7 +248,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 key={`tag-${i}`}
                                                 className="px-2.5 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-black text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-wider"
                                             >
-                                                #{at.tag.translations?.find((t: any) => t.locale === locale)?.name || at.tag.translations?.[0]?.name}
+                                                #{resolveTranslation(at.tag.translations, locale)?.name}
                                             </span>
                                         ))}
                                     </div>
@@ -408,7 +407,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs text-amber-50/80 font-serif italic leading-snug line-clamp-2">
-                                                &ldquo;{zine.translations?.find((t: any) => t.locale === locale)?.content || zine.translations?.[0]?.content}&rdquo;
+                                                &ldquo;{resolveTranslation(zine.translations, locale)?.content}&rdquo;
                                             </p>
                                             <div className="flex items-center justify-between mt-1.5 text-[9px] text-zinc-700 uppercase tracking-widest">
                                                 <span className="flex items-center gap-1">
@@ -455,13 +454,13 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_6px_rgba(225,29,72,0.5)]" />
                                                 <div className="w-10 h-10 shrink-0 bg-zinc-950 border border-zinc-800 overflow-hidden flex items-center justify-center">
                                                     {artifact.sourceArtifact.thumbnail?.url
-                                                        ? <img src={artifact.sourceArtifact.thumbnail.url} alt={artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || "Source Artifact"} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
+                                                        ? <img src={artifact.sourceArtifact.thumbnail.url} alt={resolveTranslation(artifact.sourceArtifact.translations, locale)?.title || "Source Artifact"} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
                                                         : <Icon icon="lucide:database" width={14} className="text-zinc-700" />
                                                     }
                                                 </div>
                                                 <div className="min-w-0 flex-1">
                                                     <div className="text-sm font-black text-rose-100 uppercase italic truncate leading-tight">
-                                                        {artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || artifact.sourceArtifact.translations?.[0]?.title}
+                                                        {resolveTranslation(artifact.sourceArtifact.translations, locale)?.title}
                                                     </div>
                                                     <div className="text-[10px] text-rose-500/50 uppercase tracking-widest mt-0.5">LINKED_REGISTRY</div>
                                                 </div>
@@ -481,7 +480,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         )}
                                         {originalArtistCredits.length > 0 && !artifact.sourceArtifact && !artifact.externalOriginal &&
                                             originalArtistCredits.map((credit: any, i: number) => {
-                                                const name = credit.entity?.translations?.find((t: any) => t.locale === locale)?.name || credit.entity?.translations?.[0]?.name || "ANON";
+                                                const name = resolveTranslation(credit.entity?.translations, locale)?.name || "ANON";
                                                 return (
                                                     <Link key={i} href={credit.entity ? getEntityUrl(credit.entity) : '#'} className="flex items-center gap-3 p-3 bg-rose-950/20 border border-l-0 border-rose-900/30 hover:bg-rose-900/10 transition-all group/root relative overflow-hidden">
                                                         <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_6px_rgba(225,29,72,0.5)]" />
@@ -567,10 +566,7 @@ function TreeGroup({ label, icon, color, credits, locale }: {
 
 // ── CreditRow ─────────────────────────────────────────────────────────────────
 function CreditRow({ credit, locale, isPrimary }: { credit: any; locale: string; isPrimary: boolean }) {
-    const name =
-        credit.entity?.translations?.find((t: any) => t.locale === locale)?.name ||
-        credit.entity?.translations?.[0]?.name ||
-        "Anon";
+    const name = resolveTranslation(credit.entity?.translations, locale)?.name || "Anon";
     const isEncrypted = credit.entity?.isEncrypted;
     const isOriginal = credit.isOriginalArtist;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { getAllArtifacts } from '@shimokitan/db';
+import { getAllArtifacts, resolveTranslation } from '@shimokitan/db';
 import ArtifactsBrowser from './ArtifactsBrowser';
 import type { Metadata } from 'next';
 
@@ -20,15 +20,14 @@ export default async function ArtifactsBrowsePage(props: { params: Promise<{ loc
 
     // Map DB artifacts to the format expected by the browser component
     const formattedArtifacts = artifacts.map((a: any) => {
-        const translation = a.translations?.find((t: any) => t.locale === locale) || a.translations?.[0];
+        const translation = resolveTranslation(a.translations, locale);
         const primaryCredit = a.credits?.find((c: any) => c.isPrimary && (c.contributorClass === 'author' || c.contributorClass === 'collaborator')) || a.credits?.[0];
-        const artistName = primaryCredit?.entity?.translations?.find((t: any) => t.locale === locale)?.name ||
-            primaryCredit?.entity?.translations?.[0]?.name;
+        const artistName = resolveTranslation(primaryCredit?.entity?.translations, locale)?.name;
 
         return {
             id: a.id,
             slug: a.slug,
-            title: translation?.title || "Untitled",
+            title: translation?.title || (a as any).title || "Untitled",
             category: a.category || "UNKNOWN",
             coverImage: a.thumbnail?.url || a.poster?.url || null,
             status: a.status,

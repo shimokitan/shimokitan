@@ -150,11 +150,12 @@ function VerifiedBadge({ className = "" }: { className?: string }) {
     );
 }
 
+import { resolveTranslation } from '@shimokitan/utils';
+
 // ─── Main Component ────────────────────────────────────────────────────────────
 export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, locale: string, dict: Dictionary }) {
-    const translations = entity.translations || [];
-    const translation = translations.find((t: any) => t.locale === locale) || translations[0];
-    const name = translation?.name || "Anonymous Artist";
+    const translation = resolveTranslation(entity.translations, locale);
+    const name = translation?.name || (entity as any).name || "Anonymous Artist";
 
     // ── Encrypted Gate ──────────────────────────────────────────────────────
     if (entity.isEncrypted) {
@@ -278,7 +279,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                                         className="font-black italic uppercase text-white leading-[0.88] group-hover/feat:text-violet-100 transition-colors"
                                         style={{ fontSize: 'clamp(1.8rem, 6vw, 3rem)', letterSpacing: '-0.02em' }}
                                     >
-                                        {featuredCredit.artifact.translations?.find((t: any) => t.locale === locale)?.title || "UNTITLED"}
+                                        {resolveTranslation(featuredCredit.artifact.translations, locale)?.title || "UNTITLED"}
                                     </h2>
 
                                     {/* Role */}
@@ -532,7 +533,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                         <div className="divide-y divide-zinc-900">
                             {sortedCredits.length > 0 ? (
                                 sortedCredits.map((credit: any, i: number) => {
-                                    const artifactTitle = credit.artifact.translations?.find((t: any) => t.locale === locale)?.title || "UNTITLED";
+                                    const artifactTitle = resolveTranslation(credit.artifact.translations, locale)?.title || "UNTITLED";
                                     const isFirst = i === 0;
 
                                     return (

@@ -40,3 +40,25 @@ export const getLocalePath = (path: string, locale: string) => {
 
     return `/${locale}${cleanPath}`;
 };
+
+/**
+ * Resolves a translation from a list based on target locale and fallback strategy.
+ * Priority: Target Locale -> English (en) -> First available translation.
+ */
+export function resolveTranslation<T extends { locale: string | any } & Record<string, any>>(
+    translations: T[] | undefined | null,
+    targetLocale: string
+): T | undefined {
+    if (!translations || translations.length === 0) return undefined;
+
+    // 1. Exact match for target locale
+    const perfectMatch = translations.find(t => t.locale === targetLocale);
+    if (perfectMatch) return perfectMatch;
+
+    // 2. Fallback to English
+    const englishFallback = translations.find(t => t.locale === 'en');
+    if (englishFallback) return englishFallback;
+
+    // 3. Last resort: just return the first one available
+    return translations[0];
+}

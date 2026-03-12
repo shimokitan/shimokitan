@@ -2,15 +2,19 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "@shimokitan/ui": ["packages/ui/src/index.ts"],
             "@shimokitan/ui/*": [
                 "packages/ui/src/*"
             ],
+            "@shimokitan/utils": ["packages/utils/src/index.ts"],
             "@shimokitan/utils/*": [
                 "packages/utils/src/*"
             ],
+            "@shimokitan/db": ["packages/db/src/index.ts"],
             "@shimokitan/db/*": [
                 "packages/db/src/*"
             ],
+            "@shimokitan/auth": ["packages/auth/src/index.ts"],
             "@shimokitan/auth/*": [
                 "packages/auth/src/*"
             ]

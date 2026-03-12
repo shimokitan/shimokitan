@@ -52,6 +52,8 @@ export function Navbar() {
         setMounted(true);
     }, []);
 
+    const isProd = process.env.NODE_ENV === 'production';
+
     const handleLogout = async () => {
         await authClient.signOut();
         router.push('/auth/signin');
@@ -131,7 +133,7 @@ export function Navbar() {
                     <div className="h-4 w-px bg-zinc-800 mx-2" />
                 </div>
 
-                {mounted && !isPending && (
+                {mounted && !isPending && !isProd && (
                     <>
                         {user ? (
                             <div className="flex items-center gap-4 animate-in fade-in duration-300">
@@ -274,7 +276,7 @@ export function Navbar() {
 
                             {/* User Profile / Status Bar - Fixed at Bottom */}
                             <div className="mt-auto p-4 border-t border-zinc-900 bg-zinc-950 px-6 pb-8 shrink-0">
-                                {mounted && (
+                                {mounted && !isProd && (
                                     <>
                                         {user ? (
                                             <div className="flex items-center justify-between p-3 bg-zinc-900/50 border border-zinc-800/50 rounded-xl">
@@ -309,6 +311,13 @@ export function Navbar() {
                                             </div>
                                         )}
                                     </>
+                                )}
+                                {mounted && isProd && (
+                                     <div className="text-center">
+                                        <span className="text-[8px] font-mono text-zinc-700 uppercase tracking-[0.3em] font-bold">
+                                            © 2026 SHIMOKITAN // ALL_RIGHTS_RESERVED
+                                        </span>
+                                    </div>
                                 )}
                             </div>
                         </SheetContent>

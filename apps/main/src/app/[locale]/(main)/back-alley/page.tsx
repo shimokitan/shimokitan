@@ -1,6 +1,6 @@
 import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { getAllArtifacts } from '@shimokitan/db';
+import { getAllArtifacts, resolveTranslation } from '@shimokitan/db';
 import BackAlleyBrowser from './BackAlleyBrowser';
 import type { Metadata } from 'next';
 
@@ -23,15 +23,14 @@ export default async function BackAlleyPage(props: { params: Promise<{ locale: s
     const formattedArtifacts = artifacts
         .filter((a: any) => a.category === 'music')
         .map((a: any) => {
-            const translation = a.translations?.find((t: any) => t.locale === locale) || a.translations?.[0];
+            const translation = resolveTranslation(a.translations, locale);
             const primaryCredit = a.credits?.find((c: any) => c.isPrimary && (c.contributorClass === 'author' || c.contributorClass === 'collaborator')) || a.credits?.[0];
-            const artistName = primaryCredit?.entity?.translations?.find((t: any) => t.locale === locale)?.name ||
-                primaryCredit?.entity?.translations?.[0]?.name;
+            const artistName = resolveTranslation(primaryCredit?.entity?.translations, locale)?.name;
 
             return {
                 id: a.id,
                 slug: a.slug,
-                title: translation?.title || "Untitled",
+                title: translation?.title || (a as any).title || "Untitled",
                 category: a.category || "UNKNOWN",
                 nature: a.nature || "original",
                 coverImage: a.thumbnail?.url || a.poster?.url || null,

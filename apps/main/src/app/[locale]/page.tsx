@@ -1,6 +1,6 @@
 import React from "react";
 import { MainLayout } from "../../components/layout/MainLayout";
-import { getDb, schema, desc, eq, isNull, sql, and } from "@shimokitan/db";
+import { getDb, schema, desc, eq, isNull, sql, and, resolveTranslation } from "@shimokitan/db";
 import HomeClient from "./HomeClient";
 import { Locale, getDictionary } from "@shimokitan/utils";
 
@@ -308,10 +308,22 @@ export default async function AppPage({
   // 7. Fetch Transmissions (Signal Feed)
   let transmissions: any[] = [];
   try {
-    transmissions = await db.query.transmissions.findMany({
+    const rawTransmissions = await db.query.transmissions.findMany({
       where: eq(schema.transmissions.isActive, true),
       orderBy: [desc(schema.transmissions.publishedAt)],
       limit: 5,
+      with: {
+        translations: true
+      }
+    });
+
+    transmissions = rawTransmissions.map(t => {
+      const trans = resolveTranslation(t.translations, locale);
+      return {
+        ...t,
+        title: trans?.title || "Untitled Transmission",
+        content: trans?.content || ""
+      }
     });
   } catch (e: any) {
     if (process.env.NODE_ENV !== "production")

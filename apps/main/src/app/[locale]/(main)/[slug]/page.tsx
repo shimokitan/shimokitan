@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound, redirect } from 'next/navigation';
-import { getEntityBySlug } from '@shimokitan/db';
+import { getEntityBySlug, resolveTranslation } from '@shimokitan/db';
 import { getDictionary, Locale } from '@shimokitan/utils';
 import { EntityProfileTerminal } from '@/components/entities/EntityProfileTerminal';
 
@@ -10,18 +10,15 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     const { locale, slug: rawSlug } = await props.params;
     const slug = decodeURIComponent(rawSlug).replace(/^@/, '');
     
-    let entity: any = null;
-    try {
-        entity = await getEntityBySlug(slug);
-    } catch (e) {}
-
+    const entity = await getEntityBySlug(slug);
+    
     const dict = getDictionary(locale as Locale);
     const s = dict.common.seo;
 
     if (!entity) return { title: s.entity_not_found };
 
-    const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
-    const name = translation?.name || entity.name || s.entity_anonymous;
+    const translation = resolveTranslation(entity.translations, locale);
+    const name = translation?.name || (entity as any).name || s.entity_anonymous;
     const status = translation?.status || entity.type || "Resident";
     const description = s.entity_description
         .replace('{name}', name)
@@ -84,7 +81,7 @@ export default async function EntityProfilePage(props: { params: Promise<{ local
         notFound();
     }
 
-    const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
+    const translation = resolveTranslation(entity.translations, locale);
     const name = translation?.name || entity.name || "Anonymous Resident";
     
     const jsonLd = {

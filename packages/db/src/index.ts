@@ -31,6 +31,7 @@ export function getDb() {
 
 export { schema };
 export * from 'drizzle-orm';
+export { resolveTranslation } from '@shimokitan/utils';
 
 // --- UTILITIES ---
 
