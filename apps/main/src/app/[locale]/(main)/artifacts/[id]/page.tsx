@@ -389,13 +389,6 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         {artifact.zines?.length || 0}
                                     </Badge>
                                 </div>
-                                <Link
-                                    href={`/artifacts/${id}/zines/post`}
-                                    className="flex items-center gap-1 text-[10px] font-black text-rose-500 hover:text-white hover:bg-rose-600 transition-all px-2.5 py-1 border border-rose-600/30 uppercase tracking-widest"
-                                >
-                                    <Icon icon="lucide:plus" width={10} />
-                                    INIT
-                                </Link>
                             </div>
 
                             <div className="flex-1 overflow-y-auto flex flex-col divide-y divide-zinc-900/60 scrollbar-none min-h-0">
