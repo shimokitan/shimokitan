@@ -48,21 +48,22 @@ export default async function AppPage({
       with: {
         thumbnail: true,
         poster: true,
-        translations: {
-          where: eq(schema.artifactsI18n.locale, locale),
-        },
+        translations: true,
       },
     });
 
     // Map translations and sort by score manually
     spotlightArtifacts = rawArtifacts
-      .map((a: any) => ({
-        ...a,
-        title: a.translations?.[0]?.title || "Untitled",
-        description: a.translations?.[0]?.description || "",
-        thumbnailImage: a.thumbnail?.url || null,
-        posterImage: a.poster?.url || null,
-      }))
+      .map((a: any) => {
+        const trans = resolveTranslation(a.translations, locale);
+        return {
+          ...a,
+          title: trans?.title || "Untitled",
+          description: trans?.description || "",
+          thumbnailImage: a.thumbnail?.url || null,
+          posterImage: a.poster?.url || null,
+        };
+      })
       .sort((a, b) => (b.resonance || 0) - (a.resonance || 0))
       .slice(0, 6);
   } catch (e: any) {
@@ -82,32 +83,33 @@ export default async function AppPage({
           with: {
             thumbnail: true,
             poster: true,
-            translations: {
-              where: eq(schema.artifactsI18n.locale, locale),
-            },
+            translations: true,
           },
         },
-        translations: {
-          where: eq(schema.zinesI18n.locale, locale),
-        },
+        translations: true,
         author: true,
       },
     });
 
-    recentZines = rawZines.map((z: any) => ({
-      ...z,
-      content: z.translations?.[0]?.content || "",
-      author: z.author?.name || "Anonymous",
-      artifact: z.artifact
-        ? {
-          ...z.artifact,
-          title: z.artifact.translations?.[0]?.title || "Untitled",
-          description: z.artifact.translations?.[0]?.description || "",
-          thumbnailImage: z.artifact.thumbnail?.url || null,
-          posterImage: z.artifact.poster?.url || null,
-        }
-        : null,
-    }));
+    recentZines = rawZines.map((z: any) => {
+      const zineTrans = resolveTranslation(z.translations, locale);
+      const artifactTrans = z.artifact ? resolveTranslation(z.artifact.translations, locale) : null;
+      
+      return {
+        ...z,
+        content: zineTrans?.content || "",
+        author: z.author?.name || "Anonymous",
+        artifact: z.artifact
+          ? {
+            ...z.artifact,
+            title: artifactTrans?.title || "Untitled",
+            description: artifactTrans?.description || "",
+            thumbnailImage: z.artifact.thumbnail?.url || null,
+            posterImage: z.artifact.poster?.url || null,
+          }
+          : null,
+      };
+    });
   } catch (e: any) {
     if (process.env.NODE_ENV !== "production")
       console.error("Zines Fetch Failed:", e.message);
@@ -127,14 +129,13 @@ export default async function AppPage({
       with: {
         thumbnail: true,
         poster: true,
-        translations: {
-          where: eq(schema.artifactsI18n.locale, locale),
-        },
+        translations: true,
         resources: true,
       },
     });
 
     const processArtifact = (raw: any) => {
+      const trans = resolveTranslation(raw.translations, locale);
       let videoUrl = null;
       const primaryVideo = raw.resources?.find(
         (r: any) =>
@@ -158,8 +159,8 @@ export default async function AppPage({
 
       return {
         ...raw,
-        title: raw.translations?.[0]?.title || "Untitled",
-        description: raw.translations?.[0]?.description || "",
+        title: trans?.title || "Untitled",
+        description: trans?.description || "",
         thumbnailImage: raw.thumbnail?.url || null,
         posterImage: raw.poster?.url || null,
         videoUrl: videoUrl,
@@ -198,23 +199,24 @@ export default async function AppPage({
       limit: 10,
       with: {
         avatar: true,
-        translations: {
-          where: eq(schema.entitiesI18n.locale, locale),
-        },
+        translations: true,
       },
     });
 
-    entities = rawEntities.map((e: any) => ({
-      ...e,
-      name: e.translations?.[0]?.name || "Anonymous Entity",
-      type: e.type?.toUpperCase() || "INDEPENDENT",
-      _rawType: e.type,
-      slug: e.slug,
-      uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
-      professionalTitle: e.translations?.[0]?.status || (e.type === 'independent' ? 'Resident' : e.type?.toUpperCase() || "Resident"),
-      avatar: e.avatar?.url || null,
-      highlights: [], // We could fetch credits here if needed
-    }));
+    entities = rawEntities.map((e: any) => {
+      const trans = resolveTranslation(e.translations, locale);
+      return {
+        ...e,
+        name: trans?.name || e.name || "Anonymous Entity",
+        type: e.type?.toUpperCase() || "INDEPENDENT",
+        _rawType: e.type,
+        slug: e.slug,
+        uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
+        professionalTitle: trans?.status || (e.type === 'independent' ? 'Resident' : e.type?.toUpperCase() || "Resident"),
+        avatar: e.avatar?.url || null,
+        highlights: [], // We could fetch credits here if needed
+      };
+    });
   } catch (e: any) {
     if (process.env.NODE_ENV !== "production")
       console.error("Entities Fetch Failed:", e.message);
@@ -264,17 +266,13 @@ export default async function AppPage({
       orderBy: [desc(schema.artifacts.createdAt)],
       with: {
         thumbnail: true,
-        translations: {
-          where: eq(schema.artifactsI18n.locale, locale),
-        },
+        translations: true,
         resources: true,
         credits: {
           with: {
             entity: {
               with: {
-                translations: {
-                  where: eq(schema.entitiesI18n.locale, locale)
-                }
+                translations: true
               }
             }
           }
@@ -283,17 +281,21 @@ export default async function AppPage({
     });
 
     if (latestHosted) {
+      const trans = resolveTranslation(latestHosted.translations, locale);
       const audioRes = latestHosted.resources?.find(r => r.role === 'hosted_audio');
       const artistNames = (latestHosted as any).credits
         ?.filter((c: any) => c.isPrimary)
-        .map((c: any) => c.entity?.translations?.[0]?.name || c.entity?.name)
+        .map((c: any) => {
+          const entityTrans = resolveTranslation(c.entity?.translations, locale);
+          return entityTrans?.name || c.entity?.name;
+        })
         .filter(Boolean)
         .join(", ") || "Unknown Artist";
 
       currentTrack = {
-        title: latestHosted.translations?.[0]?.title || "Untitled",
+        title: trans?.title || "Untitled",
         artist: artistNames,
-        album: latestHosted.translations?.[0]?.description?.slice(0, 50) || "Single",
+        album: trans?.description?.slice(0, 50) || "Single",
         cover: latestHosted.thumbnail?.url || "https://upload.wikimedia.org/wikipedia/en/3/39/The_Weeknd_-_Starboy.png",
         bitrate: "1411 KBPS",
         format: (audioRes as any)?.value?.endsWith('.m3u8') ? "HLS" : "LOSSLESS",
