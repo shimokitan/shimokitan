@@ -129,6 +129,7 @@ export async function createFullArtifact(data: z.infer<typeof artifactSchema>) {
     });
 
     revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
+    revalidatePath('/[locale]/artifacts', 'layout');
     revalidatePath('/', 'layout');
     return { id: artifactId };
 }
@@ -266,6 +267,7 @@ export async function updateFullArtifact(id: string, data: z.infer<typeof artifa
     console.log('[DEBUG] Update Successful for ID:', id);
 
     revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
+    revalidatePath('/[locale]/artifacts', 'layout');
     revalidatePath(`/[locale]/pedalboard/artifacts/${id}`, 'layout');
     revalidatePath('/', 'layout');
     return { success: true, id };
@@ -281,6 +283,7 @@ export async function deleteArtifact(id: string) {
         .where(eq(schema.artifacts.id, id));
 
     revalidatePath('/[locale]/pedalboard/artifacts', 'layout');
+    revalidatePath('/[locale]/artifacts', 'layout');
     revalidatePath('/', 'layout');
     return { success: true };
 }

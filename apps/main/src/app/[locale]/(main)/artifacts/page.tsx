@@ -15,6 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     };
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function ArtifactsBrowsePage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;
     const artifacts = await getAllArtifacts();

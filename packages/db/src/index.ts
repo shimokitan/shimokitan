@@ -1,7 +1,7 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle, NeonDatabase } from 'drizzle-orm/neon-serverless';
 import * as schema from './schema';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, isNull } from 'drizzle-orm';
 
 // Required for environments where global WebSocket is not available (like local Node)
 // In Bun or Cloudflare, WebSocket is globally defined.
@@ -39,7 +39,8 @@ export async function getAllArtifacts() {
   const db = getDb();
   if (!db) return [];
   return await db.query.artifacts.findMany({
-    orderBy: [desc(schema.artifacts.resonance)],
+    where: isNull(schema.artifacts.deletedAt),
+    orderBy: [desc(schema.artifacts.createdAt), desc(schema.artifacts.resonance)],
     with: {
       translations: true,
       thumbnail: true,
