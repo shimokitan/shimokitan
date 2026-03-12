@@ -1,5 +1,11 @@
 
 import React from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Pedalboard",
+};
+
 export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { isNull, schema as dbSchema, getDb } from '@shimokitan/db';

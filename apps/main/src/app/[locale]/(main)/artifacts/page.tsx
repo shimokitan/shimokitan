@@ -2,6 +2,11 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getAllArtifacts } from '@shimokitan/db';
 import ArtifactsBrowser from './ArtifactsBrowser';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Artifacts",
+};
 
 export default async function ArtifactsBrowsePage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;

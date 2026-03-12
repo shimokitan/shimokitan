@@ -1,4 +1,9 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About",
+};
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const locale = (await params).locale;

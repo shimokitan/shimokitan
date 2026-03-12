@@ -2,6 +2,11 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getAllArtifacts } from '@shimokitan/db';
 import BackAlleyBrowser from './BackAlleyBrowser';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Back Alley",
+};
 
 export default async function BackAlleyPage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;

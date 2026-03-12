@@ -227,9 +227,9 @@ export default function HomeClient({
                 <span className="text-[10px] font-black text-violet-500 uppercase tracking-[0.4em] block drop-shadow-sm italic">
                   SECTOR _ SHIMOKITAZAWA
                 </span>
-                <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-[0_8px_24px_rgba(0,0,0,1)]">
+                <h1 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-[0_8px_24px_rgba(0,0,0,1)]">
                   SHIMO<span className="text-violet-500">KITAN</span>
-                </h2>
+                </h1>
               </div>
               <div className="p-4 border-l-2 border-violet-500/50 bg-zinc-950/90 backdrop-blur-md max-w-sm shadow-2xl">
                 <p className="text-[11px] md:text-xs font-bold text-zinc-200 italic leading-snug">

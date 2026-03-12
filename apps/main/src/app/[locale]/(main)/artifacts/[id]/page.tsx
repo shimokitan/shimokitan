@@ -10,6 +10,47 @@ import { notFound } from 'next/navigation';
 import { PlayButton } from './PlayButton';
 import { StationTrack } from '@/lib/store/station-store';
 
+import type { Metadata } from 'next';
+
+export async function generateMetadata(props: { params: Promise<{ locale: string, id: string }> }): Promise<Metadata> {
+    const { locale, id } = await props.params;
+    const artifact = await getArtifactById(id);
+    if (!artifact) return { title: "SHARD_NOT_FOUND" };
+
+    const translation = artifact.translations?.find((t: any) => t.locale === locale) || artifact.translations?.[0];
+    const title = translation?.title || "Untitled Artifact";
+    const description = translation?.description || `Explore ${title} in the Shimokitan archives.`;
+
+    return {
+        title: title,
+        description: description.slice(0, 160),
+        alternates: {
+            languages: {
+                'en': `/en/artifacts/${id}`,
+                'ja': `/ja/artifacts/${id}`,
+                'id': `/id/artifacts/${id}`,
+            }
+        },
+        openGraph: {
+            title: title,
+            description: description.slice(0, 160),
+            images: [
+                {
+                    url: artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg",
+                    alt: title
+                }
+            ],
+            type: "article"
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: title,
+            description: description.slice(0, 160),
+            images: [artifact.poster?.url || artifact.thumbnail?.url || "/tokyo.jpg"]
+        }
+    };
+}
+
 export default async function ArtifactPage(props: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await props.params;
 
@@ -61,8 +102,25 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
         src: hostedAudio.value
     } : null;
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": artifact.category === 'music' ? 'MusicRecording' : 'CreativeWork',
+        "name": title,
+        "description": description,
+        "image": artifact.poster?.url || artifact.thumbnail?.url || "",
+        "author": {
+            "@type": "Person",
+            "name": primaryArtistName,
+        },
+        "datePublished": artifact.createdAt,
+    };
+
     return (
         <MainLayout>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="h-[calc(100vh-var(--header-height,48px))] w-full flex flex-col overflow-hidden text-white font-mono bg-black">
 
                 {/* ═══════════════════════════════════════════════════════
@@ -382,7 +440,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                 <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_6px_rgba(225,29,72,0.5)]" />
                                                 <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 overflow-hidden flex items-center justify-center">
                                                     {artifact.sourceArtifact.thumbnail?.url
-                                                        ? <img src={artifact.sourceArtifact.thumbnail.url} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
+                                                        ? <img src={artifact.sourceArtifact.thumbnail.url} alt={artifact.sourceArtifact.translations?.find((t: any) => t.locale === locale)?.title || "Source Artifact"} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
                                                         : <Icon icon="lucide:database" width={13} className="text-zinc-700" />
                                                     }
                                                 </div>
@@ -414,7 +472,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                                         <div className="absolute top-0 left-0 w-0.5 h-full bg-rose-600 shadow-[0_0_6px_rgba(225,29,72,0.5)]" />
                                                         <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 overflow-hidden flex items-center justify-center">
                                                             {credit.entity?.avatar?.url
-                                                                ? <img src={credit.entity.avatar.url} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
+                                                                ? <img src={credit.entity.avatar.url} alt={name} className="w-full h-full object-cover grayscale opacity-50 group-hover/root:grayscale-0 group-hover/root:opacity-100 transition-all" />
                                                                 : <Icon icon="lucide:feather" width={13} className="text-rose-900" />
                                                             }
                                                         </div>
@@ -517,7 +575,7 @@ function CreditRow({ credit, locale, isPrimary }: { credit: any; locale: string;
             )}
             <div className="w-8 h-8 shrink-0 bg-zinc-950 border border-zinc-800 flex items-center justify-center overflow-hidden">
                 {credit.entity?.avatar?.url ? (
-                    <img src={credit.entity.avatar.url} className="w-full h-full object-cover grayscale group-hover/item:grayscale-0 transition-all" />
+                    <img src={credit.entity.avatar.url} alt={name} className="w-full h-full object-cover grayscale group-hover/item:grayscale-0 transition-all" />
                 ) : (
                     <Icon
                         icon={isEncrypted ? "lucide:lock" : isPrimary ? "lucide:star" : "lucide:user"}

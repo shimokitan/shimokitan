@@ -17,9 +17,42 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://shimokitan.live";
+  
   return {
-    title: locale === 'ja' ? "SHIMOKITAN // 近日公開" : locale === 'id' ? "SHIMOKITAN // SEGERA HADIR" : "SHIMOKITAN // COMING SOON",
-    description: "SHIMOKITAN is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories - not data points.",
+    title: {
+      default: locale === 'ja' ? "Shimokitan // 近日公開" : locale === 'id' ? "Shimokitan // SEGERA HADIR" : "Coming Soon // Shimokitan",
+      template: "%s // Shimokitan"
+    },
+    description: "Shimokitan is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories - not data points.",
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      languages: {
+        'en': '/en',
+        'ja': '/ja',
+        'id': '/id',
+      },
+    },
+    openGraph: {
+      type: "website",
+      siteName: "Shimokitan",
+      title: "Shimokitan",
+      description: "Shimokitan is a district for Japanese culture enthusiasts who document their anime, games, and music as lived memories.",
+      images: [
+        {
+          url: "/tokyo.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Shimokitan // District Overview",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Shimokitan",
+      description: "Shimokitan is a district for Japanese culture enthusiasts.",
+      images: ["/tokyo.jpg"],
+    },
   };
 }
 

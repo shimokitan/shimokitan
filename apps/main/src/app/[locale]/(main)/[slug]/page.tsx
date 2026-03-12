@@ -4,6 +4,54 @@ import { getEntityBySlug } from '@shimokitan/db';
 import { getDictionary, Locale } from '@shimokitan/utils';
 import { EntityProfileTerminal } from '@/components/entities/EntityProfileTerminal';
 
+import type { Metadata } from 'next';
+
+export async function generateMetadata(props: { params: Promise<{ locale: string, slug: string }> }): Promise<Metadata> {
+    const { locale, slug: rawSlug } = await props.params;
+    const slug = decodeURIComponent(rawSlug).replace(/^@/, '');
+    
+    let entity: any = null;
+    try {
+        entity = await getEntityBySlug(slug);
+    } catch (e) {}
+
+    if (!entity) return { title: "ENTITY_NOT_FOUND" };
+
+    const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
+    const name = translation?.name || entity.name || "Anonymous Resident";
+    const status = translation?.status || entity.type || "Resident";
+    const description = `Registry Profile: ${name} (${status}). Data resonance active.`;
+
+    return {
+        title: name,
+        description: description,
+        alternates: {
+            languages: {
+                'en': `/en/${entity.slug}`,
+                'ja': `/ja/${entity.slug}`,
+                'id': `/id/${entity.slug}`,
+            }
+        },
+        openGraph: {
+            title: name,
+            description: description,
+            images: [
+                {
+                    url: entity.avatar?.url || "/tokyo.jpg",
+                    alt: name
+                }
+            ],
+            type: "profile"
+        },
+        twitter: {
+            card: "summary",
+            title: name,
+            description: description,
+            images: [entity.avatar?.url || "/tokyo.jpg"]
+        }
+    };
+}
+
 export default async function EntityProfilePage(props: { params: Promise<{ locale: string, slug: string }> }) {
     const { locale, slug: rawSlug } = await props.params;
     const dict = getDictionary(locale as Locale);
@@ -31,5 +79,25 @@ export default async function EntityProfilePage(props: { params: Promise<{ local
         notFound();
     }
 
-    return <EntityProfileTerminal entity={entity} locale={locale} dict={dict} />;
+    const translation = entity.translations?.find((t: any) => t.locale === locale) || entity.translations?.[0];
+    const name = translation?.name || entity.name || "Anonymous Resident";
+    
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": entity.type === 'individual' ? 'Person' : 'Organization',
+        "name": name,
+        "description": translation?.bio || `Registry Profile: ${name}. Data resonance active.`,
+        "image": entity.avatar?.url || "",
+        "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://shimokitan.live'}/${locale}/${entity.slug}`,
+    };
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <EntityProfileTerminal entity={entity} locale={locale} dict={dict} />
+        </>
+    );
 }

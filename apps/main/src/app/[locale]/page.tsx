@@ -4,6 +4,12 @@ import { getDb, schema, desc, eq, isNull, sql, and } from "@shimokitan/db";
 import HomeClient from "./HomeClient";
 import { Locale, getDictionary } from "@shimokitan/utils";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "The District // Shimokitan",
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function AppPage({
@@ -127,8 +133,8 @@ export default async function AppPage({
       let videoUrl = null;
       const primaryVideo = raw.resources?.find(
         (r: any) =>
-          r.role === "embed_video" || 
-          r.role === "stream" || 
+          r.role === "embed_video" ||
+          r.role === "stream" ||
           r.platform === "youtube",
       );
       if (primaryVideo) {
@@ -258,15 +264,15 @@ export default async function AppPage({
         },
         resources: true,
         credits: {
-            with: {
-                entity: {
-                    with: {
-                        translations: {
-                            where: eq(schema.entitiesI18n.locale, locale)
-                        }
-                    }
+          with: {
+            entity: {
+              with: {
+                translations: {
+                  where: eq(schema.entitiesI18n.locale, locale)
                 }
+              }
             }
+          }
         }
       }
     });

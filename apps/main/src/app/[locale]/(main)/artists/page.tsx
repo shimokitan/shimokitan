@@ -2,6 +2,11 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { getAllEntities } from '@shimokitan/db';
 import ArtistsBrowser from './ArtistsBrowser';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Architects",
+};
 
 export default async function ArtistsBrowsePage(props: { params: Promise<{ locale: string }> }) {
     const { locale } = await props.params;
