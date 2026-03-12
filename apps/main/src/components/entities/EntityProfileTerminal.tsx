@@ -249,17 +249,17 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                 <div className="absolute top-0 left-[85%] w-[1px] h-full bg-white/[0.02]" />
             </div>
 
-            <div className="relative z-10 animate-in fade-in duration-700">
+            <div className="relative z-10 animate-in fade-in duration-700 -mt-4">
 
                 {/* ── HERO: Full-bleed featured artifact, unified bottom overlay ── */}
                 {featuredCredit && (
-                    <div className="relative w-full h-[380px] md:h-[460px] overflow-hidden bg-zinc-950 border-b border-zinc-900">
+                    <div className="relative w-full h-[400px] md:h-[580px] lg:h-[700px] overflow-hidden bg-zinc-950 border-b border-zinc-900">
 
                         {/* Background thumbnail */}
                         {featuredCredit.artifact.thumbnail?.url ? (
                             <img
                                 src={featuredCredit.artifact.thumbnail.url}
-                                className="absolute inset-0 w-full h-full object-cover opacity-45 scale-[1.02] group-hover:scale-100 transition-transform duration-700"
+                                className="absolute inset-0 w-full h-full object-cover object-[center_25%] opacity-45 scale-[1.02] group-hover:scale-100 transition-transform duration-700"
                                 alt=""
                             />
                         ) : (
@@ -272,13 +272,13 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                         <div className="absolute bottom-0 left-0 right-0 h-3/4 bg-gradient-to-t from-black/90 to-transparent" />
 
                         {/* FEATURED badge — top left */}
-                        <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1.5 bg-black/70 backdrop-blur-sm border border-violet-500/40">
+                        <div className="absolute top-12 left-10 flex items-center gap-1.5 px-3 py-2 bg-black/70 backdrop-blur-sm border border-violet-500/40">
                             <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
                             <span className="text-[8px] font-black font-mono text-violet-400 uppercase tracking-[0.3em]">FEATURED</span>
                         </div>
 
                         {/* Unified bottom overlay — artifact on top, profile below */}
-                        <div className="absolute bottom-0 left-0 right-0 px-5 pb-6 md:px-8 md:pb-8 flex flex-col gap-0">
+                        <div className="absolute bottom-10 md:bottom-20 lg:bottom-24 left-0 right-0 px-5 md:px-8 flex flex-col gap-0">
 
                             {/* ── ARTIFACT ROW ── */}
                             <Link
@@ -356,7 +356,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
 
                 {/* ── If no featured artifact, show compact identity header ── */}
                 {!featuredCredit && (
-                    <div className="border-b border-zinc-900 p-8 md:p-12 flex items-center gap-8 bg-zinc-950/50">
+                    <div className="border-b border-zinc-900 p-8 md:p-12 -mx-4 flex items-center gap-8 bg-zinc-950/50">
                         <div className="relative flex-shrink-0 w-24 h-24 border-2 border-zinc-700 bg-zinc-950 overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.05)]">
                             <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-zinc-500 z-10" />
                             <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-zinc-500 z-10" />
@@ -385,7 +385,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
                 )}
 
                 {/* ── BODY: Two-column on desktop ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-px bg-zinc-900">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-px bg-zinc-900 -mt-10 md:-mt-20 lg:-mt-24 relative z-20 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
 
                     {/* LEFT: Identity + Modules */}
                     <div className="lg:col-span-5 bg-black flex flex-col gap-px">
