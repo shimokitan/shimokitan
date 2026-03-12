@@ -78,15 +78,15 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
             </div>
 
             {/* Entity Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredEntities.map((entity) => (
                     <Link
                         key={entity.id}
                         href={getEntityUrl(entity)}
-                        className="group relative bg-zinc-950/20 border border-zinc-900 hover:border-violet-900/50 p-5 transition-all duration-700 overflow-hidden flex flex-col gap-4"
+                        className="group relative bg-zinc-950/20 border border-zinc-900 hover:border-violet-900/50 p-6 transition-all duration-700 overflow-hidden flex flex-col gap-6"
                     >
-                        <div className="flex items-start gap-4 z-10">
-                            <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 flex-shrink-0">
+                        <div className="flex items-start gap-6 z-10">
+                            <div className="w-32 h-32 bg-zinc-900 border border-zinc-800 flex-shrink-0">
                                 {entity.avatarUrl ? (
                                     <img
                                         src={entity.avatarUrl}
@@ -108,7 +108,7 @@ export default function ArtistsBrowser({ initialEntities }: { initialEntities: E
                                     </div>
                                     {entity.isVerified && <Icon icon="lucide:check" width={12} className="text-violet-500" aria-hidden="true" />}
                                 </div>
-                                <h3 className="text-xl font-black italic tracking-tighter uppercase text-zinc-300 group-hover:text-white transition-colors truncate">
+                                <h3 className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase text-zinc-300 group-hover:text-white transition-colors truncate">
                                     {entity.name}
                                 </h3>
                             </div>

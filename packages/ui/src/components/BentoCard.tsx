@@ -7,18 +7,20 @@ import { cn } from "../lib/utils";
 interface BentoCardProps {
     children: React.ReactNode;
     className?: string;
+    contentClassName?: string;
     title?: string;
     icon?: string;
-    action?: React.ReactNode;
+    headerAction?: React.ReactNode;
     minimal?: boolean;
 }
 
 export const BentoCard = ({
     children,
     className = "",
+    contentClassName = "",
     title,
     icon,
-    action,
+    headerAction,
     minimal = false
 }: BentoCardProps) => (
     <div className={cn(
@@ -45,11 +47,11 @@ export const BentoCard = ({
                     {title && <span className="text-[9px] font-mono tracking-[0.2em] uppercase font-black">{title}</span>}
                 </div>
                 <div className="flex-1" />
-                {action && <div className="text-zinc-600 hover:text-white cursor-pointer transition-colors z-20">{action}</div>}
+                {headerAction && <div className="text-zinc-600 hover:text-white cursor-pointer transition-colors z-20">{headerAction}</div>}
             </div>
         )}
 
-        <div className={cn("relative z-10 flex-1 flex flex-col h-full min-h-0", !minimal && "p-4")}>
+        <div className={cn("relative z-10 flex-1 flex flex-col h-full min-h-0", !minimal && "p-4", contentClassName)}>
             {children}
         </div>
 

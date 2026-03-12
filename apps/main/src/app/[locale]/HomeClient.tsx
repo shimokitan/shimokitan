@@ -135,13 +135,6 @@ export default function HomeClient({
   const isDockedActive = hasTrack;
 
   return (
-    /**
-     * RESPONSIVE GRID STRATEGY
-     * Mobile  (< 640px):  2-col, auto-rows, stacked naturally
-     * Tablet  (640–1023px): 3-col, 2-row — Hero | Audio | Signal Station
-     *                        Everything else hidden. No scroll.
-     * Desktop (≥ 1024px):  5-col, 7-row explicit grid (original layout)
-     */
     <div className="
       grid gap-3 h-auto
       grid-cols-2
@@ -149,11 +142,7 @@ export default function HomeClient({
       lg:grid-cols-5 lg:grid-rows-7 lg:h-full
     ">
 
-      {/* ── 1. Hero / District Branding ─────────────────────────────────────
-          Mobile:  col-span-2, auto
-          Tablet:  col-span-2, row-span-3, col 1, row 1
-          Desktop: col-span-2, row-span-3, col 1, row 1
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 1. Hero / District Branding ─────────────────────────────────────*/}
       <div className="
         col-span-2 min-h-[280px]
         sm:col-span-2 sm:row-span-1 sm:col-start-1 sm:row-start-1 sm:min-h-0
@@ -289,11 +278,7 @@ export default function HomeClient({
         </div>
       </div>
 
-      {/* ── 2. Current Signal / Audio Player ────────────────────────────────
-          Mobile:  col-span-2 (full width)
-          Tablet:  col-span-1, row-span-3, col 3, row 1  (right column)
-          Desktop: col-span-1, row-span-3, col 3, row 1
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 2. Current Signal / Audio Player ────────────────────────────────*/}
       <BentoCard
         className="
           col-span-2 min-h-[360px]
@@ -509,7 +494,6 @@ export default function HomeClient({
                     dispatchCommand("playToggle");
                   } else if (currentTrack?.src) {
                     station.initialize(currentTrack as any);
-                    // Give the store a moment to update then trigger play
                     setTimeout(() => {
                       dispatchCommand("playToggle");
                     }, 100);
@@ -549,7 +533,7 @@ export default function HomeClient({
                 onMouseDown={(e) => {
                   e.preventDefault();
                   const target = e.currentTarget as HTMLElement;
-                  
+
                   const update = (clientX: number) => {
                     const rect = target.getBoundingClientRect();
                     const pos = Math.max(0, Math.min(1, (clientX - rect.left) / (rect.width || 1)));
@@ -561,7 +545,7 @@ export default function HomeClient({
                   const onMouseMove = (moveEvent: MouseEvent) => {
                     update(moveEvent.clientX);
                   };
-                  
+
                   const onMouseUp = () => {
                     document.removeEventListener("mousemove", onMouseMove);
                     document.removeEventListener("mouseup", onMouseUp);
@@ -583,10 +567,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 3. Featured Card Stack ───────────────────────────────────────────
-          Tablet: HIDDEN — saves space, content accessible via /artifacts
-          Desktop: col-span-1, row-span-3, col 4, row 1
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 3. Featured Card Stack ───────────────────────────────────────────*/}
       <BentoCard
         className="
           hidden
@@ -603,8 +584,8 @@ export default function HomeClient({
                 key={item.id}
                 onClick={() => setActiveSpotlight(i)}
                 className={`absolute cursor-pointer transition-all duration-500 hover:z-40 ${activeSpotlight === i
-                    ? "z-30 scale-110 shadow-2xl"
-                    : "z-10 opacity-80"
+                  ? "z-30 scale-110 shadow-2xl"
+                  : "z-10 opacity-80"
                   }`}
                 style={{
                   transform:
@@ -644,10 +625,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 4. District / Dynamic Time ──────────────────────────────────────
-          Tablet: HIDDEN — clock info not critical, frees up grid space
-          Desktop: col-span-1, row-span-3, col 5, row 1
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 4. District / Dynamic Time ──────────────────────────────────────*/}
       <BentoCard
         className="
           hidden
@@ -749,10 +727,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 5. In The Pit (Featured Item) ───────────────────────────────────
-          Tablet: col-span-1, row-span-2, col 1, row 4
-          Desktop: col-span-1, row-span-2, col 1, row 4
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 5. In The Pit (Featured Item) ───────────────────────────────────*/}
       {featuredArtifact && (
         <Link
           href={`/artifacts/${featuredArtifact.id}`}
@@ -804,80 +779,67 @@ export default function HomeClient({
         </Link>
       )}
 
-      {/* ── 6. District Residents List ──────────────────────────────────────
-          Tablet: col-span-1, row-span-2, col 2, row 4
-          Desktop: col-span-1, row-span-2, col 2, row 4
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 6. District Residents List ──────────────────────────────────────*/}
       <BentoCard
         className="
           col-span-1
           sm:hidden
           lg:block lg:col-span-1 lg:row-span-2 lg:col-start-2 lg:row-start-4
+          overflow-hidden
         "
+        contentClassName="lg:p-3"
         title={dict.home.district_entities}
         icon="lucide:user-check"
+        headerAction={
+          <Link
+            href="/artists"
+            className="text-[9px] font-mono font-bold text-zinc-500 hover:text-violet-400 uppercase tracking-widest transition-colors flex items-center gap-1 group/reg"
+          >
+            View Registry
+            <Icon
+              icon="lucide:arrow-right"
+              width={9}
+              className="group-hover/reg:translate-x-0.5 transition-transform"
+            />
+          </Link>
+        }
       >
-        <div className="flex flex-col gap-2.5 flex-1">
+        <div className="flex flex-col gap-2.5">
           {entities
             .filter((entity) => !entity.isEncrypted)
-            .slice(0, 2)
+            .slice(0, 3)
             .map((entity) => (
               <Link
                 key={entity.id}
                 href={getEntityUrl({ type: entity._rawType, slug: entity.slug })}
-                className="flex items-center gap-2.5 p-2 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group/item shadow-sm"
+                className="flex items-center gap-3 p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group/item shadow-sm"
               >
-                <div className="w-10 h-10 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600 group-hover/item:border-violet-500/50 transition-colors">
+                <div className="w-14 h-14 shrink-0 relative bg-zinc-950 rounded border border-zinc-700 shadow-inner overflow-hidden flex items-center justify-center text-zinc-600">
                   {entity.avatar ? (
                     <img
                       src={entity.avatar}
-                      className="w-full h-full object-cover transition-all duration-500"
+                      className="w-full h-full object-cover"
                       alt={entity.name}
                     />
                   ) : (
-                    <Icon icon="lucide:user" width={20} />
+                    <Icon icon="lucide:user" width={24} />
                   )}
                   <div className="absolute top-0 right-0 bg-emerald-500 w-1.5 h-1.5 rounded-bl border-b border-l border-zinc-800 z-10 animate-pulse" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-black text-white uppercase italic tracking-tight group-hover/item:text-violet-400 truncate mb-0.5">
+                  <div className="text-[13px] font-black text-white uppercase italic tracking-tight group-hover/item:text-violet-400 truncate leading-none mb-1">
                     {entity.name}
                   </div>
-                  <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center gap-1.5">
-                      <Icon icon="lucide:id-card" width={9} className="text-zinc-500 shrink-0" />
-                      <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest truncate">
-                        {entity.professionalTitle}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Icon icon="lucide:tag" width={9} className="text-violet-500/70 shrink-0" />
-                      <span className="text-[10px] font-mono text-violet-400 font-bold uppercase truncate">
-                        {entity.type.split("_").join(" ")}
-                      </span>
-                    </div>
+                  <div className="text-[10px] font-mono text-violet-500/80 font-bold uppercase truncate leading-none">
+                    {entity.type.split("_").join(" ")}
                   </div>
                 </div>
               </Link>
             ))}
-          <Link
-            href="/artists"
-            className="mt-auto border border-dashed border-zinc-800 rounded bg-zinc-950/30 text-zinc-500 hover:text-white hover:border-zinc-500 hover:bg-zinc-900 transition-colors py-2 px-3 flex justify-between items-center gap-2 text-[11px] font-mono uppercase tracking-widest group/item mb-1"
-          >
-            <span>View Registry</span>
-            <Icon
-              icon="lucide:arrow-right"
-              width={12}
-              className="group-hover/item:translate-x-1 group-hover/item:text-white transition-transform"
-            />
-          </Link>
         </div>
       </BentoCard>
 
-      {/* ── 7. Featured Archives ────────────────────────────────────────────
-          Tablet: col-span-1, row-span-2, col 3, row 4
-          Desktop: col-span-1, row-span-2, col 3, row 4
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 7. Featured Archives ────────────────────────────────────────────*/}
       <BentoCard
         className="
           col-span-2
@@ -958,10 +920,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 8. Video ────────────────────────────────────────────────────────
-          Tablet: col-span-2, row-span-2, col 1-2, row 6  (spans two left cols)
-          Desktop: col-span-2, row-span-4, col 4-5, row 4
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 8. Video ────────────────────────────────────────────────────────*/}
       <BentoCard
         className="
           col-span-2 min-h-[220px]
@@ -990,10 +949,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 9a. YouTube Video — tablet only ─────────────────────────────────
-          Tablet: full-width bottom row (col 1–3, row 2)
-          Desktop: hidden — desktop uses the video card in col 4–5
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 9a. YouTube Video — tablet only ─────────────────────────────────*/}
       <BentoCard
         className="
           hidden
@@ -1022,11 +978,7 @@ export default function HomeClient({
         </div>
       </BentoCard>
 
-      {/* ── 9b. Signal Station — mobile + desktop only ───────────────────────
-          Mobile:  col-span-2, auto
-          Tablet:  hidden
-          Desktop: col-span-3, row-span-2, col 1–3, row 6
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── 9b. Signal Station ───────────────────────────────────────────────*/}
       <BentoCard
         className="
           col-span-2
