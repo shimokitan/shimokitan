@@ -16,7 +16,7 @@ interface Entity {
 
 interface EntitySearchPickerProps {
     label: string;
-    type: 'individual' | 'organization' | 'agency' | 'circle' | 'staff';
+    type: 'independent' | 'organization' | 'agency' | 'circle' | 'staff';
     value?: string; // entityId
     onSelect: (entity: Entity | null) => void;
     placeholder?: string;

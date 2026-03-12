@@ -19,7 +19,7 @@ type Entity = {
 
 const entityTypes = [
     { label: 'ALL_ARTISTS', value: 'all' },
-    { label: 'INDIVIDUAL', value: 'individual' },
+    { label: 'INDEPENDENT', value: 'independent' },
     { label: 'CIRCLE', value: 'circle' },
     { label: 'ORGANIZATION', value: 'organization' },
     { label: 'AGENCY', value: 'agency' },

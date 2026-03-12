@@ -89,7 +89,7 @@ export default async function EntityProfilePage(props: { params: Promise<{ local
     
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": entity.type === 'individual' ? 'Person' : 'Organization',
+        "@type": entity.type === 'independent' ? 'Person' : 'Organization',
         "name": name,
         "description": translation?.bio || `Registry Profile: ${name}. Data resonance active.`,
         "image": entity.avatar?.url || "",

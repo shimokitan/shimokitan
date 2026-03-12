@@ -207,11 +207,11 @@ export default async function AppPage({
     entities = rawEntities.map((e: any) => ({
       ...e,
       name: e.translations?.[0]?.name || "Anonymous Entity",
-      type: e.type?.toUpperCase() || "INDIVIDUAL",
+      type: e.type?.toUpperCase() || "INDEPENDENT",
       _rawType: e.type,
       slug: e.slug,
       uid: e.uid || `UX_${e.id.slice(0, 4).toUpperCase()}`,
-      professionalTitle: e.translations?.[0]?.status || (e.type === 'individual' ? 'Resident' : e.type?.toUpperCase() || "Resident"),
+      professionalTitle: e.translations?.[0]?.status || (e.type === 'independent' ? 'Resident' : e.type?.toUpperCase() || "Resident"),
       avatar: e.avatar?.url || null,
       highlights: [], // We could fetch credits here if needed
     }));

@@ -12,7 +12,7 @@ import { relations } from "drizzle-orm";
 export const localeEnum = pgEnum("locale", ["en", "id", "ja"]);
 export const mediaTypeEnum = pgEnum("media_type", ["image", "video", "audio", "document"]);
 export const tagCategoryEnum = pgEnum("tag_category", ["genre", "mood", "style", "theme", "other", "identity"]);
-export const entityTypeEnum = pgEnum("entity_type", ["individual", "organization", "agency", "circle"]);
+export const entityTypeEnum = pgEnum("entity_type", ["independent", "organization", "agency", "circle"]);
 export const userRoleEnum = pgEnum("user_role", ["founder", "architect", "resident", "ghost"]);
 export const managerRoleEnum = pgEnum("manager_role", ["owner", "admin", "editor"]);
 

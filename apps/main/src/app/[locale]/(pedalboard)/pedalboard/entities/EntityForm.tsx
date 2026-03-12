@@ -46,7 +46,7 @@ export default function EntityForm({
 
     const [isVerified, setIsVerified] = useState(initialData?.isVerified || false);
     const [isEncrypted, setIsEncrypted] = useState(initialData?.isEncrypted || false);
-    const [type, setType] = useState(initialData?.type || 'individual');
+    const [type, setType] = useState(initialData?.type || 'independent');
     const [members, setMembers] = useState<Member[]>(
         initialData?.members?.map((m: any) => ({ memberId: m.memberId, memberRole: m.memberRole })) || []
     );
@@ -176,7 +176,7 @@ export default function EntityForm({
                                             required
                                             className="w-full bg-zinc-950 border border-zinc-900 p-3 text-xs text-white focus:border-violet-600 outline-none transition-all rounded-lg appearance-none cursor-pointer"
                                         >
-                                            <option value="individual">INDIVIDUAL_REGISTRY</option>
+                                            <option value="independent">INDEPENDENT_REGISTRY</option>
                                             <option value="organization">ORGANIZATION_ENTITY</option>
                                             <option value="agency">MANAGEMENT_AGENCY</option>
                                             <option value="circle">CREATIVE_CIRCLE (UNIT)</option>
@@ -397,7 +397,7 @@ export default function EntityForm({
                         <div className="flex items-center justify-between mb-4">
                             <div className="space-y-1">
                             <span className="text-xs font-black uppercase text-violet-500 tracking-[0.2em]">04 // UNIT_COMPOSITION_LEDGER</span>
-                            <p className="text-[9px] text-zinc-600 font-mono">LINK INDIVIDUAL ENTITIES TO THIS CREATIVE NODE.</p>
+                            <p className="text-[9px] text-zinc-600 font-mono">LINK INDEPENDENT ENTITIES TO THIS CREATIVE NODE.</p>
                         </div>
                             <button type="button" onClick={addMember} className="bg-zinc-950 border border-zinc-800 px-4 py-2 text-[10px] uppercase font-bold text-violet-500 hover:text-white hover:border-violet-600 flex items-center gap-2 transition-all rounded-lg">
                                 <Icon icon="lucide:user-plus" width={14} /> ADD_MEMBER_NODE
@@ -409,8 +409,8 @@ export default function EntityForm({
                                 <div key={i} className="flex gap-4 items-center bg-black p-4 border border-zinc-900 rounded-xl hover:border-zinc-700 transition-colors">
                                     <div className="flex-1">
                                         <EntitySearchPicker
-                                            label="INDIVIDUAL_RECORD"
-                                            type="individual"
+                                            label="INDEPENDENT_RECORD"
+                                            type="independent"
                                             value={member.memberId}
                                             onSelect={(entity) => updateMember(i, 'memberId', entity?.id || '')}
                                             placeholder="Search Global Registry..."

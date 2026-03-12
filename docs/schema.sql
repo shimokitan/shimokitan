@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS residents (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. ENTITIES (Individual Artists, Agencies, Studios, Staff)
+-- 3. ENTITIES (Independent Artists, Agencies, Studios, Staff)
 CREATE TABLE IF NOT EXISTS entities (
     id TEXT PRIMARY KEY DEFAULT nanoid(),
     name TEXT NOT NULL,
-    type TEXT NOT NULL CHECK (type IN ('individual', 'organization', 'agency', 'circle', 'staff')),
+    type TEXT NOT NULL CHECK (type IN ('independent', 'organization', 'agency', 'circle', 'staff')),
     bio TEXT,
     avatar_url TEXT,
     social_links JSONB DEFAULT '{}',

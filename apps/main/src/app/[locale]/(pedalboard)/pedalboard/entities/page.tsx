@@ -53,7 +53,7 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
                         Known <span className="text-violet-600">Entities.</span>
                     </h1>
                     <p className="text-zinc-400 text-xs font-mono uppercase tracking-[0.2em]">
-                        {isTrash ? 'Purge or recover known identities.' : 'Manage known entities, organizations, and individuals.'}
+                        {isTrash ? 'Purge or recover known identities.' : 'Manage known entities, organizations, and independent creators.'}
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -78,7 +78,7 @@ export default async function EntitiesPage(props: { searchParams: Promise<{ tras
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Total_Entities', value: allEntities.length, icon: 'lucide:users', color: 'text-white' },
-                    { label: 'Individuals', value: allEntities.filter(e => e.type === 'individual').length, icon: 'lucide:user', color: 'text-violet-500' },
+                    { label: 'Independent', value: allEntities.filter(e => e.type === 'independent').length, icon: 'lucide:user', color: 'text-violet-500' },
                     { label: 'Organizations', value: allEntities.filter(e => e.type === 'organization' || e.type === 'agency').length, icon: 'lucide:building-2', color: 'text-emerald-500' },
                     { label: 'Units_&_Circles', value: allEntities.filter(e => e.type === 'circle').length, icon: 'lucide:command', color: 'text-zinc-500' },
                 ].map((stat, i) => (

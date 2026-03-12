@@ -227,7 +227,7 @@ export function EntityProfileTerminal({ entity, locale, dict }: { entity: any, l
 
     // ── Data prep ───────────────────────────────────────────────────────────
     const bio = translation?.bio || "";
-    const entityType = entity.type?.toUpperCase() || "INDIVIDUAL";
+    const entityType = entity.type?.toUpperCase() || "INDEPENDENT";
     const professionalTitle = translation?.status?.toUpperCase() || "";
     const credits = entity.credits || [];
     const sortedCredits = [...credits].sort((a: any, b: any) => (b.artifact?.resonance || 0) - (a.artifact?.resonance || 0));

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // --- Shared Constants (Matching DB Schema) ---
 export const LOCALES = ['en', 'id', 'ja'] as const;
-export const ENTITY_TYPES = ['individual', 'organization', 'agency', 'circle'] as const;
+export const ENTITY_TYPES = ['independent', 'organization', 'agency', 'circle'] as const;
 export const CONTRIBUTOR_CLASSES = ['author', 'collaborator', 'staff'] as const;
 
 export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;

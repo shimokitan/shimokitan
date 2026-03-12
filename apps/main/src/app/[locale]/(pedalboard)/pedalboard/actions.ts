@@ -85,7 +85,7 @@ export async function approveRoleUpgrade(verificationId: string) {
 
         await tx.insert(schema.entities).values({
             id: entityId,
-            type: 'individual',
+            type: 'independent',
             slug: slugify(creator?.name || `architect-${nanoid(4)}`),
         });
 
