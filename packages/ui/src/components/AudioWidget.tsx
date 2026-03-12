@@ -80,7 +80,12 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                 audioRef.current.pause();
                 setIsPlaying(false);
             } else {
-                audioRef.current.play().catch(console.error);
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        if (error.name !== 'AbortError') console.error(error);
+                    });
+                }
                 setIsPlaying(true);
             }
         } else {
@@ -88,41 +93,35 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
         }
     };
 
-    useEffect(() => {
+    const broadcastState = () => {
         if (!audioRef.current) return;
         const audio = audioRef.current;
-        let hls: Hls | null = null;
+        window.dispatchEvent(new CustomEvent('shim_audio_state', {
+            detail: {
+                isPlaying: !audio.paused,
+                currentTime: audio.currentTime,
+                duration: audio.duration,
+                progress: (audio.currentTime / (audio.duration || 1)) * 100,
+                volume: audio.volume * 100
+            }
+        }));
+    };
 
-        if (!currentTrack?.src) {
-            audio.pause();
-            audio.src = "";
-            setIsPlaying(false);
-            setCurrentTime(0);
-            setDuration(0);
-            setProgress(0);
-            return;
-        }
+    // Effect 1: Persistent Event Listeners (Audio + Commands)
+    useEffect(() => {
+        if (!mounted || !audioRef.current) return;
+        const audio = audioRef.current;
+        console.log("AudioWidget: Initializing listeners. Audio source is currently:", audio.src);
 
-        const broadcastState = () => {
-            window.dispatchEvent(new CustomEvent('shim_audio_state', {
-                detail: {
-                    isPlaying: !audio.paused,
-                    currentTime: audio.currentTime,
-                    duration: audio.duration,
-                    progress: (audio.currentTime / (audio.duration || 1)) * 100,
-                    volume: audio.volume * 100
-                }
-            }));
-        };
-
-        const onPlay = () => { setIsPlaying(true); broadcastState(); };
-        const onPause = () => { setIsPlaying(false); broadcastState(); };
+        const onPlay = () => { console.log("Audio: play event fired"); setIsPlaying(true); broadcastState(); };
+        const onPause = () => { console.log("Audio: pause event fired"); setIsPlaying(false); broadcastState(); };
         const onTimeUpdate = () => {
             setCurrentTime(audio.currentTime);
             setProgress((audio.currentTime / (audio.duration || 1)) * 100);
             broadcastState();
         };
         const onLoadedMetadata = () => {
+            console.log("Audio: loadedmetadata fired, duration:", audio.duration);
             setDuration(audio.duration);
             broadcastState();
         };
@@ -134,9 +133,21 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
 
         const handleCommand = (e: Event) => {
             const detail = (e as CustomEvent).detail;
+            console.log("AudioWidget: Dispatching command handler for:", detail?.type);
+            
             if (detail?.type === 'playToggle') {
-                if (audio.paused) audio.play();
-                else audio.pause();
+                if (audio.paused) {
+                    console.log("AudioWidget: Calling audio.play(). Current src:", audio.src);
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            if (error.name !== 'AbortError') console.error("AudioWidget: Play error:", error);
+                        });
+                    }
+                } else {
+                    console.log("AudioWidget: Calling audio.pause()");
+                    audio.pause();
+                }
             } else if (detail?.type === 'seek') {
                 audio.currentTime = detail.time;
             } else if (detail?.type === 'volume') {
@@ -146,38 +157,66 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
         };
         window.addEventListener('shim_audio_command', handleCommand);
 
-        setIsPlaying(true);
-        // Force state broadcast to update HomeClient before play()
-        setTimeout(broadcastState, 50);
-
-        if (Hls.isSupported() && currentTrack.src.includes('.m3u8')) {
-            hls = new Hls();
-            hls.loadSource(currentTrack.src);
-            hls.attachMedia(audio);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                 audio.play().catch(console.error);
-            });
-        } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-            // Safari supports HLS natively
-            audio.src = currentTrack.src;
-            audio.play().catch(console.error);
-        } else {
-            // Fallback for standard audio files
-            audio.src = currentTrack.src;
-            audio.play().catch(console.error);
-        }
+        // Initial broadcast
+        broadcastState();
 
         return () => {
-             if (hls) {
-                hls.destroy();
-            }
             audio.removeEventListener('play', onPlay);
             audio.removeEventListener('pause', onPause);
             audio.removeEventListener('timeupdate', onTimeUpdate);
             audio.removeEventListener('loadedmetadata', onLoadedMetadata);
             window.removeEventListener('shim_audio_command', handleCommand);
         };
-    }, [currentTrack]);
+    }, [mounted]); // Run when mounted becomes true
+
+    // Effect 2: Source Management
+    useEffect(() => {
+        if (!mounted || !audioRef.current) return;
+        const audio = audioRef.current;
+        const targetSrc = track?.src || "";
+
+        console.log("AudioWidget: Source Effect Triggered. Prop src:", targetSrc, "Current audio.src:", audio.src);
+
+        if (!targetSrc) {
+            console.log("AudioWidget: No source in prop. Clearing audio.");
+            if (audio.src && audio.src !== window.location.href) {
+                audio.pause();
+                audio.src = "";
+                setIsPlaying(false);
+                broadcastState();
+            }
+            return;
+        }
+
+        console.log("AudioWidget: Applying source:", targetSrc);
+        let hls: Hls | null = null;
+        
+        setIsPlaying(false);
+        setCurrentTime(0);
+
+        if (Hls.isSupported() && targetSrc.includes('.m3u8')) {
+            console.log("AudioWidget: Using Hls.js");
+            hls = new Hls();
+            hls.loadSource(targetSrc);
+            hls.attachMedia(audio);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                 console.log("AudioWidget: HLS Manifest Ready");
+                 broadcastState();
+            });
+        } else {
+            console.log("AudioWidget: Using native src");
+            audio.src = targetSrc;
+        }
+
+        broadcastState();
+
+        return () => {
+            if (hls) {
+                console.log("AudioWidget: Cleaning up HLS");
+                hls.destroy();
+            }
+        };
+    }, [mounted, track?.src]);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -239,7 +278,7 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
     return (
         <div
             ref={widgetRef}
-            className="fixed z-[9999] select-none touch-none"
+            className="hidden md:block fixed z-[9999] select-none touch-none"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
@@ -410,19 +449,37 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                     <div className="w-full flex items-center gap-2 md:gap-4 text-[10px] text-zinc-600 font-black font-mono">
                                         <span className="w-8 text-right tracking-tight shrink-0">{formatTime(currentTime)}</span>
                                         <div 
-                                          className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden min-w-[50px]"
-                                          onClick={(e) => {
-                                              if (!audioRef.current) return;
-                                              const rect = e.currentTarget.getBoundingClientRect();
-                                              const pos = (e.clientX - rect.left) / rect.width;
-                                              audioRef.current.currentTime = pos * (audioRef.current.duration || 0);
-                                          }}
-                                        >
-                                            <div
-                                                className="absolute top-0 left-0 h-full bg-violet-600 rounded-full pointer-events-none transition-all duration-100 ease-linear"
-                                                style={{ width: `${progress}%` }}
-                                            />
-                                        </div>
+                                           className="flex-1 h-1 bg-zinc-800 rounded-full relative group cursor-pointer overflow-hidden min-w-[50px]"
+                                           onMouseDown={(e) => {
+                                               e.preventDefault();
+                                               if (!audioRef.current) return;
+                                               const target = e.currentTarget as HTMLElement;
+                                               const audio = audioRef.current;
+                                               
+                                               const update = (clientX: number) => {
+                                                   const rect = target.getBoundingClientRect();
+                                                   const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                                                   audio.currentTime = pos * (audio.duration || 0);
+                                               };
+
+                                               update(e.clientX);
+
+                                               const onMouseMove = (moveEvent: MouseEvent) => {
+                                                   update(moveEvent.clientX);
+                                               };
+                                               const onMouseUp = () => {
+                                                   document.removeEventListener('mousemove', onMouseMove);
+                                                   document.removeEventListener('mouseup', onMouseUp);
+                                               };
+                                               document.addEventListener('mousemove', onMouseMove);
+                                               document.addEventListener('mouseup', onMouseUp);
+                                           }}
+                                         >
+                                             <div
+                                                 className="absolute top-0 left-0 h-full bg-violet-600 rounded-full pointer-events-none transition-all duration-100 ease-linear"
+                                                 style={{ width: `${progress}%` }}
+                                             />
+                                         </div>
                                         <span className="w-8 tracking-tight shrink-0">{formatTime(duration)}</span>
                                     </div>
                                 </div>
@@ -433,26 +490,29 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                                     <div 
                                         className="flex-1 h-6 flex items-center cursor-pointer"
                                         onMouseDown={(e) => {
-                                            const updateVolume = (clientX: number, currentTarget: HTMLElement) => {
-                                                const rect = currentTarget.getBoundingClientRect();
-                                                const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-                                                setVolume(pos * 100);
-                                            };
-                                            const target = e.currentTarget as HTMLElement;
-                                            updateVolume(e.clientX, target);
+                                             e.preventDefault();
+                                             const target = e.currentTarget as HTMLElement;
+                                             
+                                             const update = (clientX: number) => {
+                                                 const rect = target.getBoundingClientRect();
+                                                 const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                                                 setVolume(pos * 100);
+                                             };
 
-                                            const handleMouseMove = (moveEvent: MouseEvent) => {
-                                                updateVolume(moveEvent.clientX, target);
-                                            };
-                                            
-                                            const handleMouseUp = () => {
-                                                document.removeEventListener('mousemove', handleMouseMove);
-                                                document.removeEventListener('mouseup', handleMouseUp);
-                                            };
+                                             update(e.clientX);
 
-                                            document.addEventListener('mousemove', handleMouseMove);
-                                            document.addEventListener('mouseup', handleMouseUp);
-                                        }}
+                                             const onMouseMove = (moveEvent: MouseEvent) => {
+                                                 update(moveEvent.clientX);
+                                             };
+                                             
+                                             const onMouseUp = () => {
+                                                 document.removeEventListener('mousemove', onMouseMove);
+                                                 document.removeEventListener('mouseup', onMouseUp);
+                                             };
+
+                                             document.addEventListener('mousemove', onMouseMove);
+                                             document.addEventListener('mouseup', onMouseUp);
+                                         }}
                                     >
                                         <div className="w-full h-1 bg-zinc-800 rounded-full relative pointer-events-none overflow-hidden">
                                             <div
@@ -481,7 +541,6 @@ export const AudioWidget: React.FC<AudioWidgetProps> = ({ track }) => {
                         )}
                     </div>
                 </div>
-                <audio ref={audioRef} />
             </div>
         </div>
     );

@@ -103,7 +103,6 @@ export default function HomeClient({
   const dispatchCommand = (type: string, payload: any = {}) => {
     if (type === "volume") {
       station.setVolume(payload.volume);
-      setAudioState((prev) => ({ ...prev, volume: payload.volume }));
     }
     window.dispatchEvent(
       new CustomEvent("shim_audio_command", { detail: { type, ...payload } })
@@ -450,13 +449,28 @@ export default function HomeClient({
               </span>
               <div
                 className="flex-1 h-3 flex items-center group/seek cursor-pointer"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const pos = Math.max(
-                    0,
-                    Math.min(1, (e.clientX - rect.left) / rect.width)
-                  );
-                  dispatchCommand("seek", { time: pos * audioState.duration });
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  const target = e.currentTarget as HTMLElement;
+                  const update = (clientX: number) => {
+                    const rect = target.getBoundingClientRect();
+                    const pos = Math.max(
+                      0,
+                      Math.min(1, (clientX - rect.left) / rect.width)
+                    );
+                    dispatchCommand("seek", { time: pos * audioState.duration });
+                  };
+                  update(e.clientX);
+
+                  const onMouseMove = (moveEvent: MouseEvent) => {
+                    update(moveEvent.clientX);
+                  };
+                  const onMouseUp = () => {
+                    document.removeEventListener("mousemove", onMouseMove);
+                    document.removeEventListener("mouseup", onMouseUp);
+                  };
+                  document.addEventListener("mousemove", onMouseMove);
+                  document.addEventListener("mouseup", onMouseUp);
                 }}
               >
                 <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden pointer-events-none relative">
@@ -480,10 +494,23 @@ export default function HomeClient({
               </button>
               <button
                 onClick={() => {
+                  console.log("Play button clicked. Station initialized:", station.isInitialized);
+                  console.log("Current station track:", station.currentTrack);
+                  console.log("Fallback prop track:", currentTrack);
+                  
                   if (station.isInitialized && station.currentTrack?.src) {
+                    console.log("Dispatching playToggle to existing track:", station.currentTrack.src);
                     dispatchCommand("playToggle");
                   } else if (currentTrack?.src) {
+                    console.log("Initializing station with track:", currentTrack.title, currentTrack.src);
                     station.initialize(currentTrack as any);
+                    // Give the store a moment to update then trigger play
+                    setTimeout(() => {
+                      console.log("Dispatching playToggle after initialization");
+                      dispatchCommand("playToggle");
+                    }, 100);
+                  } else {
+                    console.warn("No track source available to play");
                   }
                 }}
                 className={cn(
@@ -514,30 +541,30 @@ export default function HomeClient({
                 className={cn(isDockedActive ? "text-white" : "text-zinc-600")}
               />
               <div
-                className="flex-1 h-3 flex items-center cursor-pointer"
+                className="flex-1 h-3 flex items-center cursor-pointer group/vol"
                 onMouseDown={(e) => {
-                  const updateVolume = (
-                    clientX: number,
-                    currentTarget: HTMLElement
-                  ) => {
-                    const rect = currentTarget.getBoundingClientRect();
-                    const pos = Math.max(
-                      0,
-                      Math.min(1, (clientX - rect.left) / rect.width)
-                    );
+                  e.preventDefault();
+                  const target = e.currentTarget as HTMLElement;
+                  
+                  const update = (clientX: number) => {
+                    const rect = target.getBoundingClientRect();
+                    const pos = Math.max(0, Math.min(1, (clientX - rect.left) / (rect.width || 1)));
                     dispatchCommand("volume", { volume: pos * 100 });
                   };
-                  const target = e.currentTarget as HTMLElement;
-                  updateVolume(e.clientX, target);
-                  const handleMouseMove = (moveEvent: MouseEvent) => {
-                    updateVolume(moveEvent.clientX, target);
+
+                  update(e.clientX);
+
+                  const onMouseMove = (moveEvent: MouseEvent) => {
+                    update(moveEvent.clientX);
                   };
-                  const handleMouseUp = () => {
-                    document.removeEventListener("mousemove", handleMouseMove);
-                    document.removeEventListener("mouseup", handleMouseUp);
+                  
+                  const onMouseUp = () => {
+                    document.removeEventListener("mousemove", onMouseMove);
+                    document.removeEventListener("mouseup", onMouseUp);
                   };
-                  document.addEventListener("mousemove", handleMouseMove);
-                  document.addEventListener("mouseup", handleMouseUp);
+
+                  document.addEventListener("mousemove", onMouseMove);
+                  document.addEventListener("mouseup", onMouseUp);
                 }}
               >
                 <div className="w-full h-1 bg-zinc-800 rounded-full relative pointer-events-none overflow-hidden">

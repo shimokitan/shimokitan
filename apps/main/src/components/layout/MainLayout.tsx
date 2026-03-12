@@ -74,8 +74,8 @@ export function MainLayout({ children, noScroll = false }: { children: React.Rea
                     </main>
                 </div>
 
-                {mounted && isInitialized && (
-                    <div className={cn("transition-opacity duration-300", !isMinimized ? "opacity-0 pointer-events-none absolute -bottom-full" : "opacity-100")}>
+                {mounted && (
+                    <div className={cn("transition-opacity duration-300", (!isInitialized || !isMinimized) ? "opacity-0 pointer-events-none absolute -bottom-full" : "opacity-100")}>
                         <AudioWidget track={currentTrack} />
                     </div>
                 )}
