@@ -107,10 +107,11 @@ export function getBrandIconUrl(platform: string): string | null {
     const mapping: Record<string, string> = {
         'ko_fi': 'ko-fi',
         'twitter': 'x',
-        'apple_music': 'apple-music', // check if apple-music exists, user didn't mention it but good to have
+        'apple_music': 'apple-music',
         'buymeacoffee': 'buymeacoffee',
         'youtube_music': 'youtube',
         'crunchyroll': 'crunchyroll',
+        'amazon_prime': 'amazon-prime',
     };
 
     const fileName = mapping[p] || p.replace(/_/g, '-');
@@ -121,7 +122,7 @@ export function getBrandIconUrl(platform: string): string | null {
         'buymeacoffee', 'fanbox', 'fiverr',
         'gumroad', 'etsy', 'society6', 'redbubble', 'artstation',
         'behance', 'bandcamp', 'soundcloud',
-        'skeb', 'pixiv', 'crunchyroll'
+        'skeb', 'pixiv', 'crunchyroll', 'steam', 'netflix', 'amazon-prime'
     ];
 
     if (!supported.includes(fileName)) return null;

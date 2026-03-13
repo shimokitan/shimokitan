@@ -127,6 +127,7 @@ export default function BasicInfoSection({
                                 >
                                     <option value="music">MUSIC_TRACK</option>
                                     <option value="anime">ANIME_FEATURE</option>
+                                    <option value="game">GAME_ENTITY</option>
                                     <option value="software">SOFTWARE_UNIT</option>
                                     <option value="zine">ZINE_RECORD</option>
                                     <option value="event">EVENT_LOG</option>

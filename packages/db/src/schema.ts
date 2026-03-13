@@ -21,7 +21,7 @@ export const signalSeverityEnum = pgEnum("signal_severity", ["critical", "high",
 export const transmissionTypeEnum = pgEnum("transmission_type", ["issue", "editorial", "changelog", "broadcast"]);
 
 // Artifact-level enums
-export const artifactCategoryEnum = pgEnum("artifact_category", ["music", "anime"]);
+export const artifactCategoryEnum = pgEnum("artifact_category", ["music", "anime", "game"]);
 
 // Work Nature — the single most important discriminator
 // original   : a first-creation work
@@ -57,6 +57,7 @@ export const resourcePlatformEnum = pgEnum("resource_platform", [
     "fiverr", "gumroad", "etsy", "society6",
     "redbubble", "artstation", "behance",
     "bandcamp", "skeb", "pixiv", "crunchyroll",
+    "steam", "netflix", "amazon_prime", "official_website",
     "r2",      // internal hosted
     "other",
 ]);

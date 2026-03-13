@@ -38,7 +38,14 @@ export function BrandIcon({
   }
 
   // Fallback to Iconify
-  const iconName = fallbackIcon || `simple-icons:${platform.toLowerCase().replace(/_/g, '-')}`;
+  let iconName = fallbackIcon;
+  if (!iconName) {
+    if (platform === 'official_website') {
+      iconName = 'lucide:globe';
+    } else {
+      iconName = `simple-icons:${platform.toLowerCase().replace(/_/g, '-')}`;
+    }
+  }
   
   return (
     <Icon 

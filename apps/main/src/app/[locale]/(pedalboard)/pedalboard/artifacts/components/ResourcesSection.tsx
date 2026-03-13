@@ -99,6 +99,8 @@ export default function ResourcesSection({
                                     <option value="soundcloud">SoundCloud</option>
                                     <option value="apple_music">Apple Music</option>
                                     <option value="crunchyroll">Crunchyroll</option>
+                                    <option value="netflix">Netflix</option>
+                                    <option value="amazon_prime">Amazon Prime</option>
                                 </>
                             )}
                             {res.type === 'social' && (
@@ -133,6 +135,10 @@ export default function ResourcesSection({
                                     <option value="instagram">Instagram</option>
                                     <option value="tiktok">TikTok</option>
                                     <option value="crunchyroll">Crunchyroll</option>
+                                    <option value="steam">Steam</option>
+                                    <option value="netflix">Netflix</option>
+                                    <option value="amazon_prime">Amazon Prime</option>
+                                    <option value="official_website">Official Website</option>
                                 </>
                             )}
                             <option value="r2">R2_STORAGE</option>

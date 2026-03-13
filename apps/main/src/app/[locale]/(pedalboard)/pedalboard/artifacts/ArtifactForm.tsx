@@ -331,6 +331,15 @@ export default function ArtifactForm({
             } else if (v.includes('crunchyroll.com/')) {
                 newResources[idx].platform = 'crunchyroll';
                 newResources[idx].type = 'stream';
+            } else if (v.includes('netflix.com/')) {
+                newResources[idx].platform = 'netflix';
+                newResources[idx].type = 'stream';
+            } else if (v.includes('steampowered.com/') || v.includes('steamcommunity.com/')) {
+                newResources[idx].platform = 'steam';
+                newResources[idx].type = 'store';
+            } else if (v.includes('amazon.com/') && (v.includes('prime') || v.includes('video'))) {
+                newResources[idx].platform = 'amazon_prime';
+                newResources[idx].type = 'stream';
             }
         }
 

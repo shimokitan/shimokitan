@@ -6,7 +6,7 @@ export const LOCALES = ['en', 'id', 'ja'] as const;
 export const ENTITY_TYPES = ['independent', 'organization', 'agency', 'circle'] as const;
 export const CONTRIBUTOR_CLASSES = ['author', 'collaborator', 'staff'] as const;
 
-export const ARTIFACT_CATEGORIES = ['anime', 'music'] as const;
+export const ARTIFACT_CATEGORIES = ['anime', 'music', 'game'] as const;
 export const ARTIFACT_STATUSES = ['the_pit', 'back_alley', 'archived'] as const;
 export const ARTIFACT_NATURES = ['original', 'cover', 'live', 'compilation'] as const;
 export const ANIME_TYPES = ['pv', 'mv', 'trailer', 'op', 'ed', 'special'] as const;
@@ -56,7 +56,9 @@ export const RESOURCE_PLATFORMS = [
     'x', 'instagram', 'facebook', 'tiktok', 'ko_fi', 'booth', 'vgen', 'patreon', 
     'buymeacoffee', 'fanbox', 'fiverr', 'gumroad', 
     'etsy', 'society6', 'redbubble', 'artstation', 'behance', 
-    'bandcamp', 'skeb', 'pixiv', 'crunchyroll', 'r2', 'other'
+    'bandcamp', 'skeb', 'pixiv', 'crunchyroll', 
+    'steam', 'netflix', 'amazon_prime', 'official_website',
+    'r2', 'other'
 ] as const;
 export const RESOURCE_ROLES = ['stream', 'embed_video', 'hosted_audio', 'download', 'social', 'reference'] as const;
 
