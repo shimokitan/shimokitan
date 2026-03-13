@@ -22,8 +22,6 @@ const categories = [
     { label: 'ALL_ARTIFACTS', value: 'all' },
     { label: 'ANIME', value: 'anime' },
     { label: 'MUSIC', value: 'music' },
-    { label: 'VTUBER', value: 'vtuber' },
-    { label: 'ZINES', value: 'zine' },
 ];
 
 export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifacts: Artifact[] }) {
@@ -42,7 +40,7 @@ export default function ArtifactsBrowser({ initialArtifacts }: { initialArtifact
             <header className="flex flex-col gap-4 mb-4">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-12 bg-violet-600 shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none py-1">
                         CRATE_<span className="text-violet-600">DIGGING</span>
                     </h1>
                 </div>
