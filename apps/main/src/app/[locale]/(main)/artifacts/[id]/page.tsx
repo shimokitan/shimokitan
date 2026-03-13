@@ -319,8 +319,8 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                         />
 
                         {/* Title strip */}
-                        <div className="shrink-0 px-4 py-3 border-b border-zinc-900 bg-zinc-950/60 overflow-hidden">
-                            <h1 className="text-base md:text-lg font-black uppercase italic leading-tight text-white truncate tracking-tight">
+                        <div className="shrink-0 px-4 py-4 md:py-3 border-b border-zinc-900 bg-zinc-950/60 overflow-hidden">
+                            <h1 className="text-xl md:text-lg font-black uppercase italic leading-tight text-white tracking-tight">
                                 {title}
                             </h1>
                         </div>
@@ -379,30 +379,28 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                         </div>
 
                         {/* ── ECHO FLUX — HIDDEN on mobile/tablet, visible on desktop ── */}
-                        <div className="hidden lg:flex lg:flex-col lg:overflow-hidden border-t border-zinc-900 min-h-0 max-h-64">
-                            <div className="shrink-0 px-3 py-2 bg-zinc-950/60 border-b border-zinc-900 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-                                    <Icon icon="lucide:message-square-quote" width={12} className="text-rose-500" />
-                                    <span className="text-xs font-black uppercase tracking-[0.3em] text-white">Echo_Flux</span>
+                        <div className="flex flex-col overflow-hidden border-t border-zinc-900 min-h-0 max-h-64 lg:max-h-none lg:flex-1">
+                            <PanelHeader
+                                label="Echo_Flux"
+                                right={
                                     <Badge variant="clean" className="text-[10px] bg-rose-500/10 text-rose-500 border-rose-500/20">
                                         {artifact.zines?.length || 0}
                                     </Badge>
-                                </div>
-                            </div>
+                                }
+                            />
 
-                            <div className="flex-1 overflow-y-auto flex flex-col divide-y divide-zinc-900/60 scrollbar-none min-h-0">
+                            <div className="overflow-y-auto flex flex-col divide-y divide-zinc-900/60 scrollbar-none min-h-0">
                                 {artifact.zines?.length ? artifact.zines.map((zine: any, idx: number) => (
-                                    <div key={zine.id} className="flex gap-3 px-3 py-3 hover:bg-zinc-900/20 transition-colors group/zine shrink-0">
+                                    <div key={zine.id} className="flex gap-3 px-4 py-4 hover:bg-zinc-900/20 transition-colors group/zine shrink-0">
                                         <div className="flex flex-col items-center gap-0.5 shrink-0 pt-1">
                                             <div className="w-px h-2 bg-rose-600/40 group-hover/zine:bg-rose-600 transition-colors" />
                                             <span className="text-[9px] text-zinc-700 tabular-nums">{String(idx + 1).padStart(2, '0')}</span>
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs text-amber-50/80 font-serif italic leading-snug line-clamp-2">
+                                            <p className="text-xs md:text-sm text-amber-50/80 font-serif italic leading-snug">
                                                 &ldquo;{resolveTranslation(zine.translations, locale)?.content}&rdquo;
                                             </p>
-                                            <div className="flex items-center justify-between mt-1.5 text-[9px] text-zinc-700 uppercase tracking-widest">
+                                            <div className="flex items-center justify-between mt-2 text-[9px] text-zinc-700 uppercase tracking-widest">
                                                 <span className="flex items-center gap-1">
                                                     <Icon icon="lucide:user" width={9} />
                                                     {zine.author?.name || 'Resident'}
@@ -412,7 +410,7 @@ export default async function ArtifactPage(props: { params: Promise<{ locale: st
                                         </div>
                                     </div>
                                 )) : (
-                                    <div className="px-4 py-5 text-[10px] text-zinc-700 uppercase tracking-widest italic">
+                                    <div className="px-4 py-8 text-center text-[10px] text-zinc-700 uppercase tracking-widest italic">
                                         NO_ECHOES_DETECTED // VACUUM_STATE
                                     </div>
                                 )}
