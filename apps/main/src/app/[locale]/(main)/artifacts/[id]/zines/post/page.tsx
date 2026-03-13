@@ -36,7 +36,7 @@ export default async function PostZinePage(props: { params: Promise<{ locale: st
 
                     <div className="flex flex-col gap-4 border-l-4 border-rose-600 pl-8">
                         <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-[0.5em]">Transmitting_Memoir //</span>
-                        <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
+                        <h1 className="text-3xl sm:text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none py-1">
                             CASTING_<span className="text-rose-600">ECHO</span>
                         </h1>
                     </div>

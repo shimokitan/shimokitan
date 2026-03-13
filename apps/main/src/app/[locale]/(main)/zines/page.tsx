@@ -35,7 +35,7 @@ export default async function PublicZinesPage() {
                 <header className="flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-12 bg-rose-600 shadow-[0_0_20px_rgba(225,29,72,0.5)]" />
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+                        <h1 className="text-3xl sm:text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none py-1">
                             PUBLIC_<span className="text-rose-600">ZINES</span>
                         </h1>
                     </div>

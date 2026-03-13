@@ -80,7 +80,7 @@ function ResetPasswordContent() {
 
                 <header className="mb-16 relative">
                     <div className="flex items-baseline gap-4">
-                        <span className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase leading-none text-white">
+                        <span className="text-3xl sm:text-5xl md:text-7xl font-black italic tracking-tighter uppercase leading-none text-white py-1">
                             SIGNAL
                         </span>
                         <div className="flex-1 h-1 bg-violet-600/40" />
