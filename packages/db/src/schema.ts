@@ -197,6 +197,32 @@ export const unitMembers = pgTable("unit_members", {
 }));
 
 // ==================================================================
+// 2.8. WORKS (IP Anchors)
+// ==================================================================
+
+export const works = pgTable("works", {
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull().unique(),
+    category: artifactCategoryEnum("category").notNull(),
+    thumbnailId: text("thumbnail_id").references(() => media.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+}, (t) => ({
+    categoryIdx: index("idx_works_category").on(t.category),
+}));
+
+export const worksI18n = pgTable("works_i18n", {
+    workId: text("work_id").references(() => works.id, { onDelete: "cascade" }).notNull(),
+    locale: localeEnum("locale").notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+}, (t) => ({
+    pk: primaryKey({ columns: [t.workId, t.locale] }),
+    titleIdx: index("idx_works_i18n_title").on(t.title),
+}));
+
+// ==================================================================
 // 3. ARTIFACTS
 //
 // Design principles:
@@ -212,6 +238,9 @@ export const artifacts = pgTable("artifacts", {
     id: text("id").primaryKey(),
     category: artifactCategoryEnum("category").notNull(),
     nature: artifactNatureEnum("nature").notNull(),
+
+    // IP Anchor linkage
+    workId: text("work_id").references(() => works.id, { onDelete: "set null" }),
 
     // For covers: points to the original artifact IF it exists in the registry.
     // NULL is valid — the original may be external (e.g. a VOCALOID song on NND).
@@ -601,6 +630,23 @@ export const artifactsRelations = relations(artifacts, ({ one, many }) => ({
         fields: [artifacts.vinylId],
         references: [media.id],
     }),
+    work: one(works, {
+        fields: [artifacts.workId],
+        references: [works.id],
+    }),
+}));
+
+export const worksRelations = relations(works, ({ one, many }) => ({
+    translations: many(worksI18n),
+    artifacts: many(artifacts),
+    thumbnail: one(media, {
+        fields: [works.thumbnailId],
+        references: [media.id],
+    }),
+}));
+
+export const worksI18nRelations = relations(worksI18n, ({ one }) => ({
+    work: one(works, { fields: [worksI18n.workId], references: [works.id] }),
 }));
 
 export const artifactsI18nRelations = relations(artifactsI18n, ({ one }) => ({
