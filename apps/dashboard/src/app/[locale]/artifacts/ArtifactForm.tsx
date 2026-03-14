@@ -8,7 +8,7 @@ import { createFullArtifact, updateFullArtifact } from '../actions/artifacts';
 import { uploadMediaAction } from '../media-actions';
 import { nanoid } from 'nanoid';
 import { toast } from 'sonner';
-import { artifactSchema } from '@/lib/validations/pedalboard';
+import { artifactSchema } from '@shimokitan/utils';
 import { z, type ZodIssue } from 'zod';
 
 

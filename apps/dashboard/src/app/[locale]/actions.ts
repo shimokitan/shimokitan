@@ -11,7 +11,7 @@ import {
     zineSchema,
     tagSchema,
     verificationSchema
-} from '@/lib/validations/pedalboard';
+} from '@shimokitan/utils';
 import { z } from 'zod';
 import { uploadFileToR2, uploadImageFromUrl } from '@/lib/r2';
 import { requireUser, requireArchitect, requireFounder, ensureUserSync } from './auth-helpers';

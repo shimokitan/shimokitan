@@ -5,9 +5,9 @@ import ArtistsBrowser from './ArtistsBrowser';
 import { getDictionary, Locale } from "@shimokitan/utils";
 import { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const locale = (await params).locale;
-    const dict = getDictionary(locale);
+    const dict = getDictionary(locale as Locale);
     return {
         title: dict.navigation.artists,
         description: dict.home.district,

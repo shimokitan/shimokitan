@@ -6,7 +6,7 @@ import Link from '@/components/Link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { Toaster } from '@shimokitan/ui';
 
 export default function PedalboardLayoutClient({ children, user }: { children: React.ReactNode, user?: any }) {

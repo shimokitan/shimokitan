@@ -537,5 +537,12 @@
         "reference_id": "ID Referensi",
         "wait_period": "Mohon tunggu 7-14 siklus (hari) untuk sinkronisasi frekuensi manual.",
         "error_rate_limit": "Signal Overload: Jendela transmisi terkunci selama 24 jam. Frekuensi Anda sudah tercatat."
+    },
+    "not_found": {
+        "title": "404 // SINYAL_HILANG",
+        "description": "Sektor yang Anda coba akses tidak ada dalam arsip Shimokitan. Frekuensi mungkin telah menyimpang atau serpihan tersebut tidak pernah dicatat.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: KOORDINAT_TIDAK_VALID",
+        "action_label": "BANGUN KEMBALI KONEKSI"
     }
 }

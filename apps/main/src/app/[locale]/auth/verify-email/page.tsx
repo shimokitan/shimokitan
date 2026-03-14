@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Icon } from '@iconify/react';
@@ -144,7 +144,7 @@ function VerifyEmailContent() {
     );
 }
 
-export default function VerifyEmailPage() {
+export default function VerifyEmailPage({ params }: { params: Promise<{ locale: string }> }) {
     return (
         <Suspense>
             <VerifyEmailContent />

@@ -13,7 +13,8 @@ import Link from '@/components/Link';
 import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
-export default async function EntitiesPage(props: { searchParams: Promise<{ trash?: string }> }) {
+export default async function EntitiesPage(props: { params: Promise<{ locale: string }>, searchParams: Promise<{ trash?: string }> }) {
+    const { locale } = await props.params;
     const user = await ensureUserSync();
     if (!user || (user.role !== 'founder' && user.role !== 'architect')) {
         redirect('/');

@@ -1,8 +1,8 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
 
-export default async function VisionPage({ params }: { params: Promise<{ locale: Locale }> }) {
+export default async function VisionPage({ params }: { params: Promise<{ locale: string }> }) {
     const locale = (await params).locale;
-    const dict = getDictionary(locale);
+    const dict = getDictionary(locale as Locale);
     const v = dict.about.vision;
 
     return (

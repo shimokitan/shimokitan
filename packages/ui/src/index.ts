@@ -74,6 +74,7 @@ export { BentoCard } from "./components/BentoCard";
 export { CyberpunkShell, CyberpunkStyles } from "./components/CyberpunkShell";
 export { InlineMarkdown } from "./components/InlineMarkdown";
 export { NavigationLink } from "./components/NavigationLink";
+export { NotFound } from "./components/NotFound";
 
 // --- Theme ---
 export { ThemeProvider } from "./components/theme-provider";

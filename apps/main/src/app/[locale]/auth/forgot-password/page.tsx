@@ -2,11 +2,11 @@
 
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { toast } from 'sonner';
 import { useState, FormEvent } from 'react';
 
-export default function ForgotPasswordPage() {
+export default function ForgotPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
     const [isPending, setIsPending] = useState(false);
     const [isSent, setIsSent] = useState(false);
 

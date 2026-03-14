@@ -19,11 +19,10 @@ export const dynamic = "force-dynamic";
 
 export default async function AppPage({
   params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
+  searchParams,
+}: any) {
   const { locale } = await params;
-  const dict = getDictionary(locale);
+  const dict = getDictionary(locale as Locale);
   const db = getDb();
 
   if (!db) {

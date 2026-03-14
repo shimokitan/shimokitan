@@ -6,7 +6,7 @@ import { Icon } from '@iconify/react';
 import { toast } from 'sonner';
 import { broadcastZineAction } from '@/app/[locale]/(main)/zines/actions';
 import { cn } from '@shimokitan/ui';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 
 interface ZineCreateFormProps {
     artifactId: string;

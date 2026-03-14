@@ -1,14 +1,14 @@
 "use client"
 
 import Link from 'next/link';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import { useState, FormEvent } from 'react';
 
-export default function SignUpPage() {
+export default function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
     const router = useRouter();
     const [isPending, setIsPending] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);

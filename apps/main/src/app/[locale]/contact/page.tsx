@@ -14,9 +14,8 @@ import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { getDictionary, Locale } from '@shimokitan/utils';
 
-export default function ContactPage() {
-    const params = useParams();
-    const locale = (params?.locale as Locale) || 'en';
+export default function ContactPage({ params, searchParams }: { params: Promise<{ locale: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const { locale } = React.use(params) as { locale: Locale };
     const dict = getDictionary(locale);
 
     const [submitting, setSubmitting] = useState(false);

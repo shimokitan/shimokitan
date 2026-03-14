@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { locales, defaultLocale } from '@shimokitan/utils';
-import { AUTH_COOKIE_NAMES } from '@/lib/auth-neon/constants';
+import { AUTH_COOKIE_NAMES } from '@shimokitan/auth';
 
 function getLocale(request: NextRequest): string {
     const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
@@ -104,8 +104,9 @@ export default function middleware(request: NextRequest) {
 
     // 5. Handle Locale Prefixing (if not already there)
     if (!pathnameHasLocale) {
-        request.nextUrl.pathname = `/${locale}${pathname}`;
-        return NextResponse.rewrite(request.nextUrl);
+        const url = new URL(request.url);
+        url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
+        return NextResponse.redirect(url);
     }
 
     return NextResponse.next();
@@ -113,6 +114,6 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|icon.svg).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|icon.svg).*)',
     ],
 };

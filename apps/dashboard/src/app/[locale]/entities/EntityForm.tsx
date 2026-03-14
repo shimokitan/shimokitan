@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import EntitySearchPicker from '../artifacts/components/EntitySearchPicker';
 import { MediaUploader } from '@shimokitan/ui';
  import { uploadMediaAction } from '../media-actions';
- import { CREDIT_ROLES } from '@/lib/validations/pedalboard';
+import { CREDIT_ROLES } from '@shimokitan/utils';
   import { toast } from 'sonner';
  import { extractMediaId, getThumbnailUrl } from '@shimokitan/utils';
 

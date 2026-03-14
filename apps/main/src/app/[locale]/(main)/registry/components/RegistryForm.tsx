@@ -14,9 +14,8 @@ import {
 } from "@shimokitan/ui";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
-import { getDictionary, Locale } from "@shimokitan/utils";
+import { getDictionary, Locale, ENTITY_TYPES } from "@shimokitan/utils";
 import { submitRegistryApplication } from "../actions";
-import { ENTITY_TYPES, RESOURCE_PLATFORMS } from "@/lib/validations/pedalboard";
 
 /**
  * Artist Registry Multi-step Form.

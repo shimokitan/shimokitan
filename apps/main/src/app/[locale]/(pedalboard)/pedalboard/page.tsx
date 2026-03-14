@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 import { Icon } from '@iconify/react';
 import { isNull, schema as dbSchema, getDb } from '@shimokitan/db';
 import Link from '@/components/Link';
-import { auth } from '@/lib/auth-neon/server';
+import { auth } from '@shimokitan/auth';
 import { RequestAccessButton } from './_components/RequestAccessButton';
 import { ensureUserSync } from './auth-helpers';
 import { redirect } from 'next/navigation';
@@ -262,8 +262,8 @@ export default async function PedalboardPage({ params, searchParams }: PageProps
                         <div className="space-y-1">
                             <div className="text-[10px] font-mono text-zinc-700 uppercase mb-4 px-1">Internal_Registry</div>
                             {[
-                                { label: 'Artifact_Pool', icon: 'lucide:package', href: '/pedalboard/artifacts' },
-                                { label: 'Entities', icon: 'lucide:users', href: '/pedalboard/entities' },
+                                { label: 'Zine_Feed', icon: 'lucide:package', href: '/pedalboard/zines' },
+                                { label: 'Collections', icon: 'lucide:users', href: '/pedalboard/collections' },
                                 { label: 'Digital_Tags', icon: 'lucide:tags', href: '/pedalboard/tags' },
                             ].map((item) => (
                                 <Link key={item.label} href={item.href} className="flex items-center gap-3 p-3 text-zinc-500 hover:text-white hover:bg-zinc-950 transition-all group">

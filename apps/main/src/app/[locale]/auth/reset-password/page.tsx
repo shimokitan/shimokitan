@@ -1,7 +1,7 @@
 "use client"
 
 import { Icon } from '@iconify/react';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { useState, FormEvent, Suspense } from 'react';
@@ -152,7 +152,7 @@ function ResetPasswordContent() {
     );
 }
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
     return (
         <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-violet-600 font-mono text-xs animate-pulse uppercase">Recoding_Handshake...</div>}>
             <ResetPasswordContent />

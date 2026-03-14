@@ -4,7 +4,7 @@
 import { getDb, schema, eq, sql } from '@shimokitan/db';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
-import { zineSchema } from '@/lib/validations/pedalboard';
+import { zineSchema } from '@shimokitan/utils';
 import { ensureUserSync } from '../../(pedalboard)/pedalboard/auth-helpers';
 
 /**

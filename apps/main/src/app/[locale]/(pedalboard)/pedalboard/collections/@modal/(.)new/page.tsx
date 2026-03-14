@@ -8,7 +8,7 @@ import {
     SheetTitle,
     SheetDescription
 } from '@shimokitan/ui';
-import InterceptedClose from '../../../artifacts/@modal/(.)[id]/InterceptedClose';
+import InterceptedClose from '@/components/InterceptedClose';
 
 export default async function InterceptedCollectionCreate() {
     return (

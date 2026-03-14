@@ -3,7 +3,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import EntitySearchPicker from './EntitySearchPicker';
-import { CREDIT_ROLES } from '@/lib/validations/pedalboard';
+import { CREDIT_ROLES } from '@shimokitan/utils';
  
 interface Entity {
     id: string;

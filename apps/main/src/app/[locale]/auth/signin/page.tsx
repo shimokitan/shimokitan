@@ -2,7 +2,7 @@
 
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { PasswordInput } from '@/components/auth/PasswordInput';
@@ -177,7 +177,7 @@ function SignInContent() {
     );
 }
 
-export default function SignInPage() {
+export default function SignInPage({ params }: { params: Promise<{ locale: string }> }) {
     return (
         <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-violet-600 font-mono text-xs animate-pulse uppercase">Syncing_Bridges...</div>}>
             <SignInContent />

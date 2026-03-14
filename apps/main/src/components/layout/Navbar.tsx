@@ -17,7 +17,7 @@ import {
     SheetTrigger,
 } from '@shimokitan/ui';
 import { useRouter } from 'next/navigation';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 
 export function Navbar() {
     const time = useTime();

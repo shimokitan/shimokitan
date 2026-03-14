@@ -57,9 +57,9 @@ export default async function WorkbenchPage({ params }: PageProps) {
                     <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Artist_Workbench</h2>
                     <p className="text-zinc-500 text-[10px] font-mono tracking-[0.2em] uppercase mt-1">Creation & Deployment Monitor</p>
                 </div>
-                <Link href="/pedalboard/artifacts/new" className="bg-rose-600 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-rose-500 transition-all flex items-center gap-2">
+                <Link href="/pedalboard/zines" className="bg-rose-600 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-rose-500 transition-all flex items-center gap-2">
                     <Icon icon="lucide:plus" width={14} />
-                    New_Artifact
+                    Manage_Signals
                 </Link>
             </header>
 
@@ -68,7 +68,7 @@ export default async function WorkbenchPage({ params }: PageProps) {
                     <h3 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500">My_Portfolio</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {myPortfolio.map(art => (
-                            <Link key={art.id} href={`/pedalboard/artifacts/${art.id}`} className="bg-zinc-900/30 border border-zinc-800 p-6 flex flex-col justify-between h-48 group hover:border-zinc-700 transition-all">
+                            <Link key={art.id} href={`/pedalboard/zines`} className="bg-zinc-900/30 border border-zinc-800 p-6 flex flex-col justify-between h-48 group hover:border-zinc-700 transition-all">
                                 <div>
                                     <div className="flex justify-between items-center mb-1">
                                         <div className="flex items-center gap-2">

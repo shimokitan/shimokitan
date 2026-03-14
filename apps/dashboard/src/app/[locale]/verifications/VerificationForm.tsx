@@ -1,10 +1,11 @@
+
 "use client"
 
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { createVerification, updateVerification } from '../actions';
 import { useRouter } from 'next/navigation';
-import { authClient } from '@/lib/auth-neon/client';
+import { authClient } from '@shimokitan/auth';
 
 type Option = { id: string, name: string };
 

@@ -5,7 +5,8 @@ import VerificationForm from '../VerificationForm';
 import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
 
-export default async function NewVerificationPage() {
+export default async function NewVerificationPage(props: { params: Promise<{ locale: string }> }) {
+    const { locale } = await props.params;
     const db = getDb();
 
     const rawArtifacts = db ? await db.query.artifacts.findMany({

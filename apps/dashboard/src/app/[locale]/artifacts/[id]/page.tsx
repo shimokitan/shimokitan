@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EditArtifactPage(props: { params: Promise<{ id: string }> }) {
+export default async function EditArtifactPage(props: { params: Promise<{ locale: string; id: string }> }) {
     const params = await props.params;
     const db = getDb();
 

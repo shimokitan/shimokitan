@@ -537,5 +537,12 @@
         "reference_id": "REFERENCE_ID",
         "wait_period": "Please allow 7-14 solar cycles for manual frequency alignment.",
         "error_rate_limit": "SIGNAL_OVERLOAD: Transmission window locked for 24h. Your frequency has already been recorded."
+    },
+    "not_found": {
+        "title": "404 // SIGNAL_LOST",
+        "description": "The sector you are attempting to access does not exist in the Shimokitan archive. The frequency may have drifted or the shard was never recorded.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: INVALID_COORDINATES",
+        "action_label": "RE-ESTABLISH CONNECTION"
     }
 }

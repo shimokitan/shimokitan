@@ -5,7 +5,8 @@ import { ensureUserSync } from '../../auth-helpers';
 import ProfileForm from './ProfileForm';
 import { redirect } from 'next/navigation';
 
-export default async function ProfileEditPage() {
+export default async function ProfileEditPage(props: { params: Promise<{ locale: string }> }) {
+    const { locale } = await props.params;
     const user = await ensureUserSync();
 
     if (!user) {

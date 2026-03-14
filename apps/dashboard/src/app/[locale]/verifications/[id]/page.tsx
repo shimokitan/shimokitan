@@ -5,7 +5,7 @@ import VerificationForm from '../VerificationForm';
 import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
 
-export default async function EditVerificationPage(props: { params: Promise<{ id: string }> }) {
+export default async function EditVerificationPage(props: { params: Promise<{ locale: string; id: string }> }) {
     const { id } = await props.params;
     const db = getDb();
 

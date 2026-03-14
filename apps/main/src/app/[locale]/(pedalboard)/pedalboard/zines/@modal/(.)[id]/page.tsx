@@ -9,9 +9,9 @@ import {
     SheetTitle,
     SheetDescription
 } from '@shimokitan/ui';
-import InterceptedClose from '../../../artifacts/@modal/(.)[id]/InterceptedClose';
+import InterceptedClose from '@/components/InterceptedClose';
 
-export default async function InterceptedZineEdit(props: { params: Promise<{ id: string }> }) {
+export default async function InterceptedZineEdit(props: { params: Promise<{ locale: string; id: string }> }) {
     const { id } = await props.params;
     const db = getDb();
 

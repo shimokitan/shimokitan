@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     };
 }
 
-export default function ContactLayout({ children }: { children: React.ReactNode }) {
+export default function ContactLayout({ children, params }: { children: React.ReactNode, params: Promise<{ locale: string }> }) {
     return (
         <CyberpunkShell>
             <div className="h-screen w-full bg-black text-zinc-300 flex flex-col font-sans selection:bg-violet-500/30 selection:text-violet-200 overflow-hidden">

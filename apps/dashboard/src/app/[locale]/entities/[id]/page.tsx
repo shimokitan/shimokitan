@@ -6,7 +6,7 @@ import { Icon } from '@iconify/react';
 import Link from '@/components/Link';
 import { notFound } from 'next/navigation';
 
-export default async function EditEntityPage(props: { params: Promise<{ id: string }> }) {
+export default async function EditEntityPage(props: { params: Promise<{ locale: string; id: string }> }) {
     const params = await props.params;
     const db = getDb();
 

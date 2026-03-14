@@ -9,7 +9,8 @@ import { deleteVerification } from '../actions';
 import { ensureUserSync } from '../auth-helpers';
 import { redirect } from 'next/navigation';
 
-export default async function VerificationsPage() {
+export default async function VerificationsPage(props: { params: Promise<{ locale: string }> }) {
+    const { locale } = await props.params;
     const user = await ensureUserSync();
     if (!user || (user.role !== 'founder' && user.role !== 'architect')) {
         redirect('/');

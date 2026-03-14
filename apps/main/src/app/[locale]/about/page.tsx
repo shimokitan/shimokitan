@@ -1,17 +1,17 @@
 import { getDictionary, Locale } from "@shimokitan/utils";
 import type { Metadata } from "next";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const locale = (await params).locale;
-    const dict = getDictionary(locale);
+    const dict = getDictionary(locale as Locale);
     return {
         title: dict.about.title,
     };
 }
 
-export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
     const locale = (await params).locale;
-    const dict = getDictionary(locale);
+    const dict = getDictionary(locale as Locale);
 
     const jsonLd = {
         "@context": "https://schema.org",

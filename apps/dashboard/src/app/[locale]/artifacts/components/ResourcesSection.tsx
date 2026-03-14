@@ -4,7 +4,7 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 
-import { RESOURCE_ROLES } from '@/lib/validations/pedalboard';
+import { RESOURCE_ROLES } from '@shimokitan/utils';
 
 export interface Resource {
     type: string;

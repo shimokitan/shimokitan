@@ -14,7 +14,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     };
 }
 
-export default async function PublicZinesPage() {
+export default async function PublicZinesPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const db = getDb();
     if (!db) return <div>DB_CONNECTION_ERROR</div>;
 

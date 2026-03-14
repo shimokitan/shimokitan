@@ -7,6 +7,7 @@ export * from './storage';
 export * from './media';
 export * from './i18n';
 export * from './routing';
+export * from './validations';
 
 export function slugify(text: string) {
     const base = text

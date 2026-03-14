@@ -3,7 +3,7 @@
 import { getDb, schema, and, gte, eq } from '@shimokitan/db';
 import { nanoid } from 'nanoid';
 import { headers } from 'next/headers';
-import { registryApplicationSchema } from '@/lib/validations/pedalboard';
+import { registryApplicationSchema } from '@shimokitan/utils';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 
@@ -54,8 +54,8 @@ export async function submitRegistryApplication(data: z.infer<typeof registryApp
             updatedAt: new Date()
         });
 
-        revalidatePath('/[locale]/pedalboard/verifications', 'layout'); // Update admin dashboards
-        revalidatePath('/[locale]/pedalboard/verifications/registry', 'page');
+        // revalidatePath('/[locale]/pedalboard/verifications', 'layout'); // Update admin dashboards
+        // revalidatePath('/[locale]/pedalboard/verifications/registry', 'page');
         
         return { 
             success: true, 

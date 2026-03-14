@@ -5,7 +5,7 @@ import PedalboardLayoutClient from './layout.client';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PedalboardLayout({ children }: { children: React.ReactNode }) {
+export default async function PedalboardLayout({ children, params }: { children: React.ReactNode, params: Promise<{ locale: string }> }) {
     let session;
     try {
         const result = await getSession();

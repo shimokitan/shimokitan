@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb, schema, eq } from '@shimokitan/db';
 import { getEntityUrl } from '@shimokitan/utils';
 
-export async function GET(request: Request, props: { params: Promise<{ locale: string, id: string }> }) {
-    const { locale, id } = await props.params;
+export async function GET(request: Request, { params }: { params: Promise<{ locale: string, id: string }> }) {
+    const { locale, id } = await params;
 
     // Support either vanity slugs or raw UUIDs based on the legacy structure
     let dbId = id;

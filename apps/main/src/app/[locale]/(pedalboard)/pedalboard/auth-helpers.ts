@@ -1,33 +1,10 @@
 
 import { getDb, schema, eq } from '@shimokitan/db';
-
-/**
- * Radically lazy and build-safe Auth getter.
- * During Next.js build phase, we return a mock to avoid crashing the Page Data Collection
- * which often trips over internal auth library metadata extraction / SSR logic.
- */
-async function getAuth() {
-    // Check if we are in the Next.js build data collection phase
-    if (process.env.NEXT_PHASE === 'phase-production-build' || !process.env.NEON_AUTH_BASE_URL) {
-        return {
-            getSession: async () => ({ data: null }),
-            handler: () => { throw new Error("Auth_Handler_Disabled_During_Build"); }
-        } as any;
-    }
-
-    const { createNeonAuth } = await import('@neondatabase/auth/next/server');
-    return createNeonAuth({
-        baseUrl: process.env.NEON_AUTH_BASE_URL!,
-        cookies: {
-            secret: process.env.NEON_AUTH_COOKIE_SECRET!,
-        },
-    });
-}
+import { auth } from '@shimokitan/auth';
 
 // --- AUTH HELPERS ---
 
 export async function getSession() {
-    const auth = await getAuth();
     return auth.getSession();
 }
 
@@ -58,7 +35,6 @@ export async function requireFounder() {
 export async function ensureUserSync() {
     let session;
     try {
-        const auth = await getAuth();
         const result = await auth.getSession();
         session = result.data;
     } catch (e) {
@@ -79,7 +55,7 @@ export async function ensureUserSync() {
     try {
         // 1. Try to find the user by ID first (Fast Path)
         const existingById = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.id, userId)
+            where: (u: any, { eq }: any) => eq(u.id, userId)
         });
 
         if (existingById) {
@@ -99,7 +75,7 @@ export async function ensureUserSync() {
 
         // 2. If not found by ID, try to find by Email
         const existingByEmail = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.email, userEmail)
+            where: (u: any, { eq }: any) => eq(u.email, userEmail)
         });
 
         if (existingByEmail) {
@@ -128,7 +104,7 @@ export async function ensureUserSync() {
     } catch (error: any) {
         if (error.code === '23505') {
             const racingUser = await db.query.users.findFirst({
-                where: (u, { or, eq }) => or(eq(u.id, userId), eq(u.email, userEmail))
+                where: (u: any, { or, eq }: any) => or(eq(u.id, userId), eq(u.email, userEmail))
             });
             if (racingUser) return { ...session.user, email: userEmail, role: racingUser.role, resonanceMultiplier: racingUser.resonanceMultiplier };
         }

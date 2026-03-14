@@ -5,7 +5,7 @@ import { getDb, schema, eq } from '@shimokitan/db';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import { slugify } from '@shimokitan/utils';
-import { artifactSchema } from '@/lib/validations/pedalboard';
+import { artifactSchema } from '@shimokitan/utils';
 import { z } from 'zod';
 import { uploadImageFromUrl } from '@/lib/r2';
 import { requireArchitect, requireFounder, requireUser } from '../auth-helpers';

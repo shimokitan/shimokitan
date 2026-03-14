@@ -6,7 +6,7 @@ import Link from '@/components/Link';
 import { Icon } from '@iconify/react';
 
 export default async function ArtifactZinesManagementPage(props: {
-    params: Promise<{ id: string }>;
+    params: Promise<{ locale: string; id: string }>;
 }) {
     const { id } = await props.params;
     const db = getDb();

@@ -3,10 +3,12 @@ import React from 'react';
 
 export default function ZinesLayout({
     children,
-    modal
+    modal,
+    params
 }: {
     children: React.ReactNode;
     modal: React.ReactNode;
+    params: Promise<{ locale: string }>;
 }) {
     return (
         <>

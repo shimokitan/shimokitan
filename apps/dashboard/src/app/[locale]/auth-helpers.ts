@@ -1,24 +1,7 @@
-import { getDb, schema, eq } from '@shimokitan/db';
-
-async function getAuth() {
-    if (process.env.NEXT_PHASE === 'phase-production-build' || !process.env.NEON_AUTH_BASE_URL) {
-        return {
-            getSession: async () => ({ data: null }),
-            handler: () => { throw new Error("Auth_Handler_Disabled_During_Build"); }
-        } as any;
-    }
-
-    const { createNeonAuth } = await import('@neondatabase/auth/next/server');
-    return createNeonAuth({
-        baseUrl: process.env.NEON_AUTH_BASE_URL!,
-        cookies: {
-            secret: process.env.NEON_AUTH_COOKIE_SECRET!,
-        },
-    });
-}
+import { auth } from '@shimokitan/auth';
+import { getDb } from '@shimokitan/db';
 
 export async function getSession() {
-    const auth = await getAuth();
     return auth.getSession();
 }
 
@@ -31,7 +14,6 @@ export async function requireUser() {
 export async function ensureUserSync() {
     let session;
     try {
-        const auth = await getAuth();
         const result = await auth.getSession();
         session = result.data;
     } catch (e) {
@@ -50,7 +32,7 @@ export async function ensureUserSync() {
 
     try {
         const existingById = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.id, userId)
+            where: (u: any, { eq }: any) => eq(u.id, userId)
         });
 
         if (existingById) {
@@ -58,7 +40,7 @@ export async function ensureUserSync() {
         }
 
         const existingByEmail = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.email, userEmail)
+            where: (u: any, { eq }: any) => eq(u.email, userEmail)
         });
 
         if (existingByEmail) {
