@@ -544,5 +544,40 @@
         "back_to_district": "KEMBALI KE DISTRIK",
         "status": "STATUS: KOORDINAT_TIDAK_VALID",
         "action_label": "BANGUN KEMBALI KONEKSI"
+    },
+    "error": {
+        "title": "500 // KEGAGALAN_SISTEM",
+        "description": "Terjadi kegagalan kritis pada inti logika Shimokitan. Arsitek telah diberitahu dan sedang bekerja untuk mensinkronisasi ulang Distrik.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: KEGAGALAN_INTI_LOGIKA",
+        "try_again": "HUBUNGKAN_ULANG_SINYAL"
+    },
+    "unauthorized": {
+        "title": "401 // IDENTITAS_DITOLAK",
+        "description": "Identitas terminal Anda belum diverifikasi. Protokol memerlukan kredensial resonansi yang valid untuk mengakses sektor arsip ini.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: AUTH_DIPERLUKAN",
+        "action_label": "INISIALISASI_SESI"
+    },
+    "forbidden": {
+        "title": "403 // AKSES_DITOLAK",
+        "description": "Tingkat izin Anda saat ini tidak mencukupi untuk sektor ini. Protokol enkripsi telah memblokir transmisi Anda.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: PELANGGARAN_ENKRIPSI",
+        "action_label": "MINTA_IZIN_AKSES"
+    },
+    "maintenance": {
+        "title": "503 // DISTRIK_TERKUNCI",
+        "description": "Distrik saat ini sedang menjalani penyelarasan arsitektur. Gerbang ditutup sementara untuk sinkronisasi struktural.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: PEMELIHARAAN_AKTIF",
+        "action_label": "PERIKSA_KEMBALI_NANTI"
+    },
+    "bad_request": {
+        "title": "400 // PERMINTAAN_TIDAK_VALID",
+        "description": "Inti logika tidak dapat memproses transmisi Anda. Parameter sinyal tidak terformat dengan benar atau tidak kompatibel dengan protokol Distrik.",
+        "back_to_district": "KEMBALI KE DISTRIK",
+        "status": "STATUS: KORUPSI_DATA_TERDETEKSI",
+        "action_label": "HUBUNGKAN_ULANG_SINYAL"
     }
 }

@@ -544,5 +544,40 @@
         "back_to_district": "RETURN TO DISTRICT",
         "status": "STATUS: INVALID_COORDINATES",
         "action_label": "RE-ESTABLISH CONNECTION"
+    },
+    "error": {
+        "title": "500 // SYSTEM_FAILURE",
+        "description": "A critical failure has occurred in the Shimokitan logic core. Our architects have been notified and are working to re-synchronize the District.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: LOGIC_CORE_FAILURE",
+        "try_again": "RE-ESTABLISH_SIGNAL"
+    },
+    "unauthorized": {
+        "title": "401 // IDENTITY_REJECTED",
+        "description": "Your current terminal identity has not been verified. Protocol requires valid resonance credentials to access this archive sector.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: AUTH_REQUIRED",
+        "action_label": "INITIALIZE_SESSION"
+    },
+    "forbidden": {
+        "title": "403 // ACCESS_DENIED",
+        "description": "Your current clearance level is insufficient for this sector. Encryption protocols have blocked your transmission.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: ENCRYPTION_VIOLATION",
+        "action_label": "REQUEST_CLEARANCE"
+    },
+    "maintenance": {
+        "title": "503 // DISTRICT_LOCKED",
+        "description": "The District is currently undergoing architectural re-alignment. Gates are temporarily closed for structural synchronization.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: MAINTENANCE_ACTIVE",
+        "action_label": "CHECK_FREQUENCY_LATER"
+    },
+    "bad_request": {
+        "title": "400 // INVALID_REQUEST",
+        "description": "The logic core could not parse your transmission. The signal parameters are malformed or incompatible with District protocols.",
+        "back_to_district": "RETURN TO DISTRICT",
+        "status": "STATUS: DATA_CORRUPTION_DETECTED",
+        "action_label": "RE-ESTABLISH_SIGNAL"
     }
 }
