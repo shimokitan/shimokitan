@@ -185,6 +185,14 @@ export const registryApplicationSchema = z.object({
     })).min(1, "At least one artifact sample is required"),
 });
 
+export const workSchema = z.object({
+    id: z.string().optional(),
+    slug: z.string().optional().nullable(),
+    category: z.enum(ARTIFACT_CATEGORIES),
+    thumbnailId: z.string().optional().nullable(),
+    translations: z.array(translationSchema).optional(),
+});
+
 // --- Types ---
 export type EntityInput = z.infer<typeof entitySchema>;
 export type ArtifactInput = z.infer<typeof artifactSchema>;
@@ -192,3 +200,4 @@ export type CollectionInput = z.infer<typeof collectionSchema>;
 export type ZineInput = z.infer<typeof zineSchema>;
 export type TagInput = z.infer<typeof tagSchema>;
 export type VerificationInput = z.infer<typeof verificationSchema>;
+export type WorkInput = z.infer<typeof workSchema>;
