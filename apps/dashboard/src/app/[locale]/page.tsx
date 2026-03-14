@@ -76,69 +76,75 @@ export default async function ConsolePage({ params }: PageProps) {
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-20">
-            <header className="flex justify-between items-end border-b border-zinc-900 pb-6">
-                <div>
-                    <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">System_Console</h2>
-                    <p className="text-zinc-500 text-[10px] font-mono tracking-[0.2em] uppercase mt-1">District Governance & IP Registry</p>
+            {/* Content Header */}
+            <header className="flex justify-between items-start mb-12">
+                <div className="space-y-1">
+                    <h2 className="text-4xl font-black italic uppercase tracking-tighter text-white">System_Status: <span className="text-rose-600">Operational.</span></h2>
+                    <p className="text-zinc-500 text-xs font-mono tracking-[0.2em] uppercase">District {locale} // Identity: {user.name} // Permissions: {currentRole}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="text-right">
-                        <div className="text-[10px] font-mono text-zinc-600 uppercase">System_Mode</div>
-                        <div className="text-xs font-black text-rose-500 uppercase">God_Mode</div>
+                <div className="flex items-center gap-6">
+                    <div className="bg-zinc-950/50 border border-zinc-950 p-4 rounded-xl backdrop-blur-md">
+                        <div className="text-[10px] font-mono text-zinc-600 uppercase mb-1">System_Render_Time</div>
+                        <div className="text-sm font-black text-white font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                 </div>
             </header>
 
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-zinc-900/40 border border-zinc-800 p-4">
-                    <div className="text-[9px] font-mono text-zinc-500 uppercase">IP_Works</div>
-                    <div className="text-2xl font-black text-white">{activeWorks.length}</div>
-                </div>
-                <div className="bg-zinc-900/40 border border-zinc-800 p-4">
-                    <div className="text-[9px] font-mono text-zinc-500 uppercase">Artifacts</div>
-                    <div className="text-2xl font-black text-white">{totalActive}</div>
-                </div>
-                <div className="bg-zinc-900/40 border border-zinc-800 p-4">
-                    <div className="text-[9px] font-mono text-zinc-500 uppercase">Entities</div>
-                    <div className="text-2xl font-black text-white">{entities.length}</div>
-                </div>
-                <div className="bg-zinc-900/40 border border-zinc-800 p-4">
-                    <div className="text-[9px] font-mono text-zinc-500 uppercase">Signals</div>
-                    <div className="text-2xl font-black text-emerald-500">100%</div>
-                </div>
-            </div>
-
-            {/* Navigation Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Link href="/works" className="group bg-zinc-900/20 border border-zinc-800 p-6 hover:bg-rose-950/20 hover:border-rose-900 transition-all">
-                    <Icon icon="lucide:library" width={32} className="text-rose-500 mb-4" />
-                    <h3 className="font-black uppercase italic tracking-tight text-white group-hover:text-rose-500">Works_Registry</h3>
-                    <p className="text-zinc-500 text-[10px] mt-1 uppercase">Anchor Point Management</p>
-                </Link>
-
-                <Link href="/artifacts" className="group bg-zinc-900/20 border border-zinc-800 p-6 hover:bg-zinc-900/40 transition-all">
-                    <Icon icon="lucide:package" width={32} className="text-zinc-500 mb-4" />
-                    <h3 className="font-black uppercase italic tracking-tight text-white">Artifacts</h3>
-                    <p className="text-zinc-500 text-[10px] mt-1 uppercase">Global Media Ledger</p>
-                </Link>
-
-                <Link href="/entities" className="group bg-zinc-900/20 border border-zinc-800 p-6 hover:bg-zinc-900/40 transition-all">
-                    <Icon icon="lucide:users" width={32} className="text-zinc-500 mb-4" />
-                    <h3 className="font-black uppercase italic tracking-tight text-white">Entities</h3>
-                    <p className="text-zinc-500 text-[10px] mt-1 uppercase">Resident Units & Identity</p>
-                </Link>
-
-                <Link href="/verifications" className="group bg-zinc-900/20 border border-zinc-800 p-6 hover:bg-blue-950/20 hover:border-blue-900 transition-all">
-                    <div className="flex justify-between items-start">
-                        <Icon icon="lucide:shield-check" width={32} className="text-blue-500 mb-4" />
-                        {verifications.length > 0 && (
-                            <span className="bg-blue-600 text-white text-[9px] px-1.5 py-0.5 font-black uppercase">{verifications.length}</span>
-                        )}
+            {/* Metrics Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="relative group overflow-hidden bg-zinc-950 border border-zinc-900 p-6 rounded-2xl hover:border-rose-900/50 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <Icon icon="lucide:library" width={64} />
                     </div>
-                    <h3 className="font-black uppercase italic tracking-tight text-white group-hover:text-blue-500">Audit_Queue</h3>
-                    <p className="text-zinc-500 text-[10px] mt-1 uppercase">Pending Verifications</p>
-                </Link>
+                    <div className="relative z-10">
+                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">IP_Anchor_Active</div>
+                        <div className="text-4xl font-black text-white italic">{activeWorks.length}</div>
+                        <div className="mt-4 flex items-center gap-2">
+                             <span className="text-[9px] px-1.5 py-0.5 bg-rose-600/10 text-rose-500 rounded font-black">STABLE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="relative group overflow-hidden bg-zinc-950 border border-zinc-900 p-6 rounded-2xl hover:border-blue-900/50 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <Icon icon="lucide:package" width={64} />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Artifacts_Registry</div>
+                        <div className="text-4xl font-black text-white italic">{totalActive}</div>
+                        <div className="mt-4 flex items-center gap-4 text-[9px] font-mono uppercase text-zinc-600">
+                             <span>Music: {statusCounts.music || 0}</span>
+                             <span>Anime: {statusCounts.anime || 0}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="relative group overflow-hidden bg-zinc-950 border border-zinc-900 p-6 rounded-2xl hover:border-emerald-900/50 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <Icon icon="lucide:users" width={64} />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Resident_Entities</div>
+                        <div className="text-4xl font-black text-white italic">{entities.length}</div>
+                        <div className="mt-4 flex items-center gap-2">
+                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                             <span className="text-emerald-500 font-black">ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="relative group overflow-hidden bg-zinc-950 border border-zinc-900 p-6 rounded-2xl hover:border-violet-900/50 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                        <Icon icon="lucide:shield-check" width={64} />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Audit_Protocol_Pending</div>
+                        <div className="text-4xl font-black text-white italic">{verifications.length}</div>
+                        <div className="mt-4">
+                             <Link href="/verifications" className="text-[9px] font-black uppercase text-violet-500 hover:text-white transition-colors underline underline-offset-4">Process_Queue_Entry &gt;</Link>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Activity & Health */}
